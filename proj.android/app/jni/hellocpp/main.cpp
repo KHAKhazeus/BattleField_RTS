@@ -22,23 +22,21 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#ifndef __HELLOWORLD_SCENE_H__
-#define __HELLOWORLD_SCENE_H__
+#include <memory>
 
-#include "cocos2d.h"
+#include <android/log.h>
+#include <jni.h>
 
-class HelloWorld : public cocos2d::Scene
-{
-public:
-    static cocos2d::Scene* createScene();
+#include "AppDelegate.h"
 
-    virtual bool init();
-    
-    // a selector callback
-    void menuCloseCallback(cocos2d::Ref* pSender);
-    
-    // implement the "static create()" method manually
-    CREATE_FUNC(HelloWorld);
-};
+#define  LOG_TAG    "main"
+#define  LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,__VA_ARGS__)
 
-#endif // __HELLOWORLD_SCENE_H__
+namespace {
+std::unique_ptr<AppDelegate> appDelegate;
+}
+
+void cocos_android_app_init(JNIEnv* env) {
+    LOGD("cocos_android_app_init");
+    appDelegate.reset(new AppDelegate());
+}
