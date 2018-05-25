@@ -74,10 +74,12 @@ void GameScene::onEnter() {
 	_money_Count->setPosition(Vec2(_screen_Width*0.9, _screen_Height*0.04));
 	this->addChild(_money_Image);
 	this->addChild(_money_Count);
-	// TODO _power_Image = Sprite::create("");
+	 _power_Image = Sprite::create("ui/electric.png");
+	 _power_Image->setPosition(Vec2(_screen_Width*0.8, _screen_Height*0.10));
+	 _power_Image->setScale(0.08);
 	_power_Count = Label::createWithSystemFont("5000", "fonts/Arial", 32);
-	_power_Count->setPosition(Vec2(_screen_Width*0.9, _screen_Height*0.10));
-	//this->addChild(_power_Image);
+	_power_Count->setPosition(Vec2(_screen_Width*0.9, _screen_Height*0.1005));
+	this->addChild(_power_Image);
 	this->addChild(_power_Count);
 	//TODO
 }
