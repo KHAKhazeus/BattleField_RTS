@@ -33,10 +33,11 @@ bool SettingLayer::init(){
     float left_margin = visible_size.width/10;
     float up_margin = visible_height/8;
     
-    LayerColor *layer = LayerColor::create(Color4B(0,0,0,200));
+    LayerColor *layer = LayerColor::create(Color4B(0,0,0,0));
     if(!layer){
         problemLoading("LayerColor");
     }
+    
     this->addChild(layer);
     
     float small_adjust = 15.0;
@@ -177,6 +178,11 @@ bool SettingLayer::init(){
             }
         });
     }
+    //!!!Iteration?
+    Vector<Node *> fade_targets{text_background_volume, text_background_effects, effects_slider, volume_slider, return_button, volume_text, effects_text};
+    for(auto target : fade_targets){
+        target->setOpacity(0);
+    }
     
     layer->addChild(text_background_volume, 0);
     layer->addChild(volume_slider, 0);
@@ -184,7 +190,17 @@ bool SettingLayer::init(){
     layer->addChild(effects_slider, 0);
     layer->addChild(return_button, 0);
     
+    groupFadeIn(fade_targets);
+    auto background_fade = FadeTo::create(0.5, 150);
+    layer->runAction(background_fade);
     return true;
+}
+
+void SettingLayer::groupFadeIn(cocos2d::Vector<Node*> group){
+    for(auto target : group){
+        auto fade_in = FadeIn::create(0.5);
+        target->runAction(fade_in);
+    }
 }
 
 void SettingLayer::onEnter()
@@ -212,6 +228,23 @@ void SettingLayer::onExit(){
     }
 }
 
+void SettingLayer::fadeOutIteration(Vector<Node*> targets){
+    if(!targets.empty()){
+        for(auto target : targets){
+            auto fade_out = FadeOut::create(0.5);
+            target->runAction(fade_out);
+            fadeOutIteration(target->getChildren());
+        }
+    }
+}
+
+void SettingLayer::removeLayer(float dt){
+    this->getParent()->removeChild(this);
+}
+
 void SettingLayer::close(Node* pSender){
-    pSender->getParent()->removeChild(pSender);
+    Vector<Node*> targets;
+    targets.pushBack(pSender);
+    fadeOutIteration(targets);
+    pSender->scheduleOnce(schedule_selector(SettingLayer::removeLayer), 0.5);
 }

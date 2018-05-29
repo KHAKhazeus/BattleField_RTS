@@ -26,6 +26,12 @@ public:
     
     void close(cocos2d::Node* pSender);
     
+    void groupFadeIn(cocos2d::Vector<Node*> group);
+    
+    void removeLayer(float dt);
+    
+    static void fadeOutIteration(cocos2d::Vector<Node*> target);
+    
     // implement the "static create()" method manually
     CREATE_FUNC(SettingLayer);
 };
