@@ -56,10 +56,14 @@ include_directories(
 list(APPEND GAME_SOURCE
      Classes/AppDelegate.cpp
      Classes/HelloWorldScene.cpp
+     Classes/MenuScene.cpp
+     Classes/SettingNode.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
      Classes/HelloWorldScene.h
+     Classes/MenuScene.h
+     Classes/SettingNode.h
      )
 
 if(ANDROID)
