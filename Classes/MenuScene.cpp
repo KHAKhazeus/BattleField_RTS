@@ -50,7 +50,7 @@ bool MenuScene::init(){
 //!!!Need to be packed as one button class
     auto start_game_button = Button::create("Menu/OrangeButton.png", "Menu/OrangeButtonHighlight.png");
     auto button_size = start_game_button->getCustomSize();
-    float small_adjust = 18.0;
+    float small_adjust = button_size.height/4;
     float height_start_point = (visible_size.height/2 -
                                        button_size.height * 2 - small_adjust);
     if(!start_game_button){
