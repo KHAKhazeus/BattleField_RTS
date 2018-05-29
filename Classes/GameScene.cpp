@@ -12,8 +12,8 @@ bool GameScene::init() {
 	}
 	//get the screen size
 	auto visibleSize = Director::getInstance()->getVisibleSize();
-	_screen_Width = visibleSize.width;
-	_screen_Height = visibleSize.height;
+	screen_Width = visibleSize.width;
+	screen_Height = visibleSize.height;
 	
 	//initial the Map
 	_tiled_Map = TMXTiledMap::create("map/LostTemple.tmx");
@@ -42,6 +42,27 @@ bool GameScene::init() {
 	}
 
 	// set money and power
+	_money_Image = Sprite::create("ui/Coin.png");
+	_money_Image->setPosition(Vec2(screen_Width*0.83, screen_Height*0.04));
+	this->addChild(_money_Image);
+    _money = Money::create();
+	_money->setPosition(Vec2(screen_Width *0.92, screen_Height*0.04));
+	this->addChild(_money);
+	_power_Image = Sprite::create("ui/electric.png");
+	_power_Image->setPosition(Vec2(screen_Width*0.83, screen_Height*0.10));
+	_power_Image->setScale(0.08);
+	_power = Power::create();
+	_power->setPosition(Vec2(screen_Width*0.92, screen_Height*0.10));
+	this->addChild(_power);
+	this->addChild(_power_Image);
+
+
+	_base = Base::create();
+	_base->setPosition(visibleSize.width / 2, visibleSize.height / 2);
+	this->addChild(_base);
+	_money->schedule(schedule_selector(Money::updateMoney), 1);
+	_power->schedule(schedule_selector(Power::updatePower), 1);
+	
 
 
 	//TODO initial the money and power
@@ -49,12 +70,14 @@ bool GameScene::init() {
 
 
 	//start the update
-	this->scheduleUpdate();
+	
 	return true;
+
 }
 
-void GameScene::update() {
+void GameScene::update(float dt) {
 	//TODO add the concrete code
+
 }
 
 Vec2 GameScene::tileCoordForPosition(Vec2 position) {
@@ -68,19 +91,7 @@ Vec2 GameScene::tileCoordForPosition(Vec2 position) {
 
 void GameScene::onEnter() {
 	Scene::onEnter();
-	_money_Image = Sprite::create("ui/Coin.png");
-	_money_Image->setPosition(Vec2(_screen_Width*0.8, _screen_Height*0.04));
-	_money_Count = Label::createWithSystemFont("10000", "fonts/Arial", 32);
-	_money_Count->setPosition(Vec2(_screen_Width*0.9, _screen_Height*0.04));
-	this->addChild(_money_Image);
-	this->addChild(_money_Count);
-	 _power_Image = Sprite::create("ui/electric.png");
-	 _power_Image->setPosition(Vec2(_screen_Width*0.8, _screen_Height*0.10));
-	 _power_Image->setScale(0.08);
-	_power_Count = Label::createWithSystemFont("5000", "fonts/Arial", 32);
-	_power_Count->setPosition(Vec2(_screen_Width*0.9, _screen_Height*0.1005));
-	this->addChild(_power_Image);
-	this->addChild(_power_Count);
+	
 	//TODO
 }
 
@@ -92,4 +103,20 @@ void GameScene::onEnterTransitionDidFinish() {
 void GameScene::onExit() {
 	Scene::onExit();
 	//TODO 
+}
+
+
+
+//Debug
+
+
+void GameScene::onKeyPressed(EventKeyboard::KeyCode keycode, Event* event) {
+	switch (keycode) {
+	case EventKeyboard::KeyCode::KEY_ESCAPE:
+		//TODO 调出setting画面;
+		break;
+	case EventKeyboard::KeyCode::KEY_H:
+		//TODO 回到主基地
+		break;
+	}
 }

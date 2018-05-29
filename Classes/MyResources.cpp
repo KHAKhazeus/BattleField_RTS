@@ -1,0 +1,89 @@
+#include "MyResources.h"
+bool Money::init() {
+	_money = 10000;
+	char temp[50];
+	sprintf(temp, "%d", _money);
+	_label =  Label::create(temp, "fonts/arial.ttf", 32);
+	this->addChild(_label);
+	return _label;
+}
+
+bool Money::checkMoney(int cost)const {
+	if (_money >= cost) {
+		return true;
+	}
+	return false;
+}
+
+void Money::updateMoneyDisplay() {
+	char temp[50];
+	sprintf(temp, "%d", _money);
+	_label->setString(temp);
+}
+
+int Money::getMoney() {
+	return _money;
+}
+
+void Money::spendMoney(int cost) {
+	_money -= cost;
+	updateMoneyDisplay();
+}
+
+void Money::increaseMoney(int amount) {
+	//TODO
+	//if(building is true)
+	_money += amount;
+	updateMoneyDisplay();
+}
+
+void Money::updateMoney(float dt) {
+	//TODO the number of MineToMoney
+	increaseMoney(50);
+}
+
+bool Power::init() {
+	_power = 5000;
+	char temp[30];
+	sprintf(temp, "%d", _power);
+	_label = Label::create(temp, "fonts/arial.ttf", 32);
+	this->addChild(_label);
+	return _label;
+}
+
+bool Power::checkPower(int cost)const {
+	if (_power >= cost) {
+		return true;
+	}
+	return false;
+}
+
+void Power::updatePowerDisplay() {
+	char temp[30];
+	sprintf(temp, "%d", _power);
+	_label->setString(temp);
+}
+
+void Power::spendPower(int cost) {
+	_power -= cost;
+	updatePowerDisplay();
+}
+
+int Power::getPower() {
+	return _power;
+}
+
+void Power::increasePower(int amount) {
+	//TODO if the Powerstation is built
+	
+	_power += amount;
+	updatePowerDisplay();
+}
+
+void Power::updatePower(float dt) {
+	//TODO if create the PowerStation
+	increasePower(50);
+
+}
+
+
