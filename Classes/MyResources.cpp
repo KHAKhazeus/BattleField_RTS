@@ -8,7 +8,7 @@ bool Money::init() {
 	return _label;
 }
 
-bool Money::checkMoney(int cost)const {
+bool Money::checkMoney(const int cost)const {
 	if (_money >= cost) {
 		return true;
 	}
@@ -21,11 +21,11 @@ void Money::updateMoneyDisplay() {
 	_label->setString(temp);
 }
 
-int Money::getMoney() {
+int Money::getMoney()const {
 	return _money;
 }
 
-void Money::spendMoney(int cost) {
+void Money::spendMoney(const int cost) {
 	_money -= cost;
 	updateMoneyDisplay();
 }
@@ -51,7 +51,7 @@ bool Power::init() {
 	return _label;
 }
 
-bool Power::checkPower(int cost)const {
+bool Power::checkPower(const int cost)const {
 	if (_power >= cost) {
 		return true;
 	}
@@ -64,12 +64,12 @@ void Power::updatePowerDisplay() {
 	_label->setString(temp);
 }
 
-void Power::spendPower(int cost) {
+void Power::spendPower(const int cost) {
 	_power -= cost;
 	updatePowerDisplay();
 }
 
-int Power::getPower() {
+int Power::getPower()const  {
 	return _power;
 }
 

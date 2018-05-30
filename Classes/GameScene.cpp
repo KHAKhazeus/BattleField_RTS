@@ -15,32 +15,20 @@ bool GameScene::init() {
 	screen_Width = visibleSize.width;
 	screen_Height = visibleSize.height;
 	
-	//initial the Map
-	_tiled_Map = TMXTiledMap::create("map/LostTemple.tmx");
-	_tiled_Map->setAnchorPoint(Vec2::ZERO);
-	_tiled_Map->setPosition(Vec2::ZERO);
-	this->addChild(_tiled_Map,0);
 
-	//push the collidable item to the _colliable Vector
-	_collidable = _tiled_Map->getLayer("Collidable");
-	for (int j = 0; j < _tiled_Map->getMapSize().height; j++) {
-		for (int i = 0; i < _tiled_Map->getMapSize().width; i++) {
-			Vec2 position = Vec2(i, j);
-			int tileGid = _collidable->getTileGIDAt(position);
-			if (tileGid) {
-				Value properites = _tiled_Map->getPropertiesForGID(tileGid);
-				auto map = properites.asValueMap();
-				auto value = map.at("collidable").asString();
-				if (value.compare("true") == 0) {
-					auto grid = Grid::create(i, j);
-					grid->setPass(false);
-					_collidable_Vector.push_back(grid);
-				//	
-				}
-			}
-		}
-	}
+	_tiledMap = TiledMap::create();
+	_tiledMap->setCollidableVector();
+	this->addChild(_tiledMap);
+	
+	auto grid1 = Grid::create(1, 1);
+	auto grid2 = Grid::create(100, 100);
+	TiledMap::newMapGrid(grid1, 1);
+	TiledMap::updateMapGrid(grid1, grid2);
+	TiledMap::checkMapGrid(grid2);
+	TiledMap::getUnitId(grid2);
+	TiledMap::removeMapGrid(grid2);
 
+	
 	// set money and power
 	_money_Image = Sprite::create("ui/Coin.png");
 	_money_Image->setPosition(Vec2(screen_Width*0.83, screen_Height*0.04));

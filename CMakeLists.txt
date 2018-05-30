@@ -59,6 +59,8 @@ list(APPEND GAME_SOURCE
      Classes/GameScene.cpp
      Classes/MyResources.cpp
      Classes/UnitCreate.cpp
+	 Classes/TiledMap.cpp
+	 Classed/UnitManager.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
@@ -67,7 +69,8 @@ list(APPEND GAME_HEADER
      Classes/Grid.h
      Classes/MyResources.h
      Classes/UnitCreate.h
-	
+	Classes/TiledMap.h
+	Classes/UnitManager.h
      )
 
 if(ANDROID)

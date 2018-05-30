@@ -1,5 +1,5 @@
-#ifndef _Grid
-#define _Grid
+#ifndef _GRID
+#define _GRID
 
 #include "cocos2d.h"
 class Grid :public cocos2d::Ref {
@@ -32,4 +32,32 @@ public:
 	bool isPass() { return _pass; }
 };
 
-#endif // 
+class GridRect:public cocos2d::Ref {
+private:
+	int _x;
+	int _y;
+	int _width;
+	int _height;
+	bool initwithRect(int x, int y, int w, int h){
+		_x = x;
+		_y = y;
+		_width = w;
+		_height = h;
+		return true;
+	}
+public:
+	static GridRect* create(int x, int y, int w, int h) {
+		auto g = new GridRect();
+		if (g && g->initwithRect(x, y, w, h)) {
+			g->autorelease();
+			return g;
+		}
+		CC_SAFE_DELETE(g);
+		return nullptr;
+	}
+	int getX() { return _x; }
+	int getY() { return _y; }
+	int getWidth() { return _width; }
+	int getHeight() { return _height; }
+};
+#endif // !_GRID

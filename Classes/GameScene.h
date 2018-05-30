@@ -4,6 +4,7 @@
 #include "Grid.h"
 #include "MyResources.h"
 #include "UnitCreate.h"
+#include "TiledMap.h"
 USING_NS_CC;
 //Main Class of Game Scene
 class GameScene :public cocos2d::Scene {
@@ -29,6 +30,7 @@ private:
 	Power* _power;
 	
 	Base* _base;
+	TiledMap *_tiledMap;
 
 public:
 	
