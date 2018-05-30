@@ -60,7 +60,7 @@ bool GameScene::init() {
 
 	_base = Base::create();
 	_base->setPosition(visibleSize.width / 2, visibleSize.height / 2);
-	_tiled_map->addChild(_base);
+	_tiled_map->addChild(_base, 5);
 	_money->schedule(schedule_selector(Money::updateMoney), 1);
 	_power->schedule(schedule_selector(Power::updatePower), 1);
 	
