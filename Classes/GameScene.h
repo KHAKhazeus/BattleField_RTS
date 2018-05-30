@@ -5,26 +5,46 @@
 #include "MyResources.h"
 #include "UnitCreate.h"
 USING_NS_CC;
+
+//Class of mouse rect selection
+class MouseRect : public cocos2d::DrawNode
+{
+public:
+	CREATE_FUNC(MouseRect);
+
+	//Start point and end point
+	Vec2 start, end;
+
+	virtual void update(float delta);
+
+	void reset();
+};
+
 //Main Class of Game Scene
 class GameScene :public cocos2d::Scene {
 private:
 	//TMX Class
-	TMXTiledMap * _tiled_Map;//Map
+	TMXTiledMap * _tiled_map;//Map
 	TMXLayer* _collidable;
 
 	//Sprite Class
 	//TODO The definition of Sprite class
 
 	//The Size of Screen
-	int screen_Width;
-	int screen_Height;
+	int _screen_width;
+	int _screen_height;
+
+	//Cursor point
+	float _cursorX, _cursorY;
+
+	bool _select_flag = 0;
 
 	//The vector of collidable item;
 	std::vector<Grid *> _collidable_Vector;
 
 	//The ui of item
-	Sprite* _money_Image;
-	Sprite* _power_Image;
+	Sprite* _money_image;
+	Sprite* _power_image;
 	Money* _money;
 	Power* _power;
 	
@@ -55,6 +75,22 @@ public:
 	//TODO
 //	void win();
 //	void lose();
+
+	void resetCursor();
+
+	//Scroll map
+	void mapScroll();
+
+	//Pass data from listener
+	MouseRect* mouse_rect;
+
+	//Touch listener
+	virtual bool onTouchBegan(Touch* touch, Event* event);
+	virtual void onTouchMoved(Touch* touch, Event* event);
+	virtual void onTouchEnded(Touch* touch, Event* event);
+
+	//Mouse listener
+	void onMouseMove(Event* event);
 
 	//The function of Touch
 	
