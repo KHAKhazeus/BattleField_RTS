@@ -60,7 +60,7 @@ list(APPEND GAME_SOURCE
      Classes/MyResources.cpp
      Classes/UnitCreate.cpp
 	 Classes/TiledMap.cpp
-	 Classed/UnitManager.cpp
+	 Classes/UnitManager.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
