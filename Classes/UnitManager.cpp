@@ -11,6 +11,7 @@ void UnitManager::initBase() {
 	auto pos = getBasePosition("ObjectLayer");
 	_base = Base::create();
 	_base->setPosition(pos);
+	//TODO set the camera to the Base
 	this->getParent()->addChild(_base);
 }
 

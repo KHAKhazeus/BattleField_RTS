@@ -67,6 +67,10 @@ TMXObjectGroup* TiledMap::getObjectGroup(std::string layername) {
 	return _tiled_Map->getObjectGroup(layername);
 }
 
+TMXTiledMap* TiledMap::getTiledMap() {
+	return _tiled_Map;
+}
+
 /*Grid* SearchEnemy() {
 	auto rect = GridRect::create(curpos - rang / 2, curpos - range / 2, range, range);
 	for (auto i = rect->getX(); i = rect->getWidth(); i++) {

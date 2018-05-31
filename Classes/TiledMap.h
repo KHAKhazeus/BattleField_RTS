@@ -6,7 +6,11 @@ USING_NS_CC;
 class TiledMap : public cocos2d::Node {
 public:
 	bool init();
+	//@@return value is the pointer to the TMXObjectGroup
 	TMXObjectGroup * getObjectGroup(std::string);
+
+	//@@return value is the pointer to the TXMtiledMap
+	TMXTiledMap* getTiledMap();
 
 	void setCollidableVector();
 	//All the operations towards the map will change the boolean of the character _pass of Grid£¡

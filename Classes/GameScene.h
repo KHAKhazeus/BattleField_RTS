@@ -7,9 +7,6 @@ USING_NS_CC;
 //Main Class of Game Scene
 class GameScene :public cocos2d::Scene {
 private:
-	//TMX Class
-	TMXTiledMap * _tiled_Map;//Map
-	TMXLayer* _collidable;
 
 	//Sprite Class
 	//TODO The definition of Sprite class
@@ -28,7 +25,7 @@ private:
 	Power* _power;
 	UnitManager * _unit_Manager;
 	Base* _base;
-	TiledMap *_tiledMap;
+	TiledMap *_tiled_Map;
 
 public:
 	

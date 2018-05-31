@@ -16,9 +16,9 @@ bool GameScene::init() {
 	screen_Height = visibleSize.height;
 	
 
-	_tiledMap = TiledMap::create();
-	_tiledMap->setCollidableVector();
-	this->addChild(_tiledMap);
+	_tiled_Map = TiledMap::create();
+	_tiled_Map->setCollidableVector();
+	this->addChild(_tiled_Map);
 	
 	
 	// set money and power
@@ -40,7 +40,7 @@ bool GameScene::init() {
 	/*_base = Base::create();
 	_base->setPosition(visibleSize.width / 2, visibleSize.height / 2);
 	this->addChild(_base);*/
-	_unit_Manager = UnitManager::create(_tiledMap);
+	_unit_Manager = UnitManager::create(_tiled_Map);
 	_unit_Manager->setPosition(Vec2::ZERO);
 	this->addChild(_unit_Manager);
 	_unit_Manager->initBase();
@@ -67,11 +67,13 @@ void GameScene::update(float dt) {
 }
 
 Vec2 GameScene::tileCoordForPosition(Vec2 position) {
+	//call the function getTiledMap to get the TMXTiledMap *
+	auto tiledMap = _tiled_Map->getTiledMap();
 	int x = static_cast<int>
-		(position.x / (_tiled_Map->getTileSize().width / CC_CONTENT_SCALE_FACTOR()));
-	float pointHeight = _tiled_Map->getTileSize().height / CC_CONTENT_SCALE_FACTOR();
+		(position.x / (tiledMap->getTileSize().width / CC_CONTENT_SCALE_FACTOR()));
+	float pointHeight = tiledMap->getTileSize().height / CC_CONTENT_SCALE_FACTOR();
 	int y = static_cast<int>
-		((_tiled_Map->getMapSize().height * pointHeight - position.y) / pointHeight);
+		((tiledMap->getMapSize().height * pointHeight - position.y) / pointHeight);
 	return Vec2(x, y);
 }
 
@@ -99,10 +101,10 @@ void GameScene::onExit() {
 void GameScene::onKeyPressed(EventKeyboard::KeyCode keycode, Event* event) {
 	switch (keycode) {
 	case EventKeyboard::KeyCode::KEY_ESCAPE:
-		//TODO 调出setting画面;
+		//TODO call the scene of Setting;
 		break;
 	case EventKeyboard::KeyCode::KEY_H:
-		//TODO 回到主基地
+		//TODO go back to the base
 		break;
 	}
 }
