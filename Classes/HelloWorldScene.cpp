@@ -48,7 +48,6 @@ bool HelloWorld::init()
     {
         return false;
     }
-
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
