@@ -8,10 +8,10 @@ private:
 public:
 	virtual bool init() override;
 	//to judge if you can afford it
-	bool checkMoney(int cost)const;
-	void spendMoney(int cost);
+	bool checkMoney(const int cost)const;
+	void spendMoney(const int cost);
 	//to get the value of the _money
-	int getMoney();
+	int getMoney()const;
 	//update the value of the _money
 	void increaseMoney(int amount);
 	//update the display of the _money
@@ -28,10 +28,10 @@ private:
 public:
 	virtual bool init() override;
 	//to judge if you can afford it
-	bool checkPower(int cost)const;
-	void spendPower(int cost);
+	bool checkPower(const int cost)const;
+	void spendPower(const int cost);
 	//to get the value of the _power
-	int getPower();
+	int getPower()const;
 	//update the value of the _power
 	void increasePower(int amount);
 	//update the display of the _power

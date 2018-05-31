@@ -1,34 +1,46 @@
 #ifndef _GameScene
 #define _GameScene
 #include "cocos2d.h"
-#include "Grid.h"
 #include "MyResources.h"
-#include "UnitCreate.h"
+#include "UnitManager.h"
 USING_NS_CC;
+
+//Class of mouse rect selection
+class MouseRect : public cocos2d::DrawNode
+{
+public:
+	CREATE_FUNC(MouseRect);
+
+	//Start point and end point
+	Vec2 start, end;
+
+	virtual void update(float delta);
+
+	void reset();
+};
+
 //Main Class of Game Scene
 class GameScene :public cocos2d::Scene {
 private:
-	//TMX Class
-	TMXTiledMap * _tiled_Map;//Map
-	TMXLayer* _collidable;
-
-	//Sprite Class
-	//TODO The definition of Sprite class
 
 	//The Size of Screen
-	int screen_Width;
-	int screen_Height;
+	int _screen_width;
+	int _screen_height;
 
-	//The vector of collidable item;
-	std::vector<Grid *> _collidable_Vector;
+	//Cursor point
+	float _cursorX, _cursorY;
 
-	//The ui of item
+	bool _select_flag = 0;
+
+	//Pointer to class needed instance
 	Sprite* _money_Image;
 	Sprite* _power_Image;
 	Money* _money;
 	Power* _power;
-	
-	Base* _base;
+	//Can create the base and check something(TODO)
+	UnitManager * _unit_Manager;
+	//The Map class contains _collidabel_Vector and gridAndId_Map (Static)
+	TiledMap *_tiled_Map;
 
 public:
 	
@@ -36,8 +48,6 @@ public:
 	virtual bool init();
 	virtual void update(float dt) override;
 	
-	void updateMoney(float );
-	void updatePower(float );
 
 	CREATE_FUNC(GameScene);
 	//turn the coordinate of OpenGL to TileMap
@@ -49,20 +59,34 @@ public:
 	virtual void onEnterTransitionDidFinish();
 	virtual void onExit();
 
-	//Create the KeyBorad CallBack();
+	//Create the KeyBoard CallBack();
 	void onKeyPressed(EventKeyboard::KeyCode, Event * event) ;
 	//If you win,then ?
 	//TODO
 //	void win();
 //	void lose();
 
+	void resetCursor();
+
+	//Scroll map
+	void mapScroll();
+
+	//Pass data from listener
+	MouseRect* mouse_rect;
+
+	//Touch listener
+	virtual bool onTouchBegan(Touch* touch, Event* event);
+	virtual void onTouchMoved(Touch* touch, Event* event);
+	virtual void onTouchEnded(Touch* touch, Event* event);
+
+	//Mouse listener
+	void onMouseMove(Event* event);
+
 	//The function of Touch
 	
 	
 
 };
-
-
 
 
 #endif _GameScene
