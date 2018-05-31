@@ -63,6 +63,10 @@ int TiledMap::getUnitId(Grid * Pos) {
 	return _gridAndId_Map.at(Pos);
 }
 
+TMXObjectGroup* TiledMap::getObjectGroup(std::string layername) {
+	return _tiled_Map->getObjectGroup(layername);
+}
+
 /*Grid* SearchEnemy() {
 	auto rect = GridRect::create(curpos - rang / 2, curpos - range / 2, range, range);
 	for (auto i = rect->getX(); i = rect->getWidth(); i++) {

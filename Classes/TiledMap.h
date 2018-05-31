@@ -6,6 +6,8 @@ USING_NS_CC;
 class TiledMap : public cocos2d::Node {
 public:
 	bool init();
+	TMXObjectGroup * getObjectGroup(std::string);
+
 	void setCollidableVector();
 	//All the operations towards the map will change the boolean of the character _pass of Grid£¡
 	//The _pass change to true	

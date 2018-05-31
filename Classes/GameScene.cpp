@@ -20,14 +20,6 @@ bool GameScene::init() {
 	_tiledMap->setCollidableVector();
 	this->addChild(_tiledMap);
 	
-	auto grid1 = Grid::create(1, 1);
-	auto grid2 = Grid::create(100, 100);
-	TiledMap::newMapGrid(grid1, 1);
-	TiledMap::updateMapGrid(grid1, grid2);
-	TiledMap::checkMapGrid(grid2);
-	TiledMap::getUnitId(grid2);
-	TiledMap::removeMapGrid(grid2);
-
 	
 	// set money and power
 	_money_Image = Sprite::create("ui/Coin.png");
@@ -45,9 +37,15 @@ bool GameScene::init() {
 	this->addChild(_power_Image);
 
 
-	_base = Base::create();
+	/*_base = Base::create();
 	_base->setPosition(visibleSize.width / 2, visibleSize.height / 2);
-	this->addChild(_base);
+	this->addChild(_base);*/
+	_unit_Manager = UnitManager::create(_tiledMap);
+	_unit_Manager->setPosition(Vec2::ZERO);
+	this->addChild(_unit_Manager);
+	_unit_Manager->initBase();
+
+
 	_money->schedule(schedule_selector(Money::updateMoney), 1);
 	_power->schedule(schedule_selector(Power::updatePower), 1);
 	

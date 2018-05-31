@@ -1,10 +1,8 @@
 #ifndef _GameScene
 #define _GameScene
 #include "cocos2d.h"
-#include "Grid.h"
 #include "MyResources.h"
-#include "UnitCreate.h"
-#include "TiledMap.h"
+#include "UnitManager.h"
 USING_NS_CC;
 //Main Class of Game Scene
 class GameScene :public cocos2d::Scene {
@@ -23,12 +21,12 @@ private:
 	//The vector of collidable item;
 	std::vector<Grid *> _collidable_Vector;
 
-	//The ui of item
+	//the point to class needed instance
 	Sprite* _money_Image;
 	Sprite* _power_Image;
 	Money* _money;
 	Power* _power;
-	
+	UnitManager * _unit_Manager;
 	Base* _base;
 	TiledMap *_tiledMap;
 
@@ -38,8 +36,6 @@ public:
 	virtual bool init();
 	virtual void update(float dt) override;
 	
-	void updateMoney(float );
-	void updatePower(float );
 
 	CREATE_FUNC(GameScene);
 	//turn the coordinate of OpenGL to TileMap
@@ -51,7 +47,7 @@ public:
 	virtual void onEnterTransitionDidFinish();
 	virtual void onExit();
 
-	//Create the KeyBorad CallBack();
+	//Create the KeyBoard CallBack();
 	void onKeyPressed(EventKeyboard::KeyCode, Event * event) ;
 	//If you win,then ?
 	//TODO
