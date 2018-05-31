@@ -12,7 +12,7 @@ void UnitManager::initBase() {
 	_base = Base::create();
 	_base->setPosition(pos);
 	//TODO set the camera to the Base
-	this->getParent()->addChild(_base);
+	_tiled_Map->getTiledMap()->addChild(_base,100);
 }
 
 Vec2 UnitManager::getBasePosition(std::string layername) {
