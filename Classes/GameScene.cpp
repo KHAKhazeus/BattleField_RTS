@@ -46,8 +46,7 @@ bool GameScene::init() {
 
 
 	_money->schedule(schedule_selector(Money::updateMoney), 1);
-	_power->schedule(schedule_selector(Power::updatePower), 1);
-	
+
 	//TODO initial the money and power
 
 	//start the update

@@ -1,6 +1,8 @@
 #ifndef _UNIT_CREATE
 #define _UNIT_CREATE
 #include "cocos2d.h"
+#include "MyResources.h"
+#include "BuildingBase.h"
 USING_NS_CC;
 
 class Base :public Sprite {
