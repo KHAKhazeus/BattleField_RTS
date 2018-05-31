@@ -131,3 +131,7 @@ void Base::onTouchEnded(Touch *touch, Event *event) {
 
 }
 
+Sprite* Base::getSprite() {
+	return _base;
+}
+

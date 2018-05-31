@@ -12,15 +12,8 @@ public:
 	bool isselected;
 	static Base* create();
 	bool init();
-	/*static Base* create(std::string filename) {
-		auto *sprite = new Base();
-		if (sprite && sprite->initWithFile(filename)) {
-			sprite->autorelease();
-			return sprite;
-		}
-		CC_SAFE_DELETE(sprite);
-		return nullptr;
-	}*/
+	//TODO get the Sprite . A better Way?
+	Sprite * getSprite(); 
 	virtual bool onTouchBegan(Touch *touch, Event *event);
 	virtual void onTouchEnded(Touch *touch, Event *event);
 };

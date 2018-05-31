@@ -26,13 +26,13 @@ bool GameScene::init() {
 	_money_Image->setPosition(Vec2(_screen_width*0.83, _screen_height*0.04));
 	this->addChild(_money_Image);
     _money = Money::create();
-	_money->setPosition(Vec2(_screen_width *0.92, _screen_height*0.04));
+	_money->setPosition(Vec2(_screen_width *0.90, _screen_height*0.04));
 	this->addChild(_money);
 	_power_Image = Sprite::create("ui/electric.png");
-	_power_Image->setPosition(Vec2(_screen_width*0.83, _screen_height*0.10));
+	_power_Image->setPosition(Vec2(_screen_width*0.83, _screen_height*0.12));
 	_power_Image->setScale(0.08);
 	_power = Power::create();
-	_power->setPosition(Vec2(_screen_width*0.92, _screen_height*0.10));
+	_power->setPosition(Vec2(_screen_width*0.90, _screen_height*0.12));
 	this->addChild(_power);
 	this->addChild(_power_Image);
 
