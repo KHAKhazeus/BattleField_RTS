@@ -61,6 +61,7 @@ list(APPEND GAME_SOURCE
      Classes/UnitCreate.cpp
 	 Classes/TiledMap.cpp
 	 Classes/UnitManager.cpp
+	 Classes/BuildingBase.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
@@ -71,6 +72,7 @@ list(APPEND GAME_HEADER
      Classes/UnitCreate.h
 	Classes/TiledMap.h
 	Classes/UnitManager.h
+	Classes/BuildingBase.h
      )
 
 if(ANDROID)

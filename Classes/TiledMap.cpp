@@ -2,7 +2,7 @@
 
 //initial the static member
 std::map<Grid*,int> TiledMap::_gridAndId_Map;
-std::vector<Grid*> TiledMap::_collidable_Vector;
+std::vector<std::vector<Grid*>> TiledMap::_grid_Vector;
 
 
 bool TiledMap::init() {
@@ -11,11 +11,23 @@ bool TiledMap::init() {
 	return _tiled_Map;
 }
 
-void TiledMap::setCollidableVector() {
+void TiledMap::setGridVector() {
 	//get the Collidabel Layer
+	for (int i = 0; i < _tiled_Map->getMapSize().width; i++) {
+		std::vector<Grid*> inner;
+		for (int j = 0; j < _tiled_Map->getMapSize().height; j++) {
+			auto grid = Grid::create(i, j);
+			inner.push_back(grid);
+		}
+		_grid_Vector.push_back(inner);
+	}
+
+
 	_collidable = _tiled_Map->getLayer("Collidable");
-	for (int j = 0; j < _tiled_Map->getMapSize().height; j++) {
-		for (int i = 0; i < _tiled_Map->getMapSize().width; i++) {
+	for (int i = 0; i < _tiled_Map->getMapSize().width; i++) {
+		auto inner = _grid_Vector.at(i);
+		for (int j = 0; j < _tiled_Map->getMapSize().height; j++) {
+			auto grid = inner.at(j);
 			Vec2 position = Vec2(i, j);
 			int tileGid = _collidable->getTileGIDAt(position);
 			if (tileGid) {
@@ -23,44 +35,66 @@ void TiledMap::setCollidableVector() {
 				auto map = properites.asValueMap();
 				auto value = map.at("collidable").asString();
 				if (value.compare("true") == 0) {
-					auto grid = Grid::create(i, j);
 					grid->setPass(false);
-					log("%d %d", i, j);
-					_collidable_Vector.push_back(grid);
-					//	
+		//DEBUG		log("%d %d", i, j);
 				}
 			}
 		}
 	}
 }
 
-void TiledMap::newMapGrid(Grid *newPos,int id) {
-	_gridAndId_Map.insert({ newPos,id });
-	newPos->setPass(false);
+bool TiledMap::checkPass(Vec2 pos) {
+	auto x = static_cast<int> (pos.x);
+	auto y = static_cast<int> (pos.y);
+	auto grid = _grid_Vector.at(x).at(y);
+	return grid->isPass();
 }
 
-void TiledMap::updateMapGrid(Grid *oldPos, Grid *newPos) {
-	int id = _gridAndId_Map.at(oldPos);
-	_gridAndId_Map.erase(oldPos);
-	_gridAndId_Map.insert({newPos,id});
-	newPos->setPass(false);
-	oldPos->setPass(true);
+void TiledMap::newMapGrid(Vec2 newPos,int id) {
+	auto x = static_cast<int> (newPos.x);
+	auto y = static_cast<int> (newPos.y);
+	auto grid = _grid_Vector.at(x).at(y);
+	_gridAndId_Map.insert({ grid,id });
+	grid->setPass(false);
 }
 
-void TiledMap::removeMapGrid(Grid* Pos) {
-	_gridAndId_Map.erase(Pos);
-	Pos->setPass(true);
+void TiledMap::updateMapGrid(Vec2 oldPos, Vec2 newPos) {
+	auto x = static_cast<int> (oldPos.x);
+	auto y = static_cast<int> (oldPos.y);
+	auto oldGrid = _grid_Vector.at(x).at(y);
+	int id = _gridAndId_Map.at(oldGrid);
+	_gridAndId_Map.erase(oldGrid);
+	auto newX = static_cast<int> (newPos.x);
+	auto newY = static_cast<int> (newPos.y);
+	auto newGrid = _grid_Vector.at(newX).at(newY);
+	_gridAndId_Map.insert({newGrid,id});
+	newGrid->setPass(false);
+	oldGrid->setPass(true);
 }
 
-bool TiledMap::checkMapGrid(Grid * Pos) {
-	if (_gridAndId_Map.count(Pos) != 0) {
+void TiledMap::removeMapGrid(Vec2 Pos) {
+	auto x = static_cast<int> (Pos.x);
+	auto y = static_cast<int> (Pos.y);
+	auto grid = _grid_Vector.at(x).at(y);
+	_gridAndId_Map.erase(grid);
+	grid->setPass(true);
+}
+
+bool TiledMap::checkMapGrid(Vec2 Pos) {
+	auto x = static_cast<int> (Pos.x);
+	auto y = static_cast<int> (Pos.y);
+	auto grid = _grid_Vector.at(x).at(y);
+	if (_gridAndId_Map.count(grid) != 0) {
 		return true;
 	}
 	return false;
 }
 
-int TiledMap::getUnitId(Grid * Pos) {
-	return _gridAndId_Map.at(Pos);
+int TiledMap::getUnitId(Vec2 Pos) {
+	auto x = static_cast<int> (Pos.x);
+	auto y = static_cast<int> (Pos.y);
+	auto grid = _grid_Vector.at(x).at(y);
+	return _gridAndId_Map.at(grid);
 }
 
 TMXObjectGroup* TiledMap::getObjectGroup(std::string layername) {

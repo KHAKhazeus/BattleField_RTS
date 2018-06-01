@@ -3,6 +3,7 @@
 #include "cocos2d.h"
 #include "MyResources.h"
 #include "UnitManager.h"
+#include "BuildingBase.h"
 USING_NS_CC;
 
 //Class of mouse rect selection
@@ -42,12 +43,26 @@ private:
 	//The Map class contains _collidabel_Vector and gridAndId_Map (Static)
 	TiledMap *_tiled_Map;
 
+	//vector for unit
+	Vector<MoneyMine*> _moneyMine;
+	Vector<PowerPlant*> _powerPlant;
+	Vector<WarFactory*>_warFactory;
+	Vector<SoldierBase*>_soldierBase;
+
 public:
 	
 	static cocos2d::Scene* createScene();
 	virtual bool init();
 	virtual void update(float dt) override;
 	
+	Vector<MoneyMine*>& getVectorMine() { return _moneyMine; }
+	Vector<PowerPlant*>& getVectorPower() { return _powerPlant; }
+	Vector<SoldierBase*>& getVectorSoldier() { return _soldierBase; }
+	Vector<WarFactory*>& getVectorFactory() { return _warFactory; }
+
+	Money* getMoney() { return _money; }
+
+	Power* getPower() { return _power; }
 
 	CREATE_FUNC(GameScene);
 	//turn the coordinate of OpenGL to TileMap

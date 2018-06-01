@@ -17,7 +17,7 @@ bool GameScene::init() {
 	
 
 	_tiled_Map = TiledMap::create();
-	_tiled_Map->setCollidableVector();
+	_tiled_Map->setGridVector();
 	this->addChild(_tiled_Map);
 	
 	
@@ -44,10 +44,8 @@ bool GameScene::init() {
 	_unit_Manager->initBase();
 
 
-
 	_money->schedule(schedule_selector(Money::updateMoney), 1);
-	_power->schedule(schedule_selector(Power::updatePower), 1);
-	
+
 	//TODO initial the money and power
 
 	//start the update

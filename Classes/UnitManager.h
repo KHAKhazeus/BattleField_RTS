@@ -3,6 +3,7 @@
 #include "cocos2d.h"
 #include "TiledMap.h"
 #include "UnitCreate.h"
+#include "BuildingBase.h"
 USING_NS_CC;
 class UnitManager :public cocos2d::Node {
 public:

@@ -1,4 +1,5 @@
 #include "MyResources.h"
+#include "GameScene.h"
 bool Money::init() {
 	_money = 10000;
 	char temp[50];
@@ -39,18 +40,18 @@ void Money::increaseMoney(int amount) {
 
 void Money::updateMoney(float dt) {
 	//TODO the number of MineToMoney
-	increaseMoney(50);
+	int amount = static_cast<GameScene*>(this->getParent())->getVectorMine().size() * 50;
+	increaseMoney(amount);
 }
 
 bool Power::init() {
-	_power = 5000;
+	_power = 0;
 	char temp[30];
 	sprintf(temp, "%d", _power);
 	_label = Label::create(temp, "fonts/arial.ttf", 32);
 	this->addChild(_label);
 	return _label;
 }
-
 bool Power::checkPower(const int cost)const {
 	if (_power >= cost) {
 		return true;
@@ -80,10 +81,5 @@ void Power::increasePower(int amount) {
 	updatePowerDisplay();
 }
 
-void Power::updatePower(float dt) {
-	//TODO if create the PowerStation
-	increasePower(50);
-
-}
 
 
