@@ -71,9 +71,13 @@ bool GameScene::init() {
 	touchListener->onTouchEnded = CC_CALLBACK_2(GameScene::onTouchEnded, this);
 	touchListener->setSwallowTouches(true);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
-	
-	return true;
 
+	//Keyboard listener for go back to base
+	auto keyListener = EventListenerKeyboard::create();
+	keyListener->onKeyPressed = CC_CALLBACK_2(GameScene::onKeyPressed, this);
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(keyListener, this);
+
+	return true;
 }
 
 void GameScene::update(float dt) {
@@ -119,7 +123,13 @@ void GameScene::onKeyPressed(EventKeyboard::KeyCode keycode, Event* event) {
 		//TODO call the scene of Setting;
 		break;
 	case EventKeyboard::KeyCode::KEY_H:
-		//TODO go back to the base
+		auto _tiled_map = _tiled_Map->getTiledMap();
+		Vec2 base_point = _unit_Manager->getBasePosition("ObjectLayer");
+		log("%f_%f", base_point.x, base_point.y);
+		float map_posX = _screen_width / 2 - base_point.x;
+		float map_posY = _screen_height / 2 - base_point.y;
+		log("%f_%f", map_posX, map_posY);
+		_tiled_map->setPosition(map_posX, map_posY);
 		break;
 	}
 }
@@ -144,9 +154,9 @@ void GameScene::mapScroll() {
 	auto _tiled_map = _tiled_Map->getTiledMap();
 	float posX = _tiled_map->getPositionX();
 	float posY = _tiled_map->getPositionY();
-	float speed_low = 4.0;
-	float speed_high = 8.0;
-	//log("%f_%f", _cursorX, _cursorY);
+	float speed_low = 6.0;
+	float speed_high = 12.0;
+	log("%f_%f", _cursorX - (_tiled_map->getPosition()).x, _cursorY - (_tiled_map->getPosition()).y);
 	if (_cursorX <= _screen_width * 0.05) {
 		if (_cursorY <= _screen_height * 0.05) {
 			posX += speed_high;

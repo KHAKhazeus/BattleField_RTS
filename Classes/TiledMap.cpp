@@ -7,6 +7,7 @@ std::vector<std::vector<Grid*>> TiledMap::_grid_Vector;
 
 bool TiledMap::init() {
 	_tiled_Map = TMXTiledMap::create("map/LostTemple.tmx");
+	_tiled_Map->setAnchorPoint(Vec2::ZERO);
 	this->addChild(_tiled_Map);
 	return _tiled_Map;
 }
