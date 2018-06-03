@@ -65,9 +65,7 @@ public:
 	Power* getPower() { return _power; }
 
 	CREATE_FUNC(GameScene);
-	//turn the coordinate of OpenGL to TileMap
-	//The return value is the coordinate of tho position in TileMap
-	Vec2 tileCoordForPosition(Vec2 position);
+	
 	
 	//The function of Scene Transition
 	virtual void onEnter();
@@ -96,6 +94,10 @@ public:
 
 	//Mouse listener
 	void onMouseMove(Event* event);
+
+	//Mouse function
+	float getCursorX() { return _cursorX; }
+	float getCursorY() { return _cursorY; }
 
 	//The function of Touch
 	

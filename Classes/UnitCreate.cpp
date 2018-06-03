@@ -16,7 +16,8 @@ bool Base::init() {
 	}
 	_base = Sprite::create("unit/base_28.png");
 	_base->setPosition(0,0);
-
+	_min_range = 3;
+	_max_range = 30;
 	isselected = false;
 	iscreated = false;
 	//temp_sprite->setPosition()
@@ -33,12 +34,13 @@ bool Base::init() {
 //TODO if can't send out warning
 //TODO the animation of creating
 
+
 bool Base::onTouchBegan(Touch *touch, Event *event) {
 	auto target = static_cast<Sprite*>(event->getCurrentTarget());
 	Vec2 locationInNode = target->convertToNodeSpace(touch->getLocation());
 	Size s = target->getContentSize();
 	auto rect = Rect(0, 0, s.width, s.height);
-	if (rect.containsPoint(locationInNode)) {	//if click is valid
+	if (rect.containsPoint(locationInNode) && !BuildingBase::getIsBuilt()) {	//if click is valid
 		if (isselected || iscreated) { 
 			return false;
 		}
@@ -65,6 +67,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 			listener->onTouchBegan = [temp,temp_sprite,this,i](Touch *touch, Event *event) {
 				auto target = static_cast<Sprite*>(event->getCurrentTarget());
 				auto locationInNode = target->convertToNodeSpace(touch->getLocation());
+				
 				Size s = target->getContentSize();
 				auto rect = Rect(0, 0, s.width, s.height);
 				if (rect.containsPoint(locationInNode)) {
@@ -95,83 +98,102 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 							return true;
 						}
 					};
-					listener1->onTouchMoved = [temp_building](Touch *touch, Event *event) {
+					listener1->onTouchMoved = [temp_building,this](Touch *touch, Event *event) {
 						
 						auto target = static_cast<Sprite*>(event->getCurrentTarget());
-						target->setPosition(target->getPosition() + touch->getDelta());
+						auto pos = target->getPosition() + touch->getDelta();
+						target->setPosition(pos);
+						Vec2 nodeLocation = this->getParent()->convertToNodeSpace(pos);
+						auto tiledLocation = static_cast<TiledMap*>(this->getParent()->getParent())->tileCoordForPosition(nodeLocation);
+						temp_building->setOpacity(75);
+						log("%d %d", tiledLocation.x, tiledLocation.y);
+						//DEBUG 越界问题			
+						if (TiledMap::checkBuilt(tiledLocation, 2)) {
+							temp_building->setColor(Color3B(152, 251, 152));
+						}
+						else {
+							temp_building->setColor(Color3B(255, 99, 71));
+						}
+
 					};
 					listener1->onTouchEnded = [this, temp_building](Touch *touch, Event *event) {
-						//this->removeChild(temp_building, true);
-						if (temp_building->getTag() == 1) {
-							MoneyMine* moneyMine = MoneyMine::create("moneyMine/MinetoMoney_24.png");
-							if (static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getMoney()->checkMoney(moneyMine->getGold()) &&
-								static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getPower()->checkPower(moneyMine->getElect())) {
-								auto touchLocation = touch->getLocation();
-								Vec2 nodeLocation = this->getParent()->convertToNodeSpace(touchLocation);
-								moneyMine->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
-								moneyMine->Build();
-								static_cast<TMXTiledMap*>(this->getParent())->addChild(moneyMine,50);
-								static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getVectorMine().pushBack(moneyMine);
-								static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getPower()->spendPower(moneyMine->getElect());
-								static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getMoney()->spendMoney(moneyMine->getGold());
+						auto touchLocation = touch->getLocation();
+						Vec2 nodeLocation = this->getParent()->convertToNodeSpace(touchLocation);
+						auto tiledLocation = static_cast<TiledMap*>(this->getParent()->getParent())->tileCoordForPosition(nodeLocation);
+						// if the field isn't occupied
+						if (TiledMap::checkBuilt(tiledLocation, 2)) {
+							BuildingBase::setIsBuilt(true);	
+							if (temp_building->getTag() == 1) {
+								MoneyMine* moneyMine = MoneyMine::create("moneyMine/MinetoMoney_24.png");
+								if (static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getMoney()->checkMoney(moneyMine->getGold()) &&
+									static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getPower()->checkPower(moneyMine->getElect())) {
+									moneyMine->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
+									moneyMine->Build();
+									TiledMap::setUnpass(tiledLocation, moneyMine->getRange());
+									static_cast<TMXTiledMap*>(this->getParent())->addChild(moneyMine, 50);
+									static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getVectorMine().pushBack(moneyMine);
+									static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getPower()->spendPower(moneyMine->getElect());
+									static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getMoney()->spendMoney(moneyMine->getGold());
+								}
+								else {
+									delete moneyMine;
+								}
 							}
-							else {
-								delete moneyMine;
+							else if (temp_building->getTag() == 2) {
+								PowerPlant* powerPlant = PowerPlant::create("powerPlant/PowerBuilt_24.png");
+								if (static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getMoney()->checkMoney(powerPlant->getGold())) {
+
+									powerPlant->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
+									powerPlant->Build();
+									log("%s", "set!");
+									TiledMap::setUnpass(tiledLocation, powerPlant->getRange());
+									static_cast<TMXTiledMap*>(this->getParent())->addChild(powerPlant, 50);
+									static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getVectorPower().pushBack(powerPlant);
+									static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getPower()->increasePower((powerPlant->getElect()));
+									static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getMoney()->spendMoney(powerPlant->getGold());
+								}
+								else {
+									delete powerPlant;
+								}
+							}
+							else if (temp_building->getTag() == 3) {
+								SoldierBase* soldierBase = SoldierBase::create("soldierBase/soldierBase_23.png");
+								if (static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getMoney()->checkMoney(soldierBase->getGold()) &&
+									static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getPower()->checkPower(soldierBase->getElect())) {
+
+									soldierBase->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
+									soldierBase->Build();
+									TiledMap::setUnpass(tiledLocation, soldierBase->getRange());
+									static_cast<TMXTiledMap*>(this->getParent())->addChild(soldierBase, 50);
+									static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getVectorSoldier().pushBack(soldierBase);
+									static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getPower()->spendPower(soldierBase->getElect());
+									static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getMoney()->spendMoney(soldierBase->getGold());
+								}
+								else {
+									delete soldierBase;
+								}
+							}
+							else if (temp_building->getTag() == 4) {
+								WarFactory* warFactory = WarFactory::create("tankBase/tankbuilding_23.png");
+								if (static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getMoney()->checkMoney(warFactory->getGold()) &&
+									static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getPower()->checkPower(warFactory->getElect())) {
+
+									warFactory->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
+									warFactory->Build();
+									TiledMap::setUnpass(tiledLocation, warFactory->getRange());
+									static_cast<TMXTiledMap*>(this->getParent())->addChild(warFactory, 50);
+									static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getVectorFactory().pushBack(warFactory);
+									static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getPower()->spendPower(warFactory->getElect());
+									static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getMoney()->spendMoney(warFactory->getGold());
+								}
+								else {
+									delete warFactory;
+								}
 							}
 						}
-						else if (temp_building->getTag() == 2) {
-							PowerPlant* powerPlant = PowerPlant::create("powerPlant/PowerBuilt_24.png");
-							if (static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getMoney()->checkMoney(powerPlant->getGold())) {
-								auto touchLocation = touch->getLocation();
-								Vec2 nodeLocation = this->getParent()->convertToNodeSpace(touchLocation);
-								powerPlant->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
-								powerPlant->Build();
-								static_cast<TMXTiledMap*>(this->getParent())->addChild(powerPlant,50);
-								static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getVectorPower().pushBack(powerPlant);
-								static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getPower()->increasePower((powerPlant->getElect()));
-								static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getMoney()->spendMoney(powerPlant->getGold());
-							}
-							else {
-								delete powerPlant;
-							}
-						}
-						else if (temp_building->getTag() == 3) {
-							SoldierBase* soldierBase = SoldierBase::create("soldierBase/soldierBase_23.png");
-							if (static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getMoney()->checkMoney(soldierBase->getGold()) &&
-								static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getPower()->checkPower(soldierBase->getElect())) {
-								auto touchLocation = touch->getLocation();
-								Vec2 nodeLocation = this->getParent()->convertToNodeSpace(touchLocation);
-								soldierBase->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
-								soldierBase->Build();
-								static_cast<TMXTiledMap*>(this->getParent())->addChild(soldierBase,50);
-								static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getVectorSoldier().pushBack(soldierBase);
-								static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getPower()->spendPower(soldierBase->getElect());
-								static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getMoney()->spendMoney(soldierBase->getGold());
-							}
-							else {
-								delete soldierBase;
-							}
-						}
-						else if (temp_building->getTag() == 4) {
-							WarFactory* warFactory = WarFactory::create("tankBase/tankbuilding_23.png");
-							if (static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getMoney()->checkMoney(warFactory->getGold()) &&
-								static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getPower()->checkPower(warFactory->getElect())) {
-								auto touchLocation = touch->getLocation();
-								Vec2 nodeLocation = this->getParent()->convertToNodeSpace(touchLocation);
-								warFactory->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
-								warFactory->Build();
-								static_cast<TMXTiledMap*>(this->getParent())->addChild(warFactory,50);
-								static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getVectorFactory().pushBack(warFactory);
-								static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getPower()->spendPower(warFactory->getElect());
-								static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getMoney()->spendMoney(warFactory->getGold());
-							}
-							else {
-								delete warFactory;
-							}
-						}
-						auto tempNode = _base->getParent()->getParent()->getParent();
-						tempNode->removeChild(temp_building,true);
 						iscreated = false;
+						auto tempNode = _base->getParent()->getParent()->getParent();
+						tempNode->removeChild(temp_building, true);
 					};
 					Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener1, temp_building);
 					return true;
@@ -204,3 +226,10 @@ Sprite* Base::getSprite() {
 	return _base;
 }
 
+int Base::getMinRange() {
+	return _min_range;
+}
+
+int Base::getMaxRange() {
+	return _max_range;
+}

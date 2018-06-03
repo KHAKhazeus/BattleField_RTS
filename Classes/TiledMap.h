@@ -29,14 +29,22 @@ public:
 	static int getUnitId(Vec2);
 	//@@The type of param is Vec2
 	static bool checkMapGrid(Vec2);
-	//Check if the place is collidable 
+	//Check if the place is collidable
 	static bool checkPass(Vec2 pos);
-	//
-	//
+	//Check if the field can be built
+	static bool checkBuilt(Vec2 pos,int range);
+	//@@param 1 is the positon of your building  *TiledMap positon
+	//@@paran 2 is the field range of your building
+	static void setUnpass(Vec2 pos, int range);
+	//Check the boundary
+	static bool checkBoundary(Vec2 pos);
+	//turn the coordinate of OpenGL to TileMap
+	//The return value is the coordinate of tho position in TileMap
+	Vec2 tileCoordForPosition(Vec2 position);
 	CREATE_FUNC(TiledMap);
 private:
 	//All the grid in the map
-	static std::vector<std::vector<Grid*>>_grid_Vector;
+	static std::vector<Vector<Grid*>>_grid_Vector;
 	//The pair first is Gird* which can be gotten by _grid_Vector
 	//The pair second is the Id of Unit
 	static std::map<Grid*, int> _gridAndId_Map;

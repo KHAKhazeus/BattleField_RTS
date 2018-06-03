@@ -25,8 +25,10 @@ protected:
 	float _buildTime;//time needed to build the building
 	int _elect;//electricity spent to build the building
 	LoadingBar* _buildBar;// the bar diaplayed during building
+	int _range; //the lenth/2 of the building
+	static bool _isbuilt; //to judge whether there is builiding built
 public:
-
+	
 	//set and get the building's lifevalue
 	void setLifeValue(int lifeValue) { _lifeValue = lifeValue; }
 	int getLifeValue() { return _lifeValue; }
@@ -63,6 +65,13 @@ public:
 	void setCampID(int ID) { _campID = ID; }
 	int getCampID() { return _campID; }
 
+	//get the range of the building
+	int getRange() { return _range; }
+
+	//set the boolean ...
+	//get the boolean to judge if there is a builing built
+	static bool getIsBuilt();
+	static void setIsBuilt(bool judge);
 
 	
 	// Get the aniamtion
@@ -87,6 +96,7 @@ public:
 		_gold = 500;
 		_elect = 10;
 		_lifeValue = 900;
+		_range = 2;
 	}
 
 	void Build();
@@ -110,6 +120,7 @@ public:
 		_gold = 2000;
 		_elect = 40;
 		_lifeValue = 1000;
+		_range = 2;
 	}
 
 	void Build();
@@ -133,6 +144,7 @@ public:
 		_gold = 600;
 		_elect = 150;
 		_lifeValue = 750;
+		_range = 2;
 	}
 
 	void Build();
@@ -155,6 +167,7 @@ public:
 		_gold = 2000;
 		_elect = 50;
 		_lifeValue = 1200;
+		_range = 2;
 	}
 
 	void Build();

@@ -4,6 +4,16 @@
 
 #include "BuildingBase.h"
 
+bool BuildingBase::_isbuilt = false;
+
+bool BuildingBase::getIsBuilt() {
+	return _isbuilt;
+}
+
+void BuildingBase::setIsBuilt(bool judge) {
+	_isbuilt = judge;
+}
+
 Animate* BuildingBase:: getAnimateByName(std::string animName, float delay, int animNum) {
 	Animation* animation = Animation::create();
 
@@ -40,13 +50,14 @@ void SoldierBase::Build() {
 	this->runAction(animate);
 	auto sequence = Sequence::create(pft,CallFunc::create([=] {
 		this->removeChild(progress,true);
-	}), nullptr);
+	}), CallFunc::create([] {BuildingBase::setIsBuilt(false); }), nullptr);
 	progress->runAction(sequence);
+
 }
 
 //Build the building
 void MoneyMine::Build() {
-	auto animate = BuildingBase::getAnimateByName("moneyMine/MinetoMoney_", 0.1f, 24);
+	auto animate = BuildingBase::getAnimateByName("moneyMine/MinetoMoney_", 0.2f, 24);
 	auto barSprite = Sprite::create("bar/loadingbar.png");
 	ProgressTimer* progress = ProgressTimer::create(barSprite);
 	progress->setPercentage(0.0f);
@@ -57,11 +68,11 @@ void MoneyMine::Build() {
 	Vec2 pos = Vec2(this->getPosition().x, this->getPosition().y);
 	progress->setPosition(Vec2(120, 160));
 	this->addChild(progress);
-	auto pft = ProgressFromTo::create(2.4f, progress->getPercentage(), 100);
+	auto pft = ProgressFromTo::create(4.6f, progress->getPercentage(), 100);
 	this->runAction(animate);
 	auto sequence = Sequence::create(pft, CallFunc::create([=] {
 		this->removeChild(progress, true);
-	}), nullptr);
+	}), CallFunc::create([] {BuildingBase::setIsBuilt(false); }), nullptr);
 	progress->runAction(sequence);
 }
 
@@ -82,12 +93,13 @@ void WarFactory::Build() {
 	this->runAction(animate);
 	auto sequence = Sequence::create(pft, CallFunc::create([=] {
 		this->removeChild(progress, true);
-	}), nullptr);
+	}), CallFunc::create([] {BuildingBase::setIsBuilt(false); }), nullptr);
 	progress->runAction(sequence);
 }
 
 //Build the building
 void PowerPlant::Build() {
+	
 	auto animate = PowerPlant::getAnimateByName("powerPlant/PowerBuilt_", 0.1f, 23);
 	auto barSprite = Sprite::create("bar/loadingbar.png");
 	ProgressTimer* progress = ProgressTimer::create(barSprite);
@@ -103,7 +115,7 @@ void PowerPlant::Build() {
 	this->runAction(animate);
 	auto sequence = Sequence::create(pft, CallFunc::create([=] {
 		this->removeChild(progress, true);
-	}), nullptr);
+	}), CallFunc::create([] {BuildingBase::setIsBuilt(false); }), nullptr);
 	progress->runAction(sequence);
 }
 

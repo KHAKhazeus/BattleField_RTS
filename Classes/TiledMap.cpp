@@ -2,8 +2,7 @@
 
 //initial the static member
 std::map<Grid*,int> TiledMap::_gridAndId_Map;
-std::vector<std::vector<Grid*>> TiledMap::_grid_Vector;
-
+std::vector<Vector<Grid*>> TiledMap::_grid_Vector;
 
 bool TiledMap::init() {
 	_tiled_Map = TMXTiledMap::create("map/LostTemple.tmx");
@@ -14,10 +13,10 @@ bool TiledMap::init() {
 void TiledMap::setGridVector() {
 	//get the Collidabel Layer
 	for (int i = 0; i < _tiled_Map->getMapSize().width; i++) {
-		std::vector<Grid*> inner;
+		Vector<Grid*> inner;
 		for (int j = 0; j < _tiled_Map->getMapSize().height; j++) {
 			auto grid = Grid::create(i, j);
-			inner.push_back(grid);
+			inner.insert(j,grid);
 		}
 		_grid_Vector.push_back(inner);
 	}
@@ -43,12 +42,37 @@ void TiledMap::setGridVector() {
 	}
 }
 
+bool TiledMap::checkBoundary(Vec2 pos) {
+	if (pos.x < 0 || pos.x >= 128 || pos.y < 0 || pos.y >= 128) {
+		return false;
+	}
+	return true;
+}
+
 bool TiledMap::checkPass(Vec2 pos) {
 	auto x = static_cast<int> (pos.x);
 	auto y = static_cast<int> (pos.y);
 	auto grid = _grid_Vector.at(x).at(y);
 	return grid->isPass();
 }
+
+bool TiledMap::checkBuilt(Vec2 pos, int range) {
+	auto x = static_cast<int> (pos.x);
+	auto y = static_cast<int> (pos.y);
+	for (auto i = x - range; i <= x + range; i++) {
+		for (auto j = y - range; j <= y + range; j++) {
+			if (!checkBoundary(Vec2(i, j))) {
+				return false;
+			}
+			auto judge = checkPass(Vec2(i, j));
+			if (!judge) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
 
 void TiledMap::newMapGrid(Vec2 newPos,int id) {
 	auto x = static_cast<int> (newPos.x);
@@ -103,6 +127,27 @@ TMXObjectGroup* TiledMap::getObjectGroup(std::string layername) {
 
 TMXTiledMap* TiledMap::getTiledMap() {
 	return _tiled_Map;
+}
+
+void TiledMap::setUnpass(Vec2 Pos, int range) {
+	auto x = static_cast<int> (Pos.x);
+	auto y = static_cast<int> (Pos.y);
+	for (int i = x - range; i <= x + range; i++) {
+		for (int j = y - range; j <= y + range; j++) {
+			_grid_Vector.at(i).at(j)->setPass(false);
+			//DEBUG 
+			log("%d %d", i, j);
+		}
+	}
+}
+
+Vec2 TiledMap::tileCoordForPosition(Vec2 position) {
+	int x = static_cast<int>
+		(position.x / (_tiled_Map->getTileSize().width / CC_CONTENT_SCALE_FACTOR()));
+	float pointHeight = _tiled_Map->getTileSize().height / CC_CONTENT_SCALE_FACTOR();
+	int y = static_cast<int>
+		((_tiled_Map->getMapSize().height * pointHeight - position.y) / pointHeight);
+	return Vec2(x, y);
 }
 
 /*Grid* SearchEnemy() {
