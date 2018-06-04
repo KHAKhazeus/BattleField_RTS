@@ -21,6 +21,7 @@ public:
 	//TODO A campID towards a unique string?
 	Vec2 getBasePosition(std::string layername);
 	void initBase();
+	Base* getBase(){ return _base; }
 	//
 	void checkWinOrLose();
 private:

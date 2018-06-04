@@ -15,10 +15,27 @@ bool Base::init() {
 		return false;
 	}
 	_base = Sprite::create("unit/base_28.png");
+	// create a loading bar
+	auto loadingBar = LoadingBar::create("bar/planeHP.png");
+	loadingBar->setScaleX(0.4f);
+	loadingBar->setScaleY(0.1f);
+	// set the percentage
+	loadingBar->setPercent(60);
+	// set direction
+	loadingBar->setDirection(LoadingBar::Direction::LEFT);
+	// set position
+	loadingBar->setPosition(Vec2(90, -100));
+	// set Hp bar for soldier
+	this->setHP(loadingBar);
+	// set the HP bar as a child
+	this->addChild(this->getHP(), 210);
+	// set the HP interval
+	this->setHPInterval(this->getHP()->getPercent() / (float)this->getLifeValue());
+	loadingBar->setVisible(false);
 	_base->setPosition(0,0);
 
-	isselected = false;
-	iscreated = false;
+	setSelected(false);
+	setCreated(false);
 	//temp_sprite->setPosition()
 	this->addChild(_base);
 	auto listener = EventListenerTouchOneByOne::create();
@@ -39,10 +56,10 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 	Size s = target->getContentSize();
 	auto rect = Rect(0, 0, s.width, s.height);
 	if (rect.containsPoint(locationInNode)) {	//if click is valid
-		if (isselected || iscreated) { 
+		if (isSelected() || isCreated()) { 
 			return false;
 		}
-		isselected = true;
+		setSelected(true);
 		//TODO change this to vector
 		auto height = this->getPosition().y * 0.3;
 		std::vector<Sprite *> temp_sprite;
@@ -69,10 +86,10 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 				Size s = target->getContentSize();
 				auto rect = Rect(0, 0, s.width, s.height);
 				if (rect.containsPoint(locationInNode)) {
-					if (iscreated) {
+					if (isCreated()) {
 						return false;
 					}
-					iscreated = true;
+					setCreated(true);
 					auto temp_building = Sprite::create(StringUtils::format("unit/building_%d.png", i + 1));
 					temp_building->setTag(i + 1);
 					/*
@@ -105,16 +122,17 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 						//this->removeChild(temp_building, true);
 						if (temp_building->getTag() == 1) {
 							MoneyMine* moneyMine = MoneyMine::create("moneyMine/MinetoMoney_24.png");
-							if (static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getMoney()->checkMoney(moneyMine->getGold()) &&
-								static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getPower()->checkPower(moneyMine->getElect())) {
+							auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
+							if (tempScene->getMoney()->checkMoney(moneyMine->getGold()) &&
+								tempScene->getPower()->checkPower(moneyMine->getElect())) {
 								auto touchLocation = touch->getLocation();
 								Vec2 nodeLocation = this->getParent()->convertToNodeSpace(touchLocation);
 								moneyMine->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
 								moneyMine->Build();
 								static_cast<TMXTiledMap*>(this->getParent())->addChild(moneyMine,50);
-								static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getVectorMine().pushBack(moneyMine);
-								static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getPower()->spendPower(moneyMine->getElect());
-								static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getMoney()->spendMoney(moneyMine->getGold());
+								tempScene->getVectorMine().pushBack(moneyMine);
+								tempScene->getPower()->spendPower(moneyMine->getElect());
+								tempScene->getMoney()->spendMoney(moneyMine->getGold());
 							}
 							else {
 								delete moneyMine;
@@ -122,15 +140,17 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 						}
 						else if (temp_building->getTag() == 2) {
 							PowerPlant* powerPlant = PowerPlant::create("powerPlant/PowerBuilt_24.png");
-							if (static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getMoney()->checkMoney(powerPlant->getGold())) {
+							auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
+							if (tempScene->getMoney()->checkMoney(powerPlant->getGold())) {
 								auto touchLocation = touch->getLocation();
 								Vec2 nodeLocation = this->getParent()->convertToNodeSpace(touchLocation);
 								powerPlant->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
+								Vec2 to = static_cast<GameScene*>(this->getParent()->getParent()->getParent())->tileCoordForPosition(nodeLocation);
 								powerPlant->Build();
 								static_cast<TMXTiledMap*>(this->getParent())->addChild(powerPlant,50);
-								static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getVectorPower().pushBack(powerPlant);
-								static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getPower()->increasePower((powerPlant->getElect()));
-								static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getMoney()->spendMoney(powerPlant->getGold());
+								tempScene->getVectorPower().pushBack(powerPlant);
+								tempScene->getPower()->increasePower((powerPlant->getElect()));
+								tempScene->getMoney()->spendMoney(powerPlant->getGold());
 							}
 							else {
 								delete powerPlant;
@@ -138,16 +158,20 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 						}
 						else if (temp_building->getTag() == 3) {
 							SoldierBase* soldierBase = SoldierBase::create("soldierBase/soldierBase_23.png");
-							if (static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getMoney()->checkMoney(soldierBase->getGold()) &&
-								static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getPower()->checkPower(soldierBase->getElect())) {
+							auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
+							if (tempScene->getMoney()->checkMoney(soldierBase->getGold()) &&
+								tempScene->getPower()->checkPower(soldierBase->getElect())) {
 								auto touchLocation = touch->getLocation();
 								Vec2 nodeLocation = this->getParent()->convertToNodeSpace(touchLocation);
 								soldierBase->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
 								soldierBase->Build();
 								static_cast<TMXTiledMap*>(this->getParent())->addChild(soldierBase,50);
-								static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getVectorSoldier().pushBack(soldierBase);
-								static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getPower()->spendPower(soldierBase->getElect());
-								static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getMoney()->spendMoney(soldierBase->getGold());
+								auto listener = EventListenerTouchOneByOne::create();
+								listener->onTouchBegan = CC_CALLBACK_2(SoldierBase::onTouchBegan, soldierBase);
+								_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, soldierBase);
+								tempScene->getVectorSoldier().pushBack(soldierBase);
+								tempScene->getPower()->spendPower(soldierBase->getElect());
+								tempScene->getMoney()->spendMoney(soldierBase->getGold());
 							}
 							else {
 								delete soldierBase;
@@ -155,16 +179,20 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 						}
 						else if (temp_building->getTag() == 4) {
 							WarFactory* warFactory = WarFactory::create("tankBase/tankbuilding_23.png");
-							if (static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getMoney()->checkMoney(warFactory->getGold()) &&
-								static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getPower()->checkPower(warFactory->getElect())) {
+							auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
+							if (tempScene->getMoney()->checkMoney(warFactory->getGold()) &&
+								tempScene->getPower()->checkPower(warFactory->getElect())) {
 								auto touchLocation = touch->getLocation();
 								Vec2 nodeLocation = this->getParent()->convertToNodeSpace(touchLocation);
 								warFactory->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
 								warFactory->Build();
 								static_cast<TMXTiledMap*>(this->getParent())->addChild(warFactory,50);
-								static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getVectorFactory().pushBack(warFactory);
-								static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getPower()->spendPower(warFactory->getElect());
-								static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getMoney()->spendMoney(warFactory->getGold());
+								auto listener = EventListenerTouchOneByOne::create();
+								listener->onTouchBegan = CC_CALLBACK_2(WarFactory::onTouchBegan, warFactory);
+								_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, warFactory);
+								tempScene->getVectorFactory().pushBack(warFactory);
+								tempScene->getPower()->spendPower(warFactory->getElect());
+								tempScene->getMoney()->spendMoney(warFactory->getGold());
 							}
 							else {
 								delete warFactory;
@@ -172,7 +200,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 						}
 						auto tempNode = _base->getParent()->getParent()->getParent();
 						tempNode->removeChild(temp_building,true);
-						iscreated = false;
+						setCreated(false);
 					};
 					Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener1, temp_building);
 					return true;
@@ -186,7 +214,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 					
 			//Debug		log("%d", temp_sprite.size());
 				}
-				isselected = false;
+				setSelected(false);
 			};
 			_eventDispatcher->addEventListenerWithSceneGraphPriority(listener->clone(),temp);
 		}

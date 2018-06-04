@@ -26,6 +26,8 @@ public:
 	static int getUnitId(Grid *);
 	//
 	static bool checkMapGrid(Grid *);
+
+	TMXLayer* getCollLayer(){ return _collidable; }
 	//
 	//
 	CREATE_FUNC(TiledMap);
