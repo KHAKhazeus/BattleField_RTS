@@ -54,7 +54,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 	auto target = static_cast<Sprite*>(event->getCurrentTarget());
 	Vec2 locationInNode = target->convertToNodeSpace(touch->getLocation());
 	Size s = target->getContentSize();
-	auto rect = Rect(0, 0, s.width, s.height);
+	auto rect = Rect(s.width / 4, s.height / 4, s.width / 2, s.height / 2);
 	if (rect.containsPoint(locationInNode)) {	//if click is valid
 		if (isSelected() || isCreated()) { 
 			return false;
@@ -222,10 +222,15 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 		
 		return true;
 	}
+	else {
+		this->setSelected(false);
+		this->getHP()->setVisible(false);
+	}
 	return false;
 }
 
 void Base::onTouchEnded(Touch *touch, Event *event) {
-
+	this->setSelected(true);
+	this->getHP()->setVisible(true);
 }
 

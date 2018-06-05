@@ -1,4 +1,5 @@
 #include "GameScene.h"
+
 Scene* GameScene::createScene() {
 	auto scene = Scene::create();
 	auto gamescene = GameScene::create();
@@ -254,10 +255,10 @@ void GameScene::onTouchMoved(Touch* touch, Event* event) {
 	mouse_rect->setVisible(true);
 }
 
+
 void GameScene::onTouchEnded(Touch* touch, Event* event) {
 	Vec2 touch_point = touch->getLocation() - _tiled_Map->getTiledMap()->getPosition();
 	mouse_rect->end = touch_point;
-
 
 	//Selected rect
 	float rect_x = MIN(mouse_rect->start.x, mouse_rect->end.x);
@@ -266,32 +267,23 @@ void GameScene::onTouchEnded(Touch* touch, Event* event) {
 	float rect_height = fabs(mouse_rect->start.y - mouse_rect->end.y);
 	Rect select_rect(rect_x, rect_y, rect_width, rect_height);
 
-	auto tempUnit = this->_unit_Manager->getBase();
-	Vec2 player_point = tempUnit->getPosition();
-
-	//Concel select
-	if (rect_width * rect_height > 100.0) {
-		if (!select_rect.containsPoint(player_point)) {
-			tempUnit->setSelected(false);
-			tempUnit->getHP()->setVisible(false);
-		}
-	}
-	if (tempUnit->isSelected()) {
-		//Run action
-		tempUnit->getHP()->setVisible(true);
-	}
-
-	//Select
-	if (rect_width * rect_height > 100.0) {
-		if (select_rect.containsPoint(player_point)) {
-			tempUnit->setSelected(true);
-			tempUnit->getHP()->setVisible(true);
-		}
-	}
-
 	for (unsigned int i = 0; i < this->_dogs.size(); i++) {
 		auto tempUnit = _dogs.at(i);
 		Vec2 player_point = tempUnit->getPosition();
+		Size size = tempUnit->getContentSize();
+		//One point selection
+		if (rect_width * rect_height < 100.0) {
+			Rect rect = Rect(player_point.x - size.width / 4,
+				player_point.y - size.height / 4, size.width / 2, size.height / 2);
+			if (rect.containsPoint(touch_point)) {
+				tempUnit->setSelected(true);
+				tempUnit->getHP()->setVisible(true);
+			}
+			else {
+				tempUnit->setSelected(false);
+				tempUnit->getHP()->setVisible(false);
+			}
+		}
 
 		//Concel select
 		if (rect_width * rect_height > 100.0) {
@@ -317,6 +309,20 @@ void GameScene::onTouchEnded(Touch* touch, Event* event) {
 	for (unsigned int i = 0; i < this->_soldiers.size(); i++) {
 		auto tempUnit = _soldiers.at(i);
 		Vec2 player_point = tempUnit->getPosition();
+		Size size = tempUnit->getContentSize();
+		//One point selection
+		if (rect_width * rect_height < 100.0) {
+			Rect rect = Rect(player_point.x - size.width / 4,
+				player_point.y - size.height / 4, size.width / 2, size.height / 2);
+			if (rect.containsPoint(touch_point)) {
+				tempUnit->setSelected(true);
+				tempUnit->getHP()->setVisible(true);
+			}
+			else {
+				tempUnit->setSelected(false);
+				tempUnit->getHP()->setVisible(false);
+			}
+		}
 
 		//Concel select
 		if (rect_width * rect_height > 100.0) {
@@ -342,6 +348,20 @@ void GameScene::onTouchEnded(Touch* touch, Event* event) {
 	for (unsigned int i = 0; i < this->_tanks.size(); i++) {
 		auto tempUnit = _tanks.at(i);
 		Vec2 player_point = tempUnit->getPosition();
+		Size size = tempUnit->getContentSize();
+		//One point selection
+		if (rect_width * rect_height < 100.0) {
+			Rect rect = Rect(player_point.x - size.width / 4,
+				player_point.y - size.height / 4, size.width / 2, size.height / 2);
+			if (rect.containsPoint(touch_point)) {
+				tempUnit->setSelected(true);
+				tempUnit->getHP()->setVisible(true);
+			}
+			else {
+				tempUnit->setSelected(false);
+				tempUnit->getHP()->setVisible(false);
+			}
+		}
 
 		//Concel select
 		if (rect_width * rect_height > 100.0) {
@@ -367,6 +387,20 @@ void GameScene::onTouchEnded(Touch* touch, Event* event) {
 	for (unsigned int i = 0; i < this->_moneyMine.size(); i++) {
 		auto tempUnit = _moneyMine.at(i);
 		Vec2 player_point = tempUnit->getPosition();
+		Size size = tempUnit->getContentSize();
+		//One point selection
+		if (rect_width * rect_height < 100.0) {
+			Rect rect = Rect(player_point.x - size.width / 4,
+				player_point.y - size.height / 4, size.width / 2, size.height / 2);
+			if (rect.containsPoint(touch_point)) {
+				tempUnit->setSelected(true);
+				tempUnit->getHP()->setVisible(true);
+			}
+			else {
+				tempUnit->setSelected(false);
+				tempUnit->getHP()->setVisible(false);
+			}
+		}
 
 		//Concel select
 		if (rect_width * rect_height > 100.0) {
@@ -378,20 +412,26 @@ void GameScene::onTouchEnded(Touch* touch, Event* event) {
 		if (tempUnit->getSelected()) {
 			//Run action
 			tempUnit->getHP()->setVisible(true);
-		}
-
-		//Select
-		if (rect_width * rect_height > 100.0) {
-			if (select_rect.containsPoint(player_point)) {
-				tempUnit->setSelected(true);
-				tempUnit->getHP()->setVisible(true);
-			}
 		}
 	}
 
 	for (unsigned int i = 0; i < this->_powerPlant.size(); i++) {
 		auto tempUnit = _powerPlant.at(i);
 		Vec2 player_point = tempUnit->getPosition();
+		Size size = tempUnit->getContentSize();
+		//One point selection
+		if (rect_width * rect_height < 100.0) {
+			Rect rect = Rect(player_point.x - size.width / 4,
+				player_point.y - size.height / 4, size.width / 2, size.height / 2);
+			if (rect.containsPoint(touch_point)) {
+				tempUnit->setSelected(true);
+				tempUnit->getHP()->setVisible(true);
+			}
+			else {
+				tempUnit->setSelected(false);
+				tempUnit->getHP()->setVisible(false);
+			}
+		}
 
 		//Concel select
 		if (rect_width * rect_height > 100.0) {
@@ -403,20 +443,26 @@ void GameScene::onTouchEnded(Touch* touch, Event* event) {
 		if (tempUnit->getSelected()) {
 			//Run action
 			tempUnit->getHP()->setVisible(true);
-		}
-
-		//Select
-		if (rect_width * rect_height > 100.0) {
-			if (select_rect.containsPoint(player_point)) {
-				tempUnit->setSelected(true);
-				tempUnit->getHP()->setVisible(true);
-			}
 		}
 	}
 
 	for (unsigned int i = 0; i < this->_soldierBase.size(); i++) {
 		auto tempUnit = _soldierBase.at(i);
 		Vec2 player_point = tempUnit->getPosition();
+		Size size = tempUnit->getContentSize();
+		//One point selection
+		if (rect_width * rect_height < 100.0) {
+			Rect rect = Rect(player_point.x - size.width / 4,
+				player_point.y - size.height / 4, size.width / 2, size.height / 2);
+			if (rect.containsPoint(touch_point)) {
+				tempUnit->setSelected(true);
+				tempUnit->getHP()->setVisible(true);
+			}
+			else {
+				tempUnit->setSelected(false);
+				tempUnit->getHP()->setVisible(false);
+			}
+		}
 
 		//Concel select
 		if (rect_width * rect_height > 100.0) {
@@ -428,20 +474,26 @@ void GameScene::onTouchEnded(Touch* touch, Event* event) {
 		if (tempUnit->getSelected()) {
 			//Run action
 			tempUnit->getHP()->setVisible(true);
-		}
-
-		//Select
-		if (rect_width * rect_height > 100.0) {
-			if (select_rect.containsPoint(player_point)) {
-				tempUnit->setSelected(true);
-				tempUnit->getHP()->setVisible(true);
-			}
 		}
 	}
 
 	for (unsigned int i = 0; i < this->_warFactory.size(); i++) {
 		auto tempUnit = _warFactory.at(i);
 		Vec2 player_point = tempUnit->getPosition();
+		Size size = tempUnit->getContentSize();
+		//One point selection
+		if (rect_width * rect_height < 100.0) {
+			Rect rect = Rect(player_point.x - size.width / 4,
+				player_point.y - size.height / 4, size.width / 2, size.height / 2);
+			if (rect.containsPoint(touch_point)) {
+				tempUnit->setSelected(true);
+				tempUnit->getHP()->setVisible(true);
+			}
+			else {
+				tempUnit->setSelected(false);
+				tempUnit->getHP()->setVisible(false);
+			}
+		}
 
 		//Concel select
 		if (rect_width * rect_height > 100.0) {
@@ -455,13 +507,6 @@ void GameScene::onTouchEnded(Touch* touch, Event* event) {
 			tempUnit->getHP()->setVisible(true);
 		}
 
-		//Select
-		if (rect_width * rect_height > 100.0) {
-			if (select_rect.containsPoint(player_point)) {
-				tempUnit->setSelected(true);
-				tempUnit->getHP()->setVisible(true);
-			}
-		}
 	}
 
 	mouse_rect->reset();
