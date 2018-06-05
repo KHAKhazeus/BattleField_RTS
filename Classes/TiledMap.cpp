@@ -61,6 +61,7 @@ bool TiledMap::checkBuilt(Vec2 pos, int range) {
 	auto y = static_cast<int> (pos.y);
 	for (auto i = x - range; i <= x + range; i++) {
 		for (auto j = y - range; j <= y + range; j++) {
+			log("%d %d", i, j);
 			if (!checkBoundary(Vec2(i, j))) {
 				return false;
 			}

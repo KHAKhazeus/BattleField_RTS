@@ -20,6 +20,7 @@ bool Base::init() {
 	_max_range = 30;
 	isselected = false;
 	iscreated = false;
+	_isbuilt = false;
 	//temp_sprite->setPosition()
 	this->addChild(_base);
 	auto listener = EventListenerTouchOneByOne::create();
@@ -104,15 +105,27 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 						auto pos = target->getPosition() + touch->getDelta();
 						target->setPosition(pos);
 						Vec2 nodeLocation = this->getParent()->convertToNodeSpace(pos);
+						auto nodeBase = this->getPosition();
 						auto tiledLocation = static_cast<TiledMap*>(this->getParent()->getParent())->tileCoordForPosition(nodeLocation);
 						temp_building->setOpacity(75);
-						log("%d %d", tiledLocation.x, tiledLocation.y);
-						//DEBUG 越界问题			
-						if (TiledMap::checkBuilt(tiledLocation, 2)) {
+						//get the tiled coordinate of Base
+						auto tiledBase = static_cast<TiledMap*>(this->getParent()->getParent())->tileCoordForPosition(nodeBase);
+						//DEBUG 越界问题
+						bool judgeBoundry = true;
+						if (tiledLocation.x < tiledBase.x - this->getMaxRange() ||
+							tiledLocation.x >= tiledBase.x + this->getMaxRange() ||
+							tiledLocation.y < tiledBase.y - this->getMaxRange()||
+							tiledLocation.y >= tiledBase.y + this->getMaxRange()) {
+							judgeBoundry = false;
+						}
+						if (TiledMap::checkBuilt(tiledLocation, 3) && judgeBoundry) {
 							temp_building->setColor(Color3B(152, 251, 152));
+							this->setBuilt(true);
+
 						}
 						else {
 							temp_building->setColor(Color3B(255, 99, 71));
+							this->setBuilt(false);
 						}
 
 					};
@@ -121,13 +134,14 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 						Vec2 nodeLocation = this->getParent()->convertToNodeSpace(touchLocation);
 						auto tiledLocation = static_cast<TiledMap*>(this->getParent()->getParent())->tileCoordForPosition(nodeLocation);
 						// if the field isn't occupied
-						if (TiledMap::checkBuilt(tiledLocation, 2)) {
-							BuildingBase::setIsBuilt(true);	
+						if (this->getBuilt()) {
+							this->setBuilt(false);
 							if (temp_building->getTag() == 1) {
 								MoneyMine* moneyMine = MoneyMine::create("moneyMine/MinetoMoney_24.png");
 								if (static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getMoney()->checkMoney(moneyMine->getGold()) &&
 									static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getPower()->checkPower(moneyMine->getElect())) {
 									moneyMine->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
+									BuildingBase::setIsBuilt(true);
 									moneyMine->Build();
 									TiledMap::setUnpass(tiledLocation, moneyMine->getRange());
 									static_cast<TMXTiledMap*>(this->getParent())->addChild(moneyMine, 50);
@@ -142,10 +156,9 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 							else if (temp_building->getTag() == 2) {
 								PowerPlant* powerPlant = PowerPlant::create("powerPlant/PowerBuilt_24.png");
 								if (static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getMoney()->checkMoney(powerPlant->getGold())) {
-
 									powerPlant->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
+									BuildingBase::setIsBuilt(true);
 									powerPlant->Build();
-									log("%s", "set!");
 									TiledMap::setUnpass(tiledLocation, powerPlant->getRange());
 									static_cast<TMXTiledMap*>(this->getParent())->addChild(powerPlant, 50);
 									static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getVectorPower().pushBack(powerPlant);
@@ -160,7 +173,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 								SoldierBase* soldierBase = SoldierBase::create("soldierBase/soldierBase_23.png");
 								if (static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getMoney()->checkMoney(soldierBase->getGold()) &&
 									static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getPower()->checkPower(soldierBase->getElect())) {
-
+									BuildingBase::setIsBuilt(true);
 									soldierBase->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
 									soldierBase->Build();
 									TiledMap::setUnpass(tiledLocation, soldierBase->getRange());
@@ -177,7 +190,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 								WarFactory* warFactory = WarFactory::create("tankBase/tankbuilding_23.png");
 								if (static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getMoney()->checkMoney(warFactory->getGold()) &&
 									static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getPower()->checkPower(warFactory->getElect())) {
-
+									BuildingBase::setIsBuilt(true);
 									warFactory->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
 									warFactory->Build();
 									TiledMap::setUnpass(tiledLocation, warFactory->getRange());
@@ -232,4 +245,12 @@ int Base::getMinRange() {
 
 int Base::getMaxRange() {
 	return _max_range;
+}
+
+void Base::setBuilt(bool judge) {
+	_isbuilt = judge;
+}
+
+bool Base::getBuilt() {
+	return _isbuilt;
 }
