@@ -25,8 +25,13 @@ protected:
 	float _buildTime;//time needed to build the building
 	int _elect;//electricity spent to build the building
 	LoadingBar* _buildBar;// the bar diaplayed during building
+
 	int _range; //the lenth/2 of the building
 	static bool _isbuilt; //to judge whether there is builiding built
+
+	bool _isSelected;
+	bool _isCreated;
+
 public:
 	
 	//set and get the building's lifevalue
@@ -57,13 +62,16 @@ public:
 	void setElect(float elect) { _elect = elect; }
 	int getElect() { return _elect; }
 
-	//set and get the building's building bar
-	void setBuildBar(LoadingBar* buildBar) { _buildBar = buildBar; }
-	LoadingBar* getBuildBar() { return _buildBar; }
+	void setSelected(bool selected) { _isSelected = selected; }
+	bool getSelected() { return _isSelected; }
+
+	void setCreated(bool created) { _isCreated = created; }
+	bool getCreated() { return _isCreated; }
 
 	//set and get the side for the building
 	void setCampID(int ID) { _campID = ID; }
 	int getCampID() { return _campID; }
+
 
 	//get the range of the building
 	int getRange() { return _range; }
@@ -72,6 +80,7 @@ public:
 	//get the boolean to judge if there is a builing built
 	static bool getIsBuilt();
 	static void setIsBuilt(bool judge);
+
 
 	
 	// Get the aniamtion
@@ -99,12 +108,16 @@ public:
 		_range = 2;
 	}
 
+	Vec2 RandomPosition();
 	void Build();
+	bool onTouchBegan(Touch *touch, Event *event);
+	
 };
 
 //the derived class for SoldierBase
 class MoneyMine :public BuildingBase {
 public:
+	
 	static MoneyMine* create(const std::string& filename) {
 		MoneyMine *sprite = new MoneyMine();
 		if (sprite && sprite->initWithFile(filename))
@@ -170,6 +183,8 @@ public:
 		_range = 2;
 	}
 
+	Vec2 RandomPosition();
 	void Build();
+	bool onTouchBegan(Touch *touch, Event *event);
 };
 #endif

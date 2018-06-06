@@ -41,6 +41,9 @@ public:
 	//turn the coordinate of OpenGL to TileMap
 	//The return value is the coordinate of tho position in TileMap
 	Vec2 tileCoordForPosition(Vec2 position);
+
+	TMXLayer* getCollLayer(){ return _collidable; }
+	//
 	CREATE_FUNC(TiledMap);
 private:
 	//All the grid in the map
