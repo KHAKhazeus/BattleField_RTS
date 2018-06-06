@@ -26,7 +26,7 @@ public:
 	static void newMapGrid(Vec2,int id);
 	//@@The type of param is Vec2
 	//Get UnitId
-	static int getUnitId(Vec2);
+	static int getUnitIdByPosition(Vec2);
 	//@@The type of param is Vec2
 	static bool checkMapGrid(Vec2);
 	//Check if the place is collidable
@@ -38,6 +38,21 @@ public:
 	static void setUnpass(Vec2 pos, int range);
 	//Check the boundary
 	static bool checkBoundary(Vec2 pos);
+
+	//_idAndUnit_Map API
+
+	//@@param1 is the Id of the Unit
+	//@@param2 is the Pointer to the Unit
+	//This function push the pair<id,Sprite*> into _idAndUnit_Map
+	static void newMapId(int id, Sprite* unit);
+	//@@param is the Id of the Unit
+	//This function remove the pair<id,Sprite*> from the _idAndUnit_Map
+	static void removeMapId(int id);
+	//@@param is the Id of the Unit
+	//The return value is the Pointer to the Unit
+	static Sprite* getUnitById(int id);
+
+
 	//turn the coordinate of OpenGL to TileMap
 	//The return value is the coordinate of tho position in TileMap
 	Vec2 tileCoordForPosition(Vec2 position);
@@ -51,7 +66,12 @@ private:
 	//The pair first is Gird* which can be gotten by _grid_Vector
 	//The pair second is the Id of Unit
 	static std::map<Grid*, int> _gridAndId_Map;
+	//The pair first is the Id of the Unit
+	//The pair second is the Pointer to the Unit
+	static std::map<int, Sprite*> _idAndUnit_Map;
+	//The Pointer to the Map
 	TMXTiledMap* _tiled_Map;
+	//The Pointer to the collidable Layer
 	TMXLayer* _collidable;
 };
 

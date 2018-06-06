@@ -463,5 +463,8 @@ void GameScene::onTouchEnded(Touch* touch, Event* event) {
 		}
 	}
 
+	
+
+
 	mouse_rect->reset();
 }

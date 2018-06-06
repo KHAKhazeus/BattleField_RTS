@@ -2,7 +2,8 @@
 
 //initial the static member
 std::map<Grid*,int> TiledMap::_gridAndId_Map;
-std::vector<Vector<Grid*>> TiledMap::_grid_Vector;
+std::vector<Vector<Grid*>> TiledMap::_grid_Vector;   
+std::map<int, Sprite*> TiledMap::_idAndUnit_Map;
 
 bool TiledMap::init() {
 	_tiled_Map = TMXTiledMap::create("map/LostTemple.tmx");
@@ -35,7 +36,7 @@ void TiledMap::setGridVector() {
 				auto value = map.at("collidable").asString();
 				if (value.compare("true") == 0) {
 					grid->setPass(false);
-		//DEBUG		log("%d %d", i, j);
+					log("%d %d", i, j);
 				}
 			}
 		}
@@ -61,7 +62,7 @@ bool TiledMap::checkBuilt(Vec2 pos, int range) {
 	auto y = static_cast<int> (pos.y);
 	for (auto i = x - range; i <= x + range; i++) {
 		for (auto j = y - range; j <= y + range; j++) {
-			log("%d %d", i, j);
+//			log("%d %d", i, j);
 			if (!checkBoundary(Vec2(i, j))) {
 				return false;
 			}
@@ -115,7 +116,7 @@ bool TiledMap::checkMapGrid(Vec2 Pos) {
 	return false;
 }
 
-int TiledMap::getUnitId(Vec2 Pos) {
+int TiledMap::getUnitIdByPosition(Vec2 Pos) {
 	auto x = static_cast<int> (Pos.x);
 	auto y = static_cast<int> (Pos.y);
 	auto grid = _grid_Vector.at(x).at(y);
@@ -137,7 +138,7 @@ void TiledMap::setUnpass(Vec2 Pos, int range) {
 		for (int j = y - range; j <= y + range; j++) {
 			_grid_Vector.at(i).at(j)->setPass(false);
 			//DEBUG 
-			log("%d %d", i, j);
+		//	log("%d %d", i, j);
 		}
 	}
 }
@@ -151,13 +152,28 @@ Vec2 TiledMap::tileCoordForPosition(Vec2 position) {
 	return Vec2(x, y);
 }
 
+
+void TiledMap::newMapId(int id, Sprite* unit) {
+	_idAndUnit_Map.insert({ id,unit });
+}
+
+void TiledMap::removeMapId(int id) {
+	_idAndUnit_Map.erase(id);
+}
+
+Sprite* TiledMap::getUnitById(int id){
+	return _idAndUnit_Map.at(id);
+}
+
+
+
 /*Grid* SearchEnemy() {
 	auto rect = GridRect::create(curpos - rang / 2, curpos - range / 2, range, range);
 	for (auto i = rect->getX(); i = rect->getWidth(); i++) {
 		for (auto j = rect->getY(); j = rect->getHeight(); j++) {
 			auto grid = Grid::create(i, j);
 			if (TiledMap::checkMapGrid(grid) {
-				if (TiledMap::getUnitId(grid) != campId) {
+				if (TiledMap::getUnitIdByPosition(grid) != campId) {
 					return grid;
 				}
 			}

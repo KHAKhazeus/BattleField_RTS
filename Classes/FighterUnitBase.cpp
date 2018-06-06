@@ -130,3 +130,9 @@ void Tank::Create(WarFactory* warFactory) {
 	this->setHPInterval(this->getHP()->getPercent() / (float)this->getLifeValue());
 	loadingBar->setVisible(false);
 }
+/*
+void FighterUnitBase::attack(int id) {
+	auto tempSprtie = TiledMap::getUnitById(id);
+	auto tempAttack = this->getAttack();
+	//TODO 新增一个基类
+}*/

@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <cocos2d.h>
+
 #include "ui/CocosGUI.h"
 
 USING_NS_CC;
@@ -157,7 +158,7 @@ public:
 		_gold = 600;
 		_elect = 150;
 		_lifeValue = 750;
-		_range = 2;
+		_range = 1;
 	}
 
 	void Build();

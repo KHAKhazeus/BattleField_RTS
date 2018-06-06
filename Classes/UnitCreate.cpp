@@ -34,7 +34,7 @@ bool Base::init() {
 	loadingBar->setVisible(false);
 	_base->setPosition(0,0);
 
-	_min_range = 3;
+	_min_range = 2;
 	_max_range = 30;
 	setBuilt(false);
 	setSelected(false);
@@ -132,7 +132,6 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 						temp_building->setOpacity(75);
 						//get the tiled coordinate of Base
 						auto tiledBase = static_cast<TiledMap*>(this->getParent()->getParent())->tileCoordForPosition(nodeBase);
-						//DEBUG 越界问题
 						bool judgeBoundry = true;
 						if (tiledLocation.x < tiledBase.x - this->getMaxRange() ||
 							tiledLocation.x >= tiledBase.x + this->getMaxRange() ||
@@ -140,7 +139,14 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 							tiledLocation.y >= tiledBase.y + this->getMaxRange()) {
 							judgeBoundry = false;
 						}
-						if (TiledMap::checkBuilt(tiledLocation, 3) && judgeBoundry) {
+						bool judgeCollidable = false;
+						if (temp_building->getTag() == 2) {
+							judgeCollidable = TiledMap::checkBuilt(tiledLocation, 1);
+						}
+						else {
+							judgeCollidable = TiledMap::checkBuilt(tiledLocation, 2);
+						}
+						if (judgeCollidable && judgeBoundry) {
 							temp_building->setColor(Color3B(152, 251, 152));
 							this->setBuilt(true);
 

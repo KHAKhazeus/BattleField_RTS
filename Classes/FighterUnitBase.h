@@ -32,7 +32,7 @@ protected:
 	float _attackRange;//the attacking range of the unit
 	int _gold;//the expence of the unit
 	bool _isSelected;//whther the unit has been selected;
-	int _campID;//building belongs to which side
+	int _campID;//unit belongs to which side
 public:
 
 	// Get the aniamtion
@@ -47,7 +47,12 @@ public:
 	LoadingBar* getHP() { return _HP; }
 
 	//set and get the HPInterval
-	void setHPInterval(float HPInterval) { _HPInterval = HPInterval; }
+	void setHPInterval(float HPInterval) { 
+		_HPInterval = HPInterval;
+		if (_HPInterval <= 0) {
+			setDeath();
+		}
+	}
 	int getHPInterval() { return _HPInterval; }
 
 	//set and judge whether the unit can move
@@ -94,6 +99,16 @@ public:
 	//set and get the side for the unit
 	void setCampID(int ID) { _campID = ID; }
 	int getCampID() { return _campID; }
+
+	//attack action
+	//@@param is the enemy's ID
+	void attack(int id);
+
+	//Unit death
+	void setDeath() {
+		//TODO animation?
+		this->getParent()->removeChild(this, true);
+	}
 
 };
 
