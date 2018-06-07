@@ -281,7 +281,90 @@ void GameScene::onTouchEnded(Touch* touch, Event* event) {
 	float rect_height = fabs(mouse_rect->start.y - mouse_rect->end.y);
 	Rect select_rect(rect_x, rect_y, rect_width, rect_height);
 
-	for (unsigned int i = 0; i < this->_dogs.size(); i++) {
+	
+	if (rect_width * rect_height < 100.0) {
+		auto tiledLocation = tileCoordForPosition(touch_point);
+		//judge if there is a unit in the Grid  判断瓦片上有没有单位
+		if (TiledMap::checkMapGrid(tiledLocation)) {
+			auto id = TiledMap::getUnitIdByPosition(tiledLocation);
+			auto tempSprite = TiledMap::getUnitById(id);
+			//if the tempSprite is the enemy  如果选中的精灵是敌人
+			if (tempSprite->getCampID() != _unit_Manager->getBase()->getCampID()) {
+				//if > 1 what in the vector isn't a building   如果SelectVector的容量>1,那么它一定不会包含建筑
+				if (TiledMap::checkSize() >= 1) {
+					for (auto temp : *TiledMap::getSelectedVector()) {
+						//if the enemy is in the attack range 如果敌人在攻击范围内
+						if (temp->judgeAttack(tiledLocation)) {
+							//TODO function attack
+							
+						}
+						else {
+							//TODO function tracing
+						}
+					}	
+				}
+				else {
+					//judge the one in vector is building or not 判断在vector里面的唯一一个元素是不是建筑
+					if (TiledMap::checkSize() == 1) {
+						auto temp = TiledMap::getSelectedVector()->at(0);
+						//if not
+						if (!temp->isBuilding()) {
+							if (temp->judgeAttack(tiledLocation)) {
+								//TODO function attack
+							}
+							else {
+								//TODO function tracing
+							}
+						}
+					}
+				}
+			}
+			//if not, then clear up the vector and then push the new one
+			//如果选中的精灵不是敌人,那么清空vector,并把此次点击的精灵加入进去
+			else
+			{
+				TiledMap::clearUp();
+				TiledMap::newVectorUnit(tempSprite);	
+			}
+		}
+		//if not 如果点到的是空地
+		else {
+			//check the vector and judge if there is a building in it 
+			//检查vector,看是否只存了一个建筑
+			if (TiledMap::checkSize()) {
+				//if yes, clear up
+				if (TiledMap::getSelectedVector()->at(0)->isBuilding()) {
+					TiledMap::clearUp();
+				}
+				//if not, call all the unit in the vector to find a path and move to the Position
+				else {
+					//TODO function to move to the Position
+				}
+			}
+		}
+	}
+	else {
+		TiledMap::clearUp();	//cancel select
+		auto tiledPos = tileCoordForPosition(Vec2(rect_x, rect_y));
+		auto tiledRect = tileCoordForPosition(Vec2(rect_width, rect_height));
+		for (auto i = tiledPos.x; i < tiledRect.x; i++) {
+			for (auto j = tiledPos.y; j < tiledRect.y; j++) {
+				auto pos = Vec2(i, j);
+				//if there is a unit Grid in this pos
+				if (TiledMap::checkMapGrid(pos)) {
+					auto id = TiledMap::getUnitIdByPosition(pos);
+					auto tempSprite = TiledMap::getUnitById(id);
+					//if the unit is belonging to us and it isn't a building
+					if ((tempSprite->getCampID() == _unit_Manager->getBase()->getCampID())
+						&& !tempSprite->isBuilding()) {
+						TiledMap::newVectorUnit(tempSprite);
+					}
+				}
+			}
+		}
+	}
+
+/*	for (unsigned int i = 0; i < this->_dogs.size(); i++) {
 		auto tempUnit = _dogs.at(i);
 		Vec2 player_point = tempUnit->getPosition();
 		Size size = tempUnit->getContentSize();
@@ -522,6 +605,6 @@ void GameScene::onTouchEnded(Touch* touch, Event* event) {
 		}
 
 	}
-
+	*/
 	mouse_rect->reset();
 }

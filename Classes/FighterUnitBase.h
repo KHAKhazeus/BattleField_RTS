@@ -16,7 +16,7 @@ USING_NS_CC;
 using namespace ui;
 
 //A base class for fighter unit
-class FighterUnitBase :public cocos2d::Sprite
+class FighterUnitBase :public Unit
 {
 protected:
 	int _lifeValue;//the life for a unit
@@ -33,6 +33,7 @@ protected:
 	int _gold;//the expence of the unit
 	bool _isSelected;//whther the unit has been selected;
 	int _campID;//unit belongs to which side
+	Vec2 _tiledPos; //the tiledPostion of the Unit
 public:
 
 	// Get the aniamtion
@@ -97,12 +98,19 @@ public:
 	bool isSelected() { return _isSelected; }
 
 	//set and get the side for the unit
-	void setCampID(int ID) { _campID = ID; }
-	int getCampID() { return _campID; }
+	virtual void setCampID(int ID) { _campID = ID; }
+	virtual int getCampID() { return _campID; }
 
+	//set and get the tiledPosition of the unit
+	void setTiledPositon(Vec2 pos) { _tiledPos = pos; }
+	Vec2 getTiledPositon() { return _tiledPos; }
+	
 	//attack action
 	//@@param is the enemy's ID
 	void attack(int id);
+
+	//to judge if the enemy is in the attack range
+	bool judgeAttack(Vec2 pos);
 
 	//Unit death
 	void setDeath() {
@@ -133,6 +141,11 @@ public:
 		_attackRange = 70;
 		_attack = 15;
 		_attackInterval = 0.2;
+		//
+		setIsBuilding();
+		setCampID(RED);
+		setUnitID(getIdCount());
+		addIdCount();
 	}
 	void Create(SoldierBase*);
 };
@@ -158,6 +171,11 @@ public:
 		_attackRange = 0;
 		_attack = 20;
 		_attackInterval = 0.2;
+		//
+		setIsBuilding();
+		setCampID(RED);
+		setUnitID(getIdCount());
+		addIdCount();
 	}
 	void Create(SoldierBase*);
 };
@@ -183,6 +201,12 @@ public:
 		_attackRange = 100;
 		_attack = 30;
 		_attackInterval = 0.5;
+		//
+		setIsBuilding();
+		setCampID(RED);
+		setUnitID(getIdCount());
+		addIdCount();
+		
 	}
 	void Create(WarFactory*);
 };

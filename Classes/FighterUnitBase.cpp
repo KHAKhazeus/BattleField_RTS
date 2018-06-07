@@ -130,6 +130,16 @@ void Tank::Create(WarFactory* warFactory) {
 	this->setHPInterval(this->getHP()->getPercent() / (float)this->getLifeValue());
 	loadingBar->setVisible(false);
 }
+
+bool FighterUnitBase::judgeAttack(Vec2 pos) {
+	auto myLocation = this->getPosition();
+	auto myTiledLocaiton = getTiledPositon();
+	auto distance = sqrt(pow(myTiledLocaiton.x - pos.x, 2) + pow(myTiledLocaiton.y - pos.y, 2));
+	if (distance < this->getAttackRange()) {
+		return true;
+	}
+	return false;
+}
 /*
 void FighterUnitBase::attack(int id) {
 	auto tempSprtie = TiledMap::getUnitById(id);

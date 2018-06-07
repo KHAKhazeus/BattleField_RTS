@@ -2,7 +2,11 @@
 #define _TILEDMAP
 #include "cocos2d.h"
 #include "Grid.h"
+#include "Unit.h"
 USING_NS_CC;
+
+
+
 class TiledMap : public cocos2d::Node {
 public:
 	bool init();
@@ -21,9 +25,19 @@ public:
 	//@@param 2 is the new position
 	//The old Grid _pass change to true, on the contrary the new Grid .... to false
 	static void updateMapGrid(Vec2 old,Vec2 newPos);
-	//@@The type of first param is Vec2
+	//@@param1 is Vec2 refered to the position of the Unit
+	//@@param2 is the Id of the Unit
+	//This function just for the unit who occupies only one tiled
 	//The _pass change to false
-	static void newMapGrid(Vec2,int id);
+	static void newMapGrid(Vec2 pos,int id);
+	//@@param1 is Vec2 refered to the Anchor of the Unit
+	//@@param2 is the Id of the Unit
+	//@@param3 is the range of the Unit
+	//@@param4 is the FIX_MODLE
+	//This function just for the unit who occupies multiple tiled
+	//The _pass change to false
+	static void newMapGrid(Vec2 pos, int id, int range,int fix_modle = FIX_SQUARE);
+
 	//@@The type of param is Vec2
 	//Get UnitId
 	static int getUnitIdByPosition(Vec2);
@@ -44,13 +58,25 @@ public:
 	//@@param1 is the Id of the Unit
 	//@@param2 is the Pointer to the Unit
 	//This function push the pair<id,Sprite*> into _idAndUnit_Map
-	static void newMapId(int id, Sprite* unit);
+	static void newMapId(int id, Unit* unit);
 	//@@param is the Id of the Unit
 	//This function remove the pair<id,Sprite*> from the _idAndUnit_Map
 	static void removeMapId(int id);
 	//@@param is the Id of the Unit
 	//The return value is the Pointer to the Unit
-	static Sprite* getUnitById(int id);
+	static Unit* getUnitById(int id);
+
+
+	//_selected_Vector API
+	//@@param the Pointer to the Unit
+	static void newVectorUnit(Unit *);
+	//@@clear up the vector
+	static void clearUp();
+	//To check if the vector is empty
+	static bool checkSize();
+	//To get the Pointer to the SelectedVector
+	static const std::vector<Unit*>* getSelectedVector();
+
 
 
 	//turn the coordinate of OpenGL to TileMap
@@ -58,7 +84,8 @@ public:
 	Vec2 tileCoordForPosition(Vec2 position);
 
 	TMXLayer* getCollLayer(){ return _collidable; }
-	//
+	
+	
 	CREATE_FUNC(TiledMap);
 private:
 	//All the grid in the map
@@ -68,7 +95,9 @@ private:
 	static std::map<Grid*, int> _gridAndId_Map;
 	//The pair first is the Id of the Unit
 	//The pair second is the Pointer to the Unit
-	static std::map<int, Sprite*> _idAndUnit_Map;
+	static std::map<int, Unit*> _idAndUnit_Map;
+	
+	static std::vector<Unit*> _select_Vector;
 	//The Pointer to the Map
 	TMXTiledMap* _tiled_Map;
 	//The Pointer to the collidable Layer

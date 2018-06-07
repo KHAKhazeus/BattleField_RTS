@@ -7,6 +7,7 @@
 #include "GameScene.h"
 #include "time.h"
 
+
 bool BuildingBase::_isbuilt = false;
 
 bool BuildingBase::getIsBuilt() {
@@ -303,6 +304,9 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 					Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener1, temp_building);
 					return true;
 				}
+				else {
+					this->removeChild(temp, true);
+				}
 				return false;
 			};
 			//if click is ended,remove the sprite created
@@ -404,6 +408,9 @@ bool WarFactory::onTouchBegan(Touch *touch, Event *event) {
 				};
 				Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener1, temp_building);
 				return true;
+			}
+			else {
+				this->removeChild(temp, true);
 			}
 			return false;
 		};

@@ -16,7 +16,10 @@ void UnitManager::initBase() {
 	auto range = _base->getMinRange();
 	auto tiledPos = _tiled_Map->tileCoordForPosition(pos); //change the OpenGL coordinate to TiledMap
 	tiledPos.y -= 1;
-	TiledMap::setUnpass(tiledPos, range); // set the base field unPass!
+	_base->setBuildId(_base->getIdCount());
+	_base->addIdCount();
+	TiledMap::newMapGrid(tiledPos, _base->getBuildId(), _base->getMinRange());
+	TiledMap::newMapId(_base->getBuildId(), _base);
 	//TODO set the camera to the Base
 	_tiled_Map->getTiledMap()->addChild(_base,100);
 	_tiled_Map->getTiledMap()->setPosition(0-_base->getPositionX()+vect.width *2

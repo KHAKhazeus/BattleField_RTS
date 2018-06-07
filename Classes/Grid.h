@@ -1,6 +1,9 @@
 #ifndef _GRID
 #define _GRID
-
+#define FIX_SQUARE 0
+#define FIX_HEIGHT 1
+#define RED 99
+#define BLUE 66
 #include "cocos2d.h"
 class Grid :public cocos2d::Ref {
 private:

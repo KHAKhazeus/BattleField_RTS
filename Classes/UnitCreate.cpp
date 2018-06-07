@@ -33,6 +33,9 @@ bool Base::init() {
 	this->setHPInterval(this->getHP()->getPercent() / (float)this->getLifeValue());
 	loadingBar->setVisible(false);
 	_base->setPosition(0,0);
+	//
+	setIsBuilding(true);
+	setCampID(RED);
 
 	_min_range = 2;
 	_max_range = 30;
@@ -112,7 +115,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 					tempNode->addChild(temp_building,200);
 					auto listener1 = EventListenerTouchOneByOne::create();
 					listener1->setSwallowTouches(true);
-					listener1->onTouchBegan = [temp_building](Touch *touch, Event *event) {
+					listener1->onTouchBegan = [this,temp_sprite,temp_building](Touch *touch, Event *event) {
 						auto touchLocation = touch->getLocation();
 						auto node = (Node*)temp_building;
 						auto rect = Rect(0, 0,
@@ -172,7 +175,12 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 									moneyMine->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
 									BuildingBase::setIsBuilt(true);
 									moneyMine->Build();
-									TiledMap::setUnpass(tiledLocation, moneyMine->getRange());
+									auto id = moneyMine->getIdCount();
+									moneyMine->setBuildID(id);
+									moneyMine->addIdCount();
+									TiledMap::newMapGrid(tiledLocation, id, moneyMine->getRange());
+									TiledMap::newMapId(id, moneyMine);
+				//					TiledMap::setUnpass(tiledLocation, moneyMine->getRange());
 									static_cast<TMXTiledMap*>(this->getParent())->addChild(moneyMine, 50);
 									tempScene->getVectorMine().pushBack(moneyMine);
 									tempScene->getPower()->spendPower(moneyMine->getElect());
@@ -189,8 +197,13 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 									powerPlant->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
 									BuildingBase::setIsBuilt(true);
 									powerPlant->Build();
-									TiledMap::setUnpass(tiledLocation, powerPlant->getRange());
-									static_cast<TMXTiledMap*>(this->getParent())->addChild(powerPlant, 50);
+									auto id = powerPlant->getIdCount();
+									powerPlant->setBuildID(id);
+									powerPlant->addIdCount();
+									TiledMap::newMapGrid(tiledLocation, id, powerPlant->getRange());
+									TiledMap::newMapId(id, powerPlant);
+		//							TiledMap::setUnpass(tiledLocation, powerPlant->getRange());
+									static_cast<TMXTiledMap*>(this->getParent())->addChild(powerPlant, 40);
 									tempScene->getVectorPower().pushBack(powerPlant);
 									tempScene->getPower()->increasePower((powerPlant->getElect()));
 									tempScene->getMoney()->spendMoney(powerPlant->getGold());
@@ -207,7 +220,12 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 									BuildingBase::setIsBuilt(true);
 									soldierBase->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
 									soldierBase->Build();
-									TiledMap::setUnpass(tiledLocation, soldierBase->getRange());
+									auto id = soldierBase->getIdCount();
+									soldierBase->setBuildID(id);
+									soldierBase->addIdCount();
+									TiledMap::newMapGrid(tiledLocation, id, soldierBase->getRange(),FIX_HEIGHT);
+									TiledMap::newMapId(id, soldierBase);
+		//							TiledMap::setUnpass(tiledLocation, soldierBase->getRange());
 									static_cast<TMXTiledMap*>(this->getParent())->addChild(soldierBase, 50);
 									auto listener = EventListenerTouchOneByOne::create();
 									listener->onTouchBegan = CC_CALLBACK_2(SoldierBase::onTouchBegan, soldierBase);
@@ -229,8 +247,14 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 									BuildingBase::setIsBuilt(true);
 									warFactory->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
 									warFactory->Build();
-									TiledMap::setUnpass(tiledLocation, warFactory->getRange());
+									auto id = warFactory->getIdCount();
+									warFactory->setBuildID(id);
+									warFactory->addIdCount();
+									TiledMap::newMapGrid(tiledLocation, id, warFactory->getRange(),FIX_HEIGHT);
+									TiledMap::newMapId(id, warFactory);
+					//				TiledMap::setUnpass(tiledLocation, warFactory->getRange());
 									static_cast<TMXTiledMap*>(this->getParent())->addChild(warFactory, 50);
+
 									auto listener = EventListenerTouchOneByOne::create();
 									listener->onTouchBegan = CC_CALLBACK_2(WarFactory::onTouchBegan, warFactory);
 									_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, warFactory);
@@ -251,14 +275,17 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 					Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener1, temp_building);
 					return true;
 				}
+				else {
+					this->removeChild(temp, true);
+					
+				}
 				return false;
 			};
+
 			//if click is ended,remove the sprite created
-			listener->onTouchEnded = [this, temp_sprite](Touch *touch, Event *event) {
-				for (int i = 0; i < temp_sprite.size(); i++) {
-					this->removeChild(temp_sprite.at(i),true);
-					
-			//Debug		log("%d", temp_sprite.size());
+			listener->onTouchEnded = [this,temp_sprite](Touch *touch, Event *event) {
+				for (auto temp : temp_sprite) {
+					this->removeChild(temp, true);
 				}
 				setSelected(false);
 			};
@@ -271,13 +298,13 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 	else {
 		this->setSelected(false);
 		this->getHP()->setVisible(false);
+		
 	}
 	return false;
 }
 
 void Base::onTouchEnded(Touch *touch, Event *event) {
 	this->setSelected(true);
-	this->getHP()->setVisible(true);
 }
 
 Sprite* Base::getSprite() {

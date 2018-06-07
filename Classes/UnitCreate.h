@@ -5,7 +5,7 @@
 #include "BuildingBase.h"
 USING_NS_CC;
 
-class Base :public Sprite {
+class Base :public Unit {
 private:
 	Sprite * _base;
 	std::vector<Sprite *>_build_child;
@@ -59,6 +59,14 @@ public:
 	//set and get the side for the building
 	void setCampID(int ID) { _campID = ID; }
 	int getCampID() { return _campID; }
+
+	//set and get the build of the building
+	void setBuildId(int ID) { _buildID = ID; }
+	int getBuildId() { return _buildID; }
+
+
+	virtual bool judgeAttack(Vec2 pos) { return false; }
+	int getAttack() { return 0; }
 };
 
 

@@ -7,14 +7,15 @@
 
 #include <iostream>
 #include <cocos2d.h>
-
 #include "ui/CocosGUI.h"
+#include "Grid.h"
+#include "Unit.h"
 
 USING_NS_CC;
 using namespace ui;
 
 // a base class for buildngs
-class BuildingBase :public cocos2d::Sprite
+class BuildingBase :public Unit
 {
 protected:
 	int _lifeValue;//life value for the building
@@ -26,10 +27,9 @@ protected:
 	float _buildTime;//time needed to build the building
 	int _elect;//electricity spent to build the building
 	LoadingBar* _buildBar;// the bar diaplayed during building
-
 	int _range; //the lenth/2 of the building
 	static bool _isbuilt; //to judge whether there is builiding built
-
+	
 	bool _isSelected;
 	bool _isCreated;
 
@@ -41,7 +41,7 @@ public:
 
 	//set and get the building's life bar
 	void setHP(LoadingBar* HP) { _HP = HP; }
-	LoadingBar* getHP() { return _HP; }
+	virtual LoadingBar* getHP() { return _HP; }
 
 	//set and get the HPInterval
 	void setHPInterval(float HPInterval) { _HPInterval = HPInterval; }
@@ -51,9 +51,11 @@ public:
 	void setGold(int gold) { _gold = gold; }
 	int getGold() { return _gold; }
 
-	//set and get the ID for the building
+	//set and get the ID of the building
 	void setBuildID(int ID) { _buildID = ID; }
 	int getBuildID() { return _buildID; }
+
+	
 
 	//set and get the building time for the building
 	void setBuildTime(float time) { _buildTime = time; }
@@ -82,7 +84,11 @@ public:
 	static bool getIsBuilt();
 	static void setIsBuilt(bool judge);
 
+	virtual bool judgeAttack(Vec2 pos) {
+		return false;
+	}
 
+	int getAttack() { return 0; }
 	
 	// Get the aniamtion
 	Animate* getAnimateByName(std::string animName, float delay, int animNum);
@@ -107,6 +113,9 @@ public:
 		_elect = 10;
 		_lifeValue = 900;
 		_range = 2;
+		//
+		setCampID(RED);
+		setIsBuilding(true);
 	}
 
 	Vec2 RandomPosition();
@@ -135,6 +144,9 @@ public:
 		_elect = 40;
 		_lifeValue = 1000;
 		_range = 2;
+		//
+		setCampID(RED);
+		setIsBuilding(true);
 	}
 
 	void Build();
@@ -159,6 +171,9 @@ public:
 		_elect = 150;
 		_lifeValue = 750;
 		_range = 1;
+		//
+		setCampID(RED);
+		setIsBuilding(true);
 	}
 
 	void Build();
@@ -182,6 +197,9 @@ public:
 		_elect = 50;
 		_lifeValue = 1200;
 		_range = 2;
+		//
+		setCampID(RED);
+		setIsBuilding(true);
 	}
 
 	Vec2 RandomPosition();
