@@ -4,6 +4,7 @@
 #include "MyResources.h"
 #include "UnitManager.h"
 #include "BuildingBase.h"
+#include "FighterUnitBase.h"
 USING_NS_CC;
 
 //Class of mouse rect selection
@@ -31,7 +32,6 @@ private:
 	//Cursor point
 	float _cursorX, _cursorY;
 
-	bool _select_flag = 0;
 
 	//Pointer to class needed instance
 	Sprite* _money_Image;
@@ -48,6 +48,9 @@ private:
 	Vector<PowerPlant*> _powerPlant;
 	Vector<WarFactory*>_warFactory;
 	Vector<SoldierBase*>_soldierBase;
+	Vector<Soldier*>_soldiers;
+	Vector<Dog*>_dogs;
+	Vector<Tank*>_tanks;
 
 public:
 	
@@ -59,10 +62,15 @@ public:
 	Vector<PowerPlant*>& getVectorPower() { return _powerPlant; }
 	Vector<SoldierBase*>& getVectorSoldier() { return _soldierBase; }
 	Vector<WarFactory*>& getVectorFactory() { return _warFactory; }
+	Vector<Soldier*>& getVectorSoldiers() { return _soldiers; }
+	Vector<Dog*>& getVectorDogs() { return _dogs; }
+	Vector<Tank*>& getVectorTanks() { return _tanks; }
 
 	Money* getMoney() { return _money; }
 
 	Power* getPower() { return _power; }
+
+	TiledMap* getMap() { return _tiled_Map; }
 
 	CREATE_FUNC(GameScene);
 	//turn the coordinate of OpenGL to TileMap
@@ -85,6 +93,7 @@ public:
 
 	//Scroll map
 	void mapScroll();
+
 
 	//Pass data from listener
 	MouseRect* mouse_rect;
