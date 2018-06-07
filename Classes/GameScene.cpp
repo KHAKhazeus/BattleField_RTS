@@ -124,11 +124,20 @@ void GameScene::onKeyPressed(EventKeyboard::KeyCode keycode, Event* event) {
 		break;
 	case EventKeyboard::KeyCode::KEY_H:
 		auto _tiled_map = _tiled_Map->getTiledMap();
+		auto map_size = _tiled_map->getContentSize();
 		Vec2 base_point = _unit_Manager->getBasePosition("ObjectLayer");
-		log("%f_%f", base_point.x, base_point.y);
+		//log("%f_%f", base_point.x, base_point.y);
 		float map_posX = _screen_width / 2 - base_point.x;
 		float map_posY = _screen_height / 2 - base_point.y;
-		log("%f_%f", map_posX, map_posY);
+		//log("%f_%f", map_posX, map_posY);
+		if (map_posX > 0)
+			map_posX = 0;
+		if (map_posY > 0)
+			map_posY = 0;
+		if (map_posX < _screen_width - map_size.width)
+			map_posX = _screen_width - map_size.width;
+		if (map_posX < _screen_height - map_size.height)
+			map_posX = _screen_height - map_size.height;
 		_tiled_map->setPosition(map_posX, map_posY);
 		break;
 	}
