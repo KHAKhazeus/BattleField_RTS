@@ -12,7 +12,7 @@ void UnitManager::initBase() {
 	
 	_base = Base::create();
 	_base->setPosition(pos);
-	auto vect = _base->getSprite()->getContentSize();
+	auto vect = _base->getBase()->getContentSize();
 	auto range = _base->getMinRange();
 	auto tiledPos = _tiled_Map->tileCoordForPosition(pos); //change the OpenGL coordinate to TiledMap
 	tiledPos.y -= 1;
@@ -30,3 +30,4 @@ Vec2 UnitManager::getBasePosition(std::string layername) {
 	auto y = spawnPoint["y"].asFloat();
 	return Vec2(x, y);
 }
+

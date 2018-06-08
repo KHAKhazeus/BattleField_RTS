@@ -1,6 +1,7 @@
 #ifndef _TIlEDMAP
 #define _TILEDMAP
 #include "cocos2d.h"
+#include "Unit.h"
 #include "Grid.h"
 USING_NS_CC;
 class TiledMap : public cocos2d::Node {
@@ -36,15 +37,17 @@ public:
 	//@@param 1 is the positon of your building  *TiledMap positon
 	//@@paran 2 is the field range of your building
 	static void setUnpass(Vec2 pos, int range);
+	static void setUnpass(Vec2 Pos);
 	//Check the boundary
 	static bool checkBoundary(Vec2 pos);
+	static bool checkCreate(Vec2 pos);
 
 	//_idAndUnit_Map API
 
 	//@@param1 is the Id of the Unit
 	//@@param2 is the Pointer to the Unit
 	//This function push the pair<id,Sprite*> into _idAndUnit_Map
-	static void newMapId(int id, Sprite* unit);
+	static void newMapId(int id, Unit* unit);
 	//@@param is the Id of the Unit
 	//This function remove the pair<id,Sprite*> from the _idAndUnit_Map
 	static void removeMapId(int id);
@@ -68,7 +71,7 @@ private:
 	static std::map<Grid*, int> _gridAndId_Map;
 	//The pair first is the Id of the Unit
 	//The pair second is the Pointer to the Unit
-	static std::map<int, Sprite*> _idAndUnit_Map;
+	static std::map<int, Unit*> _idAndUnit_Map;
 	//The Pointer to the Map
 	TMXTiledMap* _tiled_Map;
 	//The Pointer to the collidable Layer

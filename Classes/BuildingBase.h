@@ -9,43 +9,23 @@
 #include <cocos2d.h>
 
 #include "ui/CocosGUI.h"
+#include "Unit.h"
 
 USING_NS_CC;
 using namespace ui;
 
 // a base class for buildngs
-class BuildingBase :public cocos2d::Sprite
+class BuildingBase :public Unit
 {
 protected:
-	int _lifeValue;//life value for the building
-	LoadingBar* _HP;//hp bar of the building
-	float _HPInterval;//interval of the building's hp
 	int _buildID;//ID of the building
-	int _campID;//building belongs to which side
 	int _gold;//expence to build the building
-	float _buildTime;//time needed to build the building
 	int _elect;//electricity spent to build the building
 	LoadingBar* _buildBar;// the bar diaplayed during building
-
 	int _range; //the lenth/2 of the building
 	static bool _isbuilt; //to judge whether there is builiding built
-
-	bool _isSelected;
 	bool _isCreated;
-
 public:
-	
-	//set and get the building's lifevalue
-	void setLifeValue(int lifeValue) { _lifeValue = lifeValue; }
-	int getLifeValue() { return _lifeValue; }
-
-	//set and get the building's life bar
-	void setHP(LoadingBar* HP) { _HP = HP; }
-	LoadingBar* getHP() { return _HP; }
-
-	//set and get the HPInterval
-	void setHPInterval(float HPInterval) { _HPInterval = HPInterval; }
-	int getHPInterval() { return _HPInterval; }
 
 	//set and get the cost for the building
 	void setGold(int gold) { _gold = gold; }
@@ -56,23 +36,11 @@ public:
 	int getBuildID() { return _buildID; }
 
 	//set and get the building time for the building
-	void setBuildTime(float time) { _buildTime = time; }
-	int getBuildTime() { return _buildTime; }
-
-	//set and get the building time for the building
 	void setElect(float elect) { _elect = elect; }
 	int getElect() { return _elect; }
-
-	void setSelected(bool selected) { _isSelected = selected; }
-	bool getSelected() { return _isSelected; }
-
+	
 	void setCreated(bool created) { _isCreated = created; }
 	bool getCreated() { return _isCreated; }
-
-	//set and get the side for the building
-	void setCampID(int ID) { _campID = ID; }
-	int getCampID() { return _campID; }
-
 
 	//get the range of the building
 	int getRange() { return _range; }
@@ -82,10 +50,6 @@ public:
 	static bool getIsBuilt();
 	static void setIsBuilt(bool judge);
 
-
-	
-	// Get the aniamtion
-	Animate* getAnimateByName(std::string animName, float delay, int animNum);
 };
 
 //the derived class for SoldierBase

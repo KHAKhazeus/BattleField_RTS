@@ -4,6 +4,7 @@
 #include "TiledMap.h"
 #include "UnitCreate.h"
 #include "BuildingBase.h"
+#include "MyResources.h"
 USING_NS_CC;
 class UnitManager :public cocos2d::Node {
 public:

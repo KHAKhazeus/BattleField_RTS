@@ -4,25 +4,16 @@
 
 #include "FighterUnitBase.h"
 
-Animate* FighterUnitBase::getAnimateByName(std::string animName, float delay, int animNum) {
-	Animation* animation = Animation::create();
 
-	for (unsigned int i = 1; i <= animNum; i++) {
-		// get the picture name
-		std::string frameName = animName;
-		frameName.append(StringUtils::format("%d", i)).append(".png");
-		// add the picture to spriteframe
-		animation->addSpriteFrameWithFile(frameName.c_str());
-	}
-	// set the properties of the animation
-	animation->setDelayPerUnit(delay);
-	// reset the animate
-	animation->setRestoreOriginalFrame(true);
-	// return the animate
-	Animate* animate = Animate::create(animation);
-	return animate;
+bool FighterUnitBase::_isBeingCreated = false;
+
+bool FighterUnitBase::getIsCreated() {
+	return _isBeingCreated;
 }
 
+void FighterUnitBase::setIsCreated(bool judge) {
+	_isBeingCreated = judge;
+}
 void Soldier::Create(SoldierBase* soldierBase) {
 	this->setVisible(false);
 	auto barSprite = Sprite::create("bar/loadingbar.png");
@@ -39,6 +30,7 @@ void Soldier::Create(SoldierBase* soldierBase) {
 	auto sequence = Sequence::create(pft, CallFunc::create([=] {
 		soldierBase->removeChild(progress, true);
 		this->setVisible(true);
+		FighterUnitBase::setIsCreated(false);
 	}), nullptr);
 	progress->runAction(sequence);
 	// create a loading bar
@@ -75,6 +67,7 @@ void Dog::Create(SoldierBase* soldierBase) {
 	auto sequence = Sequence::create(pft, CallFunc::create([=] {
 		soldierBase->removeChild(progress, true);
 		this->setVisible(true);
+		FighterUnitBase::setIsCreated(false);
 	}), nullptr);
 	progress->runAction(sequence);
 	// create a loading bar
@@ -111,6 +104,7 @@ void Tank::Create(WarFactory* warFactory) {
 	auto sequence = Sequence::create(pft, CallFunc::create([=] {
 		warFactory->removeChild(progress, true);
 		this->setVisible(true);
+		FighterUnitBase::setIsCreated(false);
 	}), nullptr);
 	progress->runAction(sequence);
 	// create a loading bar

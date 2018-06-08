@@ -5,7 +5,6 @@
 #include "BuildingBase.h"
 #include "FighterUnitBase.h"
 #include "GameScene.h"
-#include "time.h"
 
 bool BuildingBase::_isbuilt = false;
 
@@ -17,137 +16,47 @@ void BuildingBase::setIsBuilt(bool judge) {
 	_isbuilt = judge;
 }
 
-Animate* BuildingBase:: getAnimateByName(std::string animName, float delay, int animNum) {
-	Animation* animation = Animation::create();
 
-	for (unsigned int i = 1; i <= animNum; i++) {
-		// get the picture name
-		std::string frameName = animName;
-		frameName.append(StringUtils::format("%d", i)).append(".png");
-		// add the picture to spriteframe
-		animation->addSpriteFrameWithFile(frameName.c_str());
-	}
-	// set the properties of the animation
-	animation->setDelayPerUnit(delay);
-	// reset the animate
-	animation->setRestoreOriginalFrame(true);
-	// return the animate
-	Animate* animate = Animate::create(animation);
-	return animate;
-}
 
 Vec2 SoldierBase::RandomPosition() {
-	srand((unsigned int)time(NULL));
 	int sign = random() % 3 - 1;
 	int sign1 = random() % 3 - 1;
 	while (sign == 0 && sign1 == 0) {
 		sign = random() % 3 - 1;
 		sign1 = random() % 3 - 1;
 	}
-	float randX = this->getPosition().x + (55 + random() % 40)*  sign;
-	float randY = this->getPosition().y + (55 + random() % 40) * sign1;
+	float randX = this->getPosition().x + random() % 100 * sign;
+	float randY = this->getPosition().y + random() % 100 * sign1;
 	Vec2 position = Vec2(randX, randY);
-	auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
-	Vector<Soldier*>soldiers = tempScene->getVectorSoldiers();
-	Vector<Dog*>dogs = tempScene->getVectorDogs();
-	Vector<Tank*>tanks = tempScene->getVectorTanks();
-	for (unsigned int i = 0; i < soldiers.size(); i++) {
-		if (abs(position.x - soldiers.at(i)->getPosition().x) < 10&&abs(position.y - soldiers.at(i)->getPosition().y) < 10) {
-			return RandomPosition();
-		}
-	}
-	for (unsigned int i = 0; i < dogs.size(); i++) {
-		if (abs(position.x - dogs.at(i)->getPosition().x) < 10 && abs(position.y - dogs.at(i)->getPosition().y) < 10) {
-			return RandomPosition();
-		}
-	}
-	for (unsigned int i = 0; i < tanks.size(); i++) {
-		if (abs(position.x - tanks.at(i)->getPosition().x) < 20 && abs(position.y - tanks.at(i)->getPosition().y) < 20) {
-			return RandomPosition();
-		}
-	}
 	// soldier's position transfered to tilemap position
-	Vec2 tileCoord = static_cast<GameScene*>(this->getParent()->getParent()->getParent())->tileCoordForPosition(position);
-	// if wrong position ,recall
-	if (tileCoord.x < 0 || tileCoord.x >= static_cast<TMXTiledMap*>(this->getParent())->getMapSize().width
-		|| tileCoord.y < 0 || tileCoord.y >= static_cast<TMXTiledMap*>(this->getParent())->getMapSize().height) {
-		return RandomPosition();
-	}
-	// get TileMap position's GID
-	int tileGid = static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getMap()->getCollLayer()->getTileGIDAt(tileCoord);
+	Vec2 tileCoord = static_cast<TiledMap*>(this->getParent()->getParent())->tileCoordForPosition(position);
+
 	// if position is collidable,recall
-	if (tileGid) {
-		// use GID to find tile's properties
-		Value properties = static_cast<TMXTiledMap*>(this->getParent())->getPropertiesForGID(tileGid);
-		// return Value is ValueMap
-		ValueMap map = properties.asValueMap();
-		// search ValueMap£¬judge if there are collidable objects
-		std::string value = map.at("collidable").asString();
-		if (value.compare("true") == 0) {
-			return RandomPosition();
-		}
-		else {
-			return position;
-		}
+	if (!TiledMap::checkCreate(tileCoord)) {
+		return RandomPosition();
 	}
 	// if valid , return position
 	return position;
 }
 
 Vec2 WarFactory::RandomPosition() {
-	srand((unsigned int)time(NULL));
 	int sign = random() % 3 - 1;
 	int sign1 = random() % 3 - 1;
 	while (sign == 0 && sign1 == 0) {
 		sign = random() % 3 - 1;
 		sign1 = random() % 3 - 1;
 	}
-	float randX = this->getPosition().x + (this->getContentSize().width / 3 + random() % 50)*  sign;
-	float randY = this->getPosition().y + (this->getContentSize().height / 3 + random() % 50) * sign1;
+	float randX = this->getPosition().x + random() % 150*  sign;
+	float randY = this->getPosition().y + random() % 150 * sign1;
 	Vec2 position = Vec2(randX, randY);
-	auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
-	Vector<Soldier*>soldiers = tempScene->getVectorSoldiers();
-	Vector<Dog*>dogs = tempScene->getVectorDogs();
-	Vector<Tank*>tanks = tempScene->getVectorTanks();
-	for (unsigned int i = 0; i < soldiers.size(); i++) {
-		if (abs(position.x - soldiers.at(i)->getPosition().x) < 10 && abs(position.y - soldiers.at(i)->getPosition().y) < 10) {
-			return RandomPosition();
-		}
-	}
-	for (unsigned int i = 0; i < dogs.size(); i++) {
-		if (abs(position.x - dogs.at(i)->getPosition().x) < 10 && abs(position.y - dogs.at(i)->getPosition().y) < 10) {
-			return RandomPosition();
-		}
-	}
-	for (unsigned int i = 0; i < tanks.size(); i++) {
-		if (abs(position.x - tanks.at(i)->getPosition().x) < 20 && abs(position.y - tanks.at(i)->getPosition().y) < 20) {
-			return RandomPosition();
-		}
-	}
-	// soldier's position transfered to tilemap position
-	Vec2 tileCoord = static_cast<GameScene*>(this->getParent()->getParent()->getParent())->tileCoordForPosition(position);
-	// if wrong position ,recall
-	if (tileCoord.x < 0 || tileCoord.x >= static_cast<TMXTiledMap*>(this->getParent())->getMapSize().width
-		|| tileCoord.y < 0 || tileCoord.y >= static_cast<TMXTiledMap*>(this->getParent())->getMapSize().height) {
+	// tank's position transfered to tilemap position
+	Vec2 tileCoord = static_cast<TiledMap*>(this->getParent()->getParent())->tileCoordForPosition(position);
+	
+	// if position is collidable,recall
+	if (!TiledMap::checkCreate(tileCoord)) {
 		return RandomPosition();
 	}
-	// get TileMap position's GID
-	int tileGid = static_cast<GameScene*>(this->getParent()->getParent()->getParent())->getMap()->getCollLayer()->getTileGIDAt(tileCoord);
-	// if position is collidable,recall
-	if (tileGid) {
-		// use GID to find tile's properties
-		Value properties = static_cast<TMXTiledMap*>(this->getParent())->getPropertiesForGID(tileGid);
-		// return Value is ValueMap
-		ValueMap map = properties.asValueMap();
-		// search ValueMap£¬judge if there are collidable objects
-		std::string value = map.at("collidable").asString();
-		if (value.compare("true") == 0) {
-			return RandomPosition();
-		}
-		else {
-			return position;
-		}
-	}
+	
 	// if valid , return position
 	return position;
 }
@@ -181,7 +90,7 @@ void SoldierBase::Build() {
 	// set direction
 	loadingBar->setDirection(LoadingBar::Direction::LEFT);
 	// set position
-	loadingBar->setPosition(Vec2(170, -15));
+	loadingBar->setPosition(Vec2(140,100));
 	// set Hp bar for soldier
 	this->setHP(loadingBar);
 	// set the HP bar as a child
@@ -198,11 +107,12 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 	auto rect = Rect(0, 0, s.width, s.height);
 	this->setSelected(false);
 	this->setCreated(false);
-	if (rect.containsPoint(locationInNode)) {	//if click is valid
-		if (this->getSelected() || this->getCreated()) {
+
+	if (rect.containsPoint(locationInNode) && !FighterUnitBase::getIsCreated()) {	//if click is valid
+		if (getSelected() || getCreated()) {
 			return false;
 		}
-		this->setSelected(true);
+		setSelected(true);
 		//TODO change this to vector
 		auto height = this->getContentSize().height ;
 		std::vector<Sprite*> temp_sprite;
@@ -258,7 +168,7 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 						}
 					};
 					listener1->onTouchEnded = [this, temp_building](Touch *touch, Event *event) {
-						//this->removeChild(temp_building, true);
+						auto tempTiledMap = static_cast<TiledMap*>(this->getParent()->getParent());
 						if (temp_building->getTag() == 1) {
 							Dog* dog = Dog::create("dogRun/dog0.png");
 							auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
@@ -267,8 +177,11 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 								if (nodeLocation.x < this->getPosition().x) {
 									dog->setFlippedX(true);
 								}
+								auto tiledLocation = tempTiledMap->tileCoordForPosition(nodeLocation);
 								dog->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
+								FighterUnitBase::setIsCreated(true);
 								dog->Create(this);
+								TiledMap::setUnpass(tiledLocation);
 								static_cast<TMXTiledMap*>(this->getParent())->addChild(dog, 200);
 								tempScene->getVectorDogs().pushBack(dog);
 								tempScene->getMoney()->spendMoney(dog->getGold());
@@ -285,8 +198,11 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 								if (nodeLocation.x < this->getPosition().x) {
 									soldier->setFlippedX(true);
 								}
+								auto tiledLocation = tempTiledMap->tileCoordForPosition(nodeLocation);
 								soldier->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
+								FighterUnitBase::setIsCreated(true);
 								soldier->Create(this);
+								TiledMap::setUnpass(tiledLocation);
 								static_cast<TMXTiledMap*>(this->getParent())->addChild(soldier, 200);
 								tempScene->getVectorSoldiers().pushBack(soldier);
 								tempScene->getMoney()->spendMoney(soldier->getGold());
@@ -330,7 +246,7 @@ bool WarFactory::onTouchBegan(Touch *touch, Event *event) {
 	auto rect = Rect(0, 0, s.width, s.height);
 	this->setSelected(false);
 	this->setCreated(false);
-	if (rect.containsPoint(locationInNode)) {	//if click is valid
+	if (rect.containsPoint(locationInNode) && !FighterUnitBase::getIsCreated()) {	//if click is valid
 		if (this->getSelected() || this->getCreated()) {
 			return false;
 		}
@@ -383,14 +299,17 @@ bool WarFactory::onTouchBegan(Touch *touch, Event *event) {
 					}
 				};
 				listener1->onTouchEnded = [this, temp_building](Touch *touch, Event *event) {
-					//this->removeChild(temp_building, true);
+					auto tempTiledMap = static_cast<TiledMap*>(this->getParent()->getParent());
 					Tank* tank = Tank::create("tank/tank0.png");
 					auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
 					if (tempScene->getMoney()->checkMoney(tank->getGold())) {
 						Vec2 nodeLocation = this->RandomPosition();
 						tank->setScale(0.4f);
+						auto tiledLocation = tempTiledMap->tileCoordForPosition(nodeLocation);
 						tank->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
+						FighterUnitBase::setIsCreated(true);
 						tank->Create(this);
+						TiledMap::setUnpass(tiledLocation);
 						static_cast<TMXTiledMap*>(this->getParent())->addChild(tank, 200);
 						tempScene->getVectorTanks().pushBack(tank);
 						tempScene->getMoney()->spendMoney(tank->getGold());

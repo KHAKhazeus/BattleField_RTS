@@ -3,7 +3,7 @@
 //initial the static member
 std::map<Grid*,int> TiledMap::_gridAndId_Map;
 std::vector<Vector<Grid*>> TiledMap::_grid_Vector;   
-std::map<int, Sprite*> TiledMap::_idAndUnit_Map;
+std::map<int, Unit*> TiledMap::_idAndUnit_Map;
 
 bool TiledMap::init() {
 	_tiled_Map = TMXTiledMap::create("map/LostTemple.tmx");
@@ -76,6 +76,18 @@ bool TiledMap::checkBuilt(Vec2 pos, int range) {
 	return true;
 }
 
+bool TiledMap::checkCreate(Vec2 pos) {
+	auto x = static_cast<int> (pos.x);
+	auto y = static_cast<int> (pos.y);
+	if (!checkBoundary(Vec2(x, y))) {
+		return false;
+	}
+	auto judge = checkPass(Vec2(x, y));
+	if (!judge) {
+		return false;
+	}
+	return true;
+}
 
 void TiledMap::newMapGrid(Vec2 newPos,int id) {
 	auto x = static_cast<int> (newPos.x);
@@ -144,6 +156,15 @@ void TiledMap::setUnpass(Vec2 Pos, int range) {
 	}
 }
 
+void TiledMap::setUnpass(Vec2 Pos) {
+	auto x = static_cast<int> (Pos.x);
+	auto y = static_cast<int> (Pos.y);
+	_grid_Vector.at(x).at(y)->setPass(false);
+	//DEBUG 
+	//	log("%d %d", i, j);
+
+}
+
 Vec2 TiledMap::tileCoordForPosition(Vec2 position) {
 	int x = static_cast<int>
 		(position.x / (_tiled_Map->getTileSize().width / CC_CONTENT_SCALE_FACTOR()));
@@ -154,7 +175,7 @@ Vec2 TiledMap::tileCoordForPosition(Vec2 position) {
 }
 
 
-void TiledMap::newMapId(int id, Sprite* unit) {
+void TiledMap::newMapId(int id, Unit* unit) {
 	_idAndUnit_Map.insert({ id,unit });
 }
 

@@ -14,7 +14,7 @@ bool Base::init() {
 	if(!Sprite::init()) {
 		return false;
 	}
-	_base = Sprite::create("unit/base_28.png");
+	_base = Unit::create("unit/base_28.png");
 	// create a loading bar
 	auto loadingBar = LoadingBar::create("bar/planeHP.png");
 	loadingBar->setScaleX(0.4f);
@@ -61,7 +61,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 	auto rect = Rect(s.width / 4, s.height / 4, s.width / 2, s.height / 2);
 
 	if (rect.containsPoint(locationInNode) && !BuildingBase::getIsBuilt()) {	//if click is valid
-		if (isSelected() || isCreated()) { 
+		if (getSelected() || isCreated()) { 
 			return false;
 		}
 		setSelected(true);
@@ -280,7 +280,7 @@ void Base::onTouchEnded(Touch *touch, Event *event) {
 	this->getHP()->setVisible(true);
 }
 
-Sprite* Base::getSprite() {
+Unit* Base::getBase() {
 	return _base;
 }
 

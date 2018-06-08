@@ -306,7 +306,7 @@ void GameScene::onTouchEnded(Touch* touch, Event* event) {
 				tempUnit->getHP()->setVisible(false);
 			}
 		}
-		if (tempUnit->isSelected()) {
+		if (tempUnit->getSelected()) {
 			//Run action
 			tempUnit->getHP()->setVisible(true);
 		}
@@ -345,7 +345,7 @@ void GameScene::onTouchEnded(Touch* touch, Event* event) {
 				tempUnit->getHP()->setVisible(false);
 			}
 		}
-		if (tempUnit->isSelected()) {
+		if (tempUnit->getSelected()) {
 			//Run action
 			tempUnit->getHP()->setVisible(true);
 		}
@@ -384,7 +384,7 @@ void GameScene::onTouchEnded(Touch* touch, Event* event) {
 				tempUnit->getHP()->setVisible(false);
 			}
 		}
-		if (tempUnit->isSelected()) {
+		if (tempUnit->getSelected()) {
 			//Run action
 			tempUnit->getHP()->setVisible(true);
 		}

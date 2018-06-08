@@ -75,6 +75,7 @@ list(APPEND GAME_HEADER
 	Classes/UnitManager.h
 	Classes/BuildingBase.h
 	Classes/FighterUnitBase.h
+	Classes/Unit.h
      )
 
 if(ANDROID)
