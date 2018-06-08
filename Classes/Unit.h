@@ -8,6 +8,7 @@ private:
 	static int _id; //the id count of the whole building group
 protected:
 	bool _isBuilding;
+	char _type;
 public:
 	virtual ui::LoadingBar* getHP() = 0;
 	//set and get the Id for the building
@@ -19,6 +20,11 @@ public:
 	virtual void setCampID(int) = 0;
 	virtual bool judgeAttack(Vec2 pos) = 0;
 	virtual int getAttack() = 0;
+	virtual void setType(char type) { _type = type; }
+	virtual char getType() { return _type; }
+	virtual void moveTo(Vec2 pos){}
+	virtual Vec2 getTiledPosition() { return { 0,0 }; }
+	virtual void setTiledPosition(Vec2 pos) {}
 };
 
 

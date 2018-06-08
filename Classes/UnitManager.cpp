@@ -18,7 +18,7 @@ void UnitManager::initBase() {
 	tiledPos.y -= 1;
 	_base->setBuildId(_base->getIdCount());
 	_base->addIdCount();
-	TiledMap::newMapGrid(tiledPos, _base->getBuildId(), _base->getMinRange());
+	TiledMap::newMapGrid(tiledPos, _base->getBuildId(),/* _base->getMinRange()*/0);
 	TiledMap::newMapId(_base->getBuildId(), _base);
 	//TODO set the camera to the Base
 	_tiled_Map->getTiledMap()->addChild(_base,100);

@@ -270,8 +270,12 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 								}
 								dog->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
 								dog->Create(this);
+								auto tiledLocation = tempScene->tileCoordForPosition(nodeLocation);
+								TiledMap::newMapGrid(tiledLocation, dog->getUnitID());
+								TiledMap::newMapId(dog->getUnitID(), dog);
+								dog->setTiledPosition(tiledLocation);
 								static_cast<TMXTiledMap*>(this->getParent())->addChild(dog, 200);
-								tempScene->getVectorDogs().pushBack(dog);
+								//tempScene->getVectorDogs().pushBack(dog);
 								tempScene->getMoney()->spendMoney(dog->getGold());
 							}
 							else {
@@ -289,9 +293,12 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 								soldier->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
 								soldier->Create(this);
 								static_cast<TMXTiledMap*>(this->getParent())->addChild(soldier, 200);
-								tempScene->getVectorSoldiers().pushBack(soldier);
+								auto tiledLocation = tempScene->tileCoordForPosition(nodeLocation);
+								TiledMap::newMapGrid(tiledLocation, soldier->getUnitID());
+								TiledMap::newMapId(soldier->getUnitID(), soldier);
+								soldier->setTiledPosition(tiledLocation);
+							//	tempScene->getVectorSoldiers().pushBack(soldier);
 								tempScene->getMoney()->spendMoney(soldier->getGold());
-
 							}
 							else {
 								delete soldier;
@@ -396,7 +403,11 @@ bool WarFactory::onTouchBegan(Touch *touch, Event *event) {
 						tank->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
 						tank->Create(this);
 						static_cast<TMXTiledMap*>(this->getParent())->addChild(tank, 200);
-						tempScene->getVectorTanks().pushBack(tank);
+						auto tiledLocation = static_cast<TiledMap*>(this->getParent()->getParent())->tileCoordForPosition(nodeLocation);
+					//	tempScene->getVectorTanks().pushBack(tank);
+						TiledMap::newMapGrid(tiledLocation, tank->getUnitID());
+						TiledMap::newMapId(tank->getUnitID(), tank);
+						tank->setTiledPosition(tiledLocation);
 						tempScene->getMoney()->spendMoney(tank->getGold());
 					}
 					else {

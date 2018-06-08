@@ -75,7 +75,7 @@ bool TiledMap::checkBuilt(Vec2 pos, int range) {
 	}
 	return true;
 }
-
+		/*   _gridAndId_Map          API*/
 
 void TiledMap::newMapGrid(Vec2 newPos,int id) {
 	auto x = static_cast<int> (newPos.x);
@@ -151,9 +151,13 @@ int TiledMap::getUnitIdByPosition(Vec2 Pos) {
 	return _gridAndId_Map.at(grid);
 }
 
+/*--------------------------------------------------------*/
+
 TMXObjectGroup* TiledMap::getObjectGroup(std::string layername) {
 	return _tiled_Map->getObjectGroup(layername);
 }
+
+
 
 TMXTiledMap* TiledMap::getTiledMap() {
 	return _tiled_Map;
@@ -180,6 +184,10 @@ Vec2 TiledMap::tileCoordForPosition(Vec2 position) {
 	return Vec2(x, y);
 }
 
+
+				/*
+					_idAndUnit_Map API
+				*/	
 
 void TiledMap::newMapId(int id, Unit* unit) {
 	_idAndUnit_Map.insert({ id,unit });
@@ -209,6 +217,11 @@ Unit* TiledMap::getUnitById(int id){
 	}
 	return nullptr;
 }*/
+
+/*
+			_select_Vector API
+*/
+
 
 void TiledMap::newVectorUnit(Unit* unit) {
 	_select_Vector.push_back(unit);

@@ -276,7 +276,7 @@ void GameScene::onTouchEnded(Touch* touch, Event* event) {
 
 	//Selected rect
 	float rect_x = MIN(mouse_rect->start.x, mouse_rect->end.x);
-	float rect_y = MIN(mouse_rect->start.y, mouse_rect->end.y);
+	float rect_y = MAX(mouse_rect->start.y, mouse_rect->end.y);
 	float rect_width = fabs(mouse_rect->start.x - mouse_rect->end.x);
 	float rect_height = fabs(mouse_rect->start.y - mouse_rect->end.y);
 	Rect select_rect(rect_x, rect_y, rect_width, rect_height);
@@ -291,7 +291,7 @@ void GameScene::onTouchEnded(Touch* touch, Event* event) {
 			//if the tempSprite is the enemy  如果选中的精灵是敌人
 			if (tempSprite->getCampID() != _unit_Manager->getBase()->getCampID()) {
 				//if > 1 what in the vector isn't a building   如果SelectVector的容量>1,那么它一定不会包含建筑
-				if (TiledMap::checkSize() >= 1) {
+				if (TiledMap::checkSize() > 1) {
 					for (auto temp : *TiledMap::getSelectedVector()) {
 						//if the enemy is in the attack range 如果敌人在攻击范围内
 						if (temp->judgeAttack(tiledLocation)) {
@@ -339,6 +339,11 @@ void GameScene::onTouchEnded(Touch* touch, Event* event) {
 				//if not, call all the unit in the vector to find a path and move to the Position
 				else {
 					//TODO function to move to the Position
+					for (auto temp : *TiledMap::getSelectedVector()) {
+						temp->moveTo(touch_point);
+						TiledMap::updateMapGrid(temp->getTiledPosition(), tiledLocation);
+						temp->setTiledPosition(tiledLocation);
+					}
 				}
 			}
 		}
@@ -347,8 +352,9 @@ void GameScene::onTouchEnded(Touch* touch, Event* event) {
 		TiledMap::clearUp();	//cancel select
 		auto tiledPos = tileCoordForPosition(Vec2(rect_x, rect_y));
 		auto tiledRect = tileCoordForPosition(Vec2(rect_width, rect_height));
-		for (auto i = tiledPos.x; i < tiledRect.x; i++) {
-			for (auto j = tiledPos.y; j < tiledRect.y; j++) {
+		tiledRect.y = 127 - tiledRect.y;
+		for (auto i = tiledPos.x; i < tiledRect.x + tiledPos.x; i++) {
+			for (auto j = tiledPos.y; j < tiledRect.y + tiledPos.y; j++) {
 				auto pos = Vec2(i, j);
 				//if there is a unit Grid in this pos
 				if (TiledMap::checkMapGrid(pos)) {

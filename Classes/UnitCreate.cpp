@@ -178,7 +178,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 									auto id = moneyMine->getIdCount();
 									moneyMine->setBuildID(id);
 									moneyMine->addIdCount();
-									TiledMap::newMapGrid(tiledLocation, id, moneyMine->getRange());
+									TiledMap::newMapGrid(tiledLocation, id, /*moneyMine->getRange()*/0);
 									TiledMap::newMapId(id, moneyMine);
 				//					TiledMap::setUnpass(tiledLocation, moneyMine->getRange());
 									static_cast<TMXTiledMap*>(this->getParent())->addChild(moneyMine, 50);
@@ -200,7 +200,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 									auto id = powerPlant->getIdCount();
 									powerPlant->setBuildID(id);
 									powerPlant->addIdCount();
-									TiledMap::newMapGrid(tiledLocation, id, powerPlant->getRange());
+									TiledMap::newMapGrid(tiledLocation, id, /*powerPlant->getRange()*/0);
 									TiledMap::newMapId(id, powerPlant);
 		//							TiledMap::setUnpass(tiledLocation, powerPlant->getRange());
 									static_cast<TMXTiledMap*>(this->getParent())->addChild(powerPlant, 40);
@@ -223,7 +223,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 									auto id = soldierBase->getIdCount();
 									soldierBase->setBuildID(id);
 									soldierBase->addIdCount();
-									TiledMap::newMapGrid(tiledLocation, id, soldierBase->getRange(),FIX_HEIGHT);
+									TiledMap::newMapGrid(tiledLocation, id,/* soldierBase->getRange()*/0/*,FIX_HEIGHT*/);
 									TiledMap::newMapId(id, soldierBase);
 		//							TiledMap::setUnpass(tiledLocation, soldierBase->getRange());
 									static_cast<TMXTiledMap*>(this->getParent())->addChild(soldierBase, 50);
@@ -250,7 +250,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 									auto id = warFactory->getIdCount();
 									warFactory->setBuildID(id);
 									warFactory->addIdCount();
-									TiledMap::newMapGrid(tiledLocation, id, warFactory->getRange(),FIX_HEIGHT);
+									TiledMap::newMapGrid(tiledLocation, id,0/* warFactory->getRange(),FIX_HEIGHT*/);
 									TiledMap::newMapId(id, warFactory);
 					//				TiledMap::setUnpass(tiledLocation, warFactory->getRange());
 									static_cast<TMXTiledMap*>(this->getParent())->addChild(warFactory, 50);

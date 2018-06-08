@@ -133,12 +133,45 @@ void Tank::Create(WarFactory* warFactory) {
 
 bool FighterUnitBase::judgeAttack(Vec2 pos) {
 	auto myLocation = this->getPosition();
-	auto myTiledLocaiton = getTiledPositon();
+	auto myTiledLocaiton = getTiledPosition();
 	auto distance = sqrt(pow(myTiledLocaiton.x - pos.x, 2) + pow(myTiledLocaiton.y - pos.y, 2));
 	if (distance < this->getAttackRange()) {
 		return true;
 	}
 	return false;
+}
+
+void FighterUnitBase::moveTo(Vec2 pos) {
+	Animate* animate;
+	switch (getType())
+	{
+		case 's':
+			animate = getAnimateByName("soldierRun/soldier", 0.2, 7);
+			break;
+		case 'd':
+			animate = getAnimateByName("dogRun/dog", 0.2, 10);
+			break;
+		default:
+			break;
+	}
+	auto repeatanimate = RepeatForever::create(animate);
+	auto moveto = MoveTo::create(0.4f, pos);
+	runAction(repeatanimate);
+	auto callfunc = CallFunc::create([=] {
+		stopAction(repeatanimate);
+		switch (getType()) {
+			case 'd':
+				setTexture("unit/FighterUnit_1.png");
+				break;
+			case 's':
+				setTexture("unit/FighterUnit_2.png");
+				break;
+			default:
+				break;
+		}
+	});
+	auto sequence = Sequence::create(moveto, callfunc, NULL);
+	runAction(sequence);
 }
 /*
 void FighterUnitBase::attack(int id) {

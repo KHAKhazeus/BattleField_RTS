@@ -38,6 +38,7 @@ public:
 
 	// Get the aniamtion
 	Animate * getAnimateByName(std::string animName, float delay, int animNum);
+	void moveTo(Vec2 Pos);
 	
 	//set and get the unit's lifevalue
 	void setLifeValue(int lifeValue) { _lifeValue = lifeValue; }
@@ -102,8 +103,8 @@ public:
 	virtual int getCampID() { return _campID; }
 
 	//set and get the tiledPosition of the unit
-	void setTiledPositon(Vec2 pos) { _tiledPos = pos; }
-	Vec2 getTiledPositon() { return _tiledPos; }
+	void setTiledPosition(Vec2 pos) { _tiledPos = pos; }
+	Vec2 getTiledPosition() { return _tiledPos; }
 	
 	//attack action
 	//@@param is the enemy's ID
@@ -146,6 +147,7 @@ public:
 		setCampID(RED);
 		setUnitID(getIdCount());
 		addIdCount();
+		setType('s');
 	}
 	void Create(SoldierBase*);
 };
@@ -176,6 +178,7 @@ public:
 		setCampID(RED);
 		setUnitID(getIdCount());
 		addIdCount();
+		setType('d');
 	}
 	void Create(SoldierBase*);
 };
@@ -206,6 +209,7 @@ public:
 		setCampID(RED);
 		setUnitID(getIdCount());
 		addIdCount();
+		setType('t');
 		
 	}
 	void Create(WarFactory*);

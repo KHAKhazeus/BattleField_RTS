@@ -63,6 +63,7 @@ list(APPEND GAME_SOURCE
 	 Classes/UnitManager.cpp
 	 Classes/BuildingBase.cpp
 	 Classes/FighterUnitBase.cpp
+	 Classes/Unit.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
@@ -75,6 +76,7 @@ list(APPEND GAME_HEADER
 	Classes/UnitManager.h
 	Classes/BuildingBase.h
 	Classes/FighterUnitBase.h
+	Classes/Unit.h
      )
 
 if(ANDROID)
