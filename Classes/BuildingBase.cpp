@@ -6,6 +6,7 @@
 #include "FighterUnitBase.h"
 #include "GameScene.h"
 
+
 bool BuildingBase::_isbuilt = false;
 
 bool BuildingBase::getIsBuilt() {
@@ -108,7 +109,7 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 	this->setSelected(false);
 	this->setCreated(false);
 
-	if (rect.containsPoint(locationInNode) && !FighterUnitBase::getIsCreated()) {	//if click is valid
+	if (rect.containsPoint(locationInNode) && !Soldier::getIsCreated() && !Dog::getIsCreated()) {	//if click is valid
 		if (getSelected() || getCreated()) {
 			return false;
 		}
@@ -179,11 +180,15 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 								}
 								auto tiledLocation = tempTiledMap->tileCoordForPosition(nodeLocation);
 								dog->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
-								FighterUnitBase::setIsCreated(true);
+								Dog::setIsCreated(true);
 								dog->Create(this);
-								TiledMap::setUnpass(tiledLocation);
+						//		TiledMap::setUnpass(tiledLocation);
+						//		auto tiledLocation = tempScene->tileCoordForPosition(nodeLocation);
+								TiledMap::newMapGrid(tiledLocation, dog->getUnitID());
+								TiledMap::newMapId(dog->getUnitID(), dog);
+								dog->setTiledPosition(tiledLocation);
 								static_cast<TMXTiledMap*>(this->getParent())->addChild(dog, 200);
-								tempScene->getVectorDogs().pushBack(dog);
+								//tempScene->getVectorDogs().pushBack(dog);
 								tempScene->getMoney()->spendMoney(dog->getGold());
 							}
 							else {
@@ -200,13 +205,16 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 								}
 								auto tiledLocation = tempTiledMap->tileCoordForPosition(nodeLocation);
 								soldier->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
-								FighterUnitBase::setIsCreated(true);
+								Soldier::setIsCreated(true);
 								soldier->Create(this);
-								TiledMap::setUnpass(tiledLocation);
+						//		TiledMap::setUnpass(tiledLocation);
 								static_cast<TMXTiledMap*>(this->getParent())->addChild(soldier, 200);
-								tempScene->getVectorSoldiers().pushBack(soldier);
+						//		auto tiledLocation = tempScene->tileCoordForPosition(nodeLocation);
+								TiledMap::newMapGrid(tiledLocation, soldier->getUnitID());
+								TiledMap::newMapId(soldier->getUnitID(), soldier);
+								soldier->setTiledPosition(tiledLocation);
+							//	tempScene->getVectorSoldiers().pushBack(soldier);
 								tempScene->getMoney()->spendMoney(soldier->getGold());
-
 							}
 							else {
 								delete soldier;
@@ -218,6 +226,9 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 					};
 					Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener1, temp_building);
 					return true;
+				}
+				else {
+					this->removeChild(temp, true);
 				}
 				return false;
 			};
@@ -246,7 +257,7 @@ bool WarFactory::onTouchBegan(Touch *touch, Event *event) {
 	auto rect = Rect(0, 0, s.width, s.height);
 	this->setSelected(false);
 	this->setCreated(false);
-	if (rect.containsPoint(locationInNode) && !FighterUnitBase::getIsCreated()) {	//if click is valid
+	if (rect.containsPoint(locationInNode) && !Tank::getIsCreated()) {	//if click is valid
 		if (this->getSelected() || this->getCreated()) {
 			return false;
 		}
@@ -307,11 +318,15 @@ bool WarFactory::onTouchBegan(Touch *touch, Event *event) {
 						tank->setScale(0.4f);
 						auto tiledLocation = tempTiledMap->tileCoordForPosition(nodeLocation);
 						tank->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
-						FighterUnitBase::setIsCreated(true);
+						Tank::setIsCreated(true);
 						tank->Create(this);
-						TiledMap::setUnpass(tiledLocation);
+				//		TiledMap::setUnpass(tiledLocation);
 						static_cast<TMXTiledMap*>(this->getParent())->addChild(tank, 200);
-						tempScene->getVectorTanks().pushBack(tank);
+				//		auto tiledLocation = static_cast<TiledMap*>(this->getParent()->getParent())->tileCoordForPosition(nodeLocation);
+					//	tempScene->getVectorTanks().pushBack(tank);
+						TiledMap::newMapGrid(tiledLocation, tank->getUnitID());
+						TiledMap::newMapId(tank->getUnitID(), tank);
+						tank->setTiledPosition(tiledLocation);
 						tempScene->getMoney()->spendMoney(tank->getGold());
 					}
 					else {
@@ -323,6 +338,9 @@ bool WarFactory::onTouchBegan(Touch *touch, Event *event) {
 				};
 				Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener1, temp_building);
 				return true;
+			}
+			else {
+				this->removeChild(temp, true);
 			}
 			return false;
 		};

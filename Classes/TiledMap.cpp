@@ -4,6 +4,7 @@
 std::map<Grid*,int> TiledMap::_gridAndId_Map;
 std::vector<Vector<Grid*>> TiledMap::_grid_Vector;   
 std::map<int, Unit*> TiledMap::_idAndUnit_Map;
+std::vector<Unit*> TiledMap::_select_Vector;
 
 bool TiledMap::init() {
 	_tiled_Map = TMXTiledMap::create("map/LostTemple.tmx");
@@ -37,7 +38,6 @@ void TiledMap::setGridVector() {
 				auto value = map.at("collidable").asString();
 				if (value.compare("true") == 0) {
 					grid->setPass(false);
-					log("%d %d", i, j);
 				}
 			}
 		}
@@ -88,6 +88,7 @@ bool TiledMap::checkCreate(Vec2 pos) {
 	}
 	return true;
 }
+		/*   _gridAndId_Map          API*/
 
 void TiledMap::newMapGrid(Vec2 newPos,int id) {
 	auto x = static_cast<int> (newPos.x);
@@ -95,6 +96,33 @@ void TiledMap::newMapGrid(Vec2 newPos,int id) {
 	auto grid = _grid_Vector.at(x).at(y);
 	_gridAndId_Map.insert({ grid,id });
 	grid->setPass(false);
+}
+
+void TiledMap::newMapGrid(Vec2 newPos, int id,int range,int fix_modle) {
+	auto x = static_cast<int> (newPos.x);
+	auto y = static_cast<int> (newPos.y);
+	switch (fix_modle) {
+		case FIX_SQUARE:
+			for (auto i = x - range; i <= x + range; i++) {
+				for (auto j = y - range; j <= y + range; j++) {
+					auto grid = _grid_Vector.at(i).at(j);
+					grid->setPass(false);
+					_gridAndId_Map.insert({ grid,id });
+				}
+			}
+			break;
+		case FIX_HEIGHT:
+			for (auto i = x - range; i <= x + range; i++) {
+				for (auto j = y - range + 1; j <= y + range - 1; j++) {
+					auto grid = _grid_Vector.at(i).at(j);
+					grid->setPass(false);
+					_gridAndId_Map.insert({ grid,id });
+				}
+			}
+			break;
+		default:
+			break;
+	}
 }
 
 void TiledMap::updateMapGrid(Vec2 oldPos, Vec2 newPos) {
@@ -136,9 +164,13 @@ int TiledMap::getUnitIdByPosition(Vec2 Pos) {
 	return _gridAndId_Map.at(grid);
 }
 
+/*--------------------------------------------------------*/
+
 TMXObjectGroup* TiledMap::getObjectGroup(std::string layername) {
 	return _tiled_Map->getObjectGroup(layername);
 }
+
+
 
 TMXTiledMap* TiledMap::getTiledMap() {
 	return _tiled_Map;
@@ -175,6 +207,10 @@ Vec2 TiledMap::tileCoordForPosition(Vec2 position) {
 }
 
 
+				/*
+					_idAndUnit_Map API
+				*/	
+
 void TiledMap::newMapId(int id, Unit* unit) {
 	_idAndUnit_Map.insert({ id,unit });
 }
@@ -183,7 +219,7 @@ void TiledMap::removeMapId(int id) {
 	_idAndUnit_Map.erase(id);
 }
 
-Sprite* TiledMap::getUnitById(int id){
+Unit* TiledMap::getUnitById(int id){
 	return _idAndUnit_Map.at(id);
 }
 
@@ -204,5 +240,32 @@ Sprite* TiledMap::getUnitById(int id){
 	return nullptr;
 }*/
 
+/*
+			_select_Vector API
+*/
 
+
+void TiledMap::newVectorUnit(Unit* unit) {
+	_select_Vector.push_back(unit);
+	unit->getHP()->setVisible(true);
+}
+
+void TiledMap::clearUp() {
+	for (auto i : _select_Vector) {
+		i->getHP()->setVisible(false);
+	}
+	_select_Vector.clear();
+	//TODO   can use STL function swap £¿
+}
+
+bool TiledMap::checkSize() {
+	if (_select_Vector.size() > 0) {
+		return true;
+	}
+	return false;
+}
+
+const std::vector<Unit*>* TiledMap::getSelectedVector() {
+	return &_select_Vector;
+}
 

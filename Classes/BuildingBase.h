@@ -7,8 +7,8 @@
 
 #include <iostream>
 #include <cocos2d.h>
-
 #include "ui/CocosGUI.h"
+#include "Grid.h"
 #include "Unit.h"
 
 USING_NS_CC;
@@ -18,7 +18,6 @@ using namespace ui;
 class BuildingBase :public Unit
 {
 protected:
-	int _buildID;//ID of the building
 	int _gold;//expence to build the building
 	int _elect;//electricity spent to build the building
 	LoadingBar* _buildBar;// the bar diaplayed during building
@@ -30,10 +29,6 @@ public:
 	//set and get the cost for the building
 	void setGold(int gold) { _gold = gold; }
 	int getGold() { return _gold; }
-
-	//set and get the ID for the building
-	void setBuildID(int ID) { _buildID = ID; }
-	int getBuildID() { return _buildID; }
 
 	//set and get the building time for the building
 	void setElect(float elect) { _elect = elect; }
@@ -50,6 +45,12 @@ public:
 	static bool getIsBuilt();
 	static void setIsBuilt(bool judge);
 
+	virtual bool judgeAttack(Vec2 pos) {
+		return false;
+	}
+
+	int getAttack() { return 0; }
+	
 };
 
 //the derived class for SoldierBase
@@ -71,6 +72,9 @@ public:
 		_elect = 10;
 		_lifeValue = 900;
 		_range = 2;
+		//
+		setCampID(RED);
+		setIsBuilding(true);
 	}
 
 	Vec2 RandomPosition();
@@ -99,6 +103,9 @@ public:
 		_elect = 40;
 		_lifeValue = 1000;
 		_range = 2;
+		//
+		setCampID(RED);
+		setIsBuilding(true);
 	}
 
 	void Build();
@@ -123,6 +130,9 @@ public:
 		_elect = 150;
 		_lifeValue = 750;
 		_range = 1;
+		//
+		setCampID(RED);
+		setIsBuilding(true);
 	}
 
 	void Build();
@@ -146,6 +156,9 @@ public:
 		_elect = 50;
 		_lifeValue = 1200;
 		_range = 2;
+		//
+		setCampID(RED);
+		setIsBuilding(true);
 	}
 
 	Vec2 RandomPosition();

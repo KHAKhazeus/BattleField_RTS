@@ -63,6 +63,8 @@ list(APPEND GAME_SOURCE
 	 Classes/UnitManager.cpp
 	 Classes/BuildingBase.cpp
 	 Classes/FighterUnitBase.cpp
+	 Classes/Unit.cpp
+	 Classes/MouseRect.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
@@ -76,6 +78,7 @@ list(APPEND GAME_HEADER
 	Classes/BuildingBase.h
 	Classes/FighterUnitBase.h
 	Classes/Unit.h
+	Classes/MouseRect.h
      )
 
 if(ANDROID)

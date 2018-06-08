@@ -24,9 +24,11 @@ protected:
 	float _attackInterval;//the interval between attacking
 	float _attackRange;//the attacking range of the unit
 	int _gold;//the expence of the unit
-	static bool _isBeingCreated;//find if there is a unit being created
 public:
+	Vec2 _tiledPos; //the tiledPostion of the Unit
 
+	void moveTo(Vec2 Pos);
+	
 	//set and get the cost for the unit
 	void setGold(int gold) { _gold = gold; }
 	int getGold() { return _gold; }
@@ -34,10 +36,6 @@ public:
 	//set and judge whether the unit is attacking
 	void setAttack(bool attack) { _isAttack = attack; }
 	bool isAttack() { return _isAttack; }
-
-	//set and judge whether there is a unit being created
-	static void setIsCreated(bool created);
-	static bool getIsCreated();
 
 	//set and get the attacking power for the unit
 	void setAttackPower(int attack) { _attack = attack; }
@@ -60,16 +58,29 @@ public:
 	int getTargetID() { return _targetID; }
 
 
+	//set and get the tiledPosition of the unit
+	void setTiledPosition(Vec2 pos) { _tiledPos = pos; }
+	Vec2 getTiledPosition() { return _tiledPos; }
+	
 	//attack action
 	//@@param is the enemy's ID
 	void attack(int id);
 
+	//to judge if the enemy is in the attack range
+	bool judgeAttack(Vec2 pos);
 
 };
 
 class Soldier :public FighterUnitBase
 {
+private:
+	static bool _isBeingCreated;//find if there is a unit being created
 public:
+
+	//set and judge whether there is a unit being created
+	static void setIsCreated(bool created);
+	static bool getIsCreated();
+
 	//unit's creating function
 	static Soldier* create(const std::string& filename) {
 		Soldier *sprite = new Soldier();
@@ -88,13 +99,25 @@ public:
 		_attackRange = 70;
 		_attack = 15;
 		_attackInterval = 0.2;
+		//
+		setIsBuilding();
+		setCampID(RED);
+		setUnitID(getIdCount());
+		addIdCount();
+		setType('s');
 	}
 	void Create(SoldierBase*);
 };
 
 class Dog :public FighterUnitBase
 {
+private:
+	static bool _isBeingCreated;//find if there is a unit being created
 public:
+	//set and judge whether there is a unit being created
+	static void setIsCreated(bool created);
+	static bool getIsCreated();
+
 	//unit's creating function
 	static Dog* create(const std::string& filename) {
 		Dog *sprite = new Dog();
@@ -113,13 +136,24 @@ public:
 		_attackRange = 0;
 		_attack = 20;
 		_attackInterval = 0.2;
+		//
+		setIsBuilding();
+		setCampID(RED);
+		setUnitID(getIdCount());
+		addIdCount();
+		setType('d');
 	}
 	void Create(SoldierBase*);
 };
 
 class Tank :public FighterUnitBase
 {
+	static bool _isBeingCreated;//find if there is a unit being created
 public:
+	//set and judge whether there is a unit being created
+	static void setIsCreated(bool created);
+	static bool getIsCreated();
+
 	//unit's creating function
 	static Tank* create(const std::string& filename) {
 		Tank *sprite = new Tank();
@@ -138,6 +172,13 @@ public:
 		_attackRange = 100;
 		_attack = 30;
 		_attackInterval = 0.5;
+		//
+		setIsBuilding();
+		setCampID(RED);
+		setUnitID(getIdCount());
+		addIdCount();
+		setType('t');
+		
 	}
 	void Create(WarFactory*);
 };

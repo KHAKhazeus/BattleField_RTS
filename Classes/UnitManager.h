@@ -5,6 +5,7 @@
 #include "UnitCreate.h"
 #include "BuildingBase.h"
 #include "MyResources.h"
+#include "MouseRect.h"
 USING_NS_CC;
 class UnitManager :public cocos2d::Node {
 public:
@@ -25,6 +26,9 @@ public:
 	Base* getBase(){ return _base; }
 	//
 	void checkWinOrLose();
+
+	void selectUnitsByPoint(Vec2 touch_point);
+	void selectUnitsByRect(MouseRect* mouse_rect);
 private:
 	//the count of _building
 	int _building;

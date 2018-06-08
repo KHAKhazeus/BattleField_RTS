@@ -14,6 +14,8 @@ USING_NS_CC;
 using namespace ui;
 
 class Unit :public cocos2d::Sprite {
+private:
+	static int _id; //the id count of the whole building group
 protected:
 	int _lifeValue;//the life for a unit
 	LoadingBar* _HP;//a unit's hp bar
@@ -22,6 +24,8 @@ protected:
 	int _unitID;//an ID to distinguish  unit
 	int _campID;//unit belongs to which side
 	bool _isSelected;//unit has been selected?
+	bool _isBuilding;//if it's a building
+	char _type;//the type of the unit
 public:
 	// Get the aniamtion
 	static Unit* create(const std::string& filename) {
@@ -60,6 +64,22 @@ public:
 	//set and get the unit's life bar
 	void setHP(LoadingBar* HP) { _HP = HP; }
 	LoadingBar* getHP() { return _HP; }
+
+
+	//set and get the Id for the building
+	int getIdCount() { return _id; }
+	void addIdCount() { _id++; }
+	virtual bool isBuilding() { return _isBuilding; }
+	virtual void setIsBuilding(bool character = false) { _isBuilding = character; }
+
+	virtual bool judgeAttack(Vec2 pos) { return false; }
+
+	virtual void setType(char type) { _type = type; }
+	virtual char getType() { return _type; }
+
+	virtual void moveTo(Vec2 pos) {}
+	virtual Vec2 getTiledPosition() { return { 0,0 }; }
+	virtual void setTiledPosition(Vec2 pos) {}
 
 	//set and get the HPInterval
 	void setHPInterval(float HPInterval) {

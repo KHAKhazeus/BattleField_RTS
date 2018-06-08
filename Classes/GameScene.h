@@ -5,21 +5,8 @@
 #include "UnitManager.h"
 #include "BuildingBase.h"
 #include "FighterUnitBase.h"
+#include "MouseRect.h"
 USING_NS_CC;
-
-//Class of mouse rect selection
-class MouseRect : public cocos2d::DrawNode
-{
-public:
-	CREATE_FUNC(MouseRect);
-
-	//Start point and end point
-	Vec2 start, end;
-
-	virtual void update(float delta);
-
-	void reset();
-};
 
 //Main Class of Game Scene
 class GameScene :public cocos2d::Scene {
