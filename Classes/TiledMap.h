@@ -1,7 +1,5 @@
-#ifndef _TIlEDMAP
-#define _TILEDMAP
+#pragma once
 #include "cocos2d.h"
-#include "Unit.h"
 #include "Grid.h"
 #include "Unit.h"
 USING_NS_CC;
@@ -46,6 +44,7 @@ public:
 	static bool checkMapGrid(Vec2);
 	//Check if the place is collidable
 	static bool checkPass(Vec2 pos);
+	static bool checkPass(int x, int y);
 	//Check if the field can be built
 	static bool checkBuilt(Vec2 pos,int range);
 	//@@param 1 is the positon of your building  *TiledMap positon
@@ -85,14 +84,18 @@ public:
 	//turn the coordinate of OpenGL to TileMap
 	//The return value is the coordinate of tho position in TileMap
 	Vec2 tileCoordForPosition(Vec2 position);
+	Vec2 locationForTilePos(Vec2 pos);
 
 	TMXLayer* getCollLayer(){ return _collidable; }
+	//All the grid in the map
+	static std::vector<Vector<Grid*>>_grid_Vector;
+	//find free grid near
+	Vec2 findFreeNear(Vec2 position);
+
 	
 	
 	CREATE_FUNC(TiledMap);
 private:
-	//All the grid in the map
-	static std::vector<Vector<Grid*>>_grid_Vector;
 	//The pair first is Gird* which can be gotten by _grid_Vector
 	//The pair second is the Id of Unit
 	static std::map<Grid*, int> _gridAndId_Map;
@@ -108,5 +111,5 @@ private:
 	TMXLayer* _collidable;
 };
 
-#endif // !_TILEDMAP
+ // !_TILEDMAP
 

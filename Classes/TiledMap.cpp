@@ -58,6 +58,11 @@ bool TiledMap::checkPass(Vec2 pos) {
 	return grid->isPass();
 }
 
+bool TiledMap::checkPass(int x, int y) {
+	auto grid = _grid_Vector.at(x).at(y);
+	return grid->isPass();
+}
+
 bool TiledMap::checkBuilt(Vec2 pos, int range) {
 	auto x = static_cast<int> (pos.x);
 	auto y = static_cast<int> (pos.y);
@@ -206,6 +211,13 @@ Vec2 TiledMap::tileCoordForPosition(Vec2 position) {
 	return Vec2(x, y);
 }
 
+Vec2 TiledMap::locationForTilePos(Vec2 position) {
+	int x = (int)(position.x*(_tiled_Map->getTileSize().width / CC_CONTENT_SCALE_FACTOR()));
+	float pointHeight = _tiled_Map->getTileSize().height / CC_CONTENT_SCALE_FACTOR();
+	int y = (int)((_tiled_Map->getMapSize().height * pointHeight) - (position.y * pointHeight));
+	return Point(x, y);
+}
+
 
 				/*
 					_idAndUnit_Map API
@@ -269,3 +281,18 @@ const std::vector<Unit*>* TiledMap::getSelectedVector() {
 	return &_select_Vector;
 }
 
+Vec2 TiledMap::findFreeNear(Vec2 position) {
+	if (checkPass(position)) {
+		return position;
+	}
+	for (int i = 1; i < _tiled_Map->getMapSize().width + _tiled_Map->getMapSize().height; i++) {
+		for (int j = -i; j <= i; j++) {
+			int k = i - abs(j);
+			if (checkPass(position.x + j, position.y + k))
+				return Vec2(position.x + j, position.y + k);
+			if (checkPass(position.x + j, position.y - k))
+				return Vec2(position.x + j, position.y - k);
+		}
+	}
+	return Vec2(-1, -1);
+}

@@ -41,7 +41,7 @@ public:
 	Animate * getAnimateByName(std::string animName, float delay, int animNum) {
 		Animation* animation = Animation::create();
 
-		for (unsigned int i = 1; i <= animNum; i++) {
+		for (unsigned int i = 0; i <= animNum; i++) {
 			// get the picture name
 			std::string frameName = animName;
 			frameName.append(StringUtils::format("%d", i)).append(".png");

@@ -65,6 +65,7 @@ list(APPEND GAME_SOURCE
 	 Classes/FighterUnitBase.cpp
 	 Classes/Unit.cpp
 	 Classes/MouseRect.cpp
+	 Classes/PathArithmetic.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
@@ -79,6 +80,7 @@ list(APPEND GAME_HEADER
 	Classes/FighterUnitBase.h
 	Classes/Unit.h
 	Classes/MouseRect.h
+	Classes/PathArithmetic.h
      )
 
 if(ANDROID)
