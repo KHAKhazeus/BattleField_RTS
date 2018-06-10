@@ -156,20 +156,23 @@ bool FighterUnitBase::judgeAttack(Vec2 pos) {
 }
 
 void FighterUnitBase::moveTo(Vec2 pos) {
+	this->stopAllActions();
 	Animate* animate;
 	switch (getType())
 	{
 		case 's':
-			animate = getAnimateByName("soldierRun/soldier", 0.2, 7);
+			animate = getAnimateByName("soldierRun/soldier", 0.2f, 7);
 			break;
 		case 'd':
-			animate = getAnimateByName("dogRun/dog", 0.2, 10);
+			animate = getAnimateByName("dogRun/dog", 0.2f, 10);
 			break;
+		case 't':
+			animate = getAnimateByName("tank/tank", 0.2f, 7);
 		default:
 			break;
 	}
 	auto repeatanimate = RepeatForever::create(animate);
-	auto moveto = MoveTo::create(0.4f, pos);
+	auto moveto = MoveTo::create(4.0f, pos);
 	runAction(repeatanimate);
 	auto callfunc = CallFunc::create([=] {
 		stopAction(repeatanimate);
@@ -179,6 +182,9 @@ void FighterUnitBase::moveTo(Vec2 pos) {
 				break;
 			case 's':
 				setTexture("unit/FighterUnit_2.png");
+				break;
+			case 't':
+				setTexture("unit/FighterUnit.png");
 				break;
 			default:
 				break;
