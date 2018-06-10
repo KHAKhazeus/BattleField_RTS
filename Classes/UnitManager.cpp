@@ -36,7 +36,7 @@ Vec2 UnitManager::getBasePosition(std::string layername) {
 
 void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 	auto tiledLocation = _tiled_Map->tileCoordForPosition(touch_point);
-	//judge if there is a unit in the Grid  判断瓦片上有没有单位
+	//judge if there is a unit in the Grid  判断该瓦片上是否有单位
 	if (TiledMap::checkMapGrid(tiledLocation)) {
 		auto id = TiledMap::getUnitIdByPosition(tiledLocation);
 		auto tempSprite = TiledMap::getUnitById(id);
@@ -72,9 +72,8 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 			}
 		}
 		//if not, then clear up the vector and then push the new one
-		//如果选中的精灵不是敌人,那么清空vector,并把此次点击的精灵加入进去
-		else
-		{
+		//如果选中的精灵是己方
+		else {
 			TiledMap::clearUp();
 			TiledMap::newVectorUnit(tempSprite);
 		}
@@ -83,20 +82,39 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 	else {
 		//check the vector and judge if there is a building in it 
 		//检查vector,看是否只存了一个建筑
-		if (TiledMap::checkSize()) {
-			//if yes, clear up
-			if (TiledMap::getSelectedVector()->at(0)->isBuilding()) {
-				TiledMap::clearUp();
-			}
-			//if not, call all the unit in the vector to find a path and move to the Position
-			else {
-				//TODO function to move to the Position
-				for (auto temp : *TiledMap::getSelectedVector()) {
-					temp->moveTo(touch_point);
-					TiledMap::updateMapGrid(temp->getTiledPosition(), tiledLocation);
-					temp->setTiledPosition(tiledLocation);
+		if (TiledMap::checkPass(tiledLocation)) {
+			if (TiledMap::checkSize()) {
+				//if yes, clear up
+				if (TiledMap::getSelectedVector()->at(0)->isBuilding()) {
+					TiledMap::clearUp();
+				}
+				//if not, call all the unit in the vector to find a path and move to the Position
+				else {
+					//TODO function to move to the Position
+					for (auto temp : *TiledMap::getSelectedVector()) {
+						Vec2 from = _tiled_Map->tileCoordForPosition(temp->getPosition());
+						if (!_tiled_Map->checkPass(tiledLocation)) {
+							return;
+						}
+						PathArithmetic* path_finder = PathArithmetic::create();
+						path_finder->initPathArithmetic(_tiled_Map, from, tiledLocation);
+						path_finder->findPath();
+						auto path = path_finder->getPath();
+						if (temp->getNumberOfRunningActions() == 0) {
+							playerMoveWithWayPoints(temp, touch_point, path);
+						}
+						else {
+							temp->stopAllActions();
+							playerMoveWithWayPoints(temp, touch_point, path);
+						}
+					}
 				}
 			}
+		}
+		else {
+			auto new_point = _tiled_Map->findFreeNear(tiledLocation);
+			Vec2 openGL_point = _tiled_Map->locationForTilePos(new_point);
+			selectUnitsByPoint(openGL_point);
 		}
 	}
 }
@@ -125,4 +143,15 @@ void UnitManager::selectUnitsByRect(MouseRect* mouse_rect) {
 			}
 		}
 	}
+}
+
+void UnitManager::playerMoveWithWayPoints(Unit* player, Vec2 position, std::vector<Vec2> path) {
+	Vector<FiniteTimeAction*> actionVector;
+	for (int i = 0; i < path.size(); i++) {
+		Vec2 openGL_point = _tiled_Map->locationForTilePos(path[i]);
+		MoveTo* moveTo = MoveTo::create(0.4f, openGL_point);
+		actionVector.pushBack(moveTo);
+	}
+	auto sequence = Sequence::create(actionVector);
+	player->runAction(sequence);
 }
