@@ -264,6 +264,17 @@ void GameScene::onTouchEnded(Touch* touch, Event* event) {
 
 	float rect_width = fabs(mouse_rect->start.x - mouse_rect->end.x);
 	float rect_height = fabs(mouse_rect->start.y - mouse_rect->end.y);
+
+	//select by point
+	if (rect_width * rect_height < 100.0) {
+		_unit_Manager->selectUnitsByPoint(touch_point);
+	}
+	//select by rect
+	else {
+		_unit_Manager->selectUnitsByRect(mouse_rect);
+	}
+	mouse_rect->reset();
+}
 /*
 	Rect select_rect(rect_x, rect_y, rect_width, rect_height);
 
@@ -445,13 +456,4 @@ void GameScene::onTouchEnded(Touch* touch, Event* event) {
 			tempUnit->getHP()->setVisible(true);
 		}
 */
-	//select by point
-	if (rect_width * rect_height < 100.0) {
-		_unit_Manager->selectUnitsByPoint(touch_point);
-	}
-	//select by rect
-	else {
-		_unit_Manager->selectUnitsByRect(mouse_rect);
-	}
-	mouse_rect->reset();
-}
+	
