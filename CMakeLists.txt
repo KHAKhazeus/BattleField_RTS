@@ -80,7 +80,7 @@ list(APPEND GAME_HEADER
 	Classes/FighterUnitBase.h
 	Classes/Unit.h
 	Classes/MouseRect.h
-	Classes/PathArithmetic.cpp
+	Classes/PathArithmetic.h
      )
 
 if(ANDROID)
