@@ -20,14 +20,12 @@ protected:
 	bool _isAttack;//if the unit can attack
 	int _attack;//unit's attacking power
 	int _targetID;//the attacking target's ID
-	float _moveSpeed;//the speed of the unit
+	
 	float _attackInterval;//the interval between attacking
 	float _attackRange;//the attacking range of the unit
 	int _gold;//the expence of the unit
 public:
 	Vec2 _tiledPos; //the tiledPostion of the Unit
-
-	void moveTo(Vec2 Pos);
 	
 	//set and get the cost for the unit
 	void setGold(int gold) { _gold = gold; }
@@ -45,9 +43,6 @@ public:
 	void setAttackInterval(int attackInterval) { _attackInterval = attackInterval; }
 	int getAttackInterval() { return _attackInterval; }
 
-	//set and get the moving speed for the unit
-	void setMoveSpeed(int moveSpeed) { _moveSpeed = moveSpeed; }
-	int getMoveSpeed() { return _moveSpeed; }
 
 	//set and get the attacking range for the unit
 	void setAttackRange(int attackRange) { _attackRange = attackRange; }
@@ -94,7 +89,6 @@ public:
 	}
 	Soldier() {
 		_lifeValue = 115;
-		_moveSpeed = 6;
 		_gold = 80;
 		_attackRange = 70;
 		_attack = 15;
@@ -131,9 +125,8 @@ public:
 	}
 	Dog() {
 		_lifeValue = 100;
-		_moveSpeed = 9;
 		_gold = 150;
-		_attackRange = 1;
+		_attackRange = 10;
 		_attack = 20;
 		_attackInterval = 0.2;
 		//
@@ -167,14 +160,13 @@ public:
 	}
 	Tank() {
 		_lifeValue = 440;
-		_moveSpeed = 8;
 		_gold = 500;
 		_attackRange = 100;
 		_attack = 30;
 		_attackInterval = 0.5;
 		//
 		setIsBuilding();
-		setCampID(RED);
+		setCampID(BLUE);
 		setUnitID(getIdCount());
 		addIdCount();
 		setType('t');

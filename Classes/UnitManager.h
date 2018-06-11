@@ -7,6 +7,7 @@
 #include "MyResources.h"
 #include "MouseRect.h"
 #include "PathArithmetic.h"
+#include <cmath>
 USING_NS_CC;
 class UnitManager :public cocos2d::Node {
 public:
@@ -39,6 +40,9 @@ public:
 	void attack(Unit* player, Unit* enemy);
 	
 	void attackEffect(Unit* player, Unit* enemy);
+
+//	void attack(Unit *player,Unit *target);
+
 private:
 	//the count of _building
 	int _building;

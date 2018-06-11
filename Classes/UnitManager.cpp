@@ -1,7 +1,7 @@
 #include "UnitManager.h"
 #include "time.h"
 bool UnitManager::init(TiledMap * tiledMap) {
-	_building = 1;
+	_building =  1;
 	_soider = 0;
 	_tiled_Map = tiledMap;
 	return true;
@@ -50,11 +50,16 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 					//if the enemy is in the attack range 如果敌人在攻击范围内
 					if (temp->judgeAttack(tiledLocation) && TiledMap::checkMapGrid(tiledLocation)) {
 						temp->stopAllActions();
-						attackEffect(temp, enemy);
-						attack(temp, enemy);
-					}
-					else {
-						//TODO function tracing
+							attackEffect(temp, enemy);
+							attack(temp, enemy);
+
+						if (temp->judgeAttack(tiledLocation)) {
+							//TODO function attack
+						//	attack(temp, tempSprite);
+						}
+						else {
+							//TODO function tracing
+						}
 					}
 				}
 			}
@@ -65,8 +70,9 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 					//if not
 					if (!temp->isBuilding()) {
 						if (temp->judgeAttack(tiledLocation)) {
+						//	attack(temp, tempSprite);
 							//TODO function attack
-							temp->stopAllActions();
+						//	temp->stopAllActions();
 							attackEffect(temp, enemy);
 							attack(temp, enemy);
 								
@@ -158,23 +164,45 @@ void UnitManager::playerMoveWithWayPoints(Unit* player, Vec2 position, std::vect
 		return;
 	}
 	auto tiledLocation = path.back();
-	Vector<FiniteTimeAction*> actionVector;
+	/*change the direction of the unit according to the target position*/
+	Vec2 tarPos = _tiled_Map->locationForTilePos(position);
+	Vec2 myPos = _tiled_Map->locationForTilePos(player->getPosition());
+	float angle = atan2((tarPos.y - myPos.y), (tarPos.x - myPos.x)) * 180 / 3.14159;
+	if (player->isFlippedX()) {
+		player->setFlippedX(false);
+	}
+	if (tarPos.x < myPos.x) {
+		player->setFlippedX(true);
+		player->setRotation(angle - 180);
+	}
+	else {
+		player->setRotation(angle);
+	}
+	
 	Animate* animate;
+	float speed;
 	switch (player->getType())
 	{
 	case 's':
-		animate = player->getAnimateByName("soldierRun/soldier", 0.2f, 7);
+		animate = player->getAnimateByName("soldierRun/soldier", 0.2, 7);
+		speed = 0.4f;
 		break;
 	case 'd':
-		animate = player->getAnimateByName("dogRun/dog", 0.2f, 10);
+		animate = player->getAnimateByName("dogRun/dog", 0.2, 5);
+		speed = 0.3f;
 		break;
 	case 't':
-		animate = player->getAnimateByName("tank/tank", 0.2f, 7);
+		animate = player->getAnimateByName("tank/tank", 0.2, 7);
+		speed = 0.5f;
+		break;
 	default:
 		break;
 	}
+	/*add move animation*/
 	auto repeatanimate = RepeatForever::create(animate);
 	player->runAction(repeatanimate);
+	Vector<FiniteTimeAction*> actionVector;
+//Animate* animate;
 	auto callfunc = CallFunc::create([=] {
 		stopAction(repeatanimate);
 		switch (player->getType()) {
@@ -191,67 +219,88 @@ void UnitManager::playerMoveWithWayPoints(Unit* player, Vec2 position, std::vect
 			break;
 		}
 	});
-	/*	for (int i = 0; i < path.size(); i++) {
-			Vec2 openGL_point = _tiled_Map->locationForTilePos(path[i]);
-			if (/*TiledMap::checkPass(path[i])1) {
-				if (i > 0) {
-					player->stopActionByTag(i - 1);
-				}
-				auto moveTo = MoveTo::create(0.4f, openGL_point);
-				moveTo->setTag(i);
-				TiledMap::updateMapGrid(player->getTiledPosition(), path[i]);
-				player->setTiledPosition(path[i]);
-				player->runAction(moveTo);
+/*	for (int i = 0; i < path.size(); i++) {
+		Vec2 openGL_point = _tiled_Map->locationForTilePos(path[i]);
+		if (TiledMap::checkPass(path[i])1) {
+			if (i > 0) {
+				player->stopActionByTag(i - 1);
 			}
-			else {
-				auto path_finder = PathArithmetic::create();
-				if (!TiledMap::checkPass(tiledLocation)) {
-					tiledLocation = _tiled_Map->findFreeNear(tiledLocation);
-				}
-				path_finder->initPathArithmetic(_tiled_Map, player->getTiledPosition(), tiledLocation);
-				path_finder->findPath();
-				auto path = path_finder->getPath();
-				playerMoveWithWayPoints(player, tiledLocation, path);
-				return;
-			}*/
+			auto moveTo = MoveTo::create(0.4f, openGL_point);
+			moveTo->setTag(i);
+			TiledMap::updateMapGrid(player->getTiledPosition(), path[i]);
+			player->setTiledPosition(path[i]);
+			player->runAction(moveTo);
+		}
+		else {
+			auto path_finder = PathArithmetic::create();
+			if (!TiledMap::checkPass(tiledLocation)) {
+				tiledLocation = _tiled_Map->findFreeNear(tiledLocation);
+			}
+			path_finder->initPathArithmetic(_tiled_Map, player->getTiledPosition(), tiledLocation);
+			path_finder->findPath();
+			auto path = path_finder->getPath();
+			playerMoveWithWayPoints(player, tiledLocation, path);
+			return;
+		}
+	}*/
 	for (int i = 0; i < path.size(); i++) {
 		if (i == 0) {
 			TiledMap::setUnpass(tiledLocation);
 		}
 		Vec2 openGL_point = _tiled_Map->locationForTilePos(path[i]);
-		auto moveTo = MoveTo::create(0.4f, openGL_point);
-		moveTo->setTag(i+1);
+		//auto moveTo = MoveTo::create(0.4f, openGL_point);
+	//	moveTo->setTag(i+1);
 		auto callfuncPosition = CallFunc::create([=] {
-				TiledMap::updateMapGrid(player->getTiledPosition(), path[i]);
-				player->setTiledPosition(path[i]);
-	/*			if (i < path.size() - 2) {
-					int count = 0;
-					if (TiledMap::checkPass(path[i + 1])){
-						TiledMap::setUnpass(path[i + 1]);
+			TiledMap::updateMapGrid(player->getTiledPosition(), path[i]);
+			player->setTiledPosition(path[i]);
+			/*if (i < path.size() - 2) {
+				int count = 0;
+				if (TiledMap::checkPass(path[i + 1])){
+					TiledMap::setUnpass(path[i + 1]);
+				}
+				if (count == 100000 && !TiledMap::checkPass(path[i + 1])) {
+					auto location = path.back();
+					if (!_tiled_Map->checkPass(location)) {
+						location = _tiled_Map->findFreeNear(location);
 					}
-					/*if (count == 100000 && !TiledMap::checkPass(path[i + 1])) {
-						auto location = path.back();
-						if (!_tiled_Map->checkPass(location)) {
-							location = _tiled_Map->findFreeNear(location);
-						}
-						PathArithmetic* path_finder = PathArithmetic::create();
-						path_finder->initPathArithmetic(_tiled_Map, path[i], location);
-						path_finder->findPath();
-						auto path = path_finder->getPath();
-						playerMoveWithWayPoints(player, location, path);
-						return;
-					}
-				}*/
-			});
-		callfuncPosition->setTag(200 + i);
-		actionVector.pushBack(moveTo);
-		actionVector.pushBack(callfuncPosition);
+					PathArithmetic* path_finder = PathArithmetic::create();
+					path_finder->initPathArithmetic(_tiled_Map, path[i], location);
+					path_finder->findPath();
+					auto path = path_finder->getPath();
+					playerMoveWithWayPoints(player, location, path);
+					return;
+				}
+			}
+		});*/
+		});
+		//callfuncPosition->setTag(200 + i);
+			MoveTo* moveTo = MoveTo::create(speed, openGL_point);
+			actionVector.pushBack(moveTo);
+			actionVector.pushBack(callfuncPosition);
 	}
+
+/*	auto callfunc = CallFunc::create([=] {
+		player->stopAction(repeatanimate);
+		switch (player->getType()) {
+		case 'd':
+			player->setTexture("unit/FighterUnit_1.png");
+			break;
+		case 's':
+			player->setTexture("unit/FighterUnit_2.png");
+			break;
+		case 't':
+			player->setTexture("unit/FighterUnit.png");
+			break;
+		default:
+			break;
+		}
+	});*/
 	actionVector.pushBack(callfunc);
 	auto sequence = Sequence::create(actionVector);
 	sequence->setTag(1000);
 	player->runAction(sequence);
 }
+
 
 //暂时没用
 void UnitManager::delay(float dt) {
@@ -287,33 +336,34 @@ void UnitManager::attackEffect(Unit* player, Unit *enemy) {
 	Sprite* bullet;
 	Animate* dogAttack;
 	switch (type) {
-		case 's':
-			player->setTexture("unit/FighterUnit_2.png");
-			bullet = Sprite::create("soldierAttack/bullet.png");
-			bullet->setPosition(player->getPosition() );
-			bullet->setScale(0.2);
-			bullet->setFlippedX(true);
-			_tiled_Map->getTiledMap()->addChild(bullet, 30);
-			break;
-		case 'd':
-			player->setTexture("unit/FighterUnit_1.png");
-			dogAttack = player->getAnimateByName("dogAttack/dog_attack", 0.1, 6);
-			isDog = true;
-			break;
-		case 't':
-			bullet = Sprite::create("tank/tankBullet.png");
-			bullet->setPosition(player->getPosition() );
-			bullet->setScale(0.4);
-			_tiled_Map->getTiledMap()->addChild(bullet, 30);
-			break;
-		default:
-			break;
+	case 's':
+		player->setTexture("unit/FighterUnit_2.png");
+		bullet = Sprite::create("soldierAttack/bullet.png");
+		bullet->setPosition(player->getPosition());
+		bullet->setScale(0.2);
+		bullet->setFlippedX(true);
+		_tiled_Map->getTiledMap()->addChild(bullet, 30);
+		break;
+	case 'd':
+		player->setTexture("unit/FighterUnit_1.png");
+		dogAttack = player->getAnimateByName("dogAttack/dog_attack", 0.1, 6);
+		isDog = true;
+		break;
+	case 't':
+		bullet = Sprite::create("tank/tankBullet.png");
+		bullet->setPosition(player->getPosition());
+		bullet->setScale(0.4);
+		_tiled_Map->getTiledMap()->addChild(bullet, 30);
+		break;
+	default:
+		break;
 	}
 	if (isDog) {
 		auto callfuc = CallFunc::create([=] {
-			player->setTexture("FighterUnit_1.png");
+			player->stopAction(dogAttack);
+			player->setTexture("unit/FighterUnit_1.png");
 		});
-		auto sequence = Sequence::create(dogAttack,callfuc,NULL);
+		auto sequence = Sequence::create(dogAttack, callfuc, NULL);
 		player->runAction(sequence);
 	}
 	else {
@@ -329,15 +379,82 @@ void UnitManager::attackEffect(Unit* player, Unit *enemy) {
 		auto sequence = Sequence::create(moveTo, callfuc, NULL);
 		bullet->runAction(sequence);
 	}
-
-/*	bullet = Sprite::create("tank/tankBullet.png");
-	bullet->setPosition(player->getPosition());
-	bullet->setScale(0.4);
-	_tiled_Map->getTiledMap()->addChild(bullet,30);
-	auto moveTo = MoveTo::create(0.5f, pos);
-	bullet->runAction(moveTo);
-	auto callfuc = CallFunc::create([=] {
-		_tiled_Map->getTiledMap()->removeChild(bullet);
-	});*/
-
 }
+/*
+void UnitManager::attack(Unit *player, Unit *target) {
+	/*change the direction of the unit according to the target position
+	Vec2 tarPos = _tiled_Map->locationForTilePos(target->getPosition());
+	Vec2 myPos = _tiled_Map->locationForTilePos(player->getPosition());
+	float angle = atan2((tarPos.y - myPos.y), (tarPos.x - myPos.x)) * 180 / 3.14159;
+	if (tarPos.x < myPos.x) {
+		player->setFlippedX(true);
+		player->setRotation(angle - 180);
+	}
+	else {
+		player->setRotation(angle);
+	}
+	if (player->getType() == 's') {
+		player->stopAllActions();
+		player->setTexture("soldierAttack/soldier_attack.png");
+		auto fire = ParticleFire::create();
+		player->addChild(fire);
+		fire->setPosition(Vec2(30, 0));
+		/*change the direction of the unit according to the target position
+		
+		target->setLifeValue((target->getLifeValue()) - player->getAttack());
+		if (target->getHP() != nullptr) {
+			target->getHP()->setPercent(target->getHPInterval()*target->getLifeValue());
+		}
+		auto remove = Sequence::create(
+			DelayTime::create(0.2f),
+			CallFunc::create([=] {
+			player->removeChild(fire,true);
+		}), NULL);
+		player->runAction(remove);
+	}
+	else if (player->getType() == 't') {
+		player->stopAllActions();
+		player->setTexture("tank/tank0.png");
+		auto fire = ParticleFire::create();
+		fire->setScale(0.3);
+		_tiled_Map->getTiledMap()->addChild(fire, 40);
+		fire->setPosition(player->getPosition());
+
+		target->setLifeValue((target->getLifeValue()) - player->getAttack());
+		if (target->getHP() != nullptr) {
+			target->getHP()->setPercent(target->getHPInterval()*target->getLifeValue());
+		}
+		auto remove = Sequence::create(
+			DelayTime::create(0.2f),
+			CallFunc::create([=] {
+			_tiled_Map->getTiledMap()->removeChild(fire, true);
+		}), NULL);
+		player->runAction(remove);
+	}
+	else if (player->getType() == 't') {
+		player->stopAllActions();
+		player->setTexture("dogAttack/dog_attack0.png");
+		auto animate = player->getAnimateByName("dogAttack/dog_attack", 0.2f, 6);
+		auto repeateAnimate = RepeatForever::create(animate);
+		player->runAction(repeateAnimate);
+		ParticleSystem *bloodSpurts  = ParticleSystemQuad::create("bloodSpurts.plist");
+		// 设置粒子效果位置独立 particle's effection is independent
+		bloodSpurts->setPositionType(ParticleSystem::PositionType::FREE);
+		// 粒子效果完成后自动删除 if finished automatically delete itself
+		bloodSpurts->setAutoRemoveOnFinish(true);
+		bloodSpurts->setPosition(Vec2(10, 0));
+		player->addChild(bloodSpurts);
+
+		target->setLifeValue((target->getLifeValue()) - player->getAttack());
+		if (target->getHP() != nullptr) {
+			target->getHP()->setPercent(target->getHPInterval()*target->getLifeValue());
+		}
+		auto remove = Sequence::create(
+			DelayTime::create(0.2f),
+			CallFunc::create([=] {
+			player->removeChild(bloodSpurts, true);
+		}), NULL);
+		player->runAction(remove);
+	}
+}
+*/

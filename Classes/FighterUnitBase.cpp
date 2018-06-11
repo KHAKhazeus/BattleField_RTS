@@ -155,8 +155,11 @@ bool FighterUnitBase::judgeAttack(Vec2 pos) {
 	return false;
 }
 
+/*
 void FighterUnitBase::moveTo(Vec2 pos) {
 	this->stopAllActions();
+/*void FighterUnitBase::moveTo(Vec2 pos) {
+>>>>>>> 04f4b433ed6b4957d99022ae7a5ead3caf8b63c4
 	Animate* animate;
 	switch (getType())
 	{
@@ -192,7 +195,7 @@ void FighterUnitBase::moveTo(Vec2 pos) {
 	});
 	auto sequence = Sequence::create(moveto, callfunc, NULL);
 	runAction(sequence);
-}
+}*/
 /*
 void FighterUnitBase::attack(int id) {
 	auto tempSprtie = TiledMap::getUnitById(id);
