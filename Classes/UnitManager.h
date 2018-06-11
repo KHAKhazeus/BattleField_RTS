@@ -7,6 +7,7 @@
 #include "MyResources.h"
 #include "MouseRect.h"
 #include "PathArithmetic.h"
+#include <cmath>
 USING_NS_CC;
 class UnitManager :public cocos2d::Node {
 public:
@@ -32,6 +33,7 @@ public:
 	void selectUnitsByRect(MouseRect* mouse_rect);
 
 	void playerMoveWithWayPoints(Unit* player, Vec2 position, std::vector<Vec2> path);
+	void attack(Unit *player,Unit *target);
 private:
 	//the count of _building
 	int _building;

@@ -48,7 +48,7 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 					//if the enemy is in the attack range 如果敌人在攻击范围内
 					if (temp->judgeAttack(tiledLocation)) {
 						//TODO function attack
-
+						attack(temp, tempSprite);
 					}
 					else {
 						//TODO function tracing
@@ -62,6 +62,7 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 					//if not
 					if (!temp->isBuilding()) {
 						if (temp->judgeAttack(tiledLocation)) {
+							attack(temp, tempSprite);
 							//TODO function attack
 						}
 						else {
@@ -146,12 +147,143 @@ void UnitManager::selectUnitsByRect(MouseRect* mouse_rect) {
 }
 
 void UnitManager::playerMoveWithWayPoints(Unit* player, Vec2 position, std::vector<Vec2> path) {
+	/*change the direction of the unit according to the target position*/
+	Vec2 tarPos = _tiled_Map->locationForTilePos(position);
+	Vec2 myPos = _tiled_Map->locationForTilePos(player->getPosition());
+	float angle = atan2((tarPos.y - myPos.y), (tarPos.x - myPos.x)) * 180 / 3.14159;
+	if (player->isFlippedX()) {
+		player->setFlippedX(false);
+	}
+	if (tarPos.x < myPos.x) {
+		player->setFlippedX(true);
+		player->setRotation(angle - 180);
+	}
+	else {
+		player->setRotation(angle);
+	}
+	
+	Animate* animate;
+	float speed;
+	switch (player->getType())
+	{
+	case 's':
+		animate = player->getAnimateByName("soldierRun/soldier", 0.2, 7);
+		speed = 0.4f;
+		break;
+	case 'd':
+		animate = player->getAnimateByName("dogRun/dog", 0.2, 5);
+		speed = 0.3f;
+		break;
+	case 't':
+		animate = player->getAnimateByName("tank/tank", 0.2, 7);
+		speed = 0.5f;
+		break;
+	default:
+		break;
+	}
+	/*add move animation*/
+	auto repeatanimate = RepeatForever::create(animate);
+	player->runAction(repeatanimate);
 	Vector<FiniteTimeAction*> actionVector;
 	for (int i = 0; i < path.size(); i++) {
 		Vec2 openGL_point = _tiled_Map->locationForTilePos(path[i]);
-		MoveTo* moveTo = MoveTo::create(0.4f, openGL_point);
+		MoveTo* moveTo = MoveTo::create(speed, openGL_point);
 		actionVector.pushBack(moveTo);
 	}
+	auto callfunc = CallFunc::create([=] {
+		player->stopAction(repeatanimate);
+		switch (player->getType()) {
+		case 'd':
+			player->setTexture("unit/FighterUnit_1.png");
+			break;
+		case 's':
+			player->setTexture("unit/FighterUnit_2.png");
+			break;
+		case 't':
+			player->setTexture("unit/FighterUnit.png");
+			break;
+		default:
+			break;
+		}
+	});
+	actionVector.pushBack(callfunc);
 	auto sequence = Sequence::create(actionVector);
 	player->runAction(sequence);
+}
+
+//animation of player's shooting
+void UnitManager::attack(Unit *player, Unit *target) {
+	/*change the direction of the unit according to the target position*/
+	Vec2 tarPos = _tiled_Map->locationForTilePos(target->getPosition());
+	Vec2 myPos = _tiled_Map->locationForTilePos(player->getPosition());
+	float angle = atan2((tarPos.y - myPos.y), (tarPos.x - myPos.x)) * 180 / 3.14159;
+	if (tarPos.x < myPos.x) {
+		player->setFlippedX(true);
+		player->setRotation(angle - 180);
+	}
+	else {
+		player->setRotation(angle);
+	}
+	if (player->getType() == 's') {
+		player->stopAllActions();
+		player->setTexture("soldierAttack\soldier_attack.png");
+		auto fire = ParticleFire::create();
+		player->addChild(fire);
+		fire->setPosition(Vec2(30, 0));
+		/*change the direction of the unit according to the target position*/
+		
+		target->setLifeValue((target->getLifeValue()) - 15);
+		if (target->getHP() != nullptr) {
+			target->getHP()->setPercent(target->getHPInterval()*target->getLifeValue());
+		}
+		auto remove = Sequence::create(
+			DelayTime::create(0.2f),
+			CallFunc::create([=] {
+			player->removeChild(fire,true);
+		}), NULL);
+		player->runAction(remove);
+	}
+	else if (player->getType() == 't') {
+		player->stopAllActions();
+		player->setTexture("tank\tank0.png");
+		auto fire = ParticleFire::create();
+		player->addChild(fire);
+		fire->setPosition(Vec2(40, 0));
+
+		target->setLifeValue((target->getLifeValue()) - 30);
+		if (target->getHP() != nullptr) {
+			target->getHP()->setPercent(target->getHPInterval()*target->getLifeValue());
+		}
+		auto remove = Sequence::create(
+			DelayTime::create(0.2f),
+			CallFunc::create([=] {
+			player->removeChild(fire, true);
+		}), NULL);
+		player->runAction(remove);
+	}
+	else if (player->getType() == 't') {
+		player->stopAllActions();
+		player->setTexture("dogAttack\dog_attack0.png");
+		auto animate = player->getAnimateByName("dogAttack\dog_attack", 0.2f, 6);
+		auto repeateAnimate = RepeatForever::create(animate);
+		player->runAction(repeateAnimate);
+		ParticleSystem *bloodSpurts  = ParticleSystemQuad::create("bloodSpurts.plist");
+		// 设置粒子效果位置独立 particle's effection is independent
+		bloodSpurts->setPositionType(ParticleSystem::PositionType::FREE);
+		// 粒子效果完成后自动删除 if finished automatically delete itself
+		bloodSpurts->setAutoRemoveOnFinish(true);
+		bloodSpurts->setPosition(Vec2(10, 0));
+		player->addChild(bloodSpurts);
+
+		target->setLifeValue((target->getLifeValue()) - 20);
+		if (target->getHP() != nullptr) {
+			target->getHP()->setPercent(target->getHPInterval()*target->getLifeValue());
+		}
+		auto remove = Sequence::create(
+			DelayTime::create(0.2f),
+			CallFunc::create([=] {
+			player->removeChild(bloodSpurts, true);
+		}), NULL);
+		player->runAction(remove);
+	}
 }
