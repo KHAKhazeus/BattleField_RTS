@@ -29,7 +29,7 @@ set(APP_NAME BattleField_RTS)
 
 project(${APP_NAME})
 
-set(COCOS2DX_ROOT_PATH $ENV{COCOS_X_ROOT})
+set(COCOS2DX_ROOT_PATH $ENV{COCOS_X_ROOT}/cocos2d-x-3.17)
 set(CMAKE_MODULE_PATH ${COCOS2DX_ROOT_PATH}/cmake/Modules/)
 
 include(CocosBuildSet)
@@ -51,19 +51,33 @@ endif()
 include_directories(
         Classes
         ${COCOS2DX_ROOT_PATH}/cocos/audio/include/
+	Classes/include
 )
+#LINK_DIRECTORIES(
+#	Classes/lib
+#)
 # add cross-platforms source files and header files 
 list(APPEND GAME_SOURCE
      Classes/AppDelegate.cpp
      Classes/HelloWorldScene.cpp
      Classes/MenuScene.cpp
      Classes/SettingLayer.cpp
+     Classes/GameMessage.pb.cc
+     Classes/GameMessageInterface.cpp
+     Classes/NetworkLayer.cpp
+     Classes/SocketClient.cpp
+     Classes/SocketServer.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
      Classes/HelloWorldScene.h
      Classes/MenuScene.h
      Classes/SettingLayer.h
+     Classes/GameMessage.pb.h
+     Classes/GameMessageInterface.h
+     Classes/NetworkLayer.h
+     Classes/SocketClient.h
+     Classes/SocketServer.h
      )
 
 if(ANDROID)
@@ -123,9 +137,19 @@ set(APP_SRC
     ${GAME_SOURCE}
     ${GAME_HEADER}
     )
+
+set(PROTOBUFF_LIB_PATH Classes/lib/Debug)
+set(_protobuff_prefix protobuff)
+set(protobuff_INCLUDE_DIRS Classes/include)
+set(protobuff_LIBRARIES protobuff)
+add_library(protobuff STATIC IMPORTED)
+set_target_properties(protobuff
+			PROPERTIES IMPORTED_LOCATION
+			${PROTOBUFF_LIB_PATH}/libprotobuf.a
+)
 cocos_build_app(${APP_NAME}
                 APP_SRC "${APP_SRC}"
-                DEPEND_COMMON_LIBS "cocos2d"
+                DEPEND_COMMON_LIBS "cocos2d" "protobuff"
                 DEPEND_ANDROID_LIBS "cocos2d_android"
                 )
 

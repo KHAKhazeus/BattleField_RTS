@@ -11,6 +11,7 @@
 #include "cocos2d.h"
 #include "ui/CocosGUI.h"
 #include "SettingLayer.h"
+#include "NetworkLayer.h"
 
 class MenuScene : public cocos2d::Layer
 {

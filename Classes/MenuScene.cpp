@@ -9,6 +9,7 @@
 
 #include "MenuScene.h"
 #include "SimpleAudioEngine.h"
+#include "GameMessage.pb.h"
 
 #ifdef TEST
 #include <iostream>
@@ -74,14 +75,8 @@ bool MenuScene::init(){
                     
                 case Widget::TouchEventType::ENDED:{
                     start_game_button->setScale(1.0);
-                    //should switch to Network control panel, temporarily switch to GameScene
-                    
-                    //auto transition_to_gamescene = TransitionSlideInL::create(2.0, GameScene::createScene());
-                    //for tests
-                    //                auto transition_to_gamescene = TransitionFadeUp::create(1.0, HelloWorld::createScene());
-                    //                Director::getInstance()->replaceScene(transition_to_gamescene);
-                    
-                    //Director::getInstance()->pushScene(HelloWorld::createScene());
+                    auto network_layer = NetworkLayer::create();
+                    this->addChild(network_layer);
                     break;
                 }
                     

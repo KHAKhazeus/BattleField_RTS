@@ -2,10 +2,10 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-$(call import-add-path,$(LOCAL_PATH)/../../../cocos2d)
-$(call import-add-path,$(LOCAL_PATH)/../../../cocos2d/external)
-$(call import-add-path,$(LOCAL_PATH)/../../../cocos2d/cocos)
-$(call import-add-path,$(LOCAL_PATH)/../../../cocos2d/cocos/audio/include)
+$(call import-add-path,/usr/local/cocos2d-x-3.17)
+$(call import-add-path,/usr/local/cocos2d-x-3.17/external)
+$(call import-add-path,/usr/local/cocos2d-x-3.17/cocos)
+$(call import-add-path,/usr/local/cocos2d-x-3.17/cocos/audio/include)
 
 LOCAL_MODULE := MyGame_shared
 
@@ -13,7 +13,9 @@ LOCAL_MODULE_FILENAME := libMyGame
 
 LOCAL_SRC_FILES := $(LOCAL_PATH)/hellocpp/main.cpp \
                    $(LOCAL_PATH)/../../../Classes/AppDelegate.cpp \
-                   $(LOCAL_PATH)/../../../Classes/HelloWorldScene.cpp
+                   $(LOCAL_PATH)/../../../Classes/HelloWorldScene.cpp \
+                   $(LOCAL_PATH)/../../../Classes/MenuScene.cpp \
+                   $(LOCAL_PATH)/../../../Classes/SettingLayer.cpp
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../../Classes
 
@@ -28,7 +30,7 @@ LOCAL_STATIC_LIBRARIES := cocos2dx_static
 
 include $(BUILD_SHARED_LIBRARY)
 
-$(call import-add-path, $(LOCAL_PATH)/../../../cocos2d)
+$(call import-add-path, /usr/local/cocos2d-x-3.17/cocos2d)
 $(call import-module, cocos)
 
 # _COCOS_LIB_IMPORT_ANDROID_BEGIN
