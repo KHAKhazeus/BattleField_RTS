@@ -81,6 +81,7 @@ list(APPEND GAME_HEADER
 	Classes/Unit.h
 	Classes/MouseRect.h
 	Classes/PathArithmetic.h
+	Classes/BattleField_RTS.h
      )
 
 if(ANDROID)

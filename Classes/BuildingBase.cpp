@@ -474,7 +474,7 @@ void PowerPlant::Build() {
 	// set the HP bar as a child
 	this->addChild(this->getHP(), 210);
 	// set the HP interval
-	this->setHPInterval(this->getHP()->getPercent() / (float)this->getLifeValue());
+	this->setHPInterval(this->getHP()->getPercent() / static_cast<float>(this->getLifeValue()));
 	loadingBar->setVisible(false);
 }
 

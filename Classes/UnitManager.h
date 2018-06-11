@@ -32,6 +32,13 @@ public:
 	void selectUnitsByRect(MouseRect* mouse_rect);
 
 	void playerMoveWithWayPoints(Unit* player, Vec2 position, std::vector<Vec2> path);
+
+	void delay(float);
+	//@@param1 the Pointer to the Player
+	//@@param2 the Pointer to the Enemy
+	void attack(Unit* player, Unit* enemy);
+	
+	void attackEffect(Unit* player, Unit* enemy);
 private:
 	//the count of _building
 	int _building;

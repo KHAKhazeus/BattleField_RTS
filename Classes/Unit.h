@@ -26,6 +26,8 @@ protected:
 	bool _isSelected;//unit has been selected?
 	bool _isBuilding;//if it's a building
 	char _type;//the type of the unit
+	int _range; //the lenth/2 of the building
+	int _fixModel;
 public:
 	// Get the aniamtion
 	static Unit* create(const std::string& filename) {
@@ -81,14 +83,20 @@ public:
 	virtual Vec2 getTiledPosition() { return { 0,0 }; }
 	virtual void setTiledPosition(Vec2 pos) {}
 
+	virtual int getAttack() { return 0; }
+	virtual int getAttackInterval() { return 100; }
+	
+	//get the range of the building
+	int getRange() { return _range; }
+	void setRange(int range) { _range = range; }
+
+
 	//set and get the HPInterval
 	void setHPInterval(float HPInterval) {
 		_HPInterval = HPInterval;
-		if (_HPInterval <= 0) {
-			setDeath();
-		}
 	}
-	int getHPInterval() { return _HPInterval; }
+	float getHPInterval() { return _HPInterval; }
+
 
 	//set and judge whether the unit can move
 	void setMove(bool move) { _isMove = move; }
@@ -106,6 +114,8 @@ public:
 	void setSelected(bool selected) { _isSelected = selected; }
 	bool getSelected() { return _isSelected; }
 
+	void setFixModel(int model) { _fixModel = model; }
+	int getFixModel() { return _fixModel; }
 	//Unit death
 	void setDeath() {
 		//TODO animation?

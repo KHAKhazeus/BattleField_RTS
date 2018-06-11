@@ -37,7 +37,8 @@ bool Base::init() {
 	setIsBuilding(true);
 	setCampID(RED);
 
-	_min_range = 2;
+	setRange(2);
+	setFixModel(FIX_SQUARE);
 	_max_range = 30;
 	setBuilt(false);
 	setSelected(false);
@@ -73,6 +74,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 
 		auto height = this->getPosition().y * 0.3;
 		std::vector<Sprite *> temp_sprite;
+		std::vector<bool> boolean_tag;
 		int size = 4;
 		for (int i = 0; i < size; i++) {
 			auto temp = Sprite::create(StringUtils::format("unit/building_%d.png",i+1));
@@ -80,23 +82,65 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 			auto width = -temp->getContentSize().width/2;
 			temp->setScale(0.3);
 			//devided it into size(a num) pieces
-			temp->setPosition( width - width* 2 * static_cast<float> (i) / size,
+			temp->setPosition( width - width* 3 * static_cast<float> (i) / size,
 				height);
 			temp_sprite.push_back(temp);
 			this->addChild(temp);
+		}
+		auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
+		auto money = tempScene->getMoney()->getMoney();
+		auto elect = tempScene->getPower()->getPower();
+		if (money >= MONEYMINE_GOLD && elect >= MONEYMINE_ELECT) {
+			boolean_tag.push_back(true);
+
+		}
+		else {
+			boolean_tag.push_back(false);
+			temp_sprite.at(0)->setColor(Color3B(255, 0, 0));
+			temp_sprite.at(0)->setOpacity(50);
+		}
+		if (money >= POWERPLANT_GOLD) {
+			boolean_tag.push_back(true);
+		}
+		else {
+			boolean_tag.push_back(false);
+			temp_sprite.at(1)->setColor(Color3B(255, 0, 0));
+			temp_sprite.at(1)->setOpacity(50);
+		}
+		if (money >= SOLDIERBASE_GOLD && elect >= SOLDIERBASE_ELECT) {
+			boolean_tag.push_back(true);
+		}
+		else {
+			boolean_tag.push_back(false);
+			temp_sprite.at(2)->setColor(Color3B(255, 0, 0));
+			temp_sprite.at(2)->setOpacity(50);
+		}
+		if (money >= WARFACTORY_GOLD && elect >= WARFACTORY_ELECT) {
+			boolean_tag.push_back(true);
+		}
+		else {
+			boolean_tag.push_back(false);
+			temp_sprite.at(3)->setColor(Color3B(255, 0, 0));
+			temp_sprite.at(3)->setOpacity(50);
 		}
 		auto listener = EventListenerTouchOneByOne::create();
 		listener->setSwallowTouches(true);
 		//Click the small icon
 		for (auto i = 0; i < temp_sprite.size(); i++) {
 			auto temp = temp_sprite.at(i);
-			listener->onTouchBegan = [temp,temp_sprite,this,i](Touch *touch, Event *event) {
+			listener->onTouchBegan = [boolean_tag,temp,temp_sprite,this,i](Touch *touch, Event *event) {
 				auto target = static_cast<Sprite*>(event->getCurrentTarget());
 				auto locationInNode = target->convertToNodeSpace(touch->getLocation());
-				
 				Size s = target->getContentSize();
 				auto rect = Rect(0, 0, s.width, s.height);
 				if (rect.containsPoint(locationInNode)) {
+					if (!boolean_tag.at(i)) {
+						//TODO warning sound
+						for (auto temp : temp_sprite) {
+							this->removeChild(temp, true);
+						}
+						return false;
+					}
 					if (isCreated()) {
 						return false;
 					}
@@ -110,7 +154,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 					*/
 					auto tempNode = _base->getParent()->getParent()->getParent();
 					auto pos = this->convertToWorldSpace(temp->getPosition());
-					temp_building->setOpacity(50);
+					temp_building->setOpacity(75);
 					temp_building->setPosition(pos);
 					tempNode->addChild(temp_building,200);
 					auto listener1 = EventListenerTouchOneByOne::create();
@@ -155,7 +199,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 
 						}
 						else {
-							temp_building->setColor(Color3B(255, 99, 71));
+							temp_building->setColor(Color3B(255,0,0));
 							this->setBuilt(false);
 						}
 
@@ -309,10 +353,6 @@ void Base::onTouchEnded(Touch *touch, Event *event) {
 
 Unit* Base::getBase() {
 	return _base;
-}
-
-int Base::getMinRange() {
-	return _min_range;
 }
 
 int Base::getMaxRange() {

@@ -10,7 +10,6 @@ class Base :public Unit {
 private:
 	Unit * _base;
 	std::vector<Sprite *>_build_child;
-	int _min_range;
 	int _max_range;
 	bool _isbuilt;
 	bool _isCreated;
@@ -21,7 +20,6 @@ public:
 	//TODO get the Sprite . A better Way?
 	Unit * getBase(); 
 	//get the range of the Base
-	int getMinRange();
 	int getMaxRange();
 	//get the boolean if we can build a building
 	bool getBuilt();

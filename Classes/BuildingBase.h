@@ -10,6 +10,7 @@
 #include "ui/CocosGUI.h"
 #include "Grid.h"
 #include "Unit.h"
+#include "BattleField_RTS.h"
 
 USING_NS_CC;
 using namespace ui;
@@ -21,7 +22,6 @@ protected:
 	int _gold;//expence to build the building
 	int _elect;//electricity spent to build the building
 	LoadingBar* _buildBar;// the bar diaplayed during building
-	int _range; //the lenth/2 of the building
 	static bool _isbuilt; //to judge whether there is builiding built
 	bool _isCreated;
 public:
@@ -37,8 +37,7 @@ public:
 	void setCreated(bool created) { _isCreated = created; }
 	bool getCreated() { return _isCreated; }
 
-	//get the range of the building
-	int getRange() { return _range; }
+	
 
 	//set the boolean ...
 	//get the boolean to judge if there is a builing built
@@ -71,7 +70,8 @@ public:
 		_gold = 500;
 		_elect = 10;
 		_lifeValue = 900;
-		_range = 2;
+		setRange(2);
+		setFixModel(FIX_HEIGHT);
 		//
 		setCampID(RED);
 		setIsBuilding(true);
@@ -102,7 +102,8 @@ public:
 		_gold = 2000;
 		_elect = 40;
 		_lifeValue = 1000;
-		_range = 2;
+		setRange(2);
+		setFixModel(FIX_SQUARE);
 		//
 		setCampID(RED);
 		setIsBuilding(true);
@@ -129,9 +130,10 @@ public:
 		_gold = 600;
 		_elect = 150;
 		_lifeValue = 750;
-		_range = 1;
+		setRange(1);
+		setFixModel(FIX_SQUARE);
 		//
-		setCampID(RED);
+		setCampID(BLUE);
 		setIsBuilding(true);
 	}
 
@@ -155,7 +157,8 @@ public:
 		_gold = 2000;
 		_elect = 50;
 		_lifeValue = 1200;
-		_range = 2;
+		setRange(2);
+		setFixModel(FIX_HEIGHT);
 		//
 		setCampID(RED);
 		setIsBuilding(true);

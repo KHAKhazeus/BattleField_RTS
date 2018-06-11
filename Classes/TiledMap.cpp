@@ -148,6 +148,8 @@ void TiledMap::removeMapGrid(Vec2 Pos) {
 	auto x = static_cast<int> (Pos.x);
 	auto y = static_cast<int> (Pos.y);
 	auto grid = _grid_Vector.at(x).at(y);
+	auto id = getUnitIdByPosition(Pos);
+	removeMapId(id);
 	_gridAndId_Map.erase(grid);
 	grid->setPass(true);
 }
@@ -161,6 +163,39 @@ bool TiledMap::checkMapGrid(Vec2 Pos) {
 	}
 	return false;
 }
+
+void TiledMap::removeMapGrid(Vec2 pos, int fix_model) {
+	auto x = static_cast<int> (pos.x);
+	auto y = static_cast<int> (pos.y);
+	auto id = getUnitIdByPosition(pos);
+	auto tempSprite = getUnitById(id);
+	auto range = tempSprite->getRange();
+	switch (fix_model) {
+		case FIX_HEIGHT:
+			for (auto i = x - range; i <= x + range; i++) {
+				for (auto j = y - range + 1; j <= y + range - 1; j++) {
+					auto grid = _grid_Vector.at(i).at(j);
+					grid->setPass(true);
+					_gridAndId_Map.erase(grid);
+				}
+			}
+			break;
+		case FIX_SQUARE:
+			for (auto i = x - range; i <= x + range; i++) {
+				for (auto j = y - range; j <= y + range; j++) {
+					auto grid = _grid_Vector.at(i).at(j);
+					grid->setPass(true);
+					_gridAndId_Map.erase(grid);
+				}
+			}
+			break;
+		default:
+			break;
+	}
+	removeMapId(id);
+}
+
+
 
 int TiledMap::getUnitIdByPosition(Vec2 Pos) {
 	auto x = static_cast<int> (Pos.x);
@@ -270,11 +305,8 @@ void TiledMap::clearUp() {
 	//TODO   can use STL function swap £¿
 }
 
-bool TiledMap::checkSize() {
-	if (_select_Vector.size() > 0) {
-		return true;
-	}
-	return false;
+int TiledMap::checkSize() {
+	return _select_Vector.size();
 }
 
 const std::vector<Unit*>* TiledMap::getSelectedVector() {
@@ -285,12 +317,14 @@ Vec2 TiledMap::findFreeNear(Vec2 position) {
 	if (checkPass(position)) {
 		return position;
 	}
-	for (int i = 1; i < _tiled_Map->getMapSize().width + _tiled_Map->getMapSize().height; i++) {
+	for (int i = 1; i < _tiled_Map->getMapSize().width; i++) {
 		for (int j = -i; j <= i; j++) {
 			int k = i - abs(j);
-			if (checkPass(position.x + j, position.y + k))
+			if (TiledMap::checkBoundary(Vec2(position.x + j, position.y + k))
+				&& checkPass(position.x + j, position.y + k))
 				return Vec2(position.x + j, position.y + k);
-			if (checkPass(position.x + j, position.y - k))
+			if (TiledMap::checkBoundary(Vec2(position.x + j, position.y - k))
+				&& checkPass(position.x + j, position.y - k))
 				return Vec2(position.x + j, position.y - k);
 		}
 	}

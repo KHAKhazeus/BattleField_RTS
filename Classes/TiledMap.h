@@ -2,6 +2,7 @@
 #include "cocos2d.h"
 #include "Grid.h"
 #include "Unit.h"
+#include "BattleField_RTS.h"
 USING_NS_CC;
 
 
@@ -19,6 +20,7 @@ public:
 	//All the operations towards the map will change the boolean of the character _pass of Grid£¡
 	//The _pass change to true	
 	static void removeMapGrid(Vec2);
+	static void removeMapGrid(Vec2 pos, int fix_modelf);
 	//@@The type of param is Vec2
 	//@@param 1 is the old position 
 	//@@param 2 is the new position
@@ -75,7 +77,7 @@ public:
 	//@@clear up the vector
 	static void clearUp();
 	//To check if the vector is empty
-	static bool checkSize();
+	static int checkSize();
 	//To get the Pointer to the SelectedVector
 	static const std::vector<Unit*>* getSelectedVector();
 

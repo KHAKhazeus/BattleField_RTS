@@ -133,7 +133,7 @@ public:
 		_lifeValue = 100;
 		_moveSpeed = 9;
 		_gold = 150;
-		_attackRange = 0;
+		_attackRange = 1;
 		_attack = 20;
 		_attackInterval = 0.2;
 		//
