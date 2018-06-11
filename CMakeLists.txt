@@ -138,18 +138,29 @@ set(APP_SRC
     ${GAME_HEADER}
     )
 
-set(PROTOBUFF_LIB_PATH Classes/lib/Debug)
+set(PROTOBUFF_LIB_PATH Classes/lib/Debug/Protobuf)
 set(_protobuff_prefix protobuff)
-set(protobuff_INCLUDE_DIRS Classes/include)
+set(protobuff_INCLUDE_DIRS Classes/include/google)
 set(protobuff_LIBRARIES protobuff)
 add_library(protobuff STATIC IMPORTED)
 set_target_properties(protobuff
 			PROPERTIES IMPORTED_LOCATION
 			${PROTOBUFF_LIB_PATH}/libprotobuf.a
 )
+
+set(BOOST_LIB_PATH Classes/lib/Debug/Boost)
+set(_boost_prefix boost)
+set(boost_INCLUDE_DIRS Classes/include/boost)
+set(boost_LIBRARIES boost)
+add_library(boost STATIC IMPORTED)
+set_target_properties(boost
+			PROPERTIES IMPORTED_LOCATION
+			${BOOST_LIB_PATH}/libboost_system.a
+)
+
 cocos_build_app(${APP_NAME}
                 APP_SRC "${APP_SRC}"
-                DEPEND_COMMON_LIBS "cocos2d" "protobuff"
+                DEPEND_COMMON_LIBS "cocos2d" "protobuff" "boost"
                 DEPEND_ANDROID_LIBS "cocos2d_android"
                 )
 
