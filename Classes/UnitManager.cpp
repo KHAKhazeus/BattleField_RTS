@@ -48,18 +48,16 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 			if (TiledMap::checkSize() > 1) {
 				for (auto temp : *TiledMap::getSelectedVector()) {
 					//if the enemy is in the attack range 如果敌人在攻击范围内
-					if (temp->judgeAttack(tiledLocation) && TiledMap::checkMapGrid(tiledLocation)) {
-						temp->stopAllActions();
+					if (temp->judgeAttack(tiledLocation)) {
+						if (TiledMap::checkMapGrid(tiledLocation))
+						{
+							temp->stopAllActions();
 							attackEffect(temp, enemy);
 							attack(temp, enemy);
-
-						if (temp->judgeAttack(tiledLocation)) {
-							//TODO function attack
-						//	attack(temp, tempSprite);
 						}
-						else {
-							//TODO function tracing
-						}
+					}
+					else {
+						//TODO tracing
 					}
 				}
 			}
@@ -72,7 +70,7 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 						if (temp->judgeAttack(tiledLocation)) {
 						//	attack(temp, tempSprite);
 							//TODO function attack
-						//	temp->stopAllActions();
+							temp->stopAllActions();
 							attackEffect(temp, enemy);
 							attack(temp, enemy);
 								
@@ -185,15 +183,15 @@ void UnitManager::playerMoveWithWayPoints(Unit* player, Vec2 position, std::vect
 	{
 	case 's':
 		animate = player->getAnimateByName("soldierRun/soldier", 0.2, 7);
-		speed = 0.4f;
+		speed = SOIDIER_SPEED;
 		break;
 	case 'd':
 		animate = player->getAnimateByName("dogRun/dog", 0.2, 5);
-		speed = 0.3f;
+		speed = DOG_SPEED;
 		break;
 	case 't':
 		animate = player->getAnimateByName("tank/tank", 0.2, 7);
-		speed = 0.5f;
+		speed = TANK_SPEED;
 		break;
 	default:
 		break;
@@ -322,6 +320,7 @@ void UnitManager::attack(Unit* player, Unit* enemy) {
 		else {
 			TiledMap::removeMapGrid(enemy->getTiledPosition());
 			_tiled_Map->getTiledMap()->removeChild(enemy);
+			return;
 		}
 	}
 	if (enemy->getHP() != nullptr) {
@@ -357,6 +356,20 @@ void UnitManager::attackEffect(Unit* player, Unit *enemy) {
 		break;
 	default:
 		break;
+	}
+	Vec2 tarPos = _tiled_Map->locationForTilePos(enemy->getPosition());
+	Vec2 myPos = _tiled_Map->locationForTilePos(player->getPosition());
+	float angle = atan2((tarPos.y - myPos.y), 
+		(tarPos.x - myPos.x)) * 180 / 3.14159;
+	if (player->isFlippedX()) {
+		player->setFlippedX(false);
+	}
+	if (enemy->getPosition().x < player->getPosition().x) {
+		player->setFlippedX(true);
+		player->setRotation(angle - 180);
+	}
+	else {
+		player->setRotation(angle);
 	}
 	if (isDog) {
 		auto callfuc = CallFunc::create([=] {

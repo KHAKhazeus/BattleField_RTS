@@ -101,7 +101,7 @@ void PathArithmetic::findPath() {
 
 std::vector<Vec2> PathArithmetic::getPath() {
 	Grid* grid = terminal_point;
-	while (grid->getParent() != start_point) {
+	while (grid != start_point) {
 		path.push_back(Vec2(grid->getX(), grid->getY()));
 		grid = grid->getParent();
 	}
