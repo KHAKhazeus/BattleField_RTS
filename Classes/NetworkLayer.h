@@ -11,6 +11,7 @@
 #include "cocos2d.h"
 #include "ui/CocosGUI.h"
 #include "SocketServer.h"
+#include "SocketClient.h"
 class NetworkLayer : public cocos2d::Layer
 {
 private:
@@ -18,7 +19,7 @@ private:
     float _node_width;
     cocos2d::EventListenerTouchOneByOne* _swallow_listner;
     SocketServer *socket_server;
-    
+    SocketClient *socket_client;
 public:
     
     virtual bool init() override;

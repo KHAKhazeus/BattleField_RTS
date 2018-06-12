@@ -200,19 +200,20 @@ void protobuf_RegisterTypes(const ::std::string&) {
 void AddDescriptorsImpl() {
   InitDefaults();
   static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
-      "\n\021GameMessage.proto\"\353\001\n\013GameMessage\022&\n\010c"
+      "\n\021GameMessage.proto\"\364\001\n\013GameMessage\022&\n\010c"
       "md_code\030\001 \001(\0162\024.GameMessage.CmdCode\022\016\n\006u"
       "nit_0\030\002 \001(\005\022\016\n\006unit_1\030\003 \001(\005\022\014\n\004base\030\004 \001("
       "\005\022\020\n\010building\030\005 \001(\005\022\016\n\006damage\030\006 \001(\005\022\034\n\tg"
       "rid_path\030\007 \001(\0132\t.GridPath\022\023\n\013create_type"
-      "\030\010 \001(\t\"1\n\007CmdCode\022\t\n\005CRTBD\020\000\022\t\n\005CRTBU\020\001\022"
-      "\007\n\003MOV\020\002\022\007\n\003ATK\020\003\"!\n\tGridPoint\022\t\n\001x\030\001 \001("
-      "\005\022\t\n\001y\030\002 \001(\005\"*\n\010GridPath\022\036\n\ngrid_point\030\001"
-      " \003(\0132\n.GridPoint\"6\n\020GameMessageGroup\022\"\n\014"
-      "game_message\030\001 \003(\0132\014.GameMessageb\006proto3"
+      "\030\010 \001(\t\":\n\007CmdCode\022\t\n\005CRTBD\020\000\022\t\n\005CRTBU\020\001\022"
+      "\007\n\003MOV\020\002\022\007\n\003ATK\020\003\022\007\n\003EMP\020\004\"!\n\tGridPoint\022"
+      "\t\n\001x\030\001 \001(\005\022\t\n\001y\030\002 \001(\005\"*\n\010GridPath\022\036\n\ngri"
+      "d_point\030\001 \003(\0132\n.GridPoint\"6\n\020GameMessage"
+      "Group\022\"\n\014game_message\030\001 \003(\0132\014.GameMessag"
+      "eb\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 400);
+      descriptor, 409);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "GameMessage.proto", &protobuf_RegisterTypes);
 }
@@ -238,6 +239,7 @@ bool GameMessage_CmdCode_IsValid(int value) {
     case 1:
     case 2:
     case 3:
+    case 4:
       return true;
     default:
       return false;
@@ -249,6 +251,7 @@ const GameMessage_CmdCode GameMessage::CRTBD;
 const GameMessage_CmdCode GameMessage::CRTBU;
 const GameMessage_CmdCode GameMessage::MOV;
 const GameMessage_CmdCode GameMessage::ATK;
+const GameMessage_CmdCode GameMessage::EMP;
 const GameMessage_CmdCode GameMessage::CmdCode_MIN;
 const GameMessage_CmdCode GameMessage::CmdCode_MAX;
 const int GameMessage::CmdCode_ARRAYSIZE;

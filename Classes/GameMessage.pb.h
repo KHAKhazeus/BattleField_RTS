@@ -76,12 +76,13 @@ enum GameMessage_CmdCode {
   GameMessage_CmdCode_CRTBU = 1,
   GameMessage_CmdCode_MOV = 2,
   GameMessage_CmdCode_ATK = 3,
+  GameMessage_CmdCode_EMP = 4,
   GameMessage_CmdCode_GameMessage_CmdCode_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   GameMessage_CmdCode_GameMessage_CmdCode_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
 bool GameMessage_CmdCode_IsValid(int value);
 const GameMessage_CmdCode GameMessage_CmdCode_CmdCode_MIN = GameMessage_CmdCode_CRTBD;
-const GameMessage_CmdCode GameMessage_CmdCode_CmdCode_MAX = GameMessage_CmdCode_ATK;
+const GameMessage_CmdCode GameMessage_CmdCode_CmdCode_MAX = GameMessage_CmdCode_EMP;
 const int GameMessage_CmdCode_CmdCode_ARRAYSIZE = GameMessage_CmdCode_CmdCode_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* GameMessage_CmdCode_descriptor();
@@ -185,6 +186,8 @@ class GameMessage : public ::google::protobuf::Message /* @@protoc_insertion_poi
     GameMessage_CmdCode_MOV;
   static const CmdCode ATK =
     GameMessage_CmdCode_ATK;
+  static const CmdCode EMP =
+    GameMessage_CmdCode_EMP;
   static inline bool CmdCode_IsValid(int value) {
     return GameMessage_CmdCode_IsValid(value);
   }
