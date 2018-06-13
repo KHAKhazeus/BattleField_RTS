@@ -21,11 +21,13 @@ using boost::system::error_code;
 
 class SocketClient{
 public:
-    ~SocketClient();
     static SocketClient* create(std::string server_ip, int port_number);
     
 private:
-    SocketClient(std::string server_ip, int port_number): _socket(_io), _endpoint(boost::asio::ip::address_v4::from_string(server_ip), port_number){}
+    SocketClient(std::string server_ip, int port_number): _socket(_io), _endpoint(boost::asio::ip::address_v4::from_string(server_ip), port_number){
+        _exchange_thread.reset(static_cast<std::thread*>(nullptr), [](std::thread*){});
+        _read_thread.reset(static_cast<std::thread*>(nullptr), [](std::thread*){});
+    }
     
     void startClient();
     void startConnect();
@@ -42,7 +44,8 @@ private:
     boost::asio::io_service _io;
     tcp::socket _socket;
     tcp::endpoint _endpoint;
-    std::unique_ptr<std::thread> _exchange_thread, _read_thread;
+    //unique?
+    std::shared_ptr<std::thread> _exchange_thread, _read_thread;
     bool _error_flag{false};
     bool _cancel_flag{false};
     bool _stop_flag{false};

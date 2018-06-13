@@ -12,9 +12,14 @@
 
 
 SocketClient* SocketClient::create(std::string server_ip, int port_nunber){
-    auto new_client = new SocketClient(server_ip, port_nunber);
-    new_client->startClient();
-    return new_client;
+    try{
+        auto new_client = new SocketClient(server_ip, port_nunber);
+        new_client->startClient();
+        return new_client;
+    }
+    catch(...){
+        std::cerr << "Failed to Create Client" << std::endl;
+    }
 }
 
 void SocketClient::startClient(){
@@ -45,12 +50,13 @@ void SocketClient::stopClient(){
         _read_thread->join();
         if(_error_flag){
             std::cerr << "Client Error!" << std::endl;
+            std::string error_message = "Error";
+            _message_set_deque.push_back(error_message);
         }
         else if(_cancel_flag){
             std::cout << "Client Successfully Cancelled" << std::endl;
-        }
-        else{
-            std::cerr << "Unknown Errors, Client Quit!" << std::endl;
+            std::string cancel_message = "Cancelled";
+            _message_set_deque.push_back(cancel_message);
         }
     }
     catch(...){
@@ -76,12 +82,12 @@ void SocketClient::pushMessageSet(const error_code &err){
 
 void SocketClient::connectHandle(const error_code &err){
     if(!err){
-        std::cout << "client connected" << std::endl;
+        std::cout << "Client Connected" << std::endl;
         auto new_thread = new std::thread(std::bind(&SocketClient::readMessages, this));
         _read_thread.reset(new_thread);
     }
     else{
-        std::cerr << "failed to connect" << std::endl;
+        std::cerr << "Failed to Connect" << std::endl;
         checkStop();
         std::unique_lock<std::mutex> lock(_mutex);
         _error_flag = true;
@@ -91,18 +97,19 @@ void SocketClient::connectHandle(const error_code &err){
 void SocketClient::writeMessages(std::string message_set){
     static int times = 0;
     static int error_times = 0;
-    boost::asio::async_write(_socket, boost::asio::buffer(message_set), [=](const error_code &err){
+    boost::asio::async_write(_socket, boost::asio::buffer(message_set), [](const error_code &err, std::size_t bytes_transferred){
         if(!err){
             times ++;
-            std::cout << times << ".: Successfully Upload Messages" << std::endl;
+            std::cout << times << ".: Successfully Upload Messages, bytes transferred: " << bytes_transferred << std::endl;
         }
         else{
             error_times ++;
-            std::cout << error_times << ".: Error Upload Messages" << std::endl;
+            std::cout << error_times << ".: Error Upload Messages, bytes transferred: " << bytes_transferred << "Missing Bytes: Unknown" << std::endl;
         }
     });
 }
 
 void SocketClient::startConnect(){
+    std::cout << "Client Start Connecting" << std::endl;
     _socket.async_connect(_endpoint, std::bind(&SocketClient::connectHandle, this, std::placeholders::_1));
 }

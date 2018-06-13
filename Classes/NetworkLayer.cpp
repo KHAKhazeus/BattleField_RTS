@@ -27,10 +27,23 @@ void NetworkLayer::initializeServerSide(){
 }
 
 void NetworkLayer::initializeClientSide(){
-    log("%s", "Client Initialized");
+    auto color_layer = this->getChildByName("color_layer");
+    auto ipbox = static_cast<TextField *>(color_layer->getChildByName("ipbox"));
+    auto portbox = static_cast<TextField *>(color_layer->getChildByName("portbox"));
+    auto ip = ipbox->getString();
+    std::stringstream port_stream(portbox->getString());
+    int port_number;
+    port_stream >> port_number;
+    auto new_socket_client = SocketClient::create(ip, port_number);
+    
+    if(!new_socket_client){
+        _socket_client.reset(new_socket_client);
+    }
 }
 
 void NetworkLayer::resetClientAndServer(){
+    _socket_client.reset(static_cast<SocketClient*>(nullptr),[](SocketClient*){});
+    _socket_server.reset(static_cast<SocketServer*>(nullptr),[](SocketServer*){});
     log("%s", "Client and Server Reset");
 }
 
@@ -49,6 +62,7 @@ bool NetworkLayer::init(){
     if(!layer){
         problemLoading("LayerColor");
     }
+    layer->setName("color_layer");
     
     this->addChild(layer);
     
@@ -93,12 +107,13 @@ bool NetworkLayer::init(){
     auto start_server_size = start_server->getContentSize();
     
     
-    auto ipbox = TextField::create("127.0.0.1", "Arial-Bold.ttf", start_server_size.height/3);
+    auto ipbox = TextField::create("Input IPv4", "Arial-Bold.ttf", start_server_size.height/3);
     if(!ipbox){
         problemLoading("Menu/InputBox.png");
     }
     else{
         auto ipbox_size = ipbox->getContentSize();
+        ipbox->setName("ipbox");
         ipbox->setPlaceHolderColor(Color4B(255,255,255,200));
         ipbox->setPosition(Vec2(visible_width/2 - ipbox_size.width * 0.8 - small_adjust, visible_height/2 + start_server_size.height + ipbox_size.height/2 + small_adjust + up_margin));
         ipbox->setMaxLength(15);
@@ -171,12 +186,13 @@ bool NetworkLayer::init(){
         port_text->setPosition(Vec2(left_margin * 0.7, up_margin/2.4));
     }
     
-    auto portbox = TextField::create("8080", "Arial-Bold.ttf", start_server_size.height/3);
+    auto portbox = TextField::create("port", "Arial-Bold.ttf", start_server_size.height/3);
     if(!portbox){
         problemLoading("Menu/InputBox.png");
     }
     else{
         auto portbox_size = portbox->getContentSize();
+        portbox->setName("portbox");
         portbox->setPlaceHolderColor(Color4B(255,255,255,200));
         portbox->setPosition(Vec2((text_port_background->getPosition()).x + portbox_size.width * 1.8 + small_adjust + (text_port_background->getContentSize()).width/2, visible_height/2 + start_server_size.height + portbox_size.height/2 + small_adjust + up_margin));
         portbox->setMaxLength(4);
