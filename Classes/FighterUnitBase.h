@@ -64,6 +64,8 @@ public:
 	//to judge if the enemy is in the attack range
 	bool judgeAttack(Vec2 pos);
 
+	Vec2 searchEnemy();
+	void autoAttack(float dt);
 };
 
 class Soldier :public FighterUnitBase

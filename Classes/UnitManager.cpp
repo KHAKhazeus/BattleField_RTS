@@ -299,7 +299,6 @@ void UnitManager::playerMoveWithWayPoints(Unit* player, Vec2 position, std::vect
 	player->runAction(sequence);
 }
 
-
 //ÔÝÊ±Ã»ÓÃ
 void UnitManager::delay(float dt) {
 	clock_t start_time, cur_time;
@@ -393,6 +392,17 @@ void UnitManager::attackEffect(Unit* player, Unit *enemy) {
 		bullet->runAction(sequence);
 	}
 }
+
+
+void UnitManager::autoAttack(float dt) {
+	for (auto i = 0; i < _unit_Vector.size(); i++) {
+		auto pos = _unit_Vector.at(i)->searchEnemy();
+		if (pos.x != -1) {
+			auto id = ;
+		}
+	}
+}
+
 /*
 void UnitManager::attack(Unit *player, Unit *target) {
 	/*change the direction of the unit according to the target position

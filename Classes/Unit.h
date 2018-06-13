@@ -116,6 +116,9 @@ public:
 
 	void setFixModel(int model) { _fixModel = model; }
 	int getFixModel() { return _fixModel; }
+
+	virtual Vec2 searchEnemy(){ return Vec2(-1,-1); }
+	
 	//Unit death
 	void setDeath() {
 		//TODO animation?
