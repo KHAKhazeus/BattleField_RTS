@@ -4,6 +4,7 @@ bool UnitManager::init(TiledMap * tiledMap) {
 	_building =  1;
 	_soider = 0;
 	_tiled_Map = tiledMap;
+	schedule(schedule_selector(UnitManager::autoAttack),1.0);
 	return true;
 }
 
@@ -395,10 +396,15 @@ void UnitManager::attackEffect(Unit* player, Unit *enemy) {
 
 
 void UnitManager::autoAttack(float dt) {
-	for (auto i = 0; i < _unit_Vector.size(); i++) {
-		auto pos = _unit_Vector.at(i)->searchEnemy();
-		if (pos.x != -1) {
-			auto id = ;
+	if (_unit_Vector.size() > 0) {
+		for (auto i = 0; i < _unit_Vector.size(); i++) {
+			auto pos = _unit_Vector.at(i)->searchEnemy();
+			if (pos.x != -1) {
+				auto id = TiledMap::getUnitIdByPosition(pos);
+				auto enemy = TiledMap::getUnitById(id);
+				attack(_unit_Vector.at(i), enemy);
+				attackEffect(_unit_Vector.at(i), enemy);
+			}
 		}
 	}
 }
