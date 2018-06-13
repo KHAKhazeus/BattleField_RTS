@@ -190,16 +190,19 @@ bool SettingLayer::init(){
     layer->addChild(effects_slider, 0);
     layer->addChild(return_button, 0);
     
-    groupFadeIn(fade_targets);
-    auto background_fade = FadeTo::create(0.5, 150);
+    fadeInIteration(fade_targets);
+    auto background_fade = FadeTo::create(0.5, 170);
     layer->runAction(background_fade);
     return true;
 }
 
-void SettingLayer::groupFadeIn(cocos2d::Vector<Node*> group){
-    for(auto target : group){
-        auto fade_in = FadeIn::create(0.5);
-        target->runAction(fade_in);
+void SettingLayer::fadeInIteration(Vector<Node*> targets){
+    if(!targets.empty()){
+        for(auto target : targets){
+            auto fade_in = FadeIn::create(0.5);
+            target->runAction(fade_in);
+            fadeInIteration(target->getChildren());
+        }
     }
 }
 
