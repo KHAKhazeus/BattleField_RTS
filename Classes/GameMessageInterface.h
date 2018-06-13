@@ -28,6 +28,7 @@ public:
     static GameMessage newAttackMessage(int attacker_id, int under_attack_id, int damage);
     
     static GameMessage newEMPMessage();
+	
 };
 
 #endif //__GAME_MESSAGE_INTERFACE_H__
