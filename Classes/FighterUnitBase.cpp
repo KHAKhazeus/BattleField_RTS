@@ -3,7 +3,8 @@
 //18/6/1
 
 #include "FighterUnitBase.h"
-
+#include "SimpleAudioEngine.h"
+using namespace CocosDenshion;
 
 bool Soldier::_isBeingCreated = false;
 
@@ -44,13 +45,14 @@ void Soldier::Create(SoldierBase* soldierBase) {
 	progress->setBarChangeRate(Vec2(1.0f, 0.f));
 	progress->setType(ProgressTimer::Type::BAR);
 	Vec2 pos = Vec2(this->getPosition().x, this->getPosition().y);
-	progress->setPosition(Vec2(120, 160));
+	progress->setPosition(Vec2(120, 200));
 	soldierBase->addChild(progress);
 	auto pft = ProgressFromTo::create(2.4f, progress->getPercentage(), 100);
 	auto sequence = Sequence::create(pft, CallFunc::create([=] {
 		soldierBase->removeChild(progress, true);
 		this->setVisible(true);
 		Soldier::setIsCreated(false);
+		SimpleAudioEngine::getInstance()->playEffect(SOLDIER, false);
 	}), nullptr);
 	progress->runAction(sequence);
 	// create a loading bar
@@ -61,7 +63,7 @@ void Soldier::Create(SoldierBase* soldierBase) {
 	// set direction
 	loadingBar->setDirection(LoadingBar::Direction::LEFT);
 	// set position
-	loadingBar->setPosition(Vec2(30, 45));
+	loadingBar->setPosition(Vec2(25, 35));
 	// set Hp bar for soldier
 	this->setHP(loadingBar);
 	// set the HP bar as a child
@@ -81,13 +83,14 @@ void Dog::Create(SoldierBase* soldierBase) {
 	progress->setBarChangeRate(Vec2(1.0f, 0.f));
 	progress->setType(ProgressTimer::Type::BAR);
 	Vec2 pos = Vec2(this->getPosition().x, this->getPosition().y);
-	progress->setPosition(Vec2(120, 160));
+	progress->setPosition(Vec2(120, 200));
 	soldierBase->addChild(progress);
 	auto pft = ProgressFromTo::create(2.4f, progress->getPercentage(), 100);
 	auto sequence = Sequence::create(pft, CallFunc::create([=] {
 		soldierBase->removeChild(progress, true);
 		this->setVisible(true);
 		Dog::setIsCreated(false);
+		SimpleAudioEngine::getInstance()->playEffect(DOG, false);
 	}), nullptr);
 	progress->runAction(sequence);
 	// create a loading bar
@@ -98,7 +101,7 @@ void Dog::Create(SoldierBase* soldierBase) {
 	// set direction
 	loadingBar->setDirection(LoadingBar::Direction::LEFT);
 	// set position
-	loadingBar->setPosition(Vec2(30,35));
+	loadingBar->setPosition(Vec2(25,25));
 	// set Hp bar for soldier
 	this->setHP(loadingBar);
 	// set the HP bar as a child
@@ -113,18 +116,20 @@ void Tank::Create(WarFactory* warFactory) {
 	auto barSprite = Sprite::create("bar/loadingbar.png");
 	ProgressTimer* progress = ProgressTimer::create(barSprite);
 	progress->setPercentage(0.0f);
-	progress->setScale(0.3f);
+	progress->setScaleX(0.5f);
+	progress->setScaleY(0.3f);
 	progress->setMidpoint(Vec2(0.0f, 0.5f));
 	progress->setBarChangeRate(Vec2(1.0f, 0.f));
 	progress->setType(ProgressTimer::Type::BAR);
 	Vec2 pos = Vec2(this->getPosition().x, this->getPosition().y);
-	progress->setPosition(Vec2(140, 160));
+	progress->setPosition(Vec2(120, 160));
 	warFactory->addChild(progress);
 	auto pft = ProgressFromTo::create(2.4f, progress->getPercentage(), 100);
 	auto sequence = Sequence::create(pft, CallFunc::create([=] {
 		warFactory->removeChild(progress, true);
 		this->setVisible(true);
 		Tank::setIsCreated(false);
+		SimpleAudioEngine::getInstance()->playEffect(TANK, false);
 	}), nullptr);
 	progress->runAction(sequence);
 	// create a loading bar

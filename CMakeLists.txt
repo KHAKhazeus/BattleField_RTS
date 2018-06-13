@@ -66,6 +66,7 @@ list(APPEND GAME_SOURCE
 	 Classes/Unit.cpp
 	 Classes/MouseRect.cpp
 	 Classes/PathArithmetic.cpp
+	 Classes/GameMessageInterface.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
@@ -82,6 +83,7 @@ list(APPEND GAME_HEADER
 	Classes/MouseRect.h
 	Classes/PathArithmetic.h
 	Classes/BattleField_RTS.h
+	Classes/GameMessageInterface.h
      )
 
 if(ANDROID)

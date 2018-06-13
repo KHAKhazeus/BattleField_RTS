@@ -11,6 +11,17 @@
 #include "ui/CocosGUI.h"
 
 USING_NS_CC;
+
+#define CONSTRUCTION "construction.mp3"
+#define DOG "dogFinished.mp3"
+#define SOLDIER "soldierFinished.mp3"
+#define TANK "tankFinished.mp3"
+#define BUILD "Building.mp3"
+#define FIGHT "gun.mp3"
+#define LOST "unitLost.mp3"
+#define TANKBULLET "tankbullet.mp3"
+#define EXPLODE "explode.mp3"
+
 using namespace ui;
 
 class Unit :public cocos2d::Sprite {
@@ -25,9 +36,10 @@ protected:
 	int _campID;//unit belongs to which side
 	bool _isSelected;//unit has been selected?
 	bool _isBuilding;//if it's a building
-	char _type;//the type of the unit
+	std::string _type;//the type of the unit
 	int _range; //the lenth/2 of the building
 	int _fixModel;
+	bool _isProgressed;
 public:
 	// Get the aniamtion
 	static Unit* create(const std::string& filename) {
@@ -67,6 +79,8 @@ public:
 	void setHP(LoadingBar* HP) { _HP = HP; }
 	LoadingBar* getHP() { return _HP; }
 
+	void setProgressed(bool progressed) { _isProgressed = progressed; }
+	bool getProgressed() { return _isProgressed; }
 
 	//set and get the Id for the building
 	int getIdCount() { return _id; }
@@ -76,8 +90,8 @@ public:
 
 	virtual bool judgeAttack(Vec2 pos) { return false; }
 
-	virtual void setType(char type) { _type = type; }
-	virtual char getType() { return _type; }
+	virtual void setType(std::string type) { _type = type; }
+	virtual std::string getType() { return _type; }
 
 	virtual void moveTo(Vec2 pos) {}
 	virtual Vec2 getTiledPosition() { return { 0,0 }; }
@@ -121,6 +135,7 @@ public:
 		//TODO animation?
 		this->getParent()->removeChild(this, true);
 	}
+	
 };
 
 #endif // !UNIT_H

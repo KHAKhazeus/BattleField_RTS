@@ -90,7 +90,7 @@ public:
 	Soldier() {
 		_lifeValue = 115;
 		_gold = 80;
-		_attackRange = 70;
+		_attackRange = 10;
 		_attack = 15;
 		_attackInterval = 0.2;
 		//
@@ -98,7 +98,7 @@ public:
 		setCampID(RED);
 		setUnitID(getIdCount());
 		addIdCount();
-		setType('s');
+		setType(std::string("s"));
 	}
 	void Create(SoldierBase*);
 };
@@ -126,7 +126,7 @@ public:
 	Dog() {
 		_lifeValue = 100;
 		_gold = 150;
-		_attackRange = 10;
+		_attackRange = 2;
 		_attack = 20;
 		_attackInterval = 0.2;
 		//
@@ -134,7 +134,7 @@ public:
 		setCampID(RED);
 		setUnitID(getIdCount());
 		addIdCount();
-		setType('d');
+		setType(std::string("d"));
 	}
 	void Create(SoldierBase*);
 };
@@ -161,15 +161,15 @@ public:
 	Tank() {
 		_lifeValue = 440;
 		_gold = 500;
-		_attackRange = 100;
+		_attackRange = 15;
 		_attack = 30;
 		_attackInterval = 0.5;
 		//
 		setIsBuilding();
-		setCampID(BLUE);
+		setCampID(RED);
 		setUnitID(getIdCount());
 		addIdCount();
-		setType('t');
+		setType(std::string("t"));
 		
 	}
 	void Create(WarFactory*);

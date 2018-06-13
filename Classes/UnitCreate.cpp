@@ -1,5 +1,8 @@
 #include "UnitCreate.h"
 #include "GameScene.h"
+#include "SimpleAudioEngine.h"
+using namespace CocosDenshion;
+
 Base* Base::create() {
 	auto base = new Base();
 	if (base && base->init()) {
@@ -129,6 +132,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 		for (auto i = 0; i < temp_sprite.size(); i++) {
 			auto temp = temp_sprite.at(i);
 			listener->onTouchBegan = [boolean_tag,temp,temp_sprite,this,i](Touch *touch, Event *event) {
+				SimpleAudioEngine::getInstance()->playEffect(BUILD, false);
 				auto target = static_cast<Sprite*>(event->getCurrentTarget());
 				auto locationInNode = target->convertToNodeSpace(touch->getLocation());
 				Size s = target->getContentSize();
@@ -216,12 +220,13 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 								auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
 								if (tempScene->getMoney()->checkMoney(moneyMine->getGold()) &&
 									tempScene->getPower()->checkPower(moneyMine->getElect())) {
+									auto id = moneyMine->getIdCount();
+									moneyMine->setUnitID(id);
+									UnitManager::msgs->newCreateBuildingMessage(moneyMine->getUnitID(), moneyMine->getType(), this->getCampID(), this->getUnitID());
+									moneyMine->addIdCount();
 									moneyMine->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
 									BuildingBase::setIsBuilt(true);
 									moneyMine->Build();
-									auto id = moneyMine->getIdCount();
-									moneyMine->setUnitID(id);
-									moneyMine->addIdCount();
 									TiledMap::newMapGrid(tiledLocation, id, moneyMine->getRange());
 									TiledMap::newMapId(id, moneyMine);
 				//					TiledMap::setUnpass(tiledLocation, moneyMine->getRange());
@@ -238,11 +243,12 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 								PowerPlant* powerPlant = PowerPlant::create("powerPlant/PowerBuilt_24.png");
 								auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
 								if (tempScene->getMoney()->checkMoney(powerPlant->getGold())) {
+									auto id = powerPlant->getIdCount();
+									powerPlant->setUnitID(id);
+									UnitManager::msgs->newCreateBuildingMessage(powerPlant->getUnitID(), powerPlant->getType(), powerPlant->getCampID(), this->getUnitID());
 									powerPlant->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
 									BuildingBase::setIsBuilt(true);
 									powerPlant->Build();
-									auto id = powerPlant->getIdCount();
-									powerPlant->setUnitID(id);
 									powerPlant->addIdCount();
 									TiledMap::newMapGrid(tiledLocation, id, powerPlant->getRange());
 									TiledMap::newMapId(id, powerPlant);
@@ -262,18 +268,18 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 								if (tempScene->getMoney()->checkMoney(soldierBase->getGold()) &&
 									tempScene->getPower()->checkPower(soldierBase->getElect())) {
 									BuildingBase::setIsBuilt(true);
-									soldierBase->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
-									soldierBase->Build();
+									
 									auto id = soldierBase->getIdCount();
 									soldierBase->setUnitID(id);
+									UnitManager::msgs->newCreateBuildingMessage(soldierBase->getUnitID(), soldierBase->getType(), soldierBase->getCampID(), this->getUnitID());
+									soldierBase->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
+									soldierBase->Build();
 									soldierBase->addIdCount();
 									TiledMap::newMapGrid(tiledLocation, id,soldierBase->getRange(),FIX_HEIGHT);
 									TiledMap::newMapId(id, soldierBase);
 		//							TiledMap::setUnpass(tiledLocation, soldierBase->getRange());
 									static_cast<TMXTiledMap*>(this->getParent())->addChild(soldierBase, 50);
-									auto listener = EventListenerTouchOneByOne::create();
-									listener->onTouchBegan = CC_CALLBACK_2(SoldierBase::onTouchBegan, soldierBase);
-									_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, soldierBase);
+									
 									tempScene->getVectorSoldier().pushBack(soldierBase);
 									tempScene->getVectorSoldier().pushBack(soldierBase);
 									tempScene->getPower()->spendPower(soldierBase->getElect());
@@ -289,19 +295,17 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 								if (tempScene->getMoney()->checkMoney(warFactory->getGold()) &&
 									tempScene->getPower()->checkPower(warFactory->getElect())) {
 									BuildingBase::setIsBuilt(true);
-									warFactory->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
-									warFactory->Build();
+									
 									auto id = warFactory->getIdCount();
 									warFactory->setUnitID(id);
+									UnitManager::msgs->newCreateBuildingMessage(warFactory->getUnitID(), warFactory->getType(), warFactory->getCampID(), this->getUnitID());
+									warFactory->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
+									warFactory->Build();
 									warFactory->addIdCount();
 									TiledMap::newMapGrid(tiledLocation, id, warFactory->getRange(),FIX_HEIGHT);
 									TiledMap::newMapId(id, warFactory);
 					//				TiledMap::setUnpass(tiledLocation, warFactory->getRange());
 									static_cast<TMXTiledMap*>(this->getParent())->addChild(warFactory, 50);
-
-									auto listener = EventListenerTouchOneByOne::create();
-									listener->onTouchBegan = CC_CALLBACK_2(WarFactory::onTouchBegan, warFactory);
-									_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, warFactory);
 									tempScene->getVectorFactory().pushBack(warFactory);
 									tempScene->getVectorFactory().pushBack(warFactory);
 									tempScene->getPower()->spendPower(warFactory->getElect());

@@ -7,10 +7,13 @@
 #include "MyResources.h"
 #include "MouseRect.h"
 #include "PathArithmetic.h"
+#include "GameMessageInterface.h"
 #include <cmath>
 USING_NS_CC;
+
 class UnitManager :public cocos2d::Node {
 public:
+	static GameMessageInterface * msgs ;
 	virtual bool init(TiledMap *);
 	static UnitManager * create(TiledMap* tiledMap) {
 		auto unitManager = new UnitManager();
@@ -41,7 +44,9 @@ public:
 	
 	void attackEffect(Unit* player, Unit* enemy);
 
-//	void attack(Unit *player,Unit *target);
+	//the unit destroy effect
+	void destroyEffect(Unit *unit,bool type);
+
 
 private:
 	//the count of _building

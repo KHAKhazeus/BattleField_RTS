@@ -5,7 +5,8 @@
 #include "BuildingBase.h"
 #include "FighterUnitBase.h"
 #include "GameScene.h"
-
+#include "SimpleAudioEngine.h"
+using namespace CocosDenshion;
 
 bool BuildingBase::_isbuilt = false;
 
@@ -66,6 +67,7 @@ Vec2 WarFactory::RandomPosition() {
 void SoldierBase::Build() {
 	auto animate =BuildingBase::getAnimateByName("soldierBase/soldierbase_", 0.1f, 23);
 	auto barSprite = Sprite::create("bar/loadingbar.png");
+	this->setProgressed(false);
 	ProgressTimer* progress = ProgressTimer::create(barSprite);
 	progress->setPercentage(0.0f);
 	progress->setScale(0.3f);
@@ -73,25 +75,30 @@ void SoldierBase::Build() {
 	progress->setBarChangeRate(Vec2(1.0f, 0.f));
 	progress->setType(ProgressTimer::Type::BAR);
 	Vec2 pos = Vec2(this->getPosition().x, this->getPosition().y);
-	progress->setPosition(Vec2(140, 140));
+	progress->setPosition(Vec2(120, 200));
 	this->addChild(progress);
 	auto pft = ProgressFromTo::create(2.3f, progress->getPercentage(), 100);
 	this->runAction(animate);
 	auto sequence = Sequence::create(pft,CallFunc::create([=] {
 		this->removeChild(progress,true);
+		auto listener = EventListenerTouchOneByOne::create();
+		listener->onTouchBegan = CC_CALLBACK_2(SoldierBase::onTouchBegan, this);
+		_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
+		this->setProgressed(true);
+		SimpleAudioEngine::getInstance()->playEffect(CONSTRUCTION, false);
 	}), CallFunc::create([] {BuildingBase::setIsBuilt(false); }), nullptr);
 	progress->runAction(sequence);
 
 	// create a loading bar
 	auto loadingBar = LoadingBar::create("bar/planeHP.png");
-	loadingBar->setScaleX(0.25f);
+	loadingBar->setScaleX(0.3f);
 	loadingBar->setScaleY(0.1f);
 	// set the percentage
 	loadingBar->setPercent(60);
 	// set direction
 	loadingBar->setDirection(LoadingBar::Direction::LEFT);
 	// set position
-	loadingBar->setPosition(Vec2(140,100));
+	loadingBar->setPosition(Vec2(140, -5));
 	// set Hp bar for soldier
 	this->setHP(loadingBar);
 	// set the HP bar as a child
@@ -174,6 +181,7 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 							Dog* dog = Dog::create("dogRun/dog0.png");
 							auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
 							if (tempScene->getMoney()->checkMoney(dog->getGold())) {
+								UnitManager::msgs->newCreateUnitMessage(dog->getUnitID(), dog->getType(),dog->getCampID(),this->getUnitID());
 								Vec2 nodeLocation = this->RandomPosition();
 								if (nodeLocation.x < this->getPosition().x) {
 									dog->setFlippedX(true);
@@ -199,6 +207,7 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 							Soldier* soldier = Soldier::create("soldierRun/soldierstand.png");
 							auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
 							if (tempScene->getMoney()->checkMoney(soldier->getGold())) {
+								UnitManager::msgs->newCreateUnitMessage(soldier->getUnitID(),soldier->getType(), soldier->getCampID(), this->getUnitID());
 								Vec2 nodeLocation = this->RandomPosition();
 								if (nodeLocation.x < this->getPosition().x) {
 									soldier->setFlippedX(true);
@@ -314,6 +323,7 @@ bool WarFactory::onTouchBegan(Touch *touch, Event *event) {
 					Tank* tank = Tank::create("tank/tank0.png");
 					auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
 					if (tempScene->getMoney()->checkMoney(tank->getGold())) {
+						UnitManager::msgs->newCreateUnitMessage(tank->getUnitID(), tank->getType(), tank->getCampID(), this->getUnitID());
 						Vec2 nodeLocation = this->RandomPosition();
 						tank->setScale(0.4f);
 						auto tiledLocation = tempTiledMap->tileCoordForPosition(nodeLocation);
@@ -364,6 +374,7 @@ bool WarFactory::onTouchBegan(Touch *touch, Event *event) {
 void MoneyMine::Build() {
 	auto animate = BuildingBase::getAnimateByName("moneyMine/MinetoMoney_", 0.2f, 24);
 	auto barSprite = Sprite::create("bar/loadingbar.png");
+	this->setProgressed(false);
 	ProgressTimer* progress = ProgressTimer::create(barSprite);
 	progress->setPercentage(0.0f);
 	progress->setScale(0.3f);
@@ -377,6 +388,8 @@ void MoneyMine::Build() {
 	this->runAction(animate);
 	auto sequence = Sequence::create(pft, CallFunc::create([=] {
 		this->removeChild(progress, true);
+		this->setProgressed(true);
+		SimpleAudioEngine::getInstance()->playEffect(CONSTRUCTION, false);
 	}), CallFunc::create([] {BuildingBase::setIsBuilt(false); }), nullptr);
 	progress->runAction(sequence);
 
@@ -403,19 +416,26 @@ void MoneyMine::Build() {
 void WarFactory::Build() {
 	auto animate = BuildingBase::getAnimateByName("tankBase/tankbuilding_", 0.1f, 23);
 	auto barSprite = Sprite::create("bar/loadingbar.png");
+	this->setProgressed(false);
 	ProgressTimer* progress = ProgressTimer::create(barSprite);
 	progress->setPercentage(0.0f);
-	progress->setScale(0.3f);
+	progress->setScaleX(0.5f);
+	progress->setScaleY(0.3f);
 	progress->setMidpoint(Vec2(0.0f, 0.5f));
 	progress->setBarChangeRate(Vec2(1.0f, 0.f));
 	progress->setType(ProgressTimer::Type::BAR);
 	Vec2 pos = Vec2(this->getPosition().x, this->getPosition().y);
-	progress->setPosition(Vec2(200, 160));
+	progress->setPosition(Vec2(120, 160));
 	this->addChild(progress);
 	auto pft = ProgressFromTo::create(2.3f, progress->getPercentage(), 100);
 	this->runAction(animate);
 	auto sequence = Sequence::create(pft, CallFunc::create([=] {
 		this->removeChild(progress, true);
+		auto listener = EventListenerTouchOneByOne::create();
+		listener->onTouchBegan = CC_CALLBACK_2(WarFactory::onTouchBegan,this);
+		_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
+		this->setProgressed(true);
+		SimpleAudioEngine::getInstance()->playEffect(CONSTRUCTION, false);
 	}), CallFunc::create([] {BuildingBase::setIsBuilt(false); }), nullptr);
 	progress->runAction(sequence);
 
@@ -428,7 +448,7 @@ void WarFactory::Build() {
 	// set direction
 	loadingBar->setDirection(LoadingBar::Direction::LEFT);
 	// set position
-	loadingBar->setPosition(Vec2(180, -15));
+	loadingBar->setPosition(Vec2(120, -5));
 	// set Hp bar for soldier
 	this->setHP(loadingBar);
 	// set the HP bar as a child
@@ -440,9 +460,9 @@ void WarFactory::Build() {
 
 //Build the building
 void PowerPlant::Build() {
-	
 	auto animate = PowerPlant::getAnimateByName("powerPlant/PowerBuilt_", 0.1f, 23);
 	auto barSprite = Sprite::create("bar/loadingbar.png");
+	this->setProgressed(false);
 	ProgressTimer* progress = ProgressTimer::create(barSprite);
 	progress->setPercentage(0.0f);
 	progress->setScale(0.3f);
@@ -450,12 +470,14 @@ void PowerPlant::Build() {
 	progress->setBarChangeRate(Vec2(1.0f, 0.f));
 	progress->setType(ProgressTimer::Type::BAR);
 	Vec2 pos = Vec2(this->getPosition().x, this->getPosition().y);
-	progress->setPosition(Vec2(130, 120));
+	progress->setPosition(Vec2(60, 100));
 	this->addChild(progress);
 	auto pft = ProgressFromTo::create(2.3f, progress->getPercentage(), 100);
 	this->runAction(animate);
 	auto sequence = Sequence::create(pft, CallFunc::create([=] {
 		this->removeChild(progress, true);
+		this->setProgressed(true);
+		SimpleAudioEngine::getInstance()->playEffect(CONSTRUCTION, false);
 	}), CallFunc::create([] {BuildingBase::setIsBuilt(false); }), nullptr);
 	progress->runAction(sequence);
 
@@ -468,7 +490,7 @@ void PowerPlant::Build() {
 	// set direction
 	loadingBar->setDirection(LoadingBar::Direction::LEFT);
 	// set position
-	loadingBar->setPosition(Vec2(160, 120));
+	loadingBar->setPosition(Vec2(80, 80));
 	// set Hp bar for soldier
 	this->setHP(loadingBar);
 	// set the HP bar as a child

@@ -294,7 +294,9 @@ Unit* TiledMap::getUnitById(int id){
 
 void TiledMap::newVectorUnit(Unit* unit) {
 	_select_Vector.push_back(unit);
-	unit->getHP()->setVisible(true);
+	if (unit->getProgressed()) {
+		unit->getHP()->setVisible(true);
+	}
 }
 
 void TiledMap::clearUp() {

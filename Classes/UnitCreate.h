@@ -4,6 +4,7 @@
 #include "MyResources.h"
 #include "BuildingBase.h"
 #include "Unit.h"
+
 USING_NS_CC;
 
 class Base :public Unit {

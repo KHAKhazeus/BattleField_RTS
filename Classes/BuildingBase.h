@@ -13,6 +13,7 @@
 #include "BattleField_RTS.h"
 
 USING_NS_CC;
+
 using namespace ui;
 
 // a base class for buildngs
@@ -24,6 +25,7 @@ protected:
 	LoadingBar* _buildBar;// the bar diaplayed during building
 	static bool _isbuilt; //to judge whether there is builiding built
 	bool _isCreated;
+	
 public:
 
 	//set and get the cost for the building
@@ -37,7 +39,6 @@ public:
 	void setCreated(bool created) { _isCreated = created; }
 	bool getCreated() { return _isCreated; }
 
-	
 
 	//set the boolean ...
 	//get the boolean to judge if there is a builing built
@@ -75,6 +76,7 @@ public:
 		//
 		setCampID(RED);
 		setIsBuilding(true);
+		setType(std::string("S"));
 	}
 
 	Vec2 RandomPosition();
@@ -107,6 +109,7 @@ public:
 		//
 		setCampID(RED);
 		setIsBuilding(true);
+		setType(std::string("M"));
 	}
 
 	void Build();
@@ -135,6 +138,7 @@ public:
 		//
 		setCampID(BLUE);
 		setIsBuilding(true);
+		setType(std::string("P"));
 	}
 
 	void Build();
@@ -162,7 +166,9 @@ public:
 		//
 		setCampID(RED);
 		setIsBuilding(true);
+		setType(std::string("W"));
 	}
+	
 
 	Vec2 RandomPosition();
 	void Build();
