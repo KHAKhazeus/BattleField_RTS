@@ -64,8 +64,7 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 					if (temp->judgeAttack(tiledLocation) && TiledMap::checkMapGrid(tiledLocation)) {
 						temp->stopAllActions();
 						msgs->newAttackMessage(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
-						attackEffect(temp, enemy);
-						attack(temp, enemy);
+						attack(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
 
 
 						if (temp->judgeAttack(tiledLocation)) {
@@ -87,10 +86,9 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 						if (temp->judgeAttack(tiledLocation)) {
 						//	attack(temp, tempSprite);
 							//TODO function attack
-							msgs->newAttackMessage(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
 							temp->stopAllActions();
-							attackEffect(temp, enemy);
-							attack(temp, enemy);
+							msgs->newAttackMessage(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
+							attack(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
 								
 						}
 						else {
@@ -131,12 +129,12 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 						auto path = path_finder->getPath();
 						if (temp->getNumberOfRunningActions() == 0) {
 							msgs->newMoveMessage(temp->getUnitID(), path, touch_point);
-							playerMoveWithWayPoints(temp, touch_point, path);
+							playerMoveWithWayPoints(temp->getUnitID(), path, touch_point);
 						}
 						else {
 							temp->stopAllActions();
 							msgs->newMoveMessage(temp->getUnitID(), path, touch_point);
-							playerMoveWithWayPoints(temp, touch_point, path);
+							playerMoveWithWayPoints(temp->getUnitID(), path, touch_point);
 						}
 					}
 				}
@@ -176,14 +174,15 @@ void UnitManager::selectUnitsByRect(MouseRect* mouse_rect) {
 	}
 }
 
-void UnitManager::playerMoveWithWayPoints(Unit* player, Vec2 position, std::vector<Vec2> path) {
+void UnitManager::playerMoveWithWayPoints(int move_unit_id, std::vector<cocos2d::Vec2> path_points, cocos2d::Vec2 end_point) {
+	Unit* player = TiledMap::getUnitById(move_unit_id);
 	player->stopAllActions();
-	if (path.empty()) {
+	if (path_points.empty()) {
 		return;
 	}
-	auto tiledLocation = path.back();
-	/*change the direction of the unit according to the target position*/
-	Vec2 tarPos = _tiled_Map->locationForTilePos(position);
+	auto tiledLocation = path_points.back();
+	/*change the direction of the unit according to the target end_point*/
+	Vec2 tarPos = _tiled_Map->locationForTilePos(end_point);
 	Vec2 myPos = _tiled_Map->locationForTilePos(player->getPosition());
 	float angle = atan2((tarPos.y - myPos.y), (tarPos.x - myPos.x)) * 180 / 3.14159;
 	if (player->isFlippedX()) {
@@ -237,16 +236,16 @@ void UnitManager::playerMoveWithWayPoints(Unit* player, Vec2 position, std::vect
 			break;
 		}
 	});
-/*	for (int i = 0; i < path.size(); i++) {
-		Vec2 openGL_point = _tiled_Map->locationForTilePos(path[i]);
-		if (TiledMap::checkPass(path[i])1) {
+/*	for (int i = 0; i < path_points.size(); i++) {
+		Vec2 openGL_point = _tiled_Map->locationForTilePos(path_points[i]);
+		if (TiledMap::checkPass(path_points[i])1) {
 			if (i > 0) {
 				player->stopActionByTag(i - 1);
 			}
 			auto moveTo = MoveTo::create(0.4f, openGL_point);
 			moveTo->setTag(i);
-			TiledMap::updateMapGrid(player->getTiledPosition(), path[i]);
-			player->setTiledPosition(path[i]);
+			TiledMap::updateMapGrid(player->getTiledPosition(), path_points[i]);
+			player->setTiledPosition(path_points[i]);
 			player->runAction(moveTo);
 		}
 		else {
@@ -256,36 +255,36 @@ void UnitManager::playerMoveWithWayPoints(Unit* player, Vec2 position, std::vect
 			}
 			path_finder->initPathArithmetic(_tiled_Map, player->getTiledPosition(), tiledLocation);
 			path_finder->findPath();
-			auto path = path_finder->getPath();
-			playerMoveWithWayPoints(player, tiledLocation, path);
+			auto path_points = path_finder->getPath();
+			playerMoveWithWayPoints(player, tiledLocation, path_points);
 			return;
 		}
 	}*/
-	for (int i = 0; i < path.size(); i++) {
+	for (int i = 0; i < path_points.size(); i++) {
 		if (i == 0) {
 			TiledMap::setUnpass(tiledLocation);
 		}
-		Vec2 openGL_point = _tiled_Map->locationForTilePos(path[i]);
+		Vec2 openGL_point = _tiled_Map->locationForTilePos(path_points[i]);
 		//auto moveTo = MoveTo::create(0.4f, openGL_point);
 	//	moveTo->setTag(i+1);
 		auto callfuncPosition = CallFunc::create([=] {
-			TiledMap::updateMapGrid(player->getTiledPosition(), path[i]);
-			player->setTiledPosition(path[i]);
-			/*if (i < path.size() - 2) {
+			TiledMap::updateMapGrid(player->getTiledPosition(), path_points[i]);
+			player->setTiledPosition(path_points[i]);
+			/*if (i < path_points.size() - 2) {
 				int count = 0;
-				if (TiledMap::checkPass(path[i + 1])){
-					TiledMap::setUnpass(path[i + 1]);
+				if (TiledMap::checkPass(path_points[i + 1])){
+					TiledMap::setUnpass(path_points[i + 1]);
 				}
-				if (count == 100000 && !TiledMap::checkPass(path[i + 1])) {
-					auto location = path.back();
+				if (count == 100000 && !TiledMap::checkPass(path_points[i + 1])) {
+					auto location = path_points.back();
 					if (!_tiled_Map->checkPass(location)) {
 						location = _tiled_Map->findFreeNear(location);
 					}
 					PathArithmetic* path_finder = PathArithmetic::create();
-					path_finder->initPathArithmetic(_tiled_Map, path[i], location);
+					path_finder->initPathArithmetic(_tiled_Map, path_points[i], location);
 					path_finder->findPath();
-					auto path = path_finder->getPath();
-					playerMoveWithWayPoints(player, location, path);
+					auto path_points = path_finder->getPath();
+					playerMoveWithWayPoints(player, location, path_points);
 					return;
 				}
 			}
@@ -327,10 +326,12 @@ void UnitManager::delay(float dt) {
 	while ((clock() - start_time) < dt * CLOCKS_PER_SEC);
 }
 
-void UnitManager::attack(Unit* player, Unit* enemy) {
-	auto attackNumber = player->getAttack();
+void UnitManager::attack(int attacker_id, int under_attack_id, int damage) {
+	auto player = TiledMap::getUnitById(attacker_id);
+	auto enemy = TiledMap::getUnitById(under_attack_id);
+	attackEffect(player, enemy);
 	//decrease the Hp
-	enemy->setLifeValue(enemy->getLifeValue() - attackNumber);
+	enemy->setLifeValue(enemy->getLifeValue() - damage);
 	if (enemy->getLifeValue() <= 0) {
 		if (enemy->isBuilding()) {
 			auto callFunc = CallFunc::create([=] {
