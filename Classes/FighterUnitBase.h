@@ -17,15 +17,13 @@ using namespace ui;
 class FighterUnitBase :public Unit
 {
 protected:
-	bool _isAttack;//if the unit can attack
 	int _attack;//unit's attacking power
-	int _targetID;//the attacking target's ID
 	
 	float _attackInterval;//the interval between attacking
 	float _attackRange;//the attacking range of the unit
 	int _gold;//the expence of the unit
 public:
-	Vec2 _tiledPos; //the tiledPostion of the Unit
+	
 	
 	//set and get the cost for the unit
 	void setGold(int gold) { _gold = gold; }
@@ -92,7 +90,7 @@ public:
 	Soldier() {
 		_lifeValue = 115;
 		_gold = 80;
-		_attackRange = 70;
+		_attackRange = 5;
 		_attack = 15;
 		_attackInterval = 0.2;
 		//
@@ -101,6 +99,7 @@ public:
 		setUnitID(getIdCount());
 		addIdCount();
 		setType('s');
+		clearAllType();
 	}
 	void Create(SoldierBase*);
 };
@@ -137,6 +136,7 @@ public:
 		setUnitID(getIdCount());
 		addIdCount();
 		setType('d');
+		clearAllType();
 	}
 	void Create(SoldierBase*);
 };
@@ -163,16 +163,16 @@ public:
 	Tank() {
 		_lifeValue = 440;
 		_gold = 500;
-		_attackRange = 100;
+		_attackRange = 10;
 		_attack = 30;
 		_attackInterval = 0.5;
 		//
 		setIsBuilding();
-		setCampID(BLUE);
+		setCampID(RED);
 		setUnitID(getIdCount());
 		addIdCount();
 		setType('t');
-		
+		clearAllType();
 	}
 	void Create(WarFactory*);
 };

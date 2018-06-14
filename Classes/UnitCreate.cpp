@@ -221,6 +221,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 									moneyMine->Build();
 									auto id = moneyMine->getIdCount();
 									moneyMine->setUnitID(id);
+									moneyMine->setTiledPosition(tiledLocation);
 									moneyMine->addIdCount();
 									TiledMap::newMapGrid(tiledLocation, id, moneyMine->getRange());
 									TiledMap::newMapId(id, moneyMine);
@@ -239,6 +240,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 								auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
 								if (tempScene->getMoney()->checkMoney(powerPlant->getGold())) {
 									powerPlant->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
+									powerPlant->setTiledPosition(tiledLocation);
 									BuildingBase::setIsBuilt(true);
 									powerPlant->Build();
 									auto id = powerPlant->getIdCount();
@@ -263,6 +265,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 									tempScene->getPower()->checkPower(soldierBase->getElect())) {
 									BuildingBase::setIsBuilt(true);
 									soldierBase->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
+									soldierBase->setTiledPosition(tiledLocation);
 									soldierBase->Build();
 									auto id = soldierBase->getIdCount();
 									soldierBase->setUnitID(id);
@@ -290,6 +293,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 									tempScene->getPower()->checkPower(warFactory->getElect())) {
 									BuildingBase::setIsBuilt(true);
 									warFactory->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
+									warFactory->setTiledPosition(tiledLocation);
 									warFactory->Build();
 									auto id = warFactory->getIdCount();
 									warFactory->setUnitID(id);

@@ -4,7 +4,6 @@ bool UnitManager::init(TiledMap * tiledMap) {
 	_building =  1;
 	_soider = 0;
 	_tiled_Map = tiledMap;
-	schedule(schedule_selector(UnitManager::autoAttack),1.0);
 	return true;
 }
 
@@ -17,6 +16,7 @@ void UnitManager::initBase() {
 	auto vect = _base->getBase()->getContentSize();
 	auto range = _base->getRange();
 	auto tiledPos = _tiled_Map->tileCoordForPosition(pos); //change the OpenGL coordinate to TiledMap
+	_base->setTiledPosition(tiledPos);
 	_base->setUnitID(_base->getIdCount());
 	_base->addIdCount();
 	TiledMap::newMapGrid(tiledPos, _base->getUnitID(), _base->getRange());
@@ -48,18 +48,11 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 			enemy->getHP()->setVisible(true);
 			if (TiledMap::checkSize() > 1) {
 				for (auto temp : *TiledMap::getSelectedVector()) {
-					//if the enemy is in the attack range 如果敌人在攻击范围内
-					if (temp->judgeAttack(tiledLocation)) {
-						if (TiledMap::checkMapGrid(tiledLocation))
-						{
-							temp->stopAllActions();
-							attackEffect(temp, enemy);
-							attack(temp, enemy);
-						}
-					}
-					else {
-						//TODO tracing
-					}
+					//Set the Type to Attack
+					temp->stopAllActions();
+					temp->clearAllType();
+					temp->setAttack(true);
+					temp->setTargetID(enemy->getUnitID());
 				}
 			}
 			else {
@@ -68,17 +61,12 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 					auto temp = TiledMap::getSelectedVector()->at(0);
 					//if not
 					if (!temp->isBuilding()) {
-						if (temp->judgeAttack(tiledLocation)) {
-						//	attack(temp, tempSprite);
-							//TODO function attack
-							temp->stopAllActions();
-							attackEffect(temp, enemy);
-							attack(temp, enemy);
-								
-						}
-						else {
-							//TODO function tracing
-						}
+						//Set the Type to Attack
+						temp->stopAllActions();
+						temp->clearAllType();
+						temp->setAttack(true);
+						auto id = enemy->getUnitID();
+						temp->setTargetID(id);
 					}
 				}
 			}
@@ -113,10 +101,14 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 						path_finder->findPath();
 						auto path = path_finder->getPath();
 						if (temp->getNumberOfRunningActions() == 0) {
+							temp->clearAllType();
+							temp->setMove(true);
 							playerMoveWithWayPoints(temp, touch_point, path);
 						}
 						else {
 							temp->stopAllActions();
+							temp->clearAllType();
+							temp->setMove(true);
 							playerMoveWithWayPoints(temp, touch_point, path);
 						}
 					}
@@ -217,6 +209,11 @@ void UnitManager::playerMoveWithWayPoints(Unit* player, Vec2 position, std::vect
 		default:
 			break;
 		}
+		log("%s", "Done!");
+		if (player->isMove()) {
+			player->setMove(false);
+			player->setAutoAttack(true);
+		}
 	});
 /*	for (int i = 0; i < path.size(); i++) {
 		Vec2 openGL_point = _tiled_Map->locationForTilePos(path[i]);
@@ -242,6 +239,7 @@ void UnitManager::playerMoveWithWayPoints(Unit* player, Vec2 position, std::vect
 			return;
 		}
 	}*/
+	Sequence *sequence;
 	for (int i = 0; i < path.size(); i++) {
 		if (i == 0) {
 			TiledMap::setUnpass(tiledLocation);
@@ -250,8 +248,30 @@ void UnitManager::playerMoveWithWayPoints(Unit* player, Vec2 position, std::vect
 		//auto moveTo = MoveTo::create(0.4f, openGL_point);
 	//	moveTo->setTag(i+1);
 		auto callfuncPosition = CallFunc::create([=] {
+			auto oldPos = player->getTiledPosition();
+		/*	if (i >= 1 && !TiledMap::checkMapGrid(path[i - 1])) {
+				if (player->getTiledPosition() != path[i - 1]) {
+					if (!TiledMap::checkMapGrid(player->getTiledPosition())) {
+						TiledMap::newMapGrid(path[i], player->getUnitID());
+					}
+					else {
+						TiledMap::updateMapGrid(player->getTiledPosition(), path[i]);
+					}
+				}
+			}*/
 			TiledMap::updateMapGrid(player->getTiledPosition(), path[i]);
 			player->setTiledPosition(path[i]);
+			auto player_id = player->getUnitID();
+			log("%d    %d\n", player_id,i);
+			log("%f.%f change to %f.%f\n", oldPos.x,oldPos.y, path[i].x,path[i].y);
+			if (i < path.size() - 1) {
+				if((TiledMap::checkMapGrid(path[i+1])))
+				{
+					player->stopAllActions();
+					log("STOP!");
+					return;
+				}
+			}
 			/*if (i < path.size() - 2) {
 				int count = 0;
 				if (TiledMap::checkPass(path[i + 1])){
@@ -278,24 +298,8 @@ void UnitManager::playerMoveWithWayPoints(Unit* player, Vec2 position, std::vect
 			actionVector.pushBack(callfuncPosition);
 	}
 
-/*	auto callfunc = CallFunc::create([=] {
-		player->stopAction(repeatanimate);
-		switch (player->getType()) {
-		case 'd':
-			player->setTexture("unit/FighterUnit_1.png");
-			break;
-		case 's':
-			player->setTexture("unit/FighterUnit_2.png");
-			break;
-		case 't':
-			player->setTexture("unit/FighterUnit.png");
-			break;
-		default:
-			break;
-		}
-	});*/
 	actionVector.pushBack(callfunc);
-	auto sequence = Sequence::create(actionVector);
+	sequence = Sequence::create(actionVector);
 	sequence->setTag(1000);
 	player->runAction(sequence);
 }
@@ -311,14 +315,16 @@ void UnitManager::attack(Unit* player, Unit* enemy) {
 	auto attackNumber = player->getAttack();
 	//decrease the Hp
 	enemy->setLifeValue(enemy->getLifeValue() - attackNumber);
-	if (enemy->getLifeValue() <= 0) {
+	if (enemy->getLifeValue() <= 0 && TiledMap::checkMapGrid(enemy->getTiledPosition())){
 		if (enemy->isBuilding()) {
 			auto tiledLocation = _tiled_Map->tileCoordForPosition(enemy->getPosition());
 			TiledMap::removeMapGrid(tiledLocation, enemy->getFixModel());
+			TiledMap::removeMapId(enemy->getUnitID());
 			_tiled_Map->getTiledMap()->removeChild(enemy);
 		}
 		else {
 			TiledMap::removeMapGrid(enemy->getTiledPosition());
+			TiledMap::removeMapId(enemy->getUnitID());
 			_tiled_Map->getTiledMap()->removeChild(enemy);
 			return;
 		}

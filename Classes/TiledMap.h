@@ -69,6 +69,9 @@ public:
 	//@@param is the Id of the Unit
 	//The return value is the Pointer to the Unit
 	static Unit* getUnitById(int id);
+	//@@param the Id of the Unit
+	//To check the Id if has been removed already
+	static bool checkUnitId(int id);
 
 
 	//_selected_Vector API

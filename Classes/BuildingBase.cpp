@@ -189,7 +189,10 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 								dog->setTiledPosition(tiledLocation);
 								static_cast<TMXTiledMap*>(this->getParent())->addChild(dog, 200);
 								tempScene->getVectorDogs().pushBack(dog);
+								dog->setAutoAttack(true);
+								dog->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
 								tempScene->getUnitManager()->getUnitVector().pushBack(dog);
+								
 								tempScene->getMoney()->spendMoney(dog->getGold());
 							}
 							else {
@@ -213,6 +216,9 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 						//		auto tiledLocation = tempScene->tileCoordForPosition(nodeLocation);
 								TiledMap::newMapGrid(tiledLocation, soldier->getUnitID());
 								TiledMap::newMapId(soldier->getUnitID(), soldier);
+								soldier->setAutoAttack(true);
+						
+								soldier->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
 								tempScene->getUnitManager()->getUnitVector().pushBack(soldier);
 								soldier->setTiledPosition(tiledLocation);
 							//	tempScene->getVectorSoldiers().pushBack(soldier);
@@ -326,6 +332,9 @@ bool WarFactory::onTouchBegan(Touch *touch, Event *event) {
 						static_cast<TMXTiledMap*>(this->getParent())->addChild(tank, 200);
 				//		auto tiledLocation = static_cast<TiledMap*>(this->getParent()->getParent())->tileCoordForPosition(nodeLocation);
 					//	tempScene->getVectorTanks().pushBack(tank);
+						tank->setAutoAttack(true);
+						//TODO if tank belongs to my camp
+						tank->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
 						tempScene->getUnitManager()->getUnitVector().pushBack(tank);
 						TiledMap::newMapGrid(tiledLocation, tank->getUnitID());
 						TiledMap::newMapId(tank->getUnitID(), tank);
