@@ -34,7 +34,8 @@ std::vector<GameMessage> GameMessageInterface::parseMessagesFromString(std::stri
     return result;
 }
 
-GameMessage GameMessageInterface::newCreateBuildingMessage(int new_building_id, std::string new_building_type, int base_id, int from_building_id){
+GameMessage GameMessageInterface::newCreateBuildingMessage(int new_building_id, std::string new_building_type, int base_id, int from_building_id, 
+	cocos2d::Vec2 position){
     GameMessage CRTBU_new_message;
     CRTBU_new_message.set_unit_0(new_building_id);
     CRTBU_new_message.set_create_type(new_building_type);
@@ -44,7 +45,7 @@ GameMessage GameMessageInterface::newCreateBuildingMessage(int new_building_id, 
     return CRTBU_new_message;
 }
 
-GameMessage GameMessageInterface::newCreateUnitMessage(int new_unit_id, std::string new_unit_type, int base_id, int from_building_id){
+GameMessage GameMessageInterface::newCreateUnitMessage(int new_unit_id, std::string new_unit_type, int base_id, int from_building_id, cocos2d::Vec2 position){
     GameMessage CRTBD_new_message;
     CRTBD_new_message.set_unit_0(new_unit_id);
     CRTBD_new_message.set_create_type(new_unit_type);

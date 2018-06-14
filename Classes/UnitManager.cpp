@@ -1,6 +1,7 @@
 #include "UnitManager.h"
 #include "time.h"
 #include "SimpleAudioEngine.h"
+#include "GameScene.h"
 using namespace CocosDenshion;
 
 bool UnitManager::init(TiledMap * tiledMap) {
@@ -439,5 +440,192 @@ void UnitManager::destroyEffect(Unit* unit,bool type) {
 	}
 	else {
 		SimpleAudioEngine::getInstance()->playEffect(LOST, false);
+	}
+}
+
+void UnitManager::Building(int new_building_id, std::string new_building_type, int base_id, int from_building_id,
+	cocos2d::Vec2 nodeLocation) {
+	Unit* base = TiledMap::getUnitById(from_building_id);
+	auto tiledLocation = static_cast<TiledMap*>(base->getParent()->getParent())->tileCoordForPosition(nodeLocation);
+	auto tempScene = static_cast<GameScene*>(base->getParent()->getParent()->getParent());
+	if (new_building_type == "M") {
+		MoneyMine* moneyMine = MoneyMine::create("moneyMine/MinetoMoney_24.png");
+		moneyMine->setUnitID(new_building_id);
+		moneyMine->setCampID(base_id);
+		if (moneyMine->getCampID() == RED) {
+			moneyMine->setColor(Color3B(221, 160, 221));
+		}
+		else {
+			moneyMine->setColor(Color3B(65, 105, 225));
+		}
+		moneyMine->addIdCount();
+		moneyMine->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
+		BuildingBase::setIsBuilt(true);
+		moneyMine->Build();
+		TiledMap::newMapGrid(tiledLocation, new_building_id, moneyMine->getRange());
+		TiledMap::newMapId(new_building_id, moneyMine);
+		//					TiledMap::setUnpass(tiledLocation, moneyMine->getRange());
+		static_cast<TMXTiledMap*>(base->getParent())->addChild(moneyMine, 50);
+		tempScene->getVectorMine().pushBack(moneyMine);
+		tempScene->getPower()->spendPower(moneyMine->getElect());
+		tempScene->getMoney()->spendMoney(moneyMine->getGold());
+	}
+	else if (new_building_type == "P") {
+		PowerPlant* powerPlant = PowerPlant::create("powerPlant/PowerBuilt_24.png");
+		powerPlant->setUnitID(new_building_id);
+		powerPlant->setCampID(base_id);
+		if (powerPlant->getCampID() == RED) {
+			powerPlant->setColor(Color3B(221, 160, 221));
+		}
+		else {
+			powerPlant->setColor(Color3B(65, 105, 225));
+		}
+		powerPlant->addIdCount();
+		powerPlant->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
+		BuildingBase::setIsBuilt(true);
+		powerPlant->Build();
+		TiledMap::newMapGrid(tiledLocation, new_building_id, powerPlant->getRange());
+		TiledMap::newMapId(new_building_id, powerPlant);
+		//							TiledMap::setUnpass(tiledLocation, powerPlant->getRange());
+		static_cast<TMXTiledMap*>(base->getParent())->addChild(powerPlant, 40);
+		tempScene->getVectorPower().pushBack(powerPlant);
+		tempScene->getPower()->increasePower((powerPlant->getElect()));
+		tempScene->getMoney()->spendMoney(powerPlant->getGold());
+	}
+	else if (new_building_type == "S") {
+		SoldierBase* soldierBase = SoldierBase::create("soldierBase/soldierBase_23.png");
+		soldierBase->setUnitID(new_building_id);
+		soldierBase->setCampID(base_id);
+		if (soldierBase->getCampID() == RED) {
+			soldierBase->setColor(Color3B(221, 160, 221));
+		}
+		else {
+			soldierBase->setColor(Color3B(65, 105, 225));
+		}
+		soldierBase->addIdCount();
+		soldierBase->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
+		BuildingBase::setIsBuilt(true);
+		soldierBase->Build();
+		TiledMap::newMapGrid(tiledLocation, new_building_id, soldierBase->getRange(), FIX_HEIGHT);
+		TiledMap::newMapId(new_building_id, soldierBase);
+		//							TiledMap::setUnpass(tiledLocation, soldierBase->getRange());
+		static_cast<TMXTiledMap*>(base->getParent())->addChild(soldierBase, 50);
+		tempScene->getVectorSoldier().pushBack(soldierBase);
+		tempScene->getVectorSoldier().pushBack(soldierBase);
+		tempScene->getPower()->spendPower(soldierBase->getElect());
+		tempScene->getMoney()->spendMoney(soldierBase->getGold());
+	}
+	else if (new_building_type == "W") {
+		WarFactory* warFactory = WarFactory::create("tankBase/tankbuilding_23.png");
+		warFactory->setUnitID(new_building_id);
+		warFactory->setCampID(base_id);
+		if (warFactory->getCampID() == RED) {
+			warFactory->setColor(Color3B(221, 160, 221));
+		}
+		else {
+			warFactory->setColor(Color3B(65, 105, 225));
+		}
+		warFactory->addIdCount();
+		warFactory->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
+		BuildingBase::setIsBuilt(true);
+		warFactory->Build();
+		
+		TiledMap::newMapGrid(tiledLocation, new_building_id, warFactory->getRange(), FIX_HEIGHT);
+		TiledMap::newMapId(new_building_id, warFactory);
+		//				TiledMap::setUnpass(tiledLocation, warFactory->getRange());
+		static_cast<TMXTiledMap*>(base->getParent())->addChild(warFactory, 50);
+		tempScene->getVectorFactory().pushBack(warFactory);
+		tempScene->getVectorFactory().pushBack(warFactory);
+		tempScene->getPower()->spendPower(warFactory->getElect());
+		tempScene->getMoney()->spendMoney(warFactory->getGold());
+	}
+}
+
+void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int base_id, int from_building_id,
+	cocos2d::Vec2 nodeLocation) {
+	Unit* plant = TiledMap::getUnitById(from_building_id);
+	auto tempTiledMap = static_cast<TiledMap*>(plant->getParent()->getParent());
+	auto tempScene = static_cast<GameScene*>(plant->getParent()->getParent()->getParent());
+	if (new_unit_type == "d") {
+		Dog* dog = Dog::create("dogRun/dog0.png");
+		dog->setUnitID(new_unit_id);
+		dog->setCampID(base_id);
+		if (dog->getCampID() == RED) {
+			dog->setColor(Color3B(255, 0, 0));
+		}
+		else {
+			dog->setColor(Color3B(65, 105, 225));
+		}
+		dog->addIdCount();
+		if (nodeLocation.x < plant->getPosition().x) {
+			dog->setFlippedX(true);
+		}
+		auto tiledLocation = tempTiledMap->tileCoordForPosition(nodeLocation);
+		dog->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
+		Dog::setIsCreated(true);
+		dog->Create(plant);
+		//		TiledMap::setUnpass(tiledLocation);
+		//		auto tiledLocation = tempScene->tileCoordForPosition(nodeLocation);
+		TiledMap::newMapGrid(tiledLocation, dog->getUnitID());
+		TiledMap::newMapId(dog->getUnitID(), dog);
+		dog->setTiledPosition(tiledLocation);
+		static_cast<TMXTiledMap*>(plant->getParent())->addChild(dog, 200);
+		//tempScene->getVectorDogs().pushBack(dog);
+		tempScene->getMoney()->spendMoney(dog->getGold());
+	}
+	else if (new_unit_type == "s") {
+		Soldier* soldier = Soldier::create("soldierRun/soldierstand.png");
+		soldier->setUnitID(new_unit_id);
+		soldier->setCampID(base_id);
+		if (soldier->getCampID() == RED) {
+			soldier->setColor(Color3B(255, 0, 0));
+		}
+		else {
+			soldier->setColor(Color3B(65, 105, 225));
+		}
+		soldier->addIdCount();
+		if (nodeLocation.x < plant->getPosition().x) {
+			soldier->setFlippedX(true);
+		}
+		auto tiledLocation = tempTiledMap->tileCoordForPosition(nodeLocation);
+		soldier->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
+		Soldier::setIsCreated(true);
+		soldier->Create(plant);
+		//		TiledMap::setUnpass(tiledLocation);
+		static_cast<TMXTiledMap*>(plant->getParent())->addChild(soldier, 200);
+		//		auto tiledLocation = tempScene->tileCoordForPosition(nodeLocation);
+		TiledMap::newMapGrid(tiledLocation, soldier->getUnitID());
+		TiledMap::newMapId(soldier->getUnitID(), soldier);
+		soldier->setTiledPosition(tiledLocation);
+		//	tempScene->getVectorSoldiers().pushBack(soldier);
+		tempScene->getMoney()->spendMoney(soldier->getGold());
+	}
+	else if (new_unit_type == "t") {
+		Tank* tank = Tank::create("tank/tank0.png");
+		tank->setUnitID(new_unit_id);
+		tank->setCampID(base_id);
+		if (tank->getCampID() == RED) {
+			tank->setColor(Color3B(221, 160, 221));
+		}
+		else {
+			tank->setColor(Color3B(65, 105, 225));
+		}
+		tank->addIdCount();
+		tank->setScale(0.4f);
+		if (nodeLocation.x < plant->getPosition().x) {
+			tank->setFlippedX(true);
+		}
+		auto tiledLocation = tempTiledMap->tileCoordForPosition(nodeLocation);
+		tank->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
+		Tank::setIsCreated(true);
+		tank->Create(plant);
+		//		TiledMap::setUnpass(tiledLocation);
+		static_cast<TMXTiledMap*>(plant->getParent())->addChild(tank, 200);
+		//		auto tiledLocation = tempScene->tileCoordForPosition(nodeLocation);
+		TiledMap::newMapGrid(tiledLocation, tank->getUnitID());
+		TiledMap::newMapId(tank->getUnitID(), tank);
+		tank->setTiledPosition(tiledLocation);
+		//	tempScene->getVectorSoldiers().pushBack(soldier);
+		tempScene->getMoney()->spendMoney(tank->getGold());
 	}
 }

@@ -35,7 +35,7 @@ bool Tank::getIsCreated() {
 void Tank::setIsCreated(bool judge) {
 	_isBeingCreated = judge;
 }
-void Soldier::Create(SoldierBase* soldierBase) {
+void Soldier::Create(Unit* soldierBase) {
 	this->setVisible(false);
 	auto barSprite = Sprite::create("bar/loadingbar.png");
 	ProgressTimer* progress = ProgressTimer::create(barSprite);
@@ -73,7 +73,7 @@ void Soldier::Create(SoldierBase* soldierBase) {
 	loadingBar->setVisible(false);
 }
 
-void Dog::Create(SoldierBase* soldierBase) {
+void Dog::Create(Unit* soldierBase) {
 	this->setVisible(false);
 	auto barSprite = Sprite::create("bar/loadingbar.png");
 	ProgressTimer* progress = ProgressTimer::create(barSprite);
@@ -111,7 +111,7 @@ void Dog::Create(SoldierBase* soldierBase) {
 	loadingBar->setVisible(false);
 }
 
-void Tank::Create(WarFactory* warFactory) {
+void Tank::Create(Unit* warFactory) {
 	this->setVisible(false);
 	auto barSprite = Sprite::create("bar/loadingbar.png");
 	ProgressTimer* progress = ProgressTimer::create(barSprite);

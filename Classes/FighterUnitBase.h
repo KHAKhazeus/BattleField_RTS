@@ -95,12 +95,9 @@ public:
 		_attackInterval = 0.2;
 		//
 		setIsBuilding();
-		setCampID(RED);
-		setUnitID(getIdCount());
-		addIdCount();
 		setType(std::string("s"));
 	}
-	void Create(SoldierBase*);
+	void Create(Unit*);
 };
 
 class Dog :public FighterUnitBase
@@ -131,12 +128,9 @@ public:
 		_attackInterval = 0.2;
 		//
 		setIsBuilding();
-		setCampID(RED);
-		setUnitID(getIdCount());
-		addIdCount();
 		setType(std::string("d"));
 	}
-	void Create(SoldierBase*);
+	void Create(Unit*);
 };
 
 class Tank :public FighterUnitBase
@@ -166,12 +160,9 @@ public:
 		_attackInterval = 0.5;
 		//
 		setIsBuilding();
-		setCampID(RED);
-		setUnitID(getIdCount());
-		addIdCount();
 		setType(std::string("t"));
 		
 	}
-	void Create(WarFactory*);
+	void Create(Unit*);
 };
 #endif

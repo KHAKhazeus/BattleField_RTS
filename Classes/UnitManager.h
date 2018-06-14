@@ -9,6 +9,8 @@
 #include "PathArithmetic.h"
 #include "GameMessageInterface.h"
 #include <cmath>
+#include "SocketClient.h"
+#include "SocketServer.h"
 USING_NS_CC;
 
 class UnitManager :public cocos2d::Node {
@@ -46,8 +48,10 @@ public:
 
 	//the unit destroy effect
 	void destroyEffect(Unit *unit,bool type);
-
-
+	static void Building(int new_building_id, std::string new_building_type, int base_id, int from_building_id,
+		cocos2d::Vec2 position);
+	static void NewUnitCreate(int new_unit_id, std::string new_unit_type, int base_id, int from_building_id,
+		cocos2d::Vec2 position);
 private:
 	//the count of _building
 	int _building;
@@ -56,6 +60,8 @@ private:
 	//the point to TiledMap
 	TiledMap * _tiled_Map;
 	Base * _base;
+	std::shared_ptr<SocketClient> _socketClient;
+	std::shared_ptr<SocketServer> _socketServer;
 };
 
 

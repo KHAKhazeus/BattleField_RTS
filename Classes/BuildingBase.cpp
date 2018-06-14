@@ -181,53 +181,27 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 							Dog* dog = Dog::create("dogRun/dog0.png");
 							auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
 							if (tempScene->getMoney()->checkMoney(dog->getGold())) {
-								UnitManager::msgs->newCreateUnitMessage(dog->getUnitID(), dog->getType(),dog->getCampID(),this->getUnitID());
+								auto id = dog->getIdCount();
+								dog->setUnitID(id);
 								Vec2 nodeLocation = this->RandomPosition();
-								if (nodeLocation.x < this->getPosition().x) {
-									dog->setFlippedX(true);
-								}
-								auto tiledLocation = tempTiledMap->tileCoordForPosition(nodeLocation);
-								dog->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
-								Dog::setIsCreated(true);
-								dog->Create(this);
-						//		TiledMap::setUnpass(tiledLocation);
-						//		auto tiledLocation = tempScene->tileCoordForPosition(nodeLocation);
-								TiledMap::newMapGrid(tiledLocation, dog->getUnitID());
-								TiledMap::newMapId(dog->getUnitID(), dog);
-								dog->setTiledPosition(tiledLocation);
-								static_cast<TMXTiledMap*>(this->getParent())->addChild(dog, 200);
-								//tempScene->getVectorDogs().pushBack(dog);
-								tempScene->getMoney()->spendMoney(dog->getGold());
+								UnitManager::msgs->newCreateUnitMessage(dog->getUnitID(), dog->getType(),this->getCampID(),
+									this->getUnitID(), nodeLocation);
+								UnitManager::NewUnitCreate(dog->getUnitID(), dog->getType(), this->getCampID(),
+									this->getUnitID(), nodeLocation);
 							}
-							else {
-								delete dog;
-							}
+							delete dog;
 						}
 						else if (temp_building->getTag() == 2) {
 							Soldier* soldier = Soldier::create("soldierRun/soldierstand.png");
 							auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
 							if (tempScene->getMoney()->checkMoney(soldier->getGold())) {
-								UnitManager::msgs->newCreateUnitMessage(soldier->getUnitID(),soldier->getType(), soldier->getCampID(), this->getUnitID());
 								Vec2 nodeLocation = this->RandomPosition();
-								if (nodeLocation.x < this->getPosition().x) {
-									soldier->setFlippedX(true);
-								}
-								auto tiledLocation = tempTiledMap->tileCoordForPosition(nodeLocation);
-								soldier->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
-								Soldier::setIsCreated(true);
-								soldier->Create(this);
-						//		TiledMap::setUnpass(tiledLocation);
-								static_cast<TMXTiledMap*>(this->getParent())->addChild(soldier, 200);
-						//		auto tiledLocation = tempScene->tileCoordForPosition(nodeLocation);
-								TiledMap::newMapGrid(tiledLocation, soldier->getUnitID());
-								TiledMap::newMapId(soldier->getUnitID(), soldier);
-								soldier->setTiledPosition(tiledLocation);
-							//	tempScene->getVectorSoldiers().pushBack(soldier);
-								tempScene->getMoney()->spendMoney(soldier->getGold());
+								UnitManager::msgs->newCreateUnitMessage(soldier->getUnitID(), soldier->getType(), this->getCampID(),
+									this->getUnitID(), nodeLocation);
+								UnitManager::NewUnitCreate(soldier->getUnitID(), soldier->getType(), this->getCampID(),
+									this->getUnitID(), nodeLocation);
 							}
-							else {
-								delete soldier;
-							}
+							delete soldier;
 						}
 						auto tempNode = this->getParent()->getParent()->getParent();
 						tempNode->removeChild(temp_building, true);
@@ -323,25 +297,15 @@ bool WarFactory::onTouchBegan(Touch *touch, Event *event) {
 					Tank* tank = Tank::create("tank/tank0.png");
 					auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
 					if (tempScene->getMoney()->checkMoney(tank->getGold())) {
-						UnitManager::msgs->newCreateUnitMessage(tank->getUnitID(), tank->getType(), tank->getCampID(), this->getUnitID());
 						Vec2 nodeLocation = this->RandomPosition();
-						tank->setScale(0.4f);
-						auto tiledLocation = tempTiledMap->tileCoordForPosition(nodeLocation);
-						tank->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
-						Tank::setIsCreated(true);
-						tank->Create(this);
-				//		TiledMap::setUnpass(tiledLocation);
-						static_cast<TMXTiledMap*>(this->getParent())->addChild(tank, 200);
-				//		auto tiledLocation = static_cast<TiledMap*>(this->getParent()->getParent())->tileCoordForPosition(nodeLocation);
-					//	tempScene->getVectorTanks().pushBack(tank);
-						TiledMap::newMapGrid(tiledLocation, tank->getUnitID());
-						TiledMap::newMapId(tank->getUnitID(), tank);
-						tank->setTiledPosition(tiledLocation);
-						tempScene->getMoney()->spendMoney(tank->getGold());
+						auto id =tank->getIdCount();
+						tank->setUnitID(id);
+						UnitManager::msgs->newCreateUnitMessage(tank->getUnitID(), tank->getType(), this->getCampID(),
+							this->getUnitID(), nodeLocation);
+						UnitManager::NewUnitCreate(tank->getUnitID(), tank->getType(), this->getCampID(),
+							this->getUnitID(), nodeLocation);
 					}
-					else {
-						delete tank;
-					}
+					delete tank;
 					auto tempNode = this->getParent()->getParent()->getParent();
 					tempNode->removeChild(temp_building, true);
 					this->setCreated(false);

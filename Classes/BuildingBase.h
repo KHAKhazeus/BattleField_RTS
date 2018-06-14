@@ -74,7 +74,6 @@ public:
 		setRange(2);
 		setFixModel(FIX_HEIGHT);
 		//
-		setCampID(RED);
 		setIsBuilding(true);
 		setType(std::string("S"));
 	}
@@ -107,7 +106,6 @@ public:
 		setRange(2);
 		setFixModel(FIX_SQUARE);
 		//
-		setCampID(RED);
 		setIsBuilding(true);
 		setType(std::string("M"));
 	}
@@ -136,7 +134,6 @@ public:
 		setRange(1);
 		setFixModel(FIX_SQUARE);
 		//
-		setCampID(BLUE);
 		setIsBuilding(true);
 		setType(std::string("P"));
 	}
@@ -164,7 +161,6 @@ public:
 		setRange(2);
 		setFixModel(FIX_HEIGHT);
 		//
-		setCampID(RED);
 		setIsBuilding(true);
 		setType(std::string("W"));
 	}
