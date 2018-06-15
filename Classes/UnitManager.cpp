@@ -206,7 +206,10 @@ void UnitManager::playerMoveWithWayPoints(Unit* player, Vec2 position, std::vect
 //Animate* animate;
 	auto callfunc = CallFunc::create([=] {
 		stopAction(repeatanimate);
+		log("%f,%f  %f,%f", player->getTiledPosition().x, player->getTiledPosition().y,
+			tiledLocation.x, tiledLocation.y);
 		TiledMap::updateMapGrid(player->getTiledPosition(), tiledLocation);
+		player->setTiledPosition(tiledLocation);
 		switch (player->getType()) {
 		case 'd':
 			player->setTexture("unit/FighterUnit_1.png");
@@ -232,31 +235,6 @@ void UnitManager::playerMoveWithWayPoints(Unit* player, Vec2 position, std::vect
 		//	TiledMap::setUnpass(tiledLocation);
 		}
 		Vec2 openGL_point = _tiled_Map->locationForTilePos(path[i]);
-	/*	auto callfuncPosition = CallFunc::create([=] {
-			auto oldPos = player->getTiledPosition();
-			TiledMap::updateMapGrid(player->getTiledPosition(), path[i]);
-			player->setTiledPosition(path[i]);
-			if (i < path.size() - 1) {
-				if (!TiledMap::checkPass(path[i + 1]) && path[i+1] != tiledLocation) {
-					switch (player->getType()) {
-					case 'd':
-						player->setTexture("unit/FighterUnit_1.png");
-						break;
-					case 's':
-						player->setTexture("unit/FighterUnit_2.png");
-						break;
-					case 't':
-						player->setTexture("unit/FighterUnit.png");
-						break;
-					default:
-						break;
-					}
-					player->stopAllActions();
-					return;
-				}
-			}
-		});*/
-		//callfuncPosition->setTag(200 + i);
 			MoveTo* moveTo = MoveTo::create(speed, openGL_point);
 		//	auto action = Spawn::create(moveTo);
 			actionVector.pushBack(moveTo);
