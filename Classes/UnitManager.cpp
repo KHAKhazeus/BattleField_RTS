@@ -150,11 +150,21 @@ void UnitManager::selectUnitsByRect(MouseRect* mouse_rect) {
 }
 
 void UnitManager::playerMoveWithWayPoints(Unit* player, Vec2 position, std::vector<Vec2> path) {
+	
 	player->stopAllActions();
 	if (path.empty()) {
 		return;
 	}
 	auto tiledLocation = path.back();
+	if (player->getTargetPos().x != -1) {
+		if (player->getTiledPosition() != player->getTargetPos()) {
+			if (!TiledMap::checkPass(player->getTargetPos())) {
+				TiledMap::setPass(player->getTargetPos());
+			}
+		}
+	}
+	player->setTargetPos(tiledLocation);
+	TiledMap::setUnpass(tiledLocation);
 	/*change the direction of the unit according to the target position*/
 	Vec2 tarPos = _tiled_Map->locationForTilePos(position);
 	Vec2 myPos = _tiled_Map->locationForTilePos(player->getPosition());
@@ -196,6 +206,7 @@ void UnitManager::playerMoveWithWayPoints(Unit* player, Vec2 position, std::vect
 //Animate* animate;
 	auto callfunc = CallFunc::create([=] {
 		stopAction(repeatanimate);
+		TiledMap::updateMapGrid(player->getTiledPosition(), tiledLocation);
 		switch (player->getType()) {
 		case 'd':
 			player->setTexture("unit/FighterUnit_1.png");
@@ -215,87 +226,40 @@ void UnitManager::playerMoveWithWayPoints(Unit* player, Vec2 position, std::vect
 			player->setAutoAttack(true);
 		}
 	});
-/*	for (int i = 0; i < path.size(); i++) {
-		Vec2 openGL_point = _tiled_Map->locationForTilePos(path[i]);
-		if (TiledMap::checkPass(path[i])1) {
-			if (i > 0) {
-				player->stopActionByTag(i - 1);
-			}
-			auto moveTo = MoveTo::create(0.4f, openGL_point);
-			moveTo->setTag(i);
-			TiledMap::updateMapGrid(player->getTiledPosition(), path[i]);
-			player->setTiledPosition(path[i]);
-			player->runAction(moveTo);
-		}
-		else {
-			auto path_finder = PathArithmetic::create();
-			if (!TiledMap::checkPass(tiledLocation)) {
-				tiledLocation = _tiled_Map->findFreeNear(tiledLocation);
-			}
-			path_finder->initPathArithmetic(_tiled_Map, player->getTiledPosition(), tiledLocation);
-			path_finder->findPath();
-			auto path = path_finder->getPath();
-			playerMoveWithWayPoints(player, tiledLocation, path);
-			return;
-		}
-	}*/
 	Sequence *sequence;
 	for (int i = 0; i < path.size(); i++) {
 		if (i == 0) {
-			TiledMap::setUnpass(tiledLocation);
+		//	TiledMap::setUnpass(tiledLocation);
 		}
 		Vec2 openGL_point = _tiled_Map->locationForTilePos(path[i]);
-		//auto moveTo = MoveTo::create(0.4f, openGL_point);
-	//	moveTo->setTag(i+1);
-		auto callfuncPosition = CallFunc::create([=] {
+	/*	auto callfuncPosition = CallFunc::create([=] {
 			auto oldPos = player->getTiledPosition();
-		/*	if (i >= 1 && !TiledMap::checkMapGrid(path[i - 1])) {
-				if (player->getTiledPosition() != path[i - 1]) {
-					if (!TiledMap::checkMapGrid(player->getTiledPosition())) {
-						TiledMap::newMapGrid(path[i], player->getUnitID());
-					}
-					else {
-						TiledMap::updateMapGrid(player->getTiledPosition(), path[i]);
-					}
-				}
-			}*/
 			TiledMap::updateMapGrid(player->getTiledPosition(), path[i]);
 			player->setTiledPosition(path[i]);
-			auto player_id = player->getUnitID();
-			log("%d    %d\n", player_id,i);
-			log("%f.%f change to %f.%f\n", oldPos.x,oldPos.y, path[i].x,path[i].y);
 			if (i < path.size() - 1) {
-				if((TiledMap::checkMapGrid(path[i+1])))
-				{
-					player->stopAllActions();
-					log("STOP!");
-					return;
-				}
-			}
-			/*if (i < path.size() - 2) {
-				int count = 0;
-				if (TiledMap::checkPass(path[i + 1])){
-					TiledMap::setUnpass(path[i + 1]);
-				}
-				if (count == 100000 && !TiledMap::checkPass(path[i + 1])) {
-					auto location = path.back();
-					if (!_tiled_Map->checkPass(location)) {
-						location = _tiled_Map->findFreeNear(location);
+				if (!TiledMap::checkPass(path[i + 1]) && path[i+1] != tiledLocation) {
+					switch (player->getType()) {
+					case 'd':
+						player->setTexture("unit/FighterUnit_1.png");
+						break;
+					case 's':
+						player->setTexture("unit/FighterUnit_2.png");
+						break;
+					case 't':
+						player->setTexture("unit/FighterUnit.png");
+						break;
+					default:
+						break;
 					}
-					PathArithmetic* path_finder = PathArithmetic::create();
-					path_finder->initPathArithmetic(_tiled_Map, path[i], location);
-					path_finder->findPath();
-					auto path = path_finder->getPath();
-					playerMoveWithWayPoints(player, location, path);
+					player->stopAllActions();
 					return;
 				}
 			}
 		});*/
-		});
 		//callfuncPosition->setTag(200 + i);
 			MoveTo* moveTo = MoveTo::create(speed, openGL_point);
+		//	auto action = Spawn::create(moveTo);
 			actionVector.pushBack(moveTo);
-			actionVector.pushBack(callfuncPosition);
 	}
 
 	actionVector.pushBack(callfunc);

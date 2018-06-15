@@ -100,6 +100,7 @@ public:
 		addIdCount();
 		setType('s');
 		clearAllType();
+		setTargetPos(Vec2(-1,-1));
 	}
 	void Create(SoldierBase*);
 };
@@ -137,6 +138,7 @@ public:
 		addIdCount();
 		setType('d');
 		clearAllType();
+		setTargetPos(Vec2(-1, -1));
 	}
 	void Create(SoldierBase*);
 };
@@ -173,6 +175,7 @@ public:
 		addIdCount();
 		setType('t');
 		clearAllType();
+		setTargetPos(Vec2(-1, -1));
 	}
 	void Create(WarFactory*);
 };

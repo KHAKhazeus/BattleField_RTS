@@ -218,6 +218,8 @@ void FighterUnitBase::autoAttack(float dt) {
 		}
 	}
 }
+
+
 /*
 void FighterUnitBase::moveTo(Vec2 pos) {
 	this->stopAllActions();

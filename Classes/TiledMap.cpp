@@ -132,8 +132,11 @@ void TiledMap::newMapGrid(Vec2 newPos, int id,int range,int fix_modle) {
 
 void TiledMap::updateMapGrid(Vec2 oldPos, Vec2 newPos) {
 	auto id = getUnitIdByPosition(oldPos);
-	removeMapGrid(oldPos);
 	newMapGrid(newPos,id);
+	auto x = static_cast<int> (oldPos.x + 0.5);
+	auto y = static_cast<int> (oldPos.y + 0.5);
+	auto grid = _grid_Vector.at(x).at(y);
+	_gridAndId_Map.erase(grid);
 }
 
 void TiledMap::removeMapGrid(Vec2 Pos) {
@@ -227,6 +230,12 @@ void TiledMap::setUnpass(Vec2 Pos) {
 	//DEBUG 
 	//	log("%d %d", i, j);
 
+}
+
+void TiledMap::setPass(Vec2 Pos) {
+	auto x = static_cast<int> (Pos.x + 0.5);
+	auto y = static_cast<int> (Pos.y + 0.5);
+	_grid_Vector.at(x).at(y)->setPass(true);
 }
 
 Vec2 TiledMap::tileCoordForPosition(Vec2 position) {

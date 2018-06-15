@@ -32,6 +32,7 @@ protected:
 	bool _isAttack;//if the unit are attacking 
 	bool _isAutoAttack;//if the unit are auto Attacking
 	Vec2 _tiledPos; //the tiledPostion of the Unit
+	Vec2 _targetPos;
 public:
 	// Get the aniamtion
 	static Unit* create(const std::string& filename) {
@@ -135,6 +136,9 @@ public:
 
 	virtual Vec2 searchEnemy(){ return Vec2(-1,-1); }
 	
+	void setTargetPos(Vec2 targetPos) { _targetPos = targetPos; }
+	Vec2 getTargetPos() { return _targetPos; }
+
 	//Unit death
 	void setDeath() {
 		//TODO animation?
