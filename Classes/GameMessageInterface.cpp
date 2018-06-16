@@ -32,23 +32,33 @@ std::vector<GameMessage> GameMessageInterface::parseMessagesFromString(std::stri
     return result;
 }
 
-GameMessage GameMessageInterface::newCreateBuildingMessage(int new_building_id, std::string new_building_type, int base_id, int from_building_id){
+GameMessage GameMessageInterface::newCreateBuildingMessage(int new_building_id, std::string new_building_type, int base_id, int from_building_id, cocos2d::Vec2 target_point){
     GameMessage CRTBU_new_message;
     CRTBU_new_message.set_unit_0(new_building_id);
     CRTBU_new_message.set_create_type(new_building_type);
     CRTBU_new_message.set_base(base_id);
     CRTBU_new_message.set_building(from_building_id);
     CRTBU_new_message.set_cmd_code(GameMessage_CmdCode::GameMessage_CmdCode_CRTBU);
+    GridPoint end_point;
+    end_point.set_x(target_point.x);
+    end_point.set_y(target_point.y);
+    CRTBU_new_message.mutable_grid_path()->add_grid_point();
+    *(CRTBU_new_message.mutable_grid_path()->mutable_grid_point(0)) = end_point;
     return CRTBU_new_message;
 }
 
-GameMessage GameMessageInterface::newCreateUnitMessage(int new_unit_id, std::string new_unit_type, int base_id, int from_building_id){
+GameMessage GameMessageInterface::newCreateUnitMessage(int new_unit_id, std::string new_unit_type, int base_id, int from_building_id, cocos2d::Vec2 target_point){
     GameMessage CRTBD_new_message;
     CRTBD_new_message.set_unit_0(new_unit_id);
     CRTBD_new_message.set_create_type(new_unit_type);
     CRTBD_new_message.set_base(base_id);
     CRTBD_new_message.set_building(from_building_id);
     CRTBD_new_message.set_cmd_code(GameMessage_CmdCode::GameMessage_CmdCode_CRTBD);
+    GridPoint end_point;
+    end_point.set_x(target_point.x);
+    end_point.set_y(target_point.y);
+    CRTBD_new_message.mutable_grid_path()->add_grid_point();
+    *(CRTBD_new_message.mutable_grid_path()->mutable_grid_point(0)) = end_point;
     return CRTBD_new_message;
 }
 
