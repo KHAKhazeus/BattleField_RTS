@@ -190,7 +190,7 @@ void FighterUnitBase::autoAttack(float dt) {
 			auto id = TiledMap::getUnitIdByPosition(pos);
 			auto enemy = TiledMap::getUnitById(id);
 			tempScene->getUnitManager()->msgs->newAttackMessage(this->getUnitID(), enemy->getUnitID(), this->getAttack());
-			tempScene->getUnitManager()->attack(this, enemy);
+			tempScene->getUnitManager()->attack(this->getUnitID(), enemy->getUnitID(), this->getAttack());
 			tempScene->getUnitManager()->attackEffect(this, enemy);
 		}
 	}
@@ -208,7 +208,7 @@ void FighterUnitBase::autoAttack(float dt) {
 		if (this->judgeAttack(pos)) {
 			this->stopAllActions();
 			tempScene->getUnitManager()->msgs->newAttackMessage(this->getUnitID(), enemy->getUnitID(), this->getAttack());
-			tempScene->getUnitManager()->attack(this, enemy);
+			tempScene->getUnitManager()->attack(this->getUnitID(), enemy->getUnitID(), this->getAttack());
 			tempScene->getUnitManager()->attackEffect(this, enemy);
 		}
 		else {
@@ -222,7 +222,7 @@ void FighterUnitBase::autoAttack(float dt) {
 			path_finder->findPath();
 			auto path = path_finder->getPath();
 			tempScene->getUnitManager()->msgs->newMoveMessage(this->getUnitID(), path, this->getTiledPosition());
-			tempScene->getUnitManager()->playerMoveWithWayPoints(this, this->getTiledPosition(), path);
+			tempScene->getUnitManager()->playerMoveWithWayPoints(this->getUnitID(), path, this->getTiledPosition());
 		}
 	}
 }

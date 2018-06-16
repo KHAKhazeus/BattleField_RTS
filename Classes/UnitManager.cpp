@@ -83,6 +83,9 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 					temp->clearAllType();
 					temp->setAttack(true);
 					temp->setTargetID(enemy->getUnitID());
+					msgs->newAttackMessage(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
+					attack(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
+
 				}
 			}
 			else {
@@ -110,6 +113,8 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 						temp->setAttack(true);
 						auto id = enemy->getUnitID();
 						temp->setTargetID(id);
+						msgs->newAttackMessage(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
+						attack(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
 					}
 				}
 			}
@@ -144,18 +149,18 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 						path_finder->findPath();
 						auto path = path_finder->getPath();
 						if (temp->getNumberOfRunningActions() == 0) {
-							msgs->newMoveMessage(temp->getUnitID(), path, touch_point);
+							msgs->newMoveMessage(temp->getUnitID(), path, tiledLocation);
 							temp->clearAllType();
 							temp->setMove(true);
-							playerMoveWithWayPoints(temp, touch_point, path);
+							playerMoveWithWayPoints(temp->getUnitID(), path, tiledLocation);
 						}
 						else {
 							temp->stopAllActions();
-							msgs->newMoveMessage(temp->getUnitID(), path, touch_point);
+							msgs->newMoveMessage(temp->getUnitID(), path, tiledLocation);
 
 							temp->clearAllType();
 							temp->setMove(true);
-							playerMoveWithWayPoints(temp, touch_point, path);
+							playerMoveWithWayPoints(temp->getUnitID(), path, tiledLocation);
 						}
 					}
 				}
@@ -195,13 +200,13 @@ void UnitManager::selectUnitsByRect(MouseRect* mouse_rect) {
 	}
 }
 
-void UnitManager::playerMoveWithWayPoints(Unit* player, Vec2 position, std::vector<Vec2> path) {
-	
+void UnitManager::playerMoveWithWayPoints(int move_unit_id, std::vector<cocos2d::Vec2> path_points, cocos2d::Vec2 end_point) {
+	auto player = TiledMap::getUnitById(move_unit_id);
 	player->stopAllActions();
-	if (path.empty()) {
+	if (path_points.empty()) {
 		return;
 	}
-	auto tiledLocation = path.back();
+	auto tiledLocation = path_points.back();
 	if (player->getTargetPos().x != -1) {
 		if (player->getTiledPosition() != player->getTargetPos()) {
 			if (!TiledMap::checkPass(player->getTargetPos())) {
@@ -211,8 +216,8 @@ void UnitManager::playerMoveWithWayPoints(Unit* player, Vec2 position, std::vect
 	}
 	player->setTargetPos(tiledLocation);
 	TiledMap::setUnpass(tiledLocation);
-	/*change the direction of the unit according to the target position*/
-	Vec2 tarPos = _tiled_Map->locationForTilePos(position);
+	/*change the direction of the unit according to the target end_point*/
+	Vec2 tarPos = _tiled_Map->locationForTilePos(end_point);
 	Vec2 myPos = _tiled_Map->locationForTilePos(player->getPosition());
 	float angle = atan2((tarPos.y - myPos.y), (tarPos.x - myPos.x)) * 180 / 3.14159;
 	if (player->isFlippedX()) {
@@ -276,11 +281,11 @@ void UnitManager::playerMoveWithWayPoints(Unit* player, Vec2 position, std::vect
 		}
 	});
 	Sequence *sequence;
-	for (int i = 0; i < path.size(); i++) {
+	for (int i = 0; i < path_points.size(); i++) {
 		if (i == 0) {
 		//	TiledMap::setUnpass(tiledLocation);
 		}
-		Vec2 openGL_point = _tiled_Map->locationForTilePos(path[i]);
+		Vec2 openGL_point = _tiled_Map->locationForTilePos(path_points[i]);
 			MoveTo* moveTo = MoveTo::create(speed, openGL_point);
 		//	auto action = Spawn::create(moveTo);
 			actionVector.pushBack(moveTo);
@@ -299,7 +304,10 @@ void UnitManager::delay(float dt) {
 	while ((clock() - start_time) < dt * CLOCKS_PER_SEC);
 }
 
-void UnitManager::attack(Unit* player, Unit* enemy) {
+void UnitManager::attack(int attacker_id, int under_attack_id, int damage) {
+	auto player = TiledMap::getUnitById(attacker_id);
+	auto enemy = TiledMap::getUnitById(under_attack_id);
+	attackEffect(player, enemy);
 	auto attackNumber = player->getAttack();
 	//decrease the Hp
 	enemy->setLifeValue(enemy->getLifeValue() - attackNumber);
@@ -408,7 +416,7 @@ void UnitManager::autoAttack(float dt) {
 			if (pos.x != -1) {
 				auto id = TiledMap::getUnitIdByPosition(pos);
 				auto enemy = TiledMap::getUnitById(id);
-				attack(_unit_Vector.at(i), enemy);
+				attack(_unit_Vector.at(i)->getUnitID(), enemy->getUnitID(), _unit_Vector.at(i)->getAttack());
 				attackEffect(_unit_Vector.at(i), enemy);
 			}
 		}

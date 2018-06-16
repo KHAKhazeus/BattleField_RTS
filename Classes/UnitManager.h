@@ -35,12 +35,12 @@ public:
 	void selectUnitsByPoint(Vec2 touch_point);
 	void selectUnitsByRect(MouseRect* mouse_rect);
 
-	void playerMoveWithWayPoints(Unit* player, Vec2 position, std::vector<Vec2> path);
+	void playerMoveWithWayPoints(int move_unit_id, std::vector<cocos2d::Vec2> path_points, cocos2d::Vec2 end_point);
 
 	void delay(float);
 	//@@param1 the Pointer to the Player
 	//@@param2 the Pointer to the Enemy
-	void attack(Unit* player, Unit* enemy);
+	void attack(int attacker_id, int under_attack_id, int damage);
 	
 	void attackEffect(Unit* player, Unit* enemy);
 
