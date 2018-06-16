@@ -29,7 +29,7 @@ set(APP_NAME BattleField_RTS)
 
 project(${APP_NAME})
 
-set(COCOS2DX_ROOT_PATH $ENV{COCOS_X_ROOT}/cocos2d-x-3.17)
+set(COCOS2DX_ROOT_PATH $ENV{COCOS_X_ROOT})
 #!set(COCOS2DX_ROOT_PATH $ENV{COCOS_X_ROOT}/)
 
 set(CMAKE_MODULE_PATH ${COCOS2DX_ROOT_PATH}/cmake/Modules/)
@@ -65,10 +65,20 @@ list(APPEND GAME_SOURCE
      Classes/MenuScene.cpp
      Classes/SettingLayer.cpp
      Classes/GameMessage.pb.cc
-     Classes/GameMessageInterface.cpp
      Classes/NetworkLayer.cpp
      Classes/SocketClient.cpp
      Classes/SocketServer.cpp
+     Classes/GameScene.cpp
+     Classes/MyResources.cpp
+     Classes/UnitCreate.cpp
+	 Classes/TiledMap.cpp
+	 Classes/UnitManager.cpp
+	 Classes/BuildingBase.cpp
+	 Classes/FighterUnitBase.cpp
+	 Classes/Unit.cpp
+	 Classes/MouseRect.cpp
+	 Classes/PathArithmetic.cpp
+	 Classes/GameMessageInterface.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
@@ -76,10 +86,22 @@ list(APPEND GAME_HEADER
      Classes/MenuScene.h
      Classes/SettingLayer.h
      Classes/GameMessage.pb.h
-     Classes/GameMessageInterface.h
      Classes/NetworkLayer.h
      Classes/SocketClient.h
      Classes/SocketServer.h
+     Classes/GameScene.h
+     Classes/Grid.h
+     Classes/MyResources.h
+     Classes/UnitCreate.h
+	Classes/TiledMap.h
+	Classes/UnitManager.h
+	Classes/BuildingBase.h
+	Classes/FighterUnitBase.h
+	Classes/Unit.h
+	Classes/MouseRect.h
+	Classes/PathArithmetic.h
+	Classes/BattleField_RTS.h
+	Classes/GameMessageInterface.h
      )
 
 if(ANDROID)
@@ -154,7 +176,7 @@ elseif(WINDOWS)
 set_target_properties(protobuff
 		PROPERTIES IMPORTED_LOCATION
 #!
-		"D:/C++ project 2018/BattleField_RTS/Classes/lib/Debug/Protobuf/libprotobuf.lib"
+		"H:/BattleField_RTS/Classes/lib/Debug/Protobuf/libprotobuf.lib"
 )
 endif()
 

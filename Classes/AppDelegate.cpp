@@ -26,6 +26,8 @@
 #include "MenuScene.h"
 #include <string>
 //#include "HelloWorldScene.h"
+#include "HelloWorldScene.h"
+#include "GameScene.h"
 
 // #define USE_AUDIO_ENGINE 1
 // #define USE_SIMPLE_AUDIO_ENGINE 1
@@ -66,6 +68,7 @@ USING_NS_CC;
 //temporarily set to avoid error
     static std::string resource_path_prefix("MAC");
 #endif
+
 
 AppDelegate::AppDelegate()
 {
@@ -147,7 +150,11 @@ bool AppDelegate::applicationDidFinishLaunching() {
     register_all_packages();
 
     // create a scene. it's an autorelease object
-    auto scene = MenuScene::createScene();
+
+    auto scene = GameScene::createScene();
+
+    // scene = GameScene::createScene();
+
 
     // run
     director->runWithScene(scene);

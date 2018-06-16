@@ -10,6 +10,7 @@
 #define CLIENT_ERROR "Error"
 #define CLIENT_CANCEL "Cancelled"
 
+
 std::string GameMessageInterface::combineMessagesToString(std::vector<GameMessage> game_messages){
     GameMessageGroup game_message_group;
     for(auto msg: game_messages){
@@ -21,6 +22,7 @@ std::string GameMessageInterface::combineMessagesToString(std::vector<GameMessag
 }
 
 //use this function after excluding CLIENT_ERROR & CLIENT_CANCEL
+
 std::vector<GameMessage> GameMessageInterface::parseMessagesFromString(std::string data){
     GameMessageGroup game_message_group;
     game_message_group.ParseFromString(data);
@@ -97,3 +99,4 @@ GameMessage GameMessageInterface::newEMPMessage(){
     EMP_new_message.set_cmd_code(GameMessage_CmdCode::GameMessage_CmdCode_EMP);
     return EMP_new_message;
 }
+
