@@ -96,7 +96,7 @@ public:
 	//The function of Touch
 	
 	
-
+	UnitManager* getUnitManager() { return _unit_Manager; }
 };
 
 

@@ -176,7 +176,7 @@ elseif(WINDOWS)
 set_target_properties(protobuff
 		PROPERTIES IMPORTED_LOCATION
 #!
-		"C:/github/BattleField_RTS/Classes/lib/Debug/Protobuf/libprotobuf.lib"
+		"H:/BattleField_RTS/Classes/lib/Debug/Protobuf/libprotobuf.lib"
 )
 endif()
 

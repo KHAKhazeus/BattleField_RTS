@@ -216,56 +216,60 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 							this->setBuilt(false);
 							if (temp_building->getTag() == 1) {
 								auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
+								auto tempManager = tempScene->getUnitManager();
 								MoneyMine* moneyMine = MoneyMine::create("moneyMine/MinetoMoney_24.png");
 								if (tempScene->getMoney()->checkMoney(moneyMine->getGold()) &&
 									tempScene->getPower()->checkPower(moneyMine->getElect())) {
 									auto id = moneyMine->getIdCount();
 									moneyMine->setUnitID(id);
-									UnitManager::msgs->newCreateBuildingMessage(moneyMine->getUnitID(), moneyMine->getType(), 
-										this->getCampID(), this->getUnitID(),nodeLocation);
-									UnitManager::Building(moneyMine->getUnitID(), moneyMine->getType(), this->getCampID(), this->getUnitID(),
-										nodeLocation);
+									tempManager->addMessages(tempManager->msgs->newCreateBuildingMessage(moneyMine->getUnitID(), moneyMine->getType(),
+										this->getCampID(), this->getUnitID(),nodeLocation));
+									/*UnitManager::Building(moneyMine->getUnitID(), moneyMine->getType(), this->getCampID(), this->getUnitID(),
+										nodeLocation);*/
 								}
 								delete moneyMine;
 							}
 							else if (temp_building->getTag() == 2) {
 								PowerPlant* powerPlant = PowerPlant::create("powerPlant/PowerBuilt_24.png");
 								auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
+								auto tempManager = tempScene->getUnitManager();
 								if (tempScene->getMoney()->checkMoney(powerPlant->getGold())) {
 									auto id = powerPlant->getIdCount();
 									powerPlant->setUnitID(id);
-									UnitManager::msgs->newCreateBuildingMessage(powerPlant->getUnitID(), powerPlant->getType(), this->getCampID(), 
-										this->getUnitID(), nodeLocation);
-									UnitManager::Building(powerPlant->getUnitID(), powerPlant->getType(), this->getCampID(), this->getUnitID(),
-										nodeLocation);
+									tempManager->addMessages(tempManager->msgs->newCreateBuildingMessage(powerPlant->getUnitID(), powerPlant->getType(), this->getCampID(),
+										this->getUnitID(), nodeLocation));
+									/*UnitManager::Building(powerPlant->getUnitID(), powerPlant->getType(), this->getCampID(), this->getUnitID(),
+										nodeLocation);*/
 								}
 								delete powerPlant;
 							}
 							else if (temp_building->getTag() == 3) {
 								SoldierBase* soldierBase = SoldierBase::create("soldierBase/soldierBase_23.png");
 								auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
+								auto tempManager = tempScene->getUnitManager();
 								if (tempScene->getMoney()->checkMoney(soldierBase->getGold()) &&
 									tempScene->getPower()->checkPower(soldierBase->getElect())) {
 									auto id = soldierBase->getIdCount();
 									soldierBase->setUnitID(id);
-									UnitManager::msgs->newCreateBuildingMessage(soldierBase->getUnitID(), soldierBase->getType(), this->getCampID(), this->getUnitID()
-										, nodeLocation);
-									UnitManager::Building(soldierBase->getUnitID(), soldierBase->getType(), this->getCampID(), this->getUnitID(),
-										nodeLocation);
+									tempManager->addMessages(tempManager->msgs->newCreateBuildingMessage(soldierBase->getUnitID(), soldierBase->getType(), this->getCampID(), this->getUnitID()
+										, nodeLocation));
+									/*UnitManager::Building(soldierBase->getUnitID(), soldierBase->getType(), this->getCampID(), this->getUnitID(),
+										nodeLocation);*/
 								}
 								delete soldierBase;
 							}
 							else if (temp_building->getTag() == 4) {
 								WarFactory* warFactory = WarFactory::create("tankBase/tankbuilding_23.png");
 								auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
+								auto tempManager = tempScene->getUnitManager();
 								if (tempScene->getMoney()->checkMoney(warFactory->getGold()) &&
 									tempScene->getPower()->checkPower(warFactory->getElect())) {
 									auto id = warFactory->getIdCount();
 									warFactory->setUnitID(id);
-									UnitManager::msgs->newCreateBuildingMessage(warFactory->getUnitID(), warFactory->getType(), this->getCampID(), 
-										this->getUnitID(),nodeLocation);
-									UnitManager::Building(warFactory->getUnitID(), warFactory->getType(), this->getCampID(), this->getUnitID(),
-										nodeLocation);
+									tempManager->addMessages(tempManager->msgs->newCreateBuildingMessage(warFactory->getUnitID(), warFactory->getType(), this->getCampID(),
+										this->getUnitID(),nodeLocation));
+									/*UnitManager::Building(warFactory->getUnitID(), warFactory->getType(), this->getCampID(), this->getUnitID(),
+										nodeLocation);*/
 								}
 								delete warFactory;
 							}

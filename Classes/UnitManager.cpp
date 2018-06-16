@@ -8,6 +8,7 @@ bool UnitManager::init(TiledMap * tiledMap) {
 	_building =  1;
 	_soider = 0;
 	_tiled_Map = tiledMap;
+	this->schedule(schedule_selector(updateMessage), 5.0f / 60);
 	return true;
 }
 
@@ -64,8 +65,8 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 					//if the enemy is in the attack range 如果敌人在攻击范围内
 					if (temp->judgeAttack(tiledLocation) && TiledMap::checkMapGrid(tiledLocation)) {
 						temp->stopAllActions();
-						msgs->newAttackMessage(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
-						attack(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
+						UnitManager::addMessages(msgs->newAttackMessage(temp->getUnitID(), enemy->getUnitID(), temp->getAttack()));
+						//attack(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
 
 
 						if (temp->judgeAttack(tiledLocation)) {
@@ -88,8 +89,8 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 						//	attack(temp, tempSprite);
 							//TODO function attack
 							temp->stopAllActions();
-							msgs->newAttackMessage(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
-							attack(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
+							UnitManager::addMessages(msgs->newAttackMessage(temp->getUnitID(), enemy->getUnitID(), temp->getAttack()));
+							//attack(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
 								
 						}
 						else {
@@ -129,13 +130,13 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 						path_finder->findPath();
 						auto path = path_finder->getPath();
 						if (temp->getNumberOfRunningActions() == 0) {
-							msgs->newMoveMessage(temp->getUnitID(), path, touch_point);
-							playerMoveWithWayPoints(temp->getUnitID(), path, touch_point);
+							UnitManager::addMessages(msgs->newMoveMessage(temp->getUnitID(), path, touch_point));
+							//playerMoveWithWayPoints(temp->getUnitID(), path, touch_point);
 						}
 						else {
 							temp->stopAllActions();
-							msgs->newMoveMessage(temp->getUnitID(), path, touch_point);
-							playerMoveWithWayPoints(temp->getUnitID(), path, touch_point);
+							UnitManager::addMessages(msgs->newMoveMessage(temp->getUnitID(), path, touch_point));
+							//playerMoveWithWayPoints(temp->getUnitID(), path, touch_point);
 						}
 					}
 				}
@@ -629,4 +630,32 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		//	tempScene->getVectorSoldiers().pushBack(soldier);
 		tempScene->getMoney()->spendMoney(tank->getGold());
 	}
+}
+
+void UnitManager::updateMessage(float delta) {
+	std::vector<GameMessage>orders;
+	std::string packages;
+	packages = msgs->combineMessagesToString(this->getMessages());
+	if (packages == CLIENT_ERROR || packages == CLIENT_CANCEL) {
+		//To do
+	}
+	orders=msgs->parseMessagesFromString(packages);
+	for (unsigned int i = 0; i < orders.size(); i++) {
+		//to dispatch the orders
+		if (orders[i].cmd_code == GameMessage::CmdCode::GameMessage_CmdCode_CRTBU) {
+			UnitManager::Building(orders[i].unit_0, orders[i].create_type, orders[i].base, orders[i].building,
+				);
+		}
+		else if (orders[i].cmd_code == GameMessage::CmdCode::GameMessage_CmdCode_ATK) {
+			UnitManager::attack(orders[i].unit_0, orders[i].unit_1, orders[i].damage);
+		}
+		else if (orders[i].cmd_code == GameMessage::CmdCode::GameMessage_CmdCode_CRTBD) {
+			UnitManager::NewUnitCreate(orders[i].unit_0, orders[i].create_type, orders[i].base, orders[i].building, );
+		}
+		else if (orders[i].cmd_code == GameMessage::CmdCode::GameMessage_CmdCode_MOV) {
+			UnitManager::playerMoveWithWayPoints(orders[i].unit_0, , );
+		}
+		
+	}
+
 }

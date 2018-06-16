@@ -180,26 +180,28 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 						if (temp_building->getTag() == 1) {
 							Dog* dog = Dog::create("dogRun/dog0.png");
 							auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
+							auto tempManager = tempScene->getUnitManager();
 							if (tempScene->getMoney()->checkMoney(dog->getGold())) {
 								auto id = dog->getIdCount();
 								dog->setUnitID(id);
 								Vec2 nodeLocation = this->RandomPosition();
-								UnitManager::msgs->newCreateUnitMessage(dog->getUnitID(), dog->getType(),this->getCampID(),
-									this->getUnitID(), nodeLocation);
-								UnitManager::NewUnitCreate(dog->getUnitID(), dog->getType(), this->getCampID(),
-									this->getUnitID(), nodeLocation);
+								tempManager->addMessages(tempManager->msgs->newCreateUnitMessage(dog->getUnitID(), dog->getType(),this->getCampID(),
+									this->getUnitID(), nodeLocation));
+								/*UnitManager::NewUnitCreate(dog->getUnitID(), dog->getType(), this->getCampID(),
+									this->getUnitID(), nodeLocation);*/
 							}
 							delete dog;
 						}
 						else if (temp_building->getTag() == 2) {
 							Soldier* soldier = Soldier::create("soldierRun/soldierstand.png");
 							auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
+							auto tempManager = tempScene->getUnitManager();
 							if (tempScene->getMoney()->checkMoney(soldier->getGold())) {
 								Vec2 nodeLocation = this->RandomPosition();
-								UnitManager::msgs->newCreateUnitMessage(soldier->getUnitID(), soldier->getType(), this->getCampID(),
-									this->getUnitID(), nodeLocation);
-								UnitManager::NewUnitCreate(soldier->getUnitID(), soldier->getType(), this->getCampID(),
-									this->getUnitID(), nodeLocation);
+								tempManager->addMessages(tempManager->msgs->newCreateUnitMessage(soldier->getUnitID(), soldier->getType(), this->getCampID(),
+									this->getUnitID(), nodeLocation));
+								/*UnitManager::NewUnitCreate(soldier->getUnitID(), soldier->getType(), this->getCampID(),
+									this->getUnitID(), nodeLocation);*/
 							}
 							delete soldier;
 						}
@@ -296,14 +298,15 @@ bool WarFactory::onTouchBegan(Touch *touch, Event *event) {
 					auto tempTiledMap = static_cast<TiledMap*>(this->getParent()->getParent());
 					Tank* tank = Tank::create("tank/tank0.png");
 					auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
+					auto tempManager = tempScene->getUnitManager();
 					if (tempScene->getMoney()->checkMoney(tank->getGold())) {
 						Vec2 nodeLocation = this->RandomPosition();
 						auto id =tank->getIdCount();
 						tank->setUnitID(id);
-						UnitManager::msgs->newCreateUnitMessage(tank->getUnitID(), tank->getType(), this->getCampID(),
-							this->getUnitID(), nodeLocation);
-						UnitManager::NewUnitCreate(tank->getUnitID(), tank->getType(), this->getCampID(),
-							this->getUnitID(), nodeLocation);
+						tempManager->addMessages(tempManager->msgs->newCreateUnitMessage(tank->getUnitID(), tank->getType(), this->getCampID(),
+							this->getUnitID(), nodeLocation));
+						/*UnitManager::NewUnitCreate(tank->getUnitID(), tank->getType(), this->getCampID(),
+							this->getUnitID(), nodeLocation);*/
 					}
 					delete tank;
 					auto tempNode = this->getParent()->getParent()->getParent();

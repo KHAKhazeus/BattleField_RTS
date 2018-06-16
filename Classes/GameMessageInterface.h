@@ -11,6 +11,9 @@
 #include "cocos2d.h"
 #include <vector>
 
+#define CLIENT_ERROR "Error"
+#define CLIENT_CANCEL "Cancelled"
+
 class GameMessageInterface{
 public:
     GameMessageInterface() = delete;    //should prevent any instances

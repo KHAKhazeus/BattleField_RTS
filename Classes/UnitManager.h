@@ -15,7 +15,7 @@ USING_NS_CC;
 
 class UnitManager :public cocos2d::Node {
 public:
-	static GameMessageInterface * msgs ;
+	GameMessageInterface * msgs ;
 	virtual bool init(TiledMap *);
 	static UnitManager * create(TiledMap* tiledMap) {
 		auto unitManager = new UnitManager();
@@ -52,6 +52,17 @@ public:
 		cocos2d::Vec2 position);
 	static void NewUnitCreate(int new_unit_id, std::string new_unit_type, int base_id, int from_building_id,
 		cocos2d::Vec2 position);
+
+	void updateMessage(float delta);
+
+	std::vector<GameMessage>& getMessages() { return _gameMessages; }
+	void addMessages(GameMessage msg) { _gameMessages.push_back(msg); }
+
+	std::shared_ptr<SocketClient>getSocketClient() { return _socket_client; }
+	std::shared_ptr<SocketServer>getSocketServer() { return _socket_server; }
+	void writeOrders(std::vector<GameMessage> messages) {
+		_orders = messages;
+	}
 private:
 	//the count of _building
 	int _building;
@@ -60,8 +71,10 @@ private:
 	//the point to TiledMap
 	TiledMap * _tiled_Map;
 	Base * _base;
-	std::shared_ptr<SocketClient> _socketClient;
-	std::shared_ptr<SocketServer> _socketServer;
+	std::shared_ptr<SocketClient> _socket_client{ static_cast<SocketClient*>(nullptr),[](SocketClient*) {} };
+	std::shared_ptr<SocketServer> _socket_server{ static_cast<SocketServer*>(nullptr),[](SocketServer*) {} };
+	std::vector<GameMessage> _gameMessages;
+	std::vector<GameMessage>_orders;
 };
 
 

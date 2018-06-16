@@ -7,8 +7,7 @@
 
 #include "GameMessageInterface.h"
 
-#define CLIENT_ERROR "Error"
-#define CLIENT_CANCEL "Cancelled"
+
 
 
 std::string GameMessageInterface::combineMessagesToString(std::vector<GameMessage> game_messages){
