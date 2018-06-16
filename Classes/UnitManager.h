@@ -44,8 +44,16 @@ public:
 	
 	void attackEffect(Unit* player, Unit* enemy);
 
+
 	//the unit destroy effect
 	void destroyEffect(Unit *unit,bool type);
+
+
+	void autoAttack(float dt);
+
+	Vector<Unit*>& getUnitVector() { return _unit_Vector; }
+
+//	void attack(Unit *player,Unit *target);
 
 
 private:
@@ -56,6 +64,8 @@ private:
 	//the point to TiledMap
 	TiledMap * _tiled_Map;
 	Base * _base;
+	//Vector of the fightUnit created by us
+	Vector<Unit*> _unit_Vector;
 };
 
 

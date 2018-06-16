@@ -52,7 +52,10 @@ public:
 	//@@param 1 is the positon of your building  *TiledMap positon
 	//@@paran 2 is the field range of your building
 	static void setUnpass(Vec2 pos, int range);
+
 	static void setUnpass(Vec2 Pos);
+
+	static void setPass(Vec2 Pos);
 	//Check the boundary
 	static bool checkBoundary(Vec2 pos);
 	static bool checkCreate(Vec2 pos);
@@ -69,6 +72,9 @@ public:
 	//@@param is the Id of the Unit
 	//The return value is the Pointer to the Unit
 	static Unit* getUnitById(int id);
+	//@@param the Id of the Unit
+	//To check the Id if has been removed already
+	static bool checkUnitId(int id);
 
 
 	//_selected_Vector API

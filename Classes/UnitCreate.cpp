@@ -223,6 +223,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 									auto id = moneyMine->getIdCount();
 									moneyMine->setUnitID(id);
 									UnitManager::msgs->newCreateBuildingMessage(moneyMine->getUnitID(), moneyMine->getType(), this->getCampID(), this->getUnitID());
+									moneyMine->setTiledPosition(tiledLocation);
 									moneyMine->addIdCount();
 									moneyMine->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
 									BuildingBase::setIsBuilt(true);
@@ -247,6 +248,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 									powerPlant->setUnitID(id);
 									UnitManager::msgs->newCreateBuildingMessage(powerPlant->getUnitID(), powerPlant->getType(), powerPlant->getCampID(), this->getUnitID());
 									powerPlant->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
+									powerPlant->setTiledPosition(tiledLocation);
 									BuildingBase::setIsBuilt(true);
 									powerPlant->Build();
 									powerPlant->addIdCount();
@@ -268,12 +270,12 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 								if (tempScene->getMoney()->checkMoney(soldierBase->getGold()) &&
 									tempScene->getPower()->checkPower(soldierBase->getElect())) {
 									BuildingBase::setIsBuilt(true);
-									
+									soldierBase->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
+									soldierBase->setTiledPosition(tiledLocation);
+									soldierBase->Build();
 									auto id = soldierBase->getIdCount();
 									soldierBase->setUnitID(id);
 									UnitManager::msgs->newCreateBuildingMessage(soldierBase->getUnitID(), soldierBase->getType(), soldierBase->getCampID(), this->getUnitID());
-									soldierBase->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
-									soldierBase->Build();
 									soldierBase->addIdCount();
 									TiledMap::newMapGrid(tiledLocation, id,soldierBase->getRange(),FIX_HEIGHT);
 									TiledMap::newMapId(id, soldierBase);
@@ -295,7 +297,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 								if (tempScene->getMoney()->checkMoney(warFactory->getGold()) &&
 									tempScene->getPower()->checkPower(warFactory->getElect())) {
 									BuildingBase::setIsBuilt(true);
-									
+									warFactory->setTiledPosition(tiledLocation);
 									auto id = warFactory->getIdCount();
 									warFactory->setUnitID(id);
 									UnitManager::msgs->newCreateBuildingMessage(warFactory->getUnitID(), warFactory->getType(), warFactory->getCampID(), this->getUnitID());
