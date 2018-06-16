@@ -217,12 +217,13 @@ void FighterUnitBase::autoAttack(float dt) {
 			if (!TiledMap::checkPass(pos)) {
 				pos = tempMap->findFreeNear(pos);
 			}
-			auto tempPos = this->getTiledPosition();
-			path_finder->initPathArithmetic(tempMap, this->getTiledPosition(), pos);
+			auto temp_pos = TiledMap::getUnitById(this->getUnitID())->getPosition();
+			auto tiled_pos = tempMap->tileCoordForPosition(temp_pos);
+			path_finder->initPathArithmetic(tempMap, tiled_pos, pos);
 			path_finder->findPath();
 			auto path = path_finder->getPath();
-			tempScene->getUnitManager()->msgs->newMoveMessage(this->getUnitID(), path, this->getTiledPosition());
-			tempScene->getUnitManager()->playerMoveWithWayPoints(this->getUnitID(), path, this->getTiledPosition());
+			tempScene->getUnitManager()->msgs->newMoveMessage(this->getUnitID(), path, pos);
+			tempScene->getUnitManager()->playerMoveWithWayPoints(this->getUnitID(), path, pos);
 		}
 	}
 }

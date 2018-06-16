@@ -51,6 +51,7 @@ public:
 	int getTargetID() { return _targetID; }
 
 
+
 	//set and get the tiledPosition of the unit
 	void setTiledPosition(Vec2 pos) { _tiledPos = pos; }
 	Vec2 getTiledPosition() { return _tiledPos; }
