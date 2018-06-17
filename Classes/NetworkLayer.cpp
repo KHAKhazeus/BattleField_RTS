@@ -29,9 +29,13 @@ void NetworkLayer::initializeServerSide(){
     std::stringstream port_stream(portbox->getString());
     int port_number;
     port_stream >> port_number;
+    _socket_server.reset(static_cast<SocketServer*>(nullptr), [](SocketServer*){});
     auto new_socket_server = SocketServer::create(port_number);
-    if(!new_socket_server){
+    if(new_socket_server){
         _socket_server.reset(new_socket_server);
+    }
+    else{
+        _socket_server.reset(static_cast<SocketServer*>(nullptr), [](SocketServer*){});
     }
 }
 
@@ -45,7 +49,7 @@ void NetworkLayer::initializeClientSide(){
     port_stream >> port_number;
     auto new_socket_client = SocketClient::create(ip, port_number);
     
-    if(!new_socket_client){
+    if(new_socket_client){
         _socket_client.reset(new_socket_client);
     }
 }

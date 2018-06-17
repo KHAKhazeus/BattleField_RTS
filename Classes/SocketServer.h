@@ -39,6 +39,7 @@ class SocketServer{
 public:
     static SocketServer* create(int port_number);
     void startService();
+    ~SocketServer();
     
 private:
     SocketServer(int port_number);
@@ -55,15 +56,15 @@ private:
     void sendMessages(std::string message);
     
     bool _error_flag{false}, _cancel_flag{false}, _stop_flag{false};
-    tcp::acceptor _acceptor;
     boost::asio::io_service _io;
+    tcp::acceptor _acceptor;
     std::mutex _mut;
     std::condition_variable _cond;
     std::vector<std::shared_ptr<ClientConnection>> _connections;
     std::vector<std::shared_ptr<std::thread>> _io_run_threads_vec;
-    std::shared_ptr<std::thread> _accept_thread;
+    std::shared_ptr<std::thread> _accept_thread{static_cast<std::thread*>(nullptr), [](std::thread*){}};
     std::vector<std::shared_ptr<std::thread>> _contact_threads_vector;
-    std::shared_ptr<std::thread> _send_thread;
+    std::shared_ptr<std::thread> _send_thread{static_cast<std::thread*>(nullptr), [](std::thread*){}};
     std::vector<std::list<std::string>> _stored_lists;
     std::vector<std::string> _combined_messages;
 };

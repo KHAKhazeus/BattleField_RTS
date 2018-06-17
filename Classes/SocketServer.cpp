@@ -47,25 +47,34 @@ int& ClientConnection::mutableID(){
 SocketServer::SocketServer(int port_number):_acceptor(_io, tcp::endpoint(boost::asio::ip::address_v4::any(), port_number)){
 }
 
+SocketServer::~SocketServer(){
+    stopAccept();
+    stopServer();
+}
+
 SocketServer* SocketServer::create(int port_number){
     try{
+        port_number = 8080;
         auto new_server = new SocketServer(port_number);
-        if(!new_server){
+        if(new_server){
             new_server->startServerListen();
         }
+        std::cout << "Server Startup Success" << std::endl;
         return new_server;
     }
     catch(...){
+        std::cerr << "Server Startup Error" << std::endl;
         return static_cast<SocketServer*>(nullptr);
     }
 }
 
 void SocketServer::startServerListen(){
     try{
-        for(auto thread: _io_run_threads_vec){
-            thread.reset(new std::thread(std::bind(static_cast<std::size_t(boost::asio::io_service::*)()>(&boost::asio::io_service::run),
-                                                   &_io)));
-        }
+        //!Extend
+        auto new_thread = new std::thread(std::bind(static_cast<std::size_t(boost::asio::io_service::*)()>(&boost::asio::io_service::run),
+                                                   &_io));
+        std::shared_ptr<std::thread> new_ptr(new_thread);
+        _io_run_threads_vec.push_back(new_ptr);
         //_acceptor.listen();
         std::cout << "Server Listening" << std::endl;
         _accept_thread.reset(new std::thread(std::bind(&SocketServer::startAccept, this)));
@@ -216,13 +225,19 @@ void SocketServer::stopServer(){
             socket_ptr->close();
         }
         for(auto thread: _io_run_threads_vec){
-            thread->join();
+            if(thread){
+                thread->join();
+            }
         }
         _cond.notify_all();
         for(auto thread: _contact_threads_vector){
-            thread->join();
+            if(thread){
+                thread->join();
+            }
         }
-        _send_thread->join();
+        if(_send_thread){
+            _send_thread->join();
+        }
     }
     catch(...){
         std::cerr << "Server Shutdown Error" << std::endl;

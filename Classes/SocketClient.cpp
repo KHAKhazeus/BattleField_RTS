@@ -10,11 +10,14 @@
 #include <iostream>
 #define MAX_LENGTH 8000
 
+SocketClient::~SocketClient(){
+    stopClient();
+}
 
 SocketClient* SocketClient::create(std::string server_ip, int port_nunber){
     try{
         auto new_client = new SocketClient(server_ip, port_nunber);
-        if(!new_client){
+        if(new_client){
             new_client->startClient();
         }
         return new_client;
@@ -63,11 +66,11 @@ void SocketClient::stopClient(){
                 std::string error_message = "Error";
                 _message_set_deque.push_back(error_message);
             }
+            _exchange_thread->join();
             _io.stop();
             _cond.notify_one();
             _socket.shutdown(tcp::socket::shutdown_both);
             _socket.close();
-            _exchange_thread->join();
         }
         catch(...){
             std::cerr << "Client Shutdown Error!" << std::endl;
@@ -148,5 +151,6 @@ bool SocketClient::writeMessages(std::string message_set){
 
 void SocketClient::startConnect(){
     std::cout << "Client Start Connecting" << std::endl;
+    std::cout << _endpoint.port() << _endpoint.address() << std::endl;
     _socket.async_connect(_endpoint, std::bind(&SocketClient::connectHandle, this, std::placeholders::_1));
 }

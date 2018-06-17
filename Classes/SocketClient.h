@@ -22,7 +22,7 @@ using boost::system::error_code;
 class SocketClient{
 public:
     static SocketClient* create(std::string server_ip, int port_number);
-    
+    ~SocketClient();
 private:
     SocketClient(std::string server_ip, int port_number): _socket(_io), _endpoint(boost::asio::ip::address_v4::from_string(server_ip), port_number){
         _exchange_thread.reset(static_cast<std::thread*>(nullptr), [](std::thread*){});
