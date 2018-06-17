@@ -224,10 +224,29 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 									tempScene->getPower()->checkPower(moneyMine->getElect())) {
 									auto id = moneyMine->getIdCount();
 									moneyMine->setUnitID(id);
+<<<<<<< HEAD
+									//UnitManager::msgs->newCreateBuildingMessage(moneyMine->getUnitID(), moneyMine->getType(), this->getCampID(), this->getUnitID());
+									moneyMine->setTiledPosition(tiledLocation);
+									moneyMine->addIdCount();
+									moneyMine->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
+									BuildingBase::setIsBuilt(true);
+									moneyMine->Build();
+									TiledMap::newMapGrid(tiledLocation, id, moneyMine->getRange());
+									TiledMap::newMapId(id, moneyMine);
+				//					TiledMap::setUnpass(tiledLocation, moneyMine->getRange());
+									static_cast<TMXTiledMap*>(this->getParent())->addChild(moneyMine, 50);
+									tempScene->getVectorMine().pushBack(moneyMine);
+									tempScene->getPower()->spendPower(moneyMine->getElect());
+									tempScene->getMoney()->spendMoney(moneyMine->getGold());
+								}
+								else {
+									delete moneyMine;
+=======
 									tempManager->addMessages(tempManager->msgs->newCreateBuildingMessage(moneyMine->getUnitID(), moneyMine->getType(),
 										this->getCampID(), this->getUnitID(),nodeLocation));
 									/*UnitManager::Building(moneyMine->getUnitID(), moneyMine->getType(), this->getCampID(), this->getUnitID(),
 										nodeLocation);*/
+>>>>>>> 1791dce88daf9bdee04e6810f13c305dbff401f9
 								}
 								//delete moneyMine;
 							}
@@ -238,10 +257,29 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 								if (tempScene->getMoney()->checkMoney(powerPlant->getGold())) {
 									auto id = powerPlant->getIdCount();
 									powerPlant->setUnitID(id);
+<<<<<<< HEAD
+									//UnitManager::msgs->newCreateBuildingMessage(powerPlant->getUnitID(), powerPlant->getType(), powerPlant->getCampID(), this->getUnitID());
+									powerPlant->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
+									powerPlant->setTiledPosition(tiledLocation);
+									BuildingBase::setIsBuilt(true);
+									powerPlant->Build();
+									powerPlant->addIdCount();
+									TiledMap::newMapGrid(tiledLocation, id, powerPlant->getRange());
+									TiledMap::newMapId(id, powerPlant);
+		//							TiledMap::setUnpass(tiledLocation, powerPlant->getRange());
+									static_cast<TMXTiledMap*>(this->getParent())->addChild(powerPlant, 40);
+									tempScene->getVectorPower().pushBack(powerPlant);
+									tempScene->getPower()->increasePower((powerPlant->getElect()));
+									tempScene->getMoney()->spendMoney(powerPlant->getGold());
+								}
+								else {
+									delete powerPlant;
+=======
 									tempManager->addMessages(tempManager->msgs->newCreateBuildingMessage(powerPlant->getUnitID(), powerPlant->getType(), this->getCampID(),
 										this->getUnitID(), nodeLocation));
 									/*UnitManager::Building(powerPlant->getUnitID(), powerPlant->getType(), this->getCampID(), this->getUnitID(),
 										nodeLocation);*/
+>>>>>>> 1791dce88daf9bdee04e6810f13c305dbff401f9
 								}
 								//delete powerPlant;
 							}

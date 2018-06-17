@@ -21,14 +21,14 @@ void BuildingBase::setIsBuilt(bool judge) {
 
 
 Vec2 SoldierBase::RandomPosition() {
-	int sign = random() % 3 - 1;
-	int sign1 = random() % 3 - 1;
+    int sign = cocos2d::random() % 3 - 1;
+    int sign1 = cocos2d::random() % 3 - 1;
 	while (sign == 0 && sign1 == 0) {
-		sign = random() % 3 - 1;
-		sign1 = random() % 3 - 1;
+        sign = cocos2d::random() % 3 - 1;
+		sign1 = cocos2d::random() % 3 - 1;
 	}
-	float randX = this->getPosition().x + random() % 100 * sign;
-	float randY = this->getPosition().y + random() % 100 * sign1;
+	float randX = this->getPosition().x + cocos2d::random() % 100 * sign;
+	float randY = this->getPosition().y + cocos2d::random() % 100 * sign1;
 	Vec2 position = Vec2(randX, randY);
 	// soldier's position transfered to tilemap position
 	Vec2 tileCoord = static_cast<TiledMap*>(this->getParent()->getParent())->tileCoordForPosition(position);
@@ -42,14 +42,14 @@ Vec2 SoldierBase::RandomPosition() {
 }
 
 Vec2 WarFactory::RandomPosition() {
-	int sign = random() % 3 - 1;
-	int sign1 = random() % 3 - 1;
+	int sign = cocos2d::random() % 3 - 1;
+	int sign1 = cocos2d::random() % 3 - 1;
 	while (sign == 0 && sign1 == 0) {
-		sign = random() % 3 - 1;
-		sign1 = random() % 3 - 1;
+        sign = cocos2d::random() % 3 - 1;
+		sign1 = cocos2d::random() % 3 - 1;
 	}
-	float randX = this->getPosition().x + random() % 150*  sign;
-	float randY = this->getPosition().y + random() % 150 * sign1;
+    float randX = this->getPosition().x + cocos2d::random() % 150*  sign;
+    float randY = this->getPosition().y + cocos2d::random() % 150 * sign1;
 	Vec2 position = Vec2(randX, randY);
 	// tank's position transfered to tilemap position
 	Vec2 tileCoord = static_cast<TiledMap*>(this->getParent()->getParent())->tileCoordForPosition(position);
