@@ -209,8 +209,6 @@ void FighterUnitBase::autoAttack(float dt) {
 		if (this->judgeAttack(pos)) {
 			this->stopAllActions();
 			tempManager->addMessages(tempManager->msgs->newAttackMessage(this->getUnitID(), enemy->getUnitID(), this->getAttack()));
-			//tempScene->getUnitManager()->attack(this->getUnitID(), enemy->getUnitID(), this->getAttack());
-			//tempScene->getUnitManager()->attackEffect(this, enemy);
 		}
 		else {
 			PathArithmetic* path_finder = PathArithmetic::create();
@@ -223,6 +221,17 @@ void FighterUnitBase::autoAttack(float dt) {
 			path_finder->initPathArithmetic(tempMap, tiled_pos, pos);
 			path_finder->findPath();
 			auto path = path_finder->getPath();
+			if (this->getTargetPos().x != -1) {
+				if (this->getTiledPosition() != this->getTargetPos()
+					&& pos != this->getTargetPos()) {
+					if (!TiledMap::checkPass(this->getTargetPos())) {
+						TiledMap::setPass(this->getTargetPos());
+					}
+				}
+			}
+			this->setTargetPos(pos);
+			TiledMap::setUnpass(pos);
+
 			tempManager->addMessages(tempManager ->msgs->newMoveMessage(this->getUnitID(), path, pos));
 			//tempScene->getUnitManager()->playerMoveWithWayPoints(this->getUnitID(), path, pos);
 		}

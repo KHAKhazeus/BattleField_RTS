@@ -55,32 +55,18 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 			//if > 1 what in the vector isn't a building   如果SelectVector的容量>1,那么它一定不会包含建筑
 			auto enemy = tempSprite;
 			enemy->getHP()->setVisible(true);
+		
 			if (TiledMap::checkSize() > 1) {
 				for (auto temp : *TiledMap::getSelectedVector()) {
-					//if the enemy is in the attack range 如果敌人在攻击范围内
-				/*	if (temp->judgeAttack(tiledLocation) && TiledMap::checkMapGrid(tiledLocation)) {
-						temp->stopAllActions();
-						UnitManager::addMessages(msgs->newAttackMessage(temp->getUnitID(), enemy->getUnitID(), temp->getAttack()));
-						//attack(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
-
-
-						if (temp->judgeAttack(tiledLocation)) {
-							//TODO function attack
-						//	attack(temp, tempSprite);
-						}
-						else {
-							//TODO function tracing
-						}
-					}*/
-
+					if (enemy->getUnitID() == temp->getTargetID() && temp->isAttack()) {
+						return;
+					}
 					//Set the Type to Attack
 					temp->stopAllActions();
 					temp->clearAllType();
 					temp->setAttack(true);
 					temp->setTargetID(enemy->getUnitID());
 					msgs->newAttackMessage(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
-					attackEffect(temp->getUnitID(), enemy->getUnitID());
-					attack(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
 
 				}
 			}
@@ -89,19 +75,11 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 				if (TiledMap::checkSize() == 1) {
 					auto temp = TiledMap::getSelectedVector()->at(0);
 					//if not
+					if (enemy->getUnitID() == temp->getTargetID() && temp->isAttack()) {
+						return;
+					}
 					if (!temp->isBuilding()) {
-					/*
-						if (temp->judgeAttack(tiledLocation)) {
-						//	attack(temp, tempSprite);
-							//TODO function attack
-							temp->stopAllActions();
-							UnitManager::addMessages(msgs->newAttackMessage(temp->getUnitID(), enemy->getUnitID(), temp->getAttack()));
-							//attack(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
-								
-						}
-						else {
-							//TODO function tracing
-						}*/
+					
 						//Set the Type to Attack
 						temp->stopAllActions();
 						temp->clearAllType();
@@ -109,8 +87,6 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 						auto id = enemy->getUnitID();
 						temp->setTargetID(id);
 						msgs->newAttackMessage(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
-						attackEffect(temp->getUnitID(), enemy->getUnitID());
-						attack(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
 					}
 				}
 			}
@@ -144,11 +120,20 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 						path_finder->initPathArithmetic(_tiled_Map, from, tiledLocation);
 						path_finder->findPath();
 						auto path = path_finder->getPath();
+						if (temp->getTargetPos().x != -1) {
+							if (temp->getTiledPosition() != temp->getTargetPos()
+								&& tiledLocation != temp->getTargetPos()) {
+								if (!TiledMap::checkPass(temp->getTargetPos())) {
+									TiledMap::setPass(temp->getTargetPos());
+								}
+							}
+						}
+						temp->setTargetPos(tiledLocation);
+						TiledMap::setUnpass(tiledLocation);
 						if (temp->getNumberOfRunningActions() == 0) {
-
-							UnitManager::addMessages(msgs->newMoveMessage(temp->getUnitID(), path, touch_point));
 							temp->clearAllType();
 							temp->setMove(true);
+							UnitManager::addMessages(msgs->newMoveMessage(temp->getUnitID(), path, touch_point));
 							//playerMoveWithWayPoints(temp->getUnitID(), path, tiledLocation);
 						}
 						else {
@@ -205,17 +190,9 @@ void UnitManager::playerMoveWithWayPoints(int move_unit_id, std::vector<cocos2d:
 		return;
 	}
 	auto tiledLocation = path_points.back();
-	if (player->getTargetPos().x != -1) {
-		if (player->getTiledPosition() != player->getTargetPos()) {
-			if (!TiledMap::checkPass(player->getTargetPos())) {
-				TiledMap::setPass(player->getTargetPos());
-			}
-		}
-	}
-	player->setTargetPos(tiledLocation);
-	TiledMap::setUnpass(tiledLocation);
+	
 	/*change the direction of the unit according to the target end_point*/
-	Vec2 tarPos = _tiled_Map->locationForTilePos(end_point);
+	Vec2 tarPos = _tiled_Map->locationForTilePos(_tiled_Map->locationForTilePos(end_point));
 	Vec2 myPos = _tiled_Map->locationForTilePos(player->getPosition());
 	float angle = atan2((tarPos.y - myPos.y), (tarPos.x - myPos.x)) * 180 / 3.14159;
 	if (player->isFlippedX()) {
@@ -466,6 +443,7 @@ void UnitManager::Building(int new_building_id, std::string new_building_type, i
 		moneyMine->Build();
 		TiledMap::newMapGrid(tiledLocation, new_building_id, moneyMine->getRange());
 		TiledMap::newMapId(new_building_id, moneyMine);
+		moneyMine->setTiledPosition(tiledLocation);
 		//					TiledMap::setUnpass(tiledLocation, moneyMine->getRange());
 		static_cast<TMXTiledMap*>(base->getParent())->addChild(moneyMine, 50);
 		tempScene->getVectorMine().pushBack(moneyMine);
@@ -488,6 +466,7 @@ void UnitManager::Building(int new_building_id, std::string new_building_type, i
 		powerPlant->Build();
 		TiledMap::newMapGrid(tiledLocation, new_building_id, powerPlant->getRange());
 		TiledMap::newMapId(new_building_id, powerPlant);
+		powerPlant->setTiledPosition(tiledLocation);
 		//							TiledMap::setUnpass(tiledLocation, powerPlant->getRange());
 		static_cast<TMXTiledMap*>(base->getParent())->addChild(powerPlant, 40);
 		tempScene->getVectorPower().pushBack(powerPlant);
@@ -510,6 +489,7 @@ void UnitManager::Building(int new_building_id, std::string new_building_type, i
 		soldierBase->Build();
 		TiledMap::newMapGrid(tiledLocation, new_building_id, soldierBase->getRange(), FIX_HEIGHT);
 		TiledMap::newMapId(new_building_id, soldierBase);
+		soldierBase->setTiledPosition(tiledLocation);
 		//							TiledMap::setUnpass(tiledLocation, soldierBase->getRange());
 		static_cast<TMXTiledMap*>(base->getParent())->addChild(soldierBase, 50);
 		tempScene->getVectorSoldier().pushBack(soldierBase);
@@ -534,6 +514,7 @@ void UnitManager::Building(int new_building_id, std::string new_building_type, i
 		
 		TiledMap::newMapGrid(tiledLocation, new_building_id, warFactory->getRange(), FIX_HEIGHT);
 		TiledMap::newMapId(new_building_id, warFactory);
+		warFactory->setTiledPosition(tiledLocation);
 		//				TiledMap::setUnpass(tiledLocation, warFactory->getRange());
 		static_cast<TMXTiledMap*>(base->getParent())->addChild(warFactory, 50);
 		tempScene->getVectorFactory().pushBack(warFactory);
@@ -571,6 +552,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		TiledMap::newMapGrid(tiledLocation, dog->getUnitID());
 		TiledMap::newMapId(dog->getUnitID(), dog);
 		dog->setTiledPosition(tiledLocation);
+		dog->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
 		static_cast<TMXTiledMap*>(plant->getParent())->addChild(dog, 200);
 		//tempScene->getVectorDogs().pushBack(dog);
 		tempScene->getMoney()->spendMoney(dog->getGold());
@@ -598,6 +580,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		//		auto tiledLocation = tempScene->tileCoordForPosition(nodeLocation);
 		TiledMap::newMapGrid(tiledLocation, soldier->getUnitID());
 		TiledMap::newMapId(soldier->getUnitID(), soldier);
+		soldier->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
 		soldier->setTiledPosition(tiledLocation);
 		//	tempScene->getVectorSoldiers().pushBack(soldier);
 		tempScene->getMoney()->spendMoney(soldier->getGold());
@@ -626,6 +609,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		//		auto tiledLocation = tempScene->tileCoordForPosition(nodeLocation);
 		TiledMap::newMapGrid(tiledLocation, tank->getUnitID());
 		TiledMap::newMapId(tank->getUnitID(), tank);
+		tank->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
 		tank->setTiledPosition(tiledLocation);
 		//	tempScene->getVectorSoldiers().pushBack(soldier);
 		tempScene->getMoney()->spendMoney(tank->getGold());
@@ -644,8 +628,8 @@ void UnitManager::updateMessage(float delta) {
 		//to dispatch the orders
 		std::vector<cocos2d::Vec2> path_points;
 		for (int j = 0; j < orders[i].mutable_grid_path()->grid_point_size(); j++) {
-			int x = orders[i].mutable_grid_path()->mutable_grid_point(0)->x();
-			int y = orders[i].mutable_grid_path()->mutable_grid_point(0)->y();
+			int x = orders[i].mutable_grid_path()->mutable_grid_point(j)->x();
+			int y = orders[i].mutable_grid_path()->mutable_grid_point(j)->y();
 			path_points.push_back(Vec2(x, y));
 		}
 		if (orders[i].cmd_code() == GameMessage::CmdCode::GameMessage_CmdCode_CRTBU) {
@@ -661,6 +645,10 @@ void UnitManager::updateMessage(float delta) {
 				path_points[0]);
 		}
 		else if (orders[i].cmd_code() == GameMessage::CmdCode::GameMessage_CmdCode_MOV) {
+			path_points.erase(path_points.cend() - 1);
+			if (path_points.empty()) {
+				continue;
+			}
 			UnitManager::playerMoveWithWayPoints(orders[i].unit_0(), path_points , path_points.back());
 		}
 		
