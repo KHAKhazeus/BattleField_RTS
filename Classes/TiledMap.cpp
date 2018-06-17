@@ -52,8 +52,8 @@ bool TiledMap::checkBoundary(Vec2 pos) {
 }
 
 bool TiledMap::checkPass(Vec2 pos) {
-	auto x = static_cast<int> (pos.x);
-	auto y = static_cast<int> (pos.y);
+	auto x = static_cast<int> (pos.x + 0.5);
+	auto y = static_cast<int> (pos.y + 0.5);
 	auto grid = _grid_Vector.at(x).at(y);
 	return grid->isPass();
 }
@@ -64,8 +64,8 @@ bool TiledMap::checkPass(int x, int y) {
 }
 
 bool TiledMap::checkBuilt(Vec2 pos, int range) {
-	auto x = static_cast<int> (pos.x);
-	auto y = static_cast<int> (pos.y);
+	auto x = static_cast<int> (pos.x + 0.5);
+	auto y = static_cast<int> (pos.y + 0.5);
 	for (auto i = x - range; i <= x + range; i++) {
 		for (auto j = y - range; j <= y + range; j++) {
 //			log("%d %d", i, j);
@@ -82,8 +82,8 @@ bool TiledMap::checkBuilt(Vec2 pos, int range) {
 }
 
 bool TiledMap::checkCreate(Vec2 pos) {
-	auto x = static_cast<int> (pos.x);
-	auto y = static_cast<int> (pos.y);
+	auto x = static_cast<int> (pos.x + 0.5);
+	auto y = static_cast<int> (pos.y + 0.5);
 	if (!checkBoundary(Vec2(x, y))) {
 		return false;
 	}
@@ -96,16 +96,16 @@ bool TiledMap::checkCreate(Vec2 pos) {
 		/*   _gridAndId_Map          API*/
 
 void TiledMap::newMapGrid(Vec2 newPos,int id) {
-	auto x = static_cast<int> (newPos.x);
-	auto y = static_cast<int> (newPos.y);
+	auto x = static_cast<int> (newPos.x + 0.5);
+	auto y = static_cast<int> (newPos.y + 0.5);
 	auto grid = _grid_Vector.at(x).at(y);
 	_gridAndId_Map.insert({ grid,id });
 	grid->setPass(false);
 }
 
 void TiledMap::newMapGrid(Vec2 newPos, int id,int range,int fix_modle) {
-	auto x = static_cast<int> (newPos.x);
-	auto y = static_cast<int> (newPos.y);
+	auto x = static_cast<int> (newPos.x + 0.5);
+	auto y = static_cast<int> (newPos.y + 0.5);
 	switch (fix_modle) {
 		case FIX_SQUARE:
 			for (auto i = x - range; i <= x + range; i++) {
@@ -131,22 +131,17 @@ void TiledMap::newMapGrid(Vec2 newPos, int id,int range,int fix_modle) {
 }
 
 void TiledMap::updateMapGrid(Vec2 oldPos, Vec2 newPos) {
-	auto x = static_cast<int> (oldPos.x);
-	auto y = static_cast<int> (oldPos.y);
-	auto oldGrid = _grid_Vector.at(x).at(y);
-	int id = _gridAndId_Map.at(oldGrid);
-	_gridAndId_Map.erase(oldGrid);
-	auto newX = static_cast<int> (newPos.x);
-	auto newY = static_cast<int> (newPos.y);
-	auto newGrid = _grid_Vector.at(newX).at(newY);
-	_gridAndId_Map.insert({newGrid,id});
-	newGrid->setPass(false);
-	oldGrid->setPass(true);
+	auto id = getUnitIdByPosition(oldPos);
+	newMapGrid(newPos,id);
+	auto x = static_cast<int> (oldPos.x + 0.5);
+	auto y = static_cast<int> (oldPos.y + 0.5);
+	auto grid = _grid_Vector.at(x).at(y);
+	_gridAndId_Map.erase(grid);
 }
 
 void TiledMap::removeMapGrid(Vec2 Pos) {
-	auto x = static_cast<int> (Pos.x);
-	auto y = static_cast<int> (Pos.y);
+	auto x = static_cast<int> (Pos.x + 0.5);
+	auto y = static_cast<int> (Pos.y + 0.5);
 	auto grid = _grid_Vector.at(x).at(y);
 	auto id = getUnitIdByPosition(Pos);
 	removeMapId(id);
@@ -155,8 +150,8 @@ void TiledMap::removeMapGrid(Vec2 Pos) {
 }
 
 bool TiledMap::checkMapGrid(Vec2 Pos) {
-	auto x = static_cast<int> (Pos.x);
-	auto y = static_cast<int> (Pos.y);
+	auto x = static_cast<int> (Pos.x + 0.5);
+	auto y = static_cast<int> (Pos.y + 0.5);
 	auto grid = _grid_Vector.at(x).at(y);
 	if (_gridAndId_Map.count(grid) != 0) {
 		return true;
@@ -165,8 +160,8 @@ bool TiledMap::checkMapGrid(Vec2 Pos) {
 }
 
 void TiledMap::removeMapGrid(Vec2 pos, int fix_model) {
-	auto x = static_cast<int> (pos.x);
-	auto y = static_cast<int> (pos.y);
+	auto x = static_cast<int> (pos.x + 0.5);
+	auto y = static_cast<int> (pos.y + 0.5);
 	auto id = getUnitIdByPosition(pos);
 	auto tempSprite = getUnitById(id);
 	auto range = tempSprite->getRange();
@@ -198,8 +193,8 @@ void TiledMap::removeMapGrid(Vec2 pos, int fix_model) {
 
 
 int TiledMap::getUnitIdByPosition(Vec2 Pos) {
-	auto x = static_cast<int> (Pos.x);
-	auto y = static_cast<int> (Pos.y);
+	auto x = static_cast<int> (Pos.x + 0.5);
+	auto y = static_cast<int> (Pos.y + 0.5);
 	auto grid = _grid_Vector.at(x).at(y);
 	return _gridAndId_Map.at(grid);
 }
@@ -217,8 +212,8 @@ TMXTiledMap* TiledMap::getTiledMap() {
 }
 
 void TiledMap::setUnpass(Vec2 Pos, int range) {
-	auto x = static_cast<int> (Pos.x);
-	auto y = static_cast<int> (Pos.y);
+	auto x = static_cast<int> (Pos.x + 0.5);
+	auto y = static_cast<int> (Pos.y + 0.5);
 	for (int i = x - range; i <= x + range; i++) {
 		for (int j = y - range; j <= y + range; j++) {
 			_grid_Vector.at(i).at(j)->setPass(false);
@@ -229,12 +224,18 @@ void TiledMap::setUnpass(Vec2 Pos, int range) {
 }
 
 void TiledMap::setUnpass(Vec2 Pos) {
-	auto x = static_cast<int> (Pos.x);
-	auto y = static_cast<int> (Pos.y);
+	auto x = static_cast<int> (Pos.x + 0.5);
+	auto y = static_cast<int> (Pos.y + 0.5);
 	_grid_Vector.at(x).at(y)->setPass(false);
 	//DEBUG 
 	//	log("%d %d", i, j);
 
+}
+
+void TiledMap::setPass(Vec2 Pos) {
+	auto x = static_cast<int> (Pos.x + 0.5);
+	auto y = static_cast<int> (Pos.y + 0.5);
+	_grid_Vector.at(x).at(y)->setPass(true);
 }
 
 Vec2 TiledMap::tileCoordForPosition(Vec2 position) {
@@ -268,6 +269,13 @@ void TiledMap::removeMapId(int id) {
 
 Unit* TiledMap::getUnitById(int id){
 	return _idAndUnit_Map.at(id);
+}
+
+bool TiledMap::checkUnitId(int id) {
+	if (_idAndUnit_Map.count(id) != 0) {
+		return true;
+	}
+	return false;
 }
 
 

@@ -55,8 +55,27 @@ private:
 	int _width;
 	int _height;
 	bool initwithRect(int x, int y, int w, int h){
-		_x = x;
-		_y = y;
+		if (x < 0) {
+			_x = 0;
+		}
+		else if (x >= 128) {
+			x = 127;
+		}
+		else {
+			_x = x;
+		}
+		if (y < 0) {
+			_y = 127;
+		}
+		else if (y >= 128) {
+			y = 0;
+		}
+		else {
+			_y = 127;
+		}
+
+		
+		_y = 127-y;
 		_width = w;
 		_height = h;
 		return true;

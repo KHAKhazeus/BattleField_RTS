@@ -59,6 +59,8 @@ public:
 
 	TiledMap* getMap() { return _tiled_Map; }
 
+	UnitManager* getUnitManager() { return _unit_Manager; }
+
 	CREATE_FUNC(GameScene);
 	//turn the coordinate of OpenGL to TileMap
 	//The return value is the coordinate of tho position in TileMap

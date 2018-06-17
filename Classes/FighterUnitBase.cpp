@@ -5,6 +5,7 @@
 #include "FighterUnitBase.h"
 #include "SimpleAudioEngine.h"
 using namespace CocosDenshion;
+#include "GameScene.h"
 
 bool Soldier::_isBeingCreated = false;
 
@@ -160,11 +161,78 @@ bool FighterUnitBase::judgeAttack(Vec2 pos) {
 	return false;
 }
 
+Vec2 FighterUnitBase::searchEnemy() {
+	auto curpos = getTiledPosition();
+	auto range = getAttackRange();
+	auto rect = GridRect::create(curpos.x - range / 2, curpos.y - range / 2, range, range);
+	for (auto i = rect->getX(); i <= rect->getX() + rect->getWidth(); i++) {
+		for (auto j = rect->getY(); j <= rect->getY() + rect->getHeight(); j++) {
+			auto vecPos = Vec2(i, j);
+			if (TiledMap::checkBoundary(vecPos)) {
+				if (TiledMap::checkMapGrid(vecPos)) {
+					if (TiledMap::getUnitIdByPosition(vecPos) != getCampID()) {
+						return vecPos;
+					}
+				}
+			}
+		}
+	}
+	return Vec2(-1,-1);
+}
+
+
+void FighterUnitBase::autoAttack(float dt) {
+	if (isAutoAttack()) {
+		auto pos = searchEnemy();
+		if (pos.x != -1) {
+			auto tempNode = this->getParent()->getParent()->getParent();
+			auto tempScene = static_cast<GameScene*>(tempNode);
+			auto id = TiledMap::getUnitIdByPosition(pos);
+			auto enemy = TiledMap::getUnitById(id);
+			tempScene->getUnitManager()->msgs->newAttackMessage(this->getUnitID(), enemy->getUnitID(), this->getAttack());
+			tempScene->getUnitManager()->attack(this->getUnitID(), enemy->getUnitID(), this->getAttack());
+			tempScene->getUnitManager()->attackEffect(this->getUnitID(), enemy->getUnitID());
+		}
+	}
+	if (isAttack()) {
+		auto m = this;
+		if(!TiledMap::checkUnitId(this->getTargetID())){
+			return;
+		}
+		auto enemy = TiledMap::getUnitById(this->getTargetID());
+		auto pos = enemy->getTiledPosition();
+		auto tempNode = this->getParent()->getParent()->getParent();
+		auto tempScene = static_cast<GameScene*>(tempNode);
+		//judge if the enemy is in the range
+		//Attack
+		if (this->judgeAttack(pos)) {
+			this->stopAllActions();
+			tempScene->getUnitManager()->msgs->newAttackMessage(this->getUnitID(), enemy->getUnitID(), this->getAttack());
+			tempScene->getUnitManager()->attack(this->getUnitID(), enemy->getUnitID(), this->getAttack());
+			tempScene->getUnitManager()->attackEffect(this->getUnitID(), enemy->getUnitID());
+		}
+		else {
+			PathArithmetic* path_finder = PathArithmetic::create();
+			auto tempMap = static_cast<TiledMap*>(this->getParent()->getParent());
+			if (!TiledMap::checkPass(pos)) {
+				pos = tempMap->findFreeNear(pos);
+			}
+			auto temp_pos = TiledMap::getUnitById(this->getUnitID())->getPosition();
+			auto tiled_pos = tempMap->tileCoordForPosition(temp_pos);
+			path_finder->initPathArithmetic(tempMap, tiled_pos, pos);
+			path_finder->findPath();
+			auto path = path_finder->getPath();
+			tempScene->getUnitManager()->msgs->newMoveMessage(this->getUnitID(), path, pos);
+			tempScene->getUnitManager()->playerMoveWithWayPoints(this->getUnitID(), path, pos);
+		}
+	}
+}
+
+
 /*
 void FighterUnitBase::moveTo(Vec2 pos) {
 	this->stopAllActions();
 /*void FighterUnitBase::moveTo(Vec2 pos) {
->>>>>>> 04f4b433ed6b4957d99022ae7a5ead3caf8b63c4
 	Animate* animate;
 	switch (getType())
 	{

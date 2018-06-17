@@ -17,15 +17,13 @@ using namespace ui;
 class FighterUnitBase :public Unit
 {
 protected:
-	bool _isAttack;//if the unit can attack
 	int _attack;//unit's attacking power
-	int _targetID;//the attacking target's ID
 	
 	float _attackInterval;//the interval between attacking
 	float _attackRange;//the attacking range of the unit
 	int _gold;//the expence of the unit
 public:
-	Vec2 _tiledPos; //the tiledPostion of the Unit
+	
 	
 	//set and get the cost for the unit
 	void setGold(int gold) { _gold = gold; }
@@ -53,6 +51,7 @@ public:
 	int getTargetID() { return _targetID; }
 
 
+
 	//set and get the tiledPosition of the unit
 	void setTiledPosition(Vec2 pos) { _tiledPos = pos; }
 	Vec2 getTiledPosition() { return _tiledPos; }
@@ -64,6 +63,8 @@ public:
 	//to judge if the enemy is in the attack range
 	bool judgeAttack(Vec2 pos);
 
+	Vec2 searchEnemy();
+	void autoAttack(float dt);
 };
 
 class Soldier :public FighterUnitBase
@@ -96,6 +97,8 @@ public:
 		//
 		setIsBuilding();
 		setType(std::string("s"));
+		clearAllType();
+		setTargetPos(Vec2(-1,-1));
 	}
 	void Create(Unit*);
 };
@@ -129,6 +132,8 @@ public:
 		//
 		setIsBuilding();
 		setType(std::string("d"));
+		clearAllType();
+		setTargetPos(Vec2(-1, -1));
 	}
 	void Create(Unit*);
 };
@@ -161,7 +166,8 @@ public:
 		//
 		setIsBuilding();
 		setType(std::string("t"));
-		
+		clearAllType();
+		setTargetPos(Vec2(-1, -1));
 	}
 	void Create(Unit*);
 };

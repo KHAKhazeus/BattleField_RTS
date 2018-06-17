@@ -34,12 +34,17 @@ protected:
 	bool _isMove;//if the unit need move
 	int _unitID;//an ID to distinguish  unit
 	int _campID;//unit belongs to which side
+	int _targetID;//the Id of the unit attacktd
 	bool _isSelected;//unit has been selected?
 	bool _isBuilding;//if it's a building
 	std::string _type;//the type of the unit
 	int _range; //the lenth/2 of the building
 	int _fixModel;
 	bool _isProgressed;
+	bool _isAttack;//if the unit are attacking 
+	bool _isAutoAttack;//if the unit are auto Attacking
+	Vec2 _tiledPos; //the tiledPostion of the Unit
+	Vec2 _targetPos;
 public:
 	// Get the aniamtion
 	static Unit* create(const std::string& filename) {
@@ -94,12 +99,19 @@ public:
 	virtual std::string getType() { return _type; }
 
 	virtual void moveTo(Vec2 pos) {}
-	virtual Vec2 getTiledPosition() { return { 0,0 }; }
-	virtual void setTiledPosition(Vec2 pos) {}
+	virtual Vec2 getTiledPosition() { return _tiledPos; }
+	virtual void setTiledPosition(Vec2 pos) { _tiledPos = pos; }
 
 	virtual int getAttack() { return 0; }
 	virtual int getAttackInterval() { return 100; }
 	
+	virtual void setAttack(bool attack) { _isAttack = attack; }
+	virtual bool isAttack() { return _isAttack; }
+
+	virtual void setAutoAttack(bool attack) { _isAutoAttack = attack; }
+	virtual bool isAutoAttack() { return _isAutoAttack; }
+
+
 	//get the range of the building
 	int getRange() { return _range; }
 	void setRange(int range) { _range = range; }
@@ -124,12 +136,23 @@ public:
 	void setCampID(int ID) { _campID = ID; }
 	int getCampID() { return _campID; }
 
+	void setTargetID(int ID) { _targetID = ID; }
+	int getTargetID() { return _targetID; }
+
 	//set and judge whether the unit has been selected
 	void setSelected(bool selected) { _isSelected = selected; }
 	bool getSelected() { return _isSelected; }
 
 	void setFixModel(int model) { _fixModel = model; }
 	int getFixModel() { return _fixModel; }
+	//set the isMove / isAttack / isAutoAttack to false
+	void clearAllType() { setMove(false); setAutoAttack(false); setAttack(false); }
+
+	virtual Vec2 searchEnemy(){ return Vec2(-1,-1); }
+	
+	void setTargetPos(Vec2 targetPos) { _targetPos = targetPos; }
+	Vec2 getTargetPos() { return _targetPos; }
+
 	//Unit death
 	void setDeath() {
 		//TODO animation?

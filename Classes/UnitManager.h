@@ -44,7 +44,8 @@ public:
 	//@@param2 the Pointer to the Enemy
 	void attack(int attacker_id, int under_attack_id, int damage);
 	
-	void attackEffect(Unit* player, Unit* enemy);
+	void attackEffect(int attacker_id, int under_attack_id);
+
 
 	//the unit destroy effect
 	void destroyEffect(Unit *unit,bool type);
@@ -55,6 +56,7 @@ public:
 
 	void updateMessage(float delta);
 
+
 	std::vector<GameMessage>& getMessages() { return _gameMessages; }
 	void addMessages(GameMessage msg) { _gameMessages.push_back(msg); }
 
@@ -63,6 +65,14 @@ public:
 	void writeOrders(std::vector<GameMessage> messages) {
 		_orders = messages;
 	}
+
+	void autoAttack(float dt);
+
+	Vector<Unit*>& getUnitVector() { return _unit_Vector; }
+
+//	void attack(Unit *player,Unit *target);
+
+
 private:
 	//the count of _building
 	int _building;
@@ -75,6 +85,8 @@ private:
 	std::shared_ptr<SocketServer> _socket_server{ static_cast<SocketServer*>(nullptr),[](SocketServer*) {} };
 	std::vector<GameMessage> _gameMessages;
 	std::vector<GameMessage>_orders;
+	//Vector of the fightUnit created by us
+	Vector<Unit*> _unit_Vector;
 };
 
 

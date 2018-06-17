@@ -226,7 +226,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 										this->getCampID(), this->getUnitID(),nodeLocation));
 									/*UnitManager::Building(moneyMine->getUnitID(), moneyMine->getType(), this->getCampID(), this->getUnitID(),
 										nodeLocation);*/
-								}
+									}
 								delete moneyMine;
 							}
 							else if (temp_building->getTag() == 2) {
