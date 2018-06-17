@@ -8,7 +8,7 @@ bool UnitManager::init(TiledMap * tiledMap) {
 	_building =  1;
 	_soider = 0;
 	_tiled_Map = tiledMap;
-	this->schedule(schedule_selector(updateMessage), 5.0f / 60);
+	//this->schedule(schedule_selector(updateMessage), 5.0f / 60);
 	return true;
 }
 
@@ -84,6 +84,10 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 					temp->clearAllType();
 					temp->setAttack(true);
 					temp->setTargetID(enemy->getUnitID());
+					msgs->newAttackMessage(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
+					attackEffect(temp->getUnitID(), enemy->getUnitID());
+					attack(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
+
 				}
 			}
 			else {
@@ -110,6 +114,9 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 						temp->setAttack(true);
 						auto id = enemy->getUnitID();
 						temp->setTargetID(id);
+						msgs->newAttackMessage(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
+						attackEffect(temp->getUnitID(), enemy->getUnitID());
+						attack(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
 					}
 				}
 			}
@@ -152,12 +159,11 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 						}
 						else {
 							temp->stopAllActions();
-							msgs->newMoveMessage(temp->getUnitID(), path, touch_point);
+							UnitManager::addMessages(msgs->newMoveMessage(temp->getUnitID(), path, tiledLocation));
 
 							temp->clearAllType();
 							temp->setMove(true);
-							UnitManager::addMessages(msgs->newMoveMessage(temp->getUnitID(), path, touch_point));
-							//playerMoveWithWayPoints(temp->getUnitID(), path, touch_point);
+							//playerMoveWithWayPoints(temp->getUnitID(), path, tiledLocation);
 						}
 					}
 				}
@@ -295,6 +301,7 @@ void UnitManager::playerMoveWithWayPoints(int move_unit_id, std::vector<cocos2d:
 	player->runAction(sequence);
 }
 
+
 //ÔÝÊ±Ã»ÓÃ
 void UnitManager::delay(float dt) {
 	clock_t start_time, cur_time;
@@ -305,7 +312,6 @@ void UnitManager::delay(float dt) {
 void UnitManager::attack(int attacker_id, int under_attack_id, int damage) {
 	auto player = TiledMap::getUnitById(attacker_id);
 	auto enemy = TiledMap::getUnitById(under_attack_id);
-	attackEffect(player, enemy);
 	auto attackNumber = player->getAttack();
 	//decrease the Hp
 	enemy->setLifeValue(enemy->getLifeValue() - attackNumber);
@@ -336,7 +342,10 @@ void UnitManager::attack(int attacker_id, int under_attack_id, int damage) {
 	}
 }
 
-void UnitManager::attackEffect(Unit* player, Unit *enemy) {
+
+void UnitManager::attackEffect(int attacker_id, int under_attack_id) {
+	auto player = TiledMap::getUnitById(attacker_id);
+	auto enemy = TiledMap::getUnitById(under_attack_id);
 	/*change the direction of the unit according to the target position*/
 	Vec2 tarPos = _tiled_Map->locationForTilePos(enemy->getPosition());
 	Vec2 myPos = _tiled_Map->locationForTilePos(player->getPosition());
@@ -414,8 +423,8 @@ void UnitManager::attackEffect(Unit* player, Unit *enemy) {
 			if (pos.x != -1) {
 				auto id = TiledMap::getUnitIdByPosition(pos);
 				auto enemy = TiledMap::getUnitById(id);
-				attack(_unit_Vector.at(i), enemy);
-				attackEffect(_unit_Vector.at(i), enemy);
+				attack(_unit_Vector.at(i)->getUnitID(), enemy->getUnitID(), _unit_Vector.at(i)->getAttack());
+				attackEffect(_unit_Vector.at(i)->getUnitID(), enemy->getUnitID());
 			}
 		}
 	}
@@ -649,9 +658,7 @@ void UnitManager::updateMessage(float delta) {
 		}
 		else if (orders[i].cmd_code() == GameMessage::CmdCode::GameMessage_CmdCode_ATK) {
 			UnitManager::attack(orders[i].unit_0(), orders[i].unit_1(), orders[i].damage());
-			Unit* player = TiledMap::getUnitById(orders[i].unit_0());
-			Unit* enemy = TiledMap::getUnitById(orders[i].unit_1());
-			UnitManager::attackEffect(player, enemy);
+			UnitManager::attackEffect(orders[i].unit_0(), orders[i].unit_1());
 		}
 		else if (orders[i].cmd_code() == GameMessage::CmdCode::GameMessage_CmdCode_CRTBD) {
 			UnitManager::NewUnitCreate(orders[i].unit_0(), orders[i].create_type(), orders[i].base(), orders[i].building(), 
@@ -662,5 +669,6 @@ void UnitManager::updateMessage(float delta) {
 		}
 		
 	}
+	this->getMessages().clear();
 
 }

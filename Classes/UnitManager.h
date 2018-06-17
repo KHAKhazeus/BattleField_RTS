@@ -44,7 +44,7 @@ public:
 	//@@param2 the Pointer to the Enemy
 	void attack(int attacker_id, int under_attack_id, int damage);
 	
-	void attackEffect(Unit* player, Unit* enemy);
+	void attackEffect(int attacker_id, int under_attack_id);
 
 
 	//the unit destroy effect
@@ -55,6 +55,7 @@ public:
 		cocos2d::Vec2 position);
 
 	void updateMessage(float delta);
+
 	
 	void autoAttack(float dt);
 
@@ -71,6 +72,11 @@ public:
 	void writeOrders(std::vector<GameMessage> messages) {
 		_orders = messages;
 	}
+
+//	void attack(Unit *player,Unit *target);
+
+
+
 private:
 	//the count of _building
 	int _building;
@@ -79,8 +85,10 @@ private:
 	//the point to TiledMap
 	TiledMap * _tiled_Map;
 	Base * _base;
+
 	//Vector of the fightUnit created by us
 	Vector<Unit*> _unit_Vector;
+
 	std::shared_ptr<SocketClient> _socket_client{ static_cast<SocketClient*>(nullptr),[](SocketClient*) {} };
 	std::shared_ptr<SocketServer> _socket_server{ static_cast<SocketServer*>(nullptr),[](SocketServer*) {} };
 	std::vector<GameMessage> _gameMessages;

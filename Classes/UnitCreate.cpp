@@ -227,7 +227,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 									/*UnitManager::Building(moneyMine->getUnitID(), moneyMine->getType(), this->getCampID(), this->getUnitID(),
 										nodeLocation);*/
 								}
-								delete moneyMine;
+								//delete moneyMine;
 							}
 							else if (temp_building->getTag() == 2) {
 								PowerPlant* powerPlant = PowerPlant::create("powerPlant/PowerBuilt_24.png");
@@ -241,7 +241,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 									/*UnitManager::Building(powerPlant->getUnitID(), powerPlant->getType(), this->getCampID(), this->getUnitID(),
 										nodeLocation);*/
 								}
-								delete powerPlant;
+								//delete powerPlant;
 							}
 							else if (temp_building->getTag() == 3) {
 								SoldierBase* soldierBase = SoldierBase::create("soldierBase/soldierBase_23.png");
@@ -256,7 +256,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 									/*UnitManager::Building(soldierBase->getUnitID(), soldierBase->getType(), this->getCampID(), this->getUnitID(),
 										nodeLocation);*/
 								}
-								delete soldierBase;
+								//delete soldierBase;
 							}
 							else if (temp_building->getTag() == 4) {
 								WarFactory* warFactory = WarFactory::create("tankBase/tankbuilding_23.png");
@@ -271,7 +271,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 									/*UnitManager::Building(warFactory->getUnitID(), warFactory->getType(), this->getCampID(), this->getUnitID(),
 										nodeLocation);*/
 								}
-								delete warFactory;
+								//delete warFactory;
 							}
 						}
 						auto tempNode = _base->getParent()->getParent()->getParent();

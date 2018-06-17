@@ -192,7 +192,6 @@ void FighterUnitBase::autoAttack(float dt) {
 			auto enemy = TiledMap::getUnitById(id);
 			tempManager->addMessages(tempManager->msgs->newAttackMessage(this->getUnitID(), enemy->getUnitID(), this->getAttack()));
 			//tempScene->getUnitManager()->attack(this->getUnitID(), enemy->getUnitID(), this->getAttack());
-			
 		}
 	}
 	if (isAttack()) {
@@ -226,6 +225,7 @@ void FighterUnitBase::autoAttack(float dt) {
 			auto path = path_finder->getPath();
 			tempManager->addMessages(tempManager ->msgs->newMoveMessage(this->getUnitID(), path, pos));
 			//tempScene->getUnitManager()->playerMoveWithWayPoints(this->getUnitID(), path, pos);
+
 		}
 	}
 }

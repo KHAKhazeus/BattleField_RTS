@@ -190,7 +190,7 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 								/*UnitManager::NewUnitCreate(dog->getUnitID(), dog->getType(), this->getCampID(),
 									this->getUnitID(), nodeLocation);*/
 							}
-							delete dog;
+							//delete dog;
 						}
 						else if (temp_building->getTag() == 2) {
 							Soldier* soldier = Soldier::create("soldierRun/soldierstand.png");
@@ -198,13 +198,12 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 							auto tempManager = tempScene->getUnitManager();
 							if (tempScene->getMoney()->checkMoney(soldier->getGold())) {
 								Vec2 nodeLocation = this->RandomPosition();
-
 								tempManager->addMessages(tempManager->msgs->newCreateUnitMessage(soldier->getUnitID(), soldier->getType(), this->getCampID(),
 									this->getUnitID(), nodeLocation));
 								/*UnitManager::NewUnitCreate(soldier->getUnitID(), soldier->getType(), this->getCampID(),
 									this->getUnitID(), nodeLocation);*/
 							}
-							delete soldier;
+							//delete soldier;
 						}
 						auto tempNode = this->getParent()->getParent()->getParent();
 						tempNode->removeChild(temp_building, true);
@@ -309,7 +308,7 @@ bool WarFactory::onTouchBegan(Touch *touch, Event *event) {
 						/*UnitManager::NewUnitCreate(tank->getUnitID(), tank->getType(), this->getCampID(),
 							this->getUnitID(), nodeLocation);*/
 					}
-					delete tank;
+					///delete tank;
 					auto tempNode = this->getParent()->getParent()->getParent();
 					tempNode->removeChild(temp_building, true);
 					this->setCreated(false);
