@@ -211,17 +211,18 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 					listener1->onTouchEnded = [this, temp_building](Touch *touch, Event *event) {
 						auto touchLocation = touch->getLocation();
 						Vec2 nodeLocation = this->getParent()->convertToNodeSpace(touchLocation);
-						auto tiledLocation = static_cast<TiledMap*>(this->getParent()->getParent())->tileCoordForPosition(nodeLocation);
 						// if the field isn't occupied
 						if (this->getBuilt()) {
 							this->setBuilt(false);
 							if (temp_building->getTag() == 1) {
-								MoneyMine* moneyMine = MoneyMine::create("moneyMine/MinetoMoney_24.png");
 								auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
+								auto tempManager = tempScene->getUnitManager();
+								MoneyMine* moneyMine = MoneyMine::create("moneyMine/MinetoMoney_24.png");
 								if (tempScene->getMoney()->checkMoney(moneyMine->getGold()) &&
 									tempScene->getPower()->checkPower(moneyMine->getElect())) {
 									auto id = moneyMine->getIdCount();
 									moneyMine->setUnitID(id);
+<<<<<<< HEAD
 									//UnitManager::msgs->newCreateBuildingMessage(moneyMine->getUnitID(), moneyMine->getType(), this->getCampID(), this->getUnitID());
 									moneyMine->setTiledPosition(tiledLocation);
 									moneyMine->addIdCount();
@@ -238,14 +239,23 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 								}
 								else {
 									delete moneyMine;
+=======
+									tempManager->addMessages(tempManager->msgs->newCreateBuildingMessage(moneyMine->getUnitID(), moneyMine->getType(),
+										this->getCampID(), this->getUnitID(),nodeLocation));
+									/*UnitManager::Building(moneyMine->getUnitID(), moneyMine->getType(), this->getCampID(), this->getUnitID(),
+										nodeLocation);*/
+>>>>>>> 1791dce88daf9bdee04e6810f13c305dbff401f9
 								}
+								//delete moneyMine;
 							}
 							else if (temp_building->getTag() == 2) {
 								PowerPlant* powerPlant = PowerPlant::create("powerPlant/PowerBuilt_24.png");
 								auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
+								auto tempManager = tempScene->getUnitManager();
 								if (tempScene->getMoney()->checkMoney(powerPlant->getGold())) {
 									auto id = powerPlant->getIdCount();
 									powerPlant->setUnitID(id);
+<<<<<<< HEAD
 									//UnitManager::msgs->newCreateBuildingMessage(powerPlant->getUnitID(), powerPlant->getType(), powerPlant->getCampID(), this->getUnitID());
 									powerPlant->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
 									powerPlant->setTiledPosition(tiledLocation);
@@ -262,60 +272,44 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 								}
 								else {
 									delete powerPlant;
+=======
+									tempManager->addMessages(tempManager->msgs->newCreateBuildingMessage(powerPlant->getUnitID(), powerPlant->getType(), this->getCampID(),
+										this->getUnitID(), nodeLocation));
+									/*UnitManager::Building(powerPlant->getUnitID(), powerPlant->getType(), this->getCampID(), this->getUnitID(),
+										nodeLocation);*/
+>>>>>>> 1791dce88daf9bdee04e6810f13c305dbff401f9
 								}
+								//delete powerPlant;
 							}
 							else if (temp_building->getTag() == 3) {
 								SoldierBase* soldierBase = SoldierBase::create("soldierBase/soldierBase_23.png");
 								auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
+								auto tempManager = tempScene->getUnitManager();
 								if (tempScene->getMoney()->checkMoney(soldierBase->getGold()) &&
 									tempScene->getPower()->checkPower(soldierBase->getElect())) {
-									BuildingBase::setIsBuilt(true);
-									soldierBase->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
-									soldierBase->setTiledPosition(tiledLocation);
-									soldierBase->Build();
 									auto id = soldierBase->getIdCount();
 									soldierBase->setUnitID(id);
-									//UnitManager::msgs->newCreateBuildingMessage(soldierBase->getUnitID(), soldierBase->getType(), soldierBase->getCampID(), this->getUnitID());
-									soldierBase->addIdCount();
-									TiledMap::newMapGrid(tiledLocation, id,soldierBase->getRange(),FIX_HEIGHT);
-									TiledMap::newMapId(id, soldierBase);
-		//							TiledMap::setUnpass(tiledLocation, soldierBase->getRange());
-									static_cast<TMXTiledMap*>(this->getParent())->addChild(soldierBase, 50);
-									
-									tempScene->getVectorSoldier().pushBack(soldierBase);
-									tempScene->getVectorSoldier().pushBack(soldierBase);
-									tempScene->getPower()->spendPower(soldierBase->getElect());
-									tempScene->getMoney()->spendMoney(soldierBase->getGold());
+									tempManager->addMessages(tempManager->msgs->newCreateBuildingMessage(soldierBase->getUnitID(), soldierBase->getType(), this->getCampID(), this->getUnitID()
+										, nodeLocation));
+									/*UnitManager::Building(soldierBase->getUnitID(), soldierBase->getType(), this->getCampID(), this->getUnitID(),
+										nodeLocation);*/
 								}
-								else {
-									delete soldierBase;
-								}
+								//delete soldierBase;
 							}
 							else if (temp_building->getTag() == 4) {
 								WarFactory* warFactory = WarFactory::create("tankBase/tankbuilding_23.png");
 								auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
+								auto tempManager = tempScene->getUnitManager();
 								if (tempScene->getMoney()->checkMoney(warFactory->getGold()) &&
 									tempScene->getPower()->checkPower(warFactory->getElect())) {
-									BuildingBase::setIsBuilt(true);
-									warFactory->setTiledPosition(tiledLocation);
 									auto id = warFactory->getIdCount();
 									warFactory->setUnitID(id);
-									//UnitManager::msgs->newCreateBuildingMessage(warFactory->getUnitID(), warFactory->getType(), warFactory->getCampID(), this->getUnitID());
-									warFactory->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
-									warFactory->Build();
-									warFactory->addIdCount();
-									TiledMap::newMapGrid(tiledLocation, id, warFactory->getRange(),FIX_HEIGHT);
-									TiledMap::newMapId(id, warFactory);
-					//				TiledMap::setUnpass(tiledLocation, warFactory->getRange());
-									static_cast<TMXTiledMap*>(this->getParent())->addChild(warFactory, 50);
-									tempScene->getVectorFactory().pushBack(warFactory);
-									tempScene->getVectorFactory().pushBack(warFactory);
-									tempScene->getPower()->spendPower(warFactory->getElect());
-									tempScene->getMoney()->spendMoney(warFactory->getGold());
+									tempManager->addMessages(tempManager->msgs->newCreateBuildingMessage(warFactory->getUnitID(), warFactory->getType(), this->getCampID(),
+										this->getUnitID(),nodeLocation));
+									/*UnitManager::Building(warFactory->getUnitID(), warFactory->getType(), this->getCampID(), this->getUnitID(),
+										nodeLocation);*/
 								}
-								else {
-									delete warFactory;
-								}
+								//delete warFactory;
 							}
 						}
 						auto tempNode = _base->getParent()->getParent()->getParent();

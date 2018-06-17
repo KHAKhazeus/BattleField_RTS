@@ -7,8 +7,7 @@
 
 #include "GameMessageInterface.h"
 
-#define CLIENT_ERROR "Error"
-#define CLIENT_CANCEL "Cancelled"
+
 
 
 std::string GameMessageInterface::combineMessagesToString(std::vector<GameMessage> game_messages){
@@ -34,7 +33,8 @@ std::vector<GameMessage> GameMessageInterface::parseMessagesFromString(std::stri
     return result;
 }
 
-GameMessage GameMessageInterface::newCreateBuildingMessage(int new_building_id, std::string new_building_type, int base_id, int from_building_id, cocos2d::Vec2 target_point){
+GameMessage GameMessageInterface::newCreateBuildingMessage(int new_building_id, std::string new_building_type, int base_id, int from_building_id,
+ cocos2d::Vec2 target_point){
     GameMessage CRTBU_new_message;
     CRTBU_new_message.set_unit_0(new_building_id);
     CRTBU_new_message.set_create_type(new_building_type);
@@ -49,7 +49,8 @@ GameMessage GameMessageInterface::newCreateBuildingMessage(int new_building_id, 
     return CRTBU_new_message;
 }
 
-GameMessage GameMessageInterface::newCreateUnitMessage(int new_unit_id, std::string new_unit_type, int base_id, int from_building_id, cocos2d::Vec2 target_point){
+GameMessage GameMessageInterface::newCreateUnitMessage(int new_unit_id, std::string new_unit_type, int base_id, int from_building_id,
+ cocos2d::Vec2 target_point){
     GameMessage CRTBD_new_message;
     CRTBD_new_message.set_unit_0(new_unit_id);
     CRTBD_new_message.set_create_type(new_unit_type);

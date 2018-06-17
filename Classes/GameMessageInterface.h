@@ -11,6 +11,9 @@
 #include "cocos2d.h"
 #include <vector>
 
+#define CLIENT_ERROR "Error"
+#define CLIENT_CANCEL "Cancelled"
+
 class GameMessageInterface{
 public:
     GameMessageInterface() = delete;    //should prevent any instances
@@ -19,9 +22,11 @@ public:
     
     static std::vector<GameMessage> parseMessagesFromString(std::string data);
     
+
     static GameMessage newCreateBuildingMessage(int new_building_id, std::string new_building_type, int base_id, int from_building_id, cocos2d::Vec2 target_point);
     
     static GameMessage newCreateUnitMessage(int new_unit_id, std::string new_unit_type, int base_id, int from_building_id, cocos2d::Vec2 target_point);
+
     
     static GameMessage newMoveMessage(int move_unit_id, std::vector<cocos2d::Vec2> path_points, cocos2d::Vec2 end_point);
     

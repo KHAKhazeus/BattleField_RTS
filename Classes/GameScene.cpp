@@ -45,7 +45,8 @@ bool GameScene::init() {
 
 
 	_money->schedule(schedule_selector(Money::updateMoney), 1);
-	//_unit_Manager->schedule(schedule_selector(UnitManager::autoAttack), 1);
+	_unit_Manager->schedule(schedule_selector(UnitManager::updateMessage), 5.0f/60);
+
 
 	//TODO initial the money and power
 
