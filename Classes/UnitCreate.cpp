@@ -222,7 +222,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 									tempScene->getPower()->checkPower(moneyMine->getElect())) {
 									auto id = moneyMine->getIdCount();
 									moneyMine->setUnitID(id);
-									UnitManager::msgs->newCreateBuildingMessage(moneyMine->getUnitID(), moneyMine->getType(), this->getCampID(), this->getUnitID());
+									//UnitManager::msgs->newCreateBuildingMessage(moneyMine->getUnitID(), moneyMine->getType(), this->getCampID(), this->getUnitID());
 									moneyMine->setTiledPosition(tiledLocation);
 									moneyMine->addIdCount();
 									moneyMine->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
@@ -246,7 +246,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 								if (tempScene->getMoney()->checkMoney(powerPlant->getGold())) {
 									auto id = powerPlant->getIdCount();
 									powerPlant->setUnitID(id);
-									UnitManager::msgs->newCreateBuildingMessage(powerPlant->getUnitID(), powerPlant->getType(), powerPlant->getCampID(), this->getUnitID());
+									//UnitManager::msgs->newCreateBuildingMessage(powerPlant->getUnitID(), powerPlant->getType(), powerPlant->getCampID(), this->getUnitID());
 									powerPlant->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
 									powerPlant->setTiledPosition(tiledLocation);
 									BuildingBase::setIsBuilt(true);
@@ -275,7 +275,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 									soldierBase->Build();
 									auto id = soldierBase->getIdCount();
 									soldierBase->setUnitID(id);
-									UnitManager::msgs->newCreateBuildingMessage(soldierBase->getUnitID(), soldierBase->getType(), soldierBase->getCampID(), this->getUnitID());
+									//UnitManager::msgs->newCreateBuildingMessage(soldierBase->getUnitID(), soldierBase->getType(), soldierBase->getCampID(), this->getUnitID());
 									soldierBase->addIdCount();
 									TiledMap::newMapGrid(tiledLocation, id,soldierBase->getRange(),FIX_HEIGHT);
 									TiledMap::newMapId(id, soldierBase);
@@ -300,7 +300,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 									warFactory->setTiledPosition(tiledLocation);
 									auto id = warFactory->getIdCount();
 									warFactory->setUnitID(id);
-									UnitManager::msgs->newCreateBuildingMessage(warFactory->getUnitID(), warFactory->getType(), warFactory->getCampID(), this->getUnitID());
+									//UnitManager::msgs->newCreateBuildingMessage(warFactory->getUnitID(), warFactory->getType(), warFactory->getCampID(), this->getUnitID());
 									warFactory->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
 									warFactory->Build();
 									warFactory->addIdCount();

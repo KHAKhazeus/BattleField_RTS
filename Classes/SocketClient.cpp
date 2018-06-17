@@ -14,11 +14,14 @@
 SocketClient* SocketClient::create(std::string server_ip, int port_nunber){
     try{
         auto new_client = new SocketClient(server_ip, port_nunber);
-        new_client->startClient();
+        if(!new_client){
+            new_client->startClient();
+        }
         return new_client;
     }
     catch(...){
         std::cerr << "Failed to Create Client" << std::endl;
+        return static_cast<SocketClient*>(nullptr);
     }
 }
 
@@ -30,42 +33,69 @@ void SocketClient::startClient(){
     startConnect();
 }
 
-void SocketClient::checkStop(){
+bool SocketClient::checkStop(){
     if(_error_flag || _cancel_flag){
         stopClient();
+        return true;
+    }
+    else{
+        return false;
     }
 }
 
 void SocketClient::stopClient(){
-    try{
-        std::unique_lock<std::mutex> lock(_mutex);
-        _stop_flag = true;
-        _io.stop();
-        auto empty_message = "";
-        _message_set_deque.push_back(empty_message);
-        _cond.notify_one();
-        _socket.shutdown(tcp::socket::shutdown_both);
-        _socket.close();
-        _exchange_thread->join();
-        _read_thread->join();
-        if(_error_flag){
-            std::cerr << "Client Error!" << std::endl;
-            std::string error_message = "Error";
-            _message_set_deque.push_back(error_message);
+    if(!_stop_flag){
+        try{
+            std::unique_lock<std::mutex> lock(_mutex);
+            _stop_flag = true;
+            if(_error_flag){
+                std::cerr << "Client Error!" << std::endl;
+                std::string error_message = "Error";
+                _message_set_deque.push_back(error_message);
+            }
+            else if(_cancel_flag){
+                std::cout << "Client Successfully Cancelled" << std::endl;
+                std::string cancel_message = "Cancelled";
+                _message_set_deque.push_back(cancel_message);
+            }
+            else{
+                std::cerr << "Unknown Errors" << std::endl;
+                std::string error_message = "Error";
+                _message_set_deque.push_back(error_message);
+            }
+            _io.stop();
+            _cond.notify_one();
+            _socket.shutdown(tcp::socket::shutdown_both);
+            _socket.close();
+            _exchange_thread->join();
         }
-        else if(_cancel_flag){
-            std::cout << "Client Successfully Cancelled" << std::endl;
-            std::string cancel_message = "Cancelled";
-            _message_set_deque.push_back(cancel_message);
+        catch(...){
+            std::cerr << "Client Shutdown Error!" << std::endl;
         }
-    }
-    catch(...){
-        std::cerr << "Client Shutdown Error!" << std::endl;
     }
 }
 
+std::string SocketClient::read_data_once(){
+    std::unique_lock<std::mutex> lk(_mutex);
+    if(_message_set_deque.empty()){
+        _cond.wait(lk, [&]{
+            if(!_message_set_deque.empty()){
+                return true;
+            }
+            else{
+                return false;
+            }
+        });
+    }
+    std::string new_message = _message_set_deque.front();
+    _message_set_deque.pop_front();
+    return new_message;
+}
+
 void SocketClient::readMessages(){
-    boost::asio::async_read(_socket, boost::asio::buffer(&_message_set_buffer, MAX_LENGTH), std::bind(&SocketClient::pushMessageSet, this, std::placeholders::_1));
+    if(!checkStop()){
+        boost::asio::async_read(_socket, boost::asio::buffer(&_message_set_buffer, MAX_LENGTH), std::bind(&SocketClient::pushMessageSet, this, std::placeholders::_1));
+    }
 }
 
 void SocketClient::pushMessageSet(const error_code &err){
@@ -76,7 +106,6 @@ void SocketClient::pushMessageSet(const error_code &err){
     else{
         std::unique_lock<std::mutex> lock(_mutex);
         _error_flag = true;
-        stopClient();
     }
 }
 
@@ -88,25 +117,33 @@ void SocketClient::connectHandle(const error_code &err){
     }
     else{
         std::cerr << "Failed to Connect" << std::endl;
-        checkStop();
         std::unique_lock<std::mutex> lock(_mutex);
         _error_flag = true;
+        lock.unlock();
+        checkStop();
     }
 }
 
-void SocketClient::writeMessages(std::string message_set){
-    static int times = 0;
-    static int error_times = 0;
-    boost::asio::async_write(_socket, boost::asio::buffer(message_set), [](const error_code &err, std::size_t bytes_transferred){
-        if(!err){
-            times ++;
-            std::cout << times << ".: Successfully Upload Messages, bytes transferred: " << bytes_transferred << std::endl;
-        }
-        else{
-            error_times ++;
-            std::cout << error_times << ".: Error Upload Messages, bytes transferred: " << bytes_transferred << "Missing Bytes: Unknown" << std::endl;
-        }
-    });
+//if successfully called the async_write, then return true. Not to say transmitting would be successful.
+bool SocketClient::writeMessages(std::string message_set){
+    if(!checkStop()){
+        static int times = 0;
+        static int error_times = 0;
+        boost::asio::async_write(_socket, boost::asio::buffer(message_set), [](const error_code &err, std::size_t bytes_transferred){
+            if(!err){
+                times ++;
+                std::cout << times << ".: Successfully Upload Messages, bytes transferred: " << bytes_transferred << std::endl;
+            }
+            else{
+                error_times ++;
+                std::cout << error_times << ".: Error Upload Messages, bytes transferred: " << bytes_transferred << "Missing Bytes: Unknown" << std::endl;
+            }
+        });
+        return true;
+    }
+    else{
+        return false;
+    }
 }
 
 void SocketClient::startConnect(){

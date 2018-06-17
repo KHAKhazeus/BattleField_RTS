@@ -23,7 +23,15 @@ static void problemLoading(const char* filename)
 }
 
 void NetworkLayer::initializeServerSide(){
-    log("%s", "Server Initialized");
+    auto color_layer = this->getChildByName("color_layer");
+    auto portbox = static_cast<TextField *>(color_layer->getChildByName("portbox"));
+    std::stringstream port_stream(portbox->getString());
+    int port_number;
+    port_stream >> port_number;
+    auto new_socket_server = SocketServer::create(port_number);
+    if(!new_socket_server){
+        _socket_server.reset(new_socket_server);
+    }
 }
 
 void NetworkLayer::initializeClientSide(){
@@ -319,6 +327,7 @@ bool NetworkLayer::init(){
                     
                 case Widget::TouchEventType::ENDED:{
                     start_game->setScale(1.0);
+                    _socket_server->startService();
                     //need to be extended
                     break;
                 }
