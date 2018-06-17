@@ -84,9 +84,9 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 					temp->clearAllType();
 					temp->setAttack(true);
 					temp->setTargetID(enemy->getUnitID());
-					msgs->newAttackMessage(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
-					attackEffect(temp->getUnitID(), enemy->getUnitID());
-					attack(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
+					UnitManager::addMessages(msgs->newAttackMessage(temp->getUnitID(), enemy->getUnitID(), temp->getAttack()));
+					//attackEffect(temp->getUnitID(), enemy->getUnitID());
+					//attack(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
 
 				}
 			}
@@ -114,9 +114,9 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 						temp->setAttack(true);
 						auto id = enemy->getUnitID();
 						temp->setTargetID(id);
-						msgs->newAttackMessage(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
-						attackEffect(temp->getUnitID(), enemy->getUnitID());
-						attack(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
+						UnitManager::addMessages(msgs->newAttackMessage(temp->getUnitID(), enemy->getUnitID(), temp->getAttack()));
+						//attackEffect(temp->getUnitID(), enemy->getUnitID());
+						//attack(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
 					}
 				}
 			}
@@ -152,7 +152,7 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 						auto path = path_finder->getPath();
 						if (temp->getNumberOfRunningActions() == 0) {
 
-							UnitManager::addMessages(msgs->newMoveMessage(temp->getUnitID(), path, touch_point));
+							UnitManager::addMessages(msgs->newMoveMessage(temp->getUnitID(), path, tiledLocation));
 							temp->clearAllType();
 							temp->setMove(true);
 							//playerMoveWithWayPoints(temp->getUnitID(), path, tiledLocation);
@@ -221,7 +221,7 @@ void UnitManager::playerMoveWithWayPoints(int move_unit_id, std::vector<cocos2d:
 	player->setTargetPos(tiledLocation);
 	TiledMap::setUnpass(tiledLocation);
 	/*change the direction of the unit according to the target end_point*/
-	Vec2 tarPos = _tiled_Map->locationForTilePos(end_point);
+	Vec2 tarPos = _tiled_Map->locationForTilePos(_tiled_Map->locationForTilePos(end_point));
 	Vec2 myPos = _tiled_Map->locationForTilePos(player->getPosition());
 	float angle = atan2((tarPos.y - myPos.y), (tarPos.x - myPos.x)) * 180 / 3.14159;
 	if (player->isFlippedX()) {
@@ -524,7 +524,7 @@ void UnitManager::Building(int new_building_id, std::string new_building_type, i
 	else if (new_building_type == "W") {
 		WarFactory* warFactory = WarFactory::create("tankBase/tankbuilding_23.png");
 		warFactory->setUnitID(new_building_id);
-		warFactory->setCampID(base_id);
+		warFactory->setCampID(1-base_id);
 		if (warFactory->getCampID() == RED) {
 			warFactory->setColor(Color3B(221, 160, 221));
 		}
@@ -648,8 +648,8 @@ void UnitManager::updateMessage(float delta) {
 		//to dispatch the orders
 		std::vector<cocos2d::Vec2> path_points;
 		for (int j = 0; j < orders[i].mutable_grid_path()->grid_point_size(); j++) {
-			int x = orders[i].mutable_grid_path()->mutable_grid_point(0)->x();
-			int y = orders[i].mutable_grid_path()->mutable_grid_point(0)->y();
+			int x = orders[i].mutable_grid_path()->mutable_grid_point(j)->x();
+			int y = orders[i].mutable_grid_path()->mutable_grid_point(j)->y();
 			path_points.push_back(Vec2(x, y));
 		}
 		if (orders[i].cmd_code() == GameMessage::CmdCode::GameMessage_CmdCode_CRTBU) {
@@ -665,7 +665,8 @@ void UnitManager::updateMessage(float delta) {
 				path_points[0]);
 		}
 		else if (orders[i].cmd_code() == GameMessage::CmdCode::GameMessage_CmdCode_MOV) {
-			UnitManager::playerMoveWithWayPoints(orders[i].unit_0(), path_points , *(path_points.rend()));
+			path_points.erase(path_points.cend() - 1);
+			UnitManager::playerMoveWithWayPoints(orders[i].unit_0(), path_points ,path_points.back());
 		}
 		
 	}

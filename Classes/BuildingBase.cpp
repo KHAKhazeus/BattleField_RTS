@@ -21,11 +21,11 @@ void BuildingBase::setIsBuilt(bool judge) {
 
 
 Vec2 SoldierBase::RandomPosition() {
-	int sign = random() % 3 - 1;
-	int sign1 = random() % 3 - 1;
+	int sign = cocos2d::random() % 3 - 1;
+	int sign1 = cocos2d::random() % 3 - 1;
 	while (sign == 0 && sign1 == 0) {
-		sign = random() % 3 - 1;
-		sign1 = random() % 3 - 1;
+		sign = cocos2d::random() % 3 - 1;
+		sign1 = cocos2d::random() % 3 - 1;
 	}
 	float randX = this->getPosition().x + random() % 100 * sign;
 	float randY = this->getPosition().y + random() % 100 * sign1;
@@ -197,6 +197,8 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 							auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
 							auto tempManager = tempScene->getUnitManager();
 							if (tempScene->getMoney()->checkMoney(soldier->getGold())) {
+								auto id = soldier->getIdCount();
+								soldier->setUnitID(id);
 								Vec2 nodeLocation = this->RandomPosition();
 								tempManager->addMessages(tempManager->msgs->newCreateUnitMessage(soldier->getUnitID(), soldier->getType(), this->getCampID(),
 									this->getUnitID(), nodeLocation));
