@@ -4,6 +4,8 @@
 #include "ui/CocosGUI.h"
 #include "SimpleAudioEngine.h"
 #include "BattleField_RTS.h"
+#include "SocketClient.h"
+#include "SocketServer.h"
 #include "GameScene.h"
 USING_NS_CC;
 using namespace ui;
@@ -13,8 +15,10 @@ private:
 	LoadingBar* _loadingBar;
 	Sprite* _background;
 	int _count;
+	static std::shared_ptr<SocketServer> _socket_server;
+	static std::shared_ptr<SocketClient> _socket_client;
 public:
-	static Scene* createScene();
+	static Scene* createScene(std::shared_ptr<SocketServer> spserver,std::shared_ptr<SocketClient> spclient);
 	virtual bool init();
 	virtual void onEnter();
 	CREATE_FUNC(LoadingScene);

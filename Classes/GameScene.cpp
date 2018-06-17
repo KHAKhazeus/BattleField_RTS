@@ -1,8 +1,15 @@
 #include "GameScene.h"
-Scene* GameScene::createScene() {
+
+std::shared_ptr<SocketServer> GameScene::_socket_server;
+std::shared_ptr<SocketClient> GameScene::_socket_client;
+
+
+Scene* GameScene::createScene(std::shared_ptr<SocketServer> spserver, std::shared_ptr<SocketClient> spclient) {
 	auto scene = Scene::create();
 	auto gamescene = GameScene::create();
 	scene->addChild(gamescene);
+	_socket_server = spserver;
+	_socket_client = spclient;
 	return scene;
 }
 
@@ -11,7 +18,7 @@ bool GameScene::init() {
 		return false;
 	}
 	//get the screen size
-	auto visibleSize = Director::getInstance()->getVisibleSize();
+/*	auto visibleSize = Director::getInstance()->getVisibleSize();
 	_screen_width = visibleSize.width;
 	_screen_height = visibleSize.height;
 	
@@ -45,7 +52,8 @@ bool GameScene::init() {
 
 
 	_money->schedule(schedule_selector(Money::updateMoney), 1);
-	//_unit_Manager->schedule(schedule_selector(UnitManager::autoAttack), 1);
+	_unit_Manager->schedule(schedule_selector(UnitManager::updateMessage), 5.0f/60);
+
 
 	//TODO initial the money and power
 
@@ -77,7 +85,7 @@ bool GameScene::init() {
 	auto keyListener = EventListenerKeyboard::create();
 	keyListener->onKeyPressed = CC_CALLBACK_2(GameScene::onKeyPressed, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(keyListener, this);
-
+	*/
 	return true;
 }
 
@@ -105,7 +113,73 @@ void GameScene::onEnter() {
 
 void GameScene::onEnterTransitionDidFinish() {
 	Scene::onEnterTransitionDidFinish();
-	//TODO maybe about audio
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	_screen_width = visibleSize.width;
+	_screen_height = visibleSize.height;
+
+
+	_tiled_Map = TiledMap::create();
+	_tiled_Map->setGridVector();
+	this->addChild(_tiled_Map);
+
+
+	// Set money and power
+	_money_Image = Sprite::create("ui/Coin.png");
+	_money_Image->setPosition(Vec2(_screen_width*0.83, _screen_height*0.04));
+	this->addChild(_money_Image);
+	_money = Money::create();
+	_money->setPosition(Vec2(_screen_width *0.90, _screen_height*0.04));
+	this->addChild(_money);
+	_power_Image = Sprite::create("ui/electric.png");
+	_power_Image->setPosition(Vec2(_screen_width*0.83, _screen_height*0.12));
+	_power_Image->setScale(0.08);
+	_power = Power::create();
+	_power->setPosition(Vec2(_screen_width*0.90, _screen_height*0.12));
+	this->addChild(_power);
+	this->addChild(_power_Image);
+
+
+	_unit_Manager = UnitManager::create(_tiled_Map,_socket_server,_socket_client);
+	_unit_Manager->setPosition(Vec2::ZERO);
+	this->addChild(_unit_Manager);
+	//Crate the Base
+	_unit_Manager->initBase();
+
+
+	_money->schedule(schedule_selector(Money::updateMoney), 1);
+	_unit_Manager->schedule(schedule_selector(UnitManager::updateMessage), 5.0f / 60);
+
+
+	//TODO initial the money and power
+
+	//start the update
+
+	//Mouse listener for scroll map
+	resetCursor();
+	auto mouseListener = EventListenerMouse::create();
+	mouseListener->onMouseMove = CC_CALLBACK_1(GameScene::onMouseMove, this);
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(mouseListener, this);
+
+	//Create rect of selection
+	mouse_rect = MouseRect::create();
+
+	_tiled_Map->getTiledMap()->addChild(mouse_rect, 50);
+
+	//Start update
+	schedule(schedule_selector(GameScene::update));
+
+	//Touch listener for mouse rect selection
+	auto touchListener = EventListenerTouchOneByOne::create();
+	touchListener->onTouchBegan = CC_CALLBACK_2(GameScene::onTouchBegan, this);
+	touchListener->onTouchMoved = CC_CALLBACK_2(GameScene::onTouchMoved, this);
+	touchListener->onTouchEnded = CC_CALLBACK_2(GameScene::onTouchEnded, this);
+	touchListener->setSwallowTouches(true);
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
+
+	//Keyboard listener for go back to base
+	auto keyListener = EventListenerKeyboard::create();
+	keyListener->onKeyPressed = CC_CALLBACK_2(GameScene::onKeyPressed, this);
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(keyListener, this);
 }
 
 void GameScene::onExit() {

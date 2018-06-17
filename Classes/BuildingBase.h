@@ -58,7 +58,7 @@ class SoldierBase :public BuildingBase {
 public:
 	static SoldierBase* create(const std::string& filename) {
 		SoldierBase *sprite = new SoldierBase();
-		if (sprite && sprite->initWithFile(filename))
+		if (sprite && sprite->initWithTexture(Director::getInstance()->getTextureCache()->addImage(filename)))
 		{
 			sprite->autorelease();
 			return sprite;
@@ -74,7 +74,6 @@ public:
 		setRange(2);
 		setFixModel(FIX_HEIGHT);
 		//
-		setCampID(RED);
 		setIsBuilding(true);
 		setType(std::string("S"));
 	}
@@ -91,7 +90,7 @@ public:
 	
 	static MoneyMine* create(const std::string& filename) {
 		MoneyMine *sprite = new MoneyMine();
-		if (sprite && sprite->initWithFile(filename))
+		if (sprite && sprite->initWithTexture(Director::getInstance()->getTextureCache()->addImage(filename)))
 		{
 			sprite->autorelease();
 			return sprite;
@@ -107,7 +106,6 @@ public:
 		setRange(2);
 		setFixModel(FIX_SQUARE);
 		//
-		setCampID(RED);
 		setIsBuilding(true);
 		setType(std::string("M"));
 	}
@@ -120,7 +118,7 @@ class PowerPlant :public BuildingBase {
 public:
 	static PowerPlant* create(const std::string& filename) {
 		PowerPlant *sprite = new PowerPlant();
-		if (sprite && sprite->initWithFile(filename))
+		if (sprite && sprite->initWithTexture(Director::getInstance()->getTextureCache()->addImage(filename)))
 		{
 			sprite->autorelease();
 			return sprite;
@@ -136,7 +134,6 @@ public:
 		setRange(1);
 		setFixModel(FIX_SQUARE);
 		//
-		setCampID(BLUE);
 		setIsBuilding(true);
 		setType(std::string("P"));
 	}
@@ -148,7 +145,7 @@ class WarFactory :public BuildingBase {
 public:
 	static WarFactory* create(const std::string& filename) {
 		WarFactory *sprite = new WarFactory();
-		if (sprite && sprite->initWithFile(filename))
+		if (sprite && sprite->initWithTexture(Director::getInstance()->getTextureCache()->addImage(filename)))
 		{
 			sprite->autorelease();
 			return sprite;
@@ -164,7 +161,6 @@ public:
 		setRange(2);
 		setFixModel(FIX_HEIGHT);
 		//
-		setCampID(RED);
 		setIsBuilding(true);
 		setType(std::string("W"));
 	}

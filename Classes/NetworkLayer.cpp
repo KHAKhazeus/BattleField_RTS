@@ -320,10 +320,9 @@ bool NetworkLayer::init(){
                     
                 case Widget::TouchEventType::ENDED:{
                     start_game->setScale(1.0);
-					auto gameScene = LoadingScene::createScene();
-					auto testScene = GameScene::createScene();
-					auto gameSceneAnimate = TransitionFade::create(1.0, gameScene);
-					Director::getInstance()->replaceScene(gameScene);
+					auto gameScene = LoadingScene::createScene(_socket_server,_socket_client);
+				//	Director::getInstance()->replaceScene(gameSceneAnimate);
+					this->addChild(gameScene);
                     //need to be extended
                     break;
                 }

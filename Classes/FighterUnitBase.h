@@ -51,6 +51,7 @@ public:
 	int getTargetID() { return _targetID; }
 
 
+
 	//set and get the tiledPosition of the unit
 	void setTiledPosition(Vec2 pos) { _tiledPos = pos; }
 	Vec2 getTiledPosition() { return _tiledPos; }
@@ -79,7 +80,7 @@ public:
 	//unit's creating function
 	static Soldier* create(const std::string& filename) {
 		Soldier *sprite = new Soldier();
-		if (sprite && sprite->initWithFile(filename))
+		if (sprite && sprite->initWithTexture(Director::getInstance()->getTextureCache()->addImage(filename)))
 		{
 			sprite->autorelease();
 			return sprite;
@@ -95,14 +96,11 @@ public:
 		_attackInterval = 0.2;
 		//
 		setIsBuilding();
-		setCampID(RED);
-		setUnitID(getIdCount());
-		addIdCount();
 		setType(std::string("s"));
 		clearAllType();
 		setTargetPos(Vec2(-1,-1));
 	}
-	void Create(SoldierBase*);
+	void Create(Unit*);
 };
 
 class Dog :public FighterUnitBase
@@ -117,7 +115,7 @@ public:
 	//unit's creating function
 	static Dog* create(const std::string& filename) {
 		Dog *sprite = new Dog();
-		if (sprite && sprite->initWithFile(filename))
+		if (sprite && sprite->initWithTexture(Director::getInstance()->getTextureCache()->addImage(filename)))
 		{
 			sprite->autorelease();
 			return sprite;
@@ -133,14 +131,11 @@ public:
 		_attackInterval = 0.2;
 		//
 		setIsBuilding();
-		setCampID(RED);
-		setUnitID(getIdCount());
-		addIdCount();
 		setType(std::string("d"));
 		clearAllType();
 		setTargetPos(Vec2(-1, -1));
 	}
-	void Create(SoldierBase*);
+	void Create(Unit*);
 };
 
 class Tank :public FighterUnitBase
@@ -154,7 +149,7 @@ public:
 	//unit's creating function
 	static Tank* create(const std::string& filename) {
 		Tank *sprite = new Tank();
-		if (sprite && sprite->initWithFile(filename))
+		if (sprite && sprite->initWithTexture(Director::getInstance()->getTextureCache()->addImage(filename)))
 		{
 			sprite->autorelease();
 			return sprite;
@@ -170,13 +165,10 @@ public:
 		_attackInterval = 0.5;
 		//
 		setIsBuilding();
-		setCampID(RED);
-		setUnitID(getIdCount());
-		addIdCount();
 		setType(std::string("t"));
 		clearAllType();
 		setTargetPos(Vec2(-1, -1));
 	}
-	void Create(WarFactory*);
+	void Create(Unit*);
 };
 #endif

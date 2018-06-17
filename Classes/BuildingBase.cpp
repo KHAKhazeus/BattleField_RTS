@@ -65,7 +65,7 @@ Vec2 WarFactory::RandomPosition() {
 
 //Build the building
 void SoldierBase::Build() {
-	auto animate =BuildingBase::getAnimateByName("soldierBase/soldierbase_", 0.1f, 23);
+	auto animate =BuildingBase::getAnimateByName("soldierBase", 0.1f, 23);
 	auto barSprite = Sprite::create("bar/loadingbar.png");
 	this->setProgressed(false);
 	ProgressTimer* progress = ProgressTimer::create(barSprite);
@@ -123,10 +123,11 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 		setSelected(true);
 		//TODO change this to vector
 		auto height = this->getContentSize().height ;
+		auto cache = Director::getInstance()->getTextureCache();
 		std::vector<Sprite*> temp_sprite;
 		int size = 2;
 		for (int i = 0; i < size; i++) {
-			auto temp = Sprite::create(StringUtils::format("unit/FighterUnit_%d.png", i + 1));
+			auto temp = Sprite::createWithTexture(cache->addImage(StringUtils::format("unit/FighterUnit_%d.png", i + 1)));
 			//make notes: do a little change to the position of the small icons
 			auto width = temp->getContentSize().width / 2;
 			temp->setScale(1.0);
@@ -142,7 +143,7 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 		//Click the small icon
 		for (auto i = 0; i < temp_sprite.size(); i++) {
 			auto temp = temp_sprite.at(i);
-			listener->onTouchBegan = [temp, temp_sprite, this, i](Touch *touch, Event *event) {
+			listener->onTouchBegan = [temp, temp_sprite, this, i,cache](Touch *touch, Event *event) {
 				auto target = static_cast<Sprite*>(event->getCurrentTarget());
 				auto locationInNode = target->convertToNodeSpace(touch->getLocation());
 				Size s = target->getContentSize();
@@ -152,7 +153,7 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 						return false;
 					}
 					this->setCreated(true);
-					auto temp_building = Sprite::create(StringUtils::format("unit/FighterUnit_%d.png", i + 1));
+					auto temp_building = Sprite::createWithTexture(cache->addImage(StringUtils::format("unit/FighterUnit_%d.png", i + 1)));
 					temp_building->setTag(i + 1);
 					/*
 					make notes:
@@ -180,62 +181,32 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 						if (temp_building->getTag() == 1) {
 							Dog* dog = Dog::create("dogRun/dog0.png");
 							auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
+							auto tempManager = tempScene->getUnitManager();
 							if (tempScene->getMoney()->checkMoney(dog->getGold())) {
+								auto id = dog->getIdCount();
+								dog->setUnitID(id);
 								Vec2 nodeLocation = this->RandomPosition();
-								UnitManager::msgs->newCreateUnitMessage(dog->getUnitID(), dog->getType(),dog->getCampID(),this->getUnitID(), nodeLocation);
-								if (nodeLocation.x < this->getPosition().x) {
-									dog->setFlippedX(true);
-								}
-								auto tiledLocation = tempTiledMap->tileCoordForPosition(nodeLocation);
-								dog->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
-								Dog::setIsCreated(true);
-								dog->Create(this);
-						//		TiledMap::setUnpass(tiledLocation);
-						//		auto tiledLocation = tempScene->tileCoordForPosition(nodeLocation);
-								TiledMap::newMapGrid(tiledLocation, dog->getUnitID());
-								TiledMap::newMapId(dog->getUnitID(), dog);
-								dog->setTiledPosition(tiledLocation);
-								static_cast<TMXTiledMap*>(this->getParent())->addChild(dog, 200);
-								tempScene->getVectorDogs().pushBack(dog);
-								dog->setAutoAttack(true);
-								dog->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
-								tempScene->getUnitManager()->getUnitVector().pushBack(dog);
-								
-								tempScene->getMoney()->spendMoney(dog->getGold());
+								tempManager->addMessages(tempManager->msgs->newCreateUnitMessage(dog->getUnitID(), dog->getType(),this->getCampID(),
+									this->getUnitID(), nodeLocation));
+								/*UnitManager::NewUnitCreate(dog->getUnitID(), dog->getType(), this->getCampID(),
+									this->getUnitID(), nodeLocation);*/
 							}
-							else {
-								delete dog;
-							}
+							//delete dog;
 						}
 						else if (temp_building->getTag() == 2) {
 							Soldier* soldier = Soldier::create("soldierRun/soldierstand.png");
 							auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
+							auto tempManager = tempScene->getUnitManager();
 							if (tempScene->getMoney()->checkMoney(soldier->getGold())) {
 								Vec2 nodeLocation = this->RandomPosition();
-								UnitManager::msgs->newCreateUnitMessage(soldier->getUnitID(),soldier->getType(), soldier->getCampID(), this->getUnitID(),nodeLocation);
-								if (nodeLocation.x < this->getPosition().x) {
-									soldier->setFlippedX(true);
-								}
-								auto tiledLocation = tempTiledMap->tileCoordForPosition(nodeLocation);
-								soldier->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
-								Soldier::setIsCreated(true);
-								soldier->Create(this);
-						//		TiledMap::setUnpass(tiledLocation);
-								static_cast<TMXTiledMap*>(this->getParent())->addChild(soldier, 200);
-						//		auto tiledLocation = tempScene->tileCoordForPosition(nodeLocation);
-								TiledMap::newMapGrid(tiledLocation, soldier->getUnitID());
-								TiledMap::newMapId(soldier->getUnitID(), soldier);
-								soldier->setAutoAttack(true);
-						
-								soldier->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
-								tempScene->getUnitManager()->getUnitVector().pushBack(soldier);
-								soldier->setTiledPosition(tiledLocation);
-							//	tempScene->getVectorSoldiers().pushBack(soldier);
-								tempScene->getMoney()->spendMoney(soldier->getGold());
+								auto id = soldier->getIdCount();
+								soldier->setUnitID(id);
+								tempManager->addMessages(tempManager->msgs->newCreateUnitMessage(soldier->getUnitID(), soldier->getType(), this->getCampID(),
+									this->getUnitID(), nodeLocation));
+								/*UnitManager::NewUnitCreate(soldier->getUnitID(), soldier->getType(), this->getCampID(),
+									this->getUnitID(), nodeLocation);*/
 							}
-							else {
-								delete soldier;
-							}
+							//delete soldier;
 						}
 						auto tempNode = this->getParent()->getParent()->getParent();
 						tempNode->removeChild(temp_building, true);
@@ -330,30 +301,17 @@ bool WarFactory::onTouchBegan(Touch *touch, Event *event) {
 					auto tempTiledMap = static_cast<TiledMap*>(this->getParent()->getParent());
 					Tank* tank = Tank::create("tank/tank0.png");
 					auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
+					auto tempManager = tempScene->getUnitManager();
 					if (tempScene->getMoney()->checkMoney(tank->getGold())) {
 						Vec2 nodeLocation = this->RandomPosition();
-						UnitManager::msgs->newCreateUnitMessage(tank->getUnitID(), tank->getType(), tank->getCampID(), this->getUnitID(),nodeLocation);
-						tank->setScale(0.4f);
-						auto tiledLocation = tempTiledMap->tileCoordForPosition(nodeLocation);
-						tank->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
-						Tank::setIsCreated(true);
-						tank->Create(this);
-				//		TiledMap::setUnpass(tiledLocation);
-						static_cast<TMXTiledMap*>(this->getParent())->addChild(tank, 200);
-				//		auto tiledLocation = static_cast<TiledMap*>(this->getParent()->getParent())->tileCoordForPosition(nodeLocation);
-					//	tempScene->getVectorTanks().pushBack(tank);
-						tank->setAutoAttack(true);
-						//TODO if tank belongs to my camp
-						tank->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
-						tempScene->getUnitManager()->getUnitVector().pushBack(tank);
-						TiledMap::newMapGrid(tiledLocation, tank->getUnitID());
-						TiledMap::newMapId(tank->getUnitID(), tank);
-						tank->setTiledPosition(tiledLocation);
-						tempScene->getMoney()->spendMoney(tank->getGold());
+						auto id =tank->getIdCount();
+						tank->setUnitID(id);
+						tempManager->addMessages(tempManager->msgs->newCreateUnitMessage(tank->getUnitID(), tank->getType(), this->getCampID(),
+							this->getUnitID(), nodeLocation));
+						/*UnitManager::NewUnitCreate(tank->getUnitID(), tank->getType(), this->getCampID(),
+							this->getUnitID(), nodeLocation);*/
 					}
-					else {
-						delete tank;
-					}
+					///delete tank;
 					auto tempNode = this->getParent()->getParent()->getParent();
 					tempNode->removeChild(temp_building, true);
 					this->setCreated(false);
@@ -384,7 +342,7 @@ bool WarFactory::onTouchBegan(Touch *touch, Event *event) {
 
 //Build the building
 void MoneyMine::Build() {
-	auto animate = BuildingBase::getAnimateByName("moneyMine/MinetoMoney_", 0.2f, 24);
+	auto animate = BuildingBase::getAnimateByName("moneyMine", 0.2f, 24);
 	auto barSprite = Sprite::create("bar/loadingbar.png");
 	this->setProgressed(false);
 	ProgressTimer* progress = ProgressTimer::create(barSprite);
@@ -426,7 +384,7 @@ void MoneyMine::Build() {
 
 //Build the building
 void WarFactory::Build() {
-	auto animate = BuildingBase::getAnimateByName("tankBase/tankbuilding_", 0.1f, 23);
+	auto animate = BuildingBase::getAnimateByName("tankBase", 0.1f, 23);
 	auto barSprite = Sprite::create("bar/loadingbar.png");
 	this->setProgressed(false);
 	ProgressTimer* progress = ProgressTimer::create(barSprite);
@@ -448,7 +406,7 @@ void WarFactory::Build() {
 		_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
 		this->setProgressed(true);
 		SimpleAudioEngine::getInstance()->playEffect(CONSTRUCTION, false);
-	}), CallFunc::create([] {BuildingBase::setIsBuilt(false); }), nullptr);
+	}), CallFunc::create([]{BuildingBase::setIsBuilt(false); }), nullptr);
 	progress->runAction(sequence);
 
 	// create a loading bar
@@ -472,7 +430,7 @@ void WarFactory::Build() {
 
 //Build the building
 void PowerPlant::Build() {
-	auto animate = PowerPlant::getAnimateByName("powerPlant/PowerBuilt_", 0.1f, 23);
+	auto animate = PowerPlant::getAnimateByName("powerPlant", 0.1f, 23);
 	auto barSprite = Sprite::create("bar/loadingbar.png");
 	this->setProgressed(false);
 	ProgressTimer* progress = ProgressTimer::create(barSprite);

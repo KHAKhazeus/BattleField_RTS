@@ -1,7 +1,14 @@
 #include "LoadingScene.h"
-Scene* LoadingScene::createScene() {
+std::shared_ptr<SocketServer> LoadingScene::_socket_server;
+std::shared_ptr<SocketClient> LoadingScene::_socket_client;
+
+
+
+Scene* LoadingScene::createScene(std::shared_ptr<SocketServer> spserver, std::shared_ptr<SocketClient> spclient) {
 	auto scene = Scene::create();
 	auto loadingScene = LoadingScene::create();
+	_socket_client = spclient;
+	_socket_server = spserver;
 	scene->addChild(loadingScene);
 	return scene;
 }
@@ -23,7 +30,7 @@ bool LoadingScene::init() {
 	loadingBarBackground->setPosition(Vec2(visibleSize.width / 2, visibleSize.height*0.05));
 	this->addChild(loadingBarBackground,2);
 
-	_count = 8;
+	_count = 0;
 
 	
 
@@ -32,11 +39,11 @@ bool LoadingScene::init() {
 
 
 void LoadingScene::loadingCallback() {
-	_count--;
-	_loadingBar->setPercent(((8 - _count) / 8.0) * 100);
+	_count++;
+	_loadingBar->setPercent((_count / 8.0) * 100);
 	log("%d", _count);
-	if (_count == 0) {
-		auto gameScene = GameScene::createScene();
+	if(_count == 12) {
+		auto gameScene = GameScene::createScene(_socket_server,_socket_client);
 		auto gameSceneAnimate = TransitionFade::create(1.0f, gameScene);
 		Director::getInstance()->replaceScene(gameSceneAnimate);
 	}
@@ -61,6 +68,8 @@ Animation* LoadingScene::getAnimateByName(std::string animName, float delay, int
 
 void LoadingScene::onEnter() {
 	// Ô¤¼ÓÔØÒôÐ§ preloading sound effect
+	Scene::onEnter();
+
 	SimpleAudioEngine::getInstance()->preloadEffect(CONSTRUCTION);
 	SimpleAudioEngine::getInstance()->preloadEffect(BUILD);
 	SimpleAudioEngine::getInstance()->preloadEffect(SOLDIER);
@@ -89,9 +98,9 @@ void LoadingScene::onEnter() {
 	textureCache->addImageAsync("unit/FighterUnit_1.png", CC_CALLBACK_0(LoadingScene::loadingCallback, this));
 	AnimateCache->addAnimation(getAnimateByName("tank/tank", 0.2f, 7), "tankRun");
 	textureCache->addImageAsync("unit/FighterUnit_2.png", CC_CALLBACK_0(LoadingScene::loadingCallback, this));
-
-
-
-
-	log("Done!");
+	AnimateCache->addAnimation(getAnimateByName("explode1/explode", 0.1f, 30), "explode");
+	textureCache->addImageAsync("soldierAttack/bullet.png", CC_CALLBACK_0(LoadingScene::loadingCallback, this));
+	textureCache->addImageAsync("dogRun/dog0.png", CC_CALLBACK_0(LoadingScene::loadingCallback, this));
+	textureCache->addImageAsync("soldierRun/soldierstand.png", CC_CALLBACK_0(LoadingScene::loadingCallback, this));
+	textureCache->addImageAsync("tank/tankBullet.png", CC_CALLBACK_0(LoadingScene::loadingCallback, this));
 }

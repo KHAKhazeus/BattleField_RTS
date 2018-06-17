@@ -50,20 +50,7 @@ public:
 		return nullptr;
 	}
 	Animate * getAnimateByName(std::string animName, float delay, int animNum) {
-		Animation* animation = Animation::create();
-
-		for (unsigned int i = 0; i <= animNum; i++) {
-			// get the picture name
-			std::string frameName = animName;
-			frameName.append(StringUtils::format("%d", i)).append(".png");
-			// add the picture to spriteframe
-			animation->addSpriteFrameWithFile(frameName.c_str());
-		}
-		// set the properties of the animation
-		animation->setDelayPerUnit(delay);
-		// reset the animate
-		animation->setRestoreOriginalFrame(true);
-		// return the animate
+		auto animation = AnimationCache::getInstance()->getAnimation(animName);
 		Animate* animate = Animate::create(animation);
 		return animate;
 	}
