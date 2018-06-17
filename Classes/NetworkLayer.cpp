@@ -8,6 +8,7 @@
 #include "NetworkLayer.h"
 #include "SimpleAudioEngine.h"
 #include "MenuScene.h"
+#include "LoadingScene.h"
 
 #ifdef TEST
 #include <iostream>
@@ -319,6 +320,10 @@ bool NetworkLayer::init(){
                     
                 case Widget::TouchEventType::ENDED:{
                     start_game->setScale(1.0);
+					auto gameScene = LoadingScene::createScene();
+					auto testScene = GameScene::createScene();
+					auto gameSceneAnimate = TransitionFade::create(1.0, gameScene);
+					Director::getInstance()->replaceScene(gameScene);
                     //need to be extended
                     break;
                 }

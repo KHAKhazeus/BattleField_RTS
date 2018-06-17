@@ -15,6 +15,15 @@
 #define DOG_SPEED 0.2
 #define TANK_SPEED 0.5
 #define SOIDIER_SPEED 0.4
+#define CONSTRUCTION "construction.mp3"
+#define DOG "dogFinished.mp3"
+#define SOLDIER "soldierFinished.mp3"
+#define TANK "tankFinished.mp3"
+#define BUILD "Building.mp3"
+#define FIGHT "gun.mp3"
+#define LOST "unitLost.mp3"
+#define TANKBULLET "tankbullet.mp3"
+#define EXPLODE "explode.mp3"
 
 
 

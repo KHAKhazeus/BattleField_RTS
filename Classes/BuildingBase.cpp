@@ -181,8 +181,8 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 							Dog* dog = Dog::create("dogRun/dog0.png");
 							auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
 							if (tempScene->getMoney()->checkMoney(dog->getGold())) {
-								UnitManager::msgs->newCreateUnitMessage(dog->getUnitID(), dog->getType(),dog->getCampID(),this->getUnitID());
 								Vec2 nodeLocation = this->RandomPosition();
+								UnitManager::msgs->newCreateUnitMessage(dog->getUnitID(), dog->getType(),dog->getCampID(),this->getUnitID(), nodeLocation);
 								if (nodeLocation.x < this->getPosition().x) {
 									dog->setFlippedX(true);
 								}
@@ -211,8 +211,8 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 							Soldier* soldier = Soldier::create("soldierRun/soldierstand.png");
 							auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
 							if (tempScene->getMoney()->checkMoney(soldier->getGold())) {
-								UnitManager::msgs->newCreateUnitMessage(soldier->getUnitID(),soldier->getType(), soldier->getCampID(), this->getUnitID());
 								Vec2 nodeLocation = this->RandomPosition();
+								UnitManager::msgs->newCreateUnitMessage(soldier->getUnitID(),soldier->getType(), soldier->getCampID(), this->getUnitID(),nodeLocation);
 								if (nodeLocation.x < this->getPosition().x) {
 									soldier->setFlippedX(true);
 								}
@@ -331,8 +331,8 @@ bool WarFactory::onTouchBegan(Touch *touch, Event *event) {
 					Tank* tank = Tank::create("tank/tank0.png");
 					auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
 					if (tempScene->getMoney()->checkMoney(tank->getGold())) {
-						UnitManager::msgs->newCreateUnitMessage(tank->getUnitID(), tank->getType(), tank->getCampID(), this->getUnitID());
 						Vec2 nodeLocation = this->RandomPosition();
+						UnitManager::msgs->newCreateUnitMessage(tank->getUnitID(), tank->getType(), tank->getCampID(), this->getUnitID(),nodeLocation);
 						tank->setScale(0.4f);
 						auto tiledLocation = tempTiledMap->tileCoordForPosition(nodeLocation);
 						tank->setPosition(Vec2(nodeLocation.x, nodeLocation.y));

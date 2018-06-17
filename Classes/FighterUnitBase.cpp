@@ -221,8 +221,9 @@ void FighterUnitBase::autoAttack(float dt) {
 			path_finder->initPathArithmetic(tempMap, this->getTiledPosition(), pos);
 			path_finder->findPath();
 			auto path = path_finder->getPath();
-			tempScene->getUnitManager()->msgs->newMoveMessage(this->getUnitID(), path, this->getTiledPosition());
-			tempScene->getUnitManager()->playerMoveWithWayPoints(this, this->getTiledPosition(), path);
+			auto targetPos = tempMap->locationForTilePos(pos);
+			tempScene->getUnitManager()->msgs->newMoveMessage(this->getUnitID(), path, targetPos);
+			tempScene->getUnitManager()->playerMoveWithWayPoints(this,targetPos, path);
 		}
 	}
 }

@@ -17,6 +17,7 @@ bool Base::init() {
 	if(!Sprite::init()) {
 		return false;
 	}
+	auto cache = Director::getInstance()->getTextureCache();
 	_base = Unit::create("unit/base_28.png");
 	// create a loading bar
 	auto loadingBar = LoadingBar::create("bar/planeHP.png");
@@ -62,6 +63,7 @@ bool Base::init() {
 
 
 bool Base::onTouchBegan(Touch *touch, Event *event) {
+	auto cache = Director::getInstance()->getTextureCache();
 	auto target = static_cast<Sprite*>(event->getCurrentTarget());
 	Vec2 locationInNode = target->convertToNodeSpace(touch->getLocation());
 	Size s = target->getContentSize();
@@ -131,7 +133,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 		//Click the small icon
 		for (auto i = 0; i < temp_sprite.size(); i++) {
 			auto temp = temp_sprite.at(i);
-			listener->onTouchBegan = [boolean_tag,temp,temp_sprite,this,i](Touch *touch, Event *event) {
+			listener->onTouchBegan = [boolean_tag,temp,temp_sprite,this,i,cache](Touch *touch, Event *event) {
 				SimpleAudioEngine::getInstance()->playEffect(BUILD, false);
 				auto target = static_cast<Sprite*>(event->getCurrentTarget());
 				auto locationInNode = target->convertToNodeSpace(touch->getLocation());
@@ -149,7 +151,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 						return false;
 					}
 					setCreated(true);
-					auto temp_building = Sprite::create(StringUtils::format("unit/building_%d.png", i + 1));
+					auto temp_building = Sprite::createWithTexture(cache->addImage(StringUtils::format("unit/building_%d.png", i + 1)));
 					temp_building->setTag(i + 1);
 					/*
 						make notes:
@@ -222,7 +224,8 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 									tempScene->getPower()->checkPower(moneyMine->getElect())) {
 									auto id = moneyMine->getIdCount();
 									moneyMine->setUnitID(id);
-									UnitManager::msgs->newCreateBuildingMessage(moneyMine->getUnitID(), moneyMine->getType(), this->getCampID(), this->getUnitID());
+									UnitManager::msgs->newCreateBuildingMessage(moneyMine->getUnitID(), 
+										moneyMine->getType(), this->getCampID(), this->getUnitID(), Vec2(nodeLocation.x, nodeLocation.y));
 									moneyMine->setTiledPosition(tiledLocation);
 									moneyMine->addIdCount();
 									moneyMine->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
@@ -246,7 +249,8 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 								if (tempScene->getMoney()->checkMoney(powerPlant->getGold())) {
 									auto id = powerPlant->getIdCount();
 									powerPlant->setUnitID(id);
-									UnitManager::msgs->newCreateBuildingMessage(powerPlant->getUnitID(), powerPlant->getType(), powerPlant->getCampID(), this->getUnitID());
+									UnitManager::msgs->newCreateBuildingMessage(powerPlant->getUnitID(), 
+										powerPlant->getType(), powerPlant->getCampID(), this->getUnitID(), Vec2(nodeLocation.x, nodeLocation.y));
 									powerPlant->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
 									powerPlant->setTiledPosition(tiledLocation);
 									BuildingBase::setIsBuilt(true);
@@ -275,7 +279,8 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 									soldierBase->Build();
 									auto id = soldierBase->getIdCount();
 									soldierBase->setUnitID(id);
-									UnitManager::msgs->newCreateBuildingMessage(soldierBase->getUnitID(), soldierBase->getType(), soldierBase->getCampID(), this->getUnitID());
+									UnitManager::msgs->newCreateBuildingMessage(soldierBase->getUnitID(), 
+										soldierBase->getType(), soldierBase->getCampID(), this->getUnitID(), Vec2(nodeLocation.x, nodeLocation.y));
 									soldierBase->addIdCount();
 									TiledMap::newMapGrid(tiledLocation, id,soldierBase->getRange(),FIX_HEIGHT);
 									TiledMap::newMapId(id, soldierBase);
@@ -300,7 +305,8 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 									warFactory->setTiledPosition(tiledLocation);
 									auto id = warFactory->getIdCount();
 									warFactory->setUnitID(id);
-									UnitManager::msgs->newCreateBuildingMessage(warFactory->getUnitID(), warFactory->getType(), warFactory->getCampID(), this->getUnitID());
+									UnitManager::msgs->newCreateBuildingMessage(warFactory->getUnitID(), 
+										warFactory->getType(), warFactory->getCampID(), this->getUnitID(), Vec2(nodeLocation.x, nodeLocation.y));
 									warFactory->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
 									warFactory->Build();
 									warFactory->addIdCount();

@@ -28,16 +28,7 @@ void UnitManager::initBase() {
 	_tiled_Map->getTiledMap()->addChild(_base, 100);
 	_tiled_Map->getTiledMap()->setPosition(0 - _base->getPositionX() + vect.width * 2
 		, 0 - _base->getPositionY() + vect.height * 1.5);
-	// Ô¤¼ÓÔØÒôÐ§ preloading sound effect
-	SimpleAudioEngine::getInstance()->preloadEffect(CONSTRUCTION);
-	SimpleAudioEngine::getInstance()->preloadEffect(BUILD);
-	SimpleAudioEngine::getInstance()->preloadEffect(SOLDIER);
-	SimpleAudioEngine::getInstance()->preloadEffect(TANK);
-	SimpleAudioEngine::getInstance()->preloadEffect(DOG);
-	SimpleAudioEngine::getInstance()->preloadEffect(FIGHT);
-	SimpleAudioEngine::getInstance()->preloadEffect(LOST);
-	SimpleAudioEngine::getInstance()->preloadEffect(TANKBULLET);
-	SimpleAudioEngine::getInstance()->preloadEffect(EXPLODE);
+	
 }
 
 Vec2 UnitManager::getBasePosition(std::string layername) {
