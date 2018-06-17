@@ -191,7 +191,7 @@ void FighterUnitBase::autoAttack(float dt) {
 			auto enemy = TiledMap::getUnitById(id);
 			tempScene->getUnitManager()->msgs->newAttackMessage(this->getUnitID(), enemy->getUnitID(), this->getAttack());
 			tempScene->getUnitManager()->attack(this->getUnitID(), enemy->getUnitID(), this->getAttack());
-			tempScene->getUnitManager()->attackEffect(this, enemy);
+			tempScene->getUnitManager()->attackEffect(this->getUnitID(), enemy->getUnitID());
 		}
 	}
 	if (isAttack()) {
@@ -209,7 +209,7 @@ void FighterUnitBase::autoAttack(float dt) {
 			this->stopAllActions();
 			tempScene->getUnitManager()->msgs->newAttackMessage(this->getUnitID(), enemy->getUnitID(), this->getAttack());
 			tempScene->getUnitManager()->attack(this->getUnitID(), enemy->getUnitID(), this->getAttack());
-			tempScene->getUnitManager()->attackEffect(this, enemy);
+			tempScene->getUnitManager()->attackEffect(this->getUnitID(), enemy->getUnitID());
 		}
 		else {
 			PathArithmetic* path_finder = PathArithmetic::create();

@@ -84,6 +84,7 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 					temp->setAttack(true);
 					temp->setTargetID(enemy->getUnitID());
 					msgs->newAttackMessage(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
+					attackEffect(temp->getUnitID(), enemy->getUnitID());
 					attack(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
 
 				}
@@ -114,6 +115,7 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 						auto id = enemy->getUnitID();
 						temp->setTargetID(id);
 						msgs->newAttackMessage(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
+						attackEffect(temp->getUnitID(), enemy->getUnitID());
 						attack(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
 					}
 				}
@@ -307,7 +309,6 @@ void UnitManager::delay(float dt) {
 void UnitManager::attack(int attacker_id, int under_attack_id, int damage) {
 	auto player = TiledMap::getUnitById(attacker_id);
 	auto enemy = TiledMap::getUnitById(under_attack_id);
-	attackEffect(player, enemy);
 	auto attackNumber = player->getAttack();
 	//decrease the Hp
 	enemy->setLifeValue(enemy->getLifeValue() - attackNumber);
@@ -338,7 +339,9 @@ void UnitManager::attack(int attacker_id, int under_attack_id, int damage) {
 	}
 }
 
-void UnitManager::attackEffect(Unit* player, Unit *enemy) {
+void UnitManager::attackEffect(int attacker_id, int under_attack_id) {
+	auto player = TiledMap::getUnitById(attacker_id);
+	auto enemy = TiledMap::getUnitById(under_attack_id);
 	/*change the direction of the unit according to the target position*/
 	Vec2 tarPos = _tiled_Map->locationForTilePos(enemy->getPosition());
 	Vec2 myPos = _tiled_Map->locationForTilePos(player->getPosition());
@@ -417,12 +420,11 @@ void UnitManager::autoAttack(float dt) {
 				auto id = TiledMap::getUnitIdByPosition(pos);
 				auto enemy = TiledMap::getUnitById(id);
 				attack(_unit_Vector.at(i)->getUnitID(), enemy->getUnitID(), _unit_Vector.at(i)->getAttack());
-				attackEffect(_unit_Vector.at(i), enemy);
+				attackEffect(_unit_Vector.at(i)->getUnitID(), enemy->getUnitID());
 			}
 		}
 	}
 }
-
 /*
 void UnitManager::attack(Unit *player, Unit *target) {
 	/*change the direction of the unit according to the target position

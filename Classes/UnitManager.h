@@ -42,7 +42,7 @@ public:
 	//@@param2 the Pointer to the Enemy
 	void attack(int attacker_id, int under_attack_id, int damage);
 	
-	void attackEffect(Unit* player, Unit* enemy);
+	void attackEffect(int attacker_id, int under_attack_id);
 
 
 	//the unit destroy effect
