@@ -30,11 +30,11 @@ set(APP_NAME BattleField_RTS)
 project(${APP_NAME})
 
 if(WIN32)
-set(COCOS2DX_ROOT_PATH $ENV{COCOS_X_ROOT}/)
+set(COCOS2DX_ROOT_PATH $ENV{COCOS_X_ROOT})
 elseif(MACOSX)
 set(COCOS2DX_ROOT_PATH $ENV{COCOS_X_ROOT}/cocos2d-x-3.17)
 #!set(COCOS2DX_ROOT_PATH $ENV{COCOS_X_ROOT}/)
-endif
+endif()
 set(CMAKE_MODULE_PATH ${COCOS2DX_ROOT_PATH}/cmake/Modules/)
 
 include(CocosBuildSet)

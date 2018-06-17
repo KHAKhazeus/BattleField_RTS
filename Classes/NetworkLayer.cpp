@@ -328,13 +328,13 @@ bool NetworkLayer::init(){
                     
                 case Widget::TouchEventType::ENDED:{
                     start_game->setScale(1.0);
-<<<<<<< HEAD
-					auto gameScene = LoadingScene::createScene(_socket_server,_socket_client);
-				//	Director::getInstance()->replaceScene(gameSceneAnimate);
+					if (_socket_server != NULL) {
+						_socket_server->startService();
+					}
+					auto gameScene = LoadingScene::createScene(_socket_server, _socket_client);
+					//	Director::getInstance()->replaceScene(gameSceneAnimate);
 					this->addChild(gameScene);
-=======
-                    _socket_server->startService();
->>>>>>> 28068c24042f53f05878e3059d98e92bdc5d7745
+
                     //need to be extended
                     break;
                 }
