@@ -80,7 +80,7 @@ public:
 	//unit's creating function
 	static Soldier* create(const std::string& filename) {
 		Soldier *sprite = new Soldier();
-		if (sprite && sprite->initWithFile(filename))
+		if (sprite && sprite->initWithTexture(Director::getInstance()->getTextureCache()->addImage(filename)))
 		{
 			sprite->autorelease();
 			return sprite;
@@ -115,7 +115,7 @@ public:
 	//unit's creating function
 	static Dog* create(const std::string& filename) {
 		Dog *sprite = new Dog();
-		if (sprite && sprite->initWithFile(filename))
+		if (sprite && sprite->initWithTexture(Director::getInstance()->getTextureCache()->addImage(filename)))
 		{
 			sprite->autorelease();
 			return sprite;
@@ -149,7 +149,7 @@ public:
 	//unit's creating function
 	static Tank* create(const std::string& filename) {
 		Tank *sprite = new Tank();
-		if (sprite && sprite->initWithFile(filename))
+		if (sprite && sprite->initWithTexture(Director::getInstance()->getTextureCache()->addImage(filename)))
 		{
 			sprite->autorelease();
 			return sprite;

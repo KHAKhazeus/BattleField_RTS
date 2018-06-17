@@ -29,9 +29,12 @@ set(APP_NAME BattleField_RTS)
 
 project(${APP_NAME})
 
+if(WIN32)
 set(COCOS2DX_ROOT_PATH $ENV{COCOS_X_ROOT})
+elseif(MACOSX)
+set(COCOS2DX_ROOT_PATH $ENV{COCOS_X_ROOT}/cocos2d-x-3.17)
 #!set(COCOS2DX_ROOT_PATH $ENV{COCOS_X_ROOT}/)
-
+endif()
 set(CMAKE_MODULE_PATH ${COCOS2DX_ROOT_PATH}/cmake/Modules/)
 
 include(CocosBuildSet)
@@ -60,7 +63,7 @@ include_directories(
 #)
 # add cross-platforms source files and header files 
 list(APPEND GAME_SOURCE
-     Classes/AppDelegate.cpp
+       Classes/AppDelegate.cpp
      Classes/HelloWorldScene.cpp
      Classes/MenuScene.cpp
      Classes/SettingLayer.cpp
@@ -79,6 +82,7 @@ list(APPEND GAME_SOURCE
 	 Classes/MouseRect.cpp
 	 Classes/PathArithmetic.cpp
 	 Classes/GameMessageInterface.cpp
+	 Classes/LoadingScene.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
@@ -102,6 +106,7 @@ list(APPEND GAME_HEADER
 	Classes/PathArithmetic.h
 	Classes/BattleField_RTS.h
 	Classes/GameMessageInterface.h
+	Classes/LoadingScene.h
      )
 
 if(ANDROID)
@@ -162,6 +167,7 @@ set(APP_SRC
     ${GAME_HEADER}
     )
 
+
 set(PROTOBUFF_LIB_PATH Classes/lib/Debug/Protobuf)
 set(_protobuff_prefix protobuff)
 set(protobuff_INCLUDE_DIRS Classes/include/google/protobuf)
@@ -175,9 +181,10 @@ set_target_properties(protobuff
 elseif(WINDOWS)
 set_target_properties(protobuff
 		PROPERTIES IMPORTED_LOCATION
-#!
 		"H:/BattleField_RTS/Classes/lib/Debug/Protobuf/libprotobuf.lib"
 )
+
+#LINK_DIRECTORIES(${PROTOBUFF_LIB_PATH})
 endif()
 
 set(BOOST_LIB_PATH Classes/lib/Debug/Boost)
@@ -186,27 +193,32 @@ set(boost_INCLUDE_DIRS Classes/include/boost)
 set(boost_LIBRARIES boost)
 add_library(boost STATIC IMPORTED)
 if(MACOSX)
-	set_target_properties(boost
+set_target_properties(boost
 			PROPERTIES IMPORTED_LOCATION
 			${BOOST_LIB_PATH}/libboost_system.a
-	)
+)
 elseif(WINDOWS)
-	link_directories(${BOOST_LIB_PATH})
+#set_target_properties(boost
+#			PROPERTIES IMPORTED_LOCATION
+#			D:\C++ project 2018\BattleField_RTS\Classes\lib\Debug\Boost\libboost_date_time-vc141-mt-gd-x32-1_67.lib
+#)
+link_directories(${BOOST_LIB_PATH})
 endif()
 
 if(MACOSX)
-	cocos_build_app(${APP_NAME}
+cocos_build_app(${APP_NAME}
                 APP_SRC "${APP_SRC}"
-		DEPEND_COMMON_LIBS "cocos2d" "protobuff" "boost"
+				DEPEND_COMMON_LIBS "cocos2d" "protobuff" "boost"
                 DEPEND_ANDROID_LIBS "cocos2d_android"
                 )
 elseif(WINDOWS)
-	cocos_build_app(${APP_NAME}
+cocos_build_app(${APP_NAME}
                 APP_SRC "${APP_SRC}"
-		DEPEND_COMMON_LIBS "cocos2d" "protobuff"
+				DEPEND_COMMON_LIBS "cocos2d" "protobuff"	
                 DEPEND_ANDROID_LIBS "cocos2d_android"
                 )
 endif()
+
 
 if(APPLE)
     set_target_properties(${APP_NAME} PROPERTIES RESOURCE "${APP_UI_RES}")

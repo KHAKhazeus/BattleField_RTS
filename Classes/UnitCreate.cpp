@@ -17,6 +17,7 @@ bool Base::init() {
 	if(!Sprite::init()) {
 		return false;
 	}
+	auto cache = Director::getInstance()->getTextureCache();
 	_base = Unit::create("unit/base_28.png");
 	// create a loading bar
 	auto loadingBar = LoadingBar::create("bar/planeHP.png");
@@ -62,6 +63,7 @@ bool Base::init() {
 
 
 bool Base::onTouchBegan(Touch *touch, Event *event) {
+	auto cache = Director::getInstance()->getTextureCache();
 	auto target = static_cast<Sprite*>(event->getCurrentTarget());
 	Vec2 locationInNode = target->convertToNodeSpace(touch->getLocation());
 	Size s = target->getContentSize();
@@ -80,7 +82,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 		std::vector<bool> boolean_tag;
 		int size = 4;
 		for (int i = 0; i < size; i++) {
-			auto temp = Sprite::create(StringUtils::format("unit/building_%d.png",i+1));
+			auto temp = Sprite::createWithTexture(cache->addImage(StringUtils::format("unit/building_%d.png",i+1)));
 			//make notes: do a little change to the position of the small icons
 			auto width = -temp->getContentSize().width/2;
 			temp->setScale(0.3);
@@ -131,7 +133,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 		//Click the small icon
 		for (auto i = 0; i < temp_sprite.size(); i++) {
 			auto temp = temp_sprite.at(i);
-			listener->onTouchBegan = [boolean_tag,temp,temp_sprite,this,i](Touch *touch, Event *event) {
+			listener->onTouchBegan = [boolean_tag,temp,temp_sprite,this,i,cache](Touch *touch, Event *event) {
 				SimpleAudioEngine::getInstance()->playEffect(BUILD, false);
 				auto target = static_cast<Sprite*>(event->getCurrentTarget());
 				auto locationInNode = target->convertToNodeSpace(touch->getLocation());
@@ -149,7 +151,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 						return false;
 					}
 					setCreated(true);
-					auto temp_building = Sprite::create(StringUtils::format("unit/building_%d.png", i + 1));
+					auto temp_building = Sprite::createWithTexture(cache->addImage(StringUtils::format("unit/building_%d.png", i + 1)));
 					temp_building->setTag(i + 1);
 					/*
 						make notes:
@@ -222,6 +224,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 									tempScene->getPower()->checkPower(moneyMine->getElect())) {
 									auto id = moneyMine->getIdCount();
 									moneyMine->setUnitID(id);
+
 									tempManager->addMessages(tempManager->msgs->newCreateBuildingMessage(moneyMine->getUnitID(), moneyMine->getType(),
 										this->getCampID(), this->getUnitID(),nodeLocation));
 									/*UnitManager::Building(moneyMine->getUnitID(), moneyMine->getType(), this->getCampID(), this->getUnitID(),
@@ -236,11 +239,10 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 								if (tempScene->getMoney()->checkMoney(powerPlant->getGold())) {
 									auto id = powerPlant->getIdCount();
 									powerPlant->setUnitID(id);
-									tempManager->addMessages(tempManager->msgs->newCreateBuildingMessage(powerPlant->getUnitID(), powerPlant->getType(), this->getCampID(),
+									tempManager->addMessages(tempManager->msgs->newCreateBuildingMessage(powerPlant->getUnitID(), powerPlant->getType(),BLUE,// this->getCampID(),
 										this->getUnitID(), nodeLocation));
 									/*UnitManager::Building(powerPlant->getUnitID(), powerPlant->getType(), this->getCampID(), this->getUnitID(),
-										nodeLocation);*/
-								}
+										nodeLocation);*/								}
 								//delete powerPlant;
 							}
 							else if (temp_building->getTag() == 3) {

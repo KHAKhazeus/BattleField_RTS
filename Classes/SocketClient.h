@@ -31,11 +31,12 @@ private:
     
     void startClient();
     void startConnect();
-    void checkStop();
+    bool checkStop();
     void stopClient();
     void readMessages();
     void pushMessageSet(const error_code &err);
-    void writeMessages(std::string message_set);
+    bool writeMessages(std::string message_set);
+    std::string read_data_once();
     
     void connectHandle(const error_code &err);
     

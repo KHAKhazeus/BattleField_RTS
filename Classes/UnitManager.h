@@ -16,10 +16,12 @@ USING_NS_CC;
 class UnitManager :public cocos2d::Node {
 public:
 	GameMessageInterface * msgs ;
-	virtual bool init(TiledMap *);
-	static UnitManager * create(TiledMap* tiledMap) {
+	virtual bool init(TiledMap *, std::shared_ptr<SocketServer> spserver,
+		std::shared_ptr<SocketClient> spclient);
+	static UnitManager * create(TiledMap* tiledMap, std::shared_ptr<SocketServer> spserver,
+		std::shared_ptr<SocketClient> spclient) {
 		auto unitManager = new UnitManager();
-		if (unitManager && unitManager->init(tiledMap)) {
+		if (unitManager && unitManager->init(tiledMap,spserver,spclient)) {
 			unitManager->autorelease();
 			return unitManager;
 		}
@@ -93,6 +95,8 @@ private:
 	std::shared_ptr<SocketServer> _socket_server{ static_cast<SocketServer*>(nullptr),[](SocketServer*) {} };
 	std::vector<GameMessage> _gameMessages;
 	std::vector<GameMessage>_orders;
+
+
 };
 
 

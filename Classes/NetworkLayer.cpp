@@ -8,6 +8,7 @@
 #include "NetworkLayer.h"
 #include "SimpleAudioEngine.h"
 #include "MenuScene.h"
+#include "LoadingScene.h"
 
 #ifdef TEST
 #include <iostream>
@@ -23,7 +24,15 @@ static void problemLoading(const char* filename)
 }
 
 void NetworkLayer::initializeServerSide(){
-    log("%s", "Server Initialized");
+    auto color_layer = this->getChildByName("color_layer");
+    auto portbox = static_cast<TextField *>(color_layer->getChildByName("portbox"));
+    std::stringstream port_stream(portbox->getString());
+    int port_number;
+    port_stream >> port_number;
+    auto new_socket_server = SocketServer::create(port_number);
+    if(!new_socket_server){
+        _socket_server.reset(new_socket_server);
+    }
 }
 
 void NetworkLayer::initializeClientSide(){
@@ -297,6 +306,45 @@ bool NetworkLayer::init(){
             }
         });
     }
+
+
+	Button *select_map = Button::create("Menu/OrangeButton.png", "Menu/OrangeButtonHighlight.png");
+	if (!select_map) {
+		problemLoading("Menu/OrangeButton.png and Menu/OrangeButtonHighlight.png");
+	}
+	else {
+		auto button_size = select_map->getCustomSize();
+		select_map->setScale(1.0);
+		select_map->setTitleText("Select Map");
+		select_map->setTitleFontName("Arial-Bold.ttf");
+		select_map->setTitleColor(Color3B(80, 80, 80));
+		select_map->setTitleFontSize(button_size.height / 3);
+		select_map->setPosition(Vec2((reset->getPosition()).x, (reset->getPosition()).y - start_server_size.height / 2 - small_adjust));
+		select_map->addTouchEventListener([=](Ref* pSender, Widget::TouchEventType event_type) {
+			switch (event_type) {
+			case Widget::TouchEventType::BEGAN: {
+				select_map->setScale(1.05);
+				break;
+			}
+
+			case Widget::TouchEventType::ENDED: {
+				select_map->setScale(1.0);
+				
+
+				
+				break;
+			}
+
+			case Widget::TouchEventType::CANCELED: {
+				select_map->setScale(1.0);
+				break;
+			}
+
+			default:
+				break;
+			}
+		});
+	}
     
     Button *start_game = Button::create("Menu/OrangeButton.png", "Menu/OrangeButtonHighlight.png");
     if(!reset){
@@ -309,7 +357,7 @@ bool NetworkLayer::init(){
         start_game->setTitleFontName("Arial-Bold.ttf");
         start_game->setTitleColor(Color3B(80,80,80));
         start_game->setTitleFontSize(button_size.height/3);
-        start_game->setPosition(Vec2((reset->getPosition()).x, (reset->getPosition()).y -start_server_size.height/2 - small_adjust));
+        start_game->setPosition(Vec2((select_map->getPosition()).x, (select_map->getPosition()).y -start_server_size.height/2 - small_adjust));
         start_game->addTouchEventListener([=](Ref* pSender, Widget::TouchEventType event_type){
             switch (event_type) {
                 case Widget::TouchEventType::BEGAN:{
@@ -319,6 +367,13 @@ bool NetworkLayer::init(){
                     
                 case Widget::TouchEventType::ENDED:{
                     start_game->setScale(1.0);
+					if (_socket_server != NULL) {
+						_socket_server->startService();
+					}
+					auto gameScene = LoadingScene::createScene(_socket_server, _socket_client);
+					//	Director::getInstance()->replaceScene(gameSceneAnimate);
+					this->addChild(gameScene);
+
                     //need to be extended
                     break;
                 }
@@ -334,6 +389,10 @@ bool NetworkLayer::init(){
         });
     }
     
+
+
+
+
     auto return_button = Button::create("Menu/OrangeButton.png", "Menu/OrangeButtonHighlight.png");
     if(!return_button){
         problemLoading("Menu/OrangeButton.png and Menu/OrangeButtonHighlight.png");
@@ -370,7 +429,7 @@ bool NetworkLayer::init(){
         });
     }
     //!!!Iteration?
-    Vector<Node *> fade_targets{text_ip_background, text_port_background, return_button, start_server, start_client, portbox, ipbox, reset, start_game};
+    Vector<Node *> fade_targets{text_ip_background, text_port_background, return_button, start_server, start_client, portbox, ipbox, reset, start_game,select_map};
     for(auto target : fade_targets){
         target->setOpacity(0);
         layer->addChild(target);

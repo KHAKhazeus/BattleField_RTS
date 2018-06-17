@@ -21,14 +21,14 @@ void BuildingBase::setIsBuilt(bool judge) {
 
 
 Vec2 SoldierBase::RandomPosition() {
-	int sign = cocos2d::random() % 3 - 1;
-	int sign1 = cocos2d::random() % 3 - 1;
+    int sign = cocos2d::random() % 3 - 1;
+    int sign1 = cocos2d::random() % 3 - 1;
 	while (sign == 0 && sign1 == 0) {
-		sign = cocos2d::random() % 3 - 1;
+        sign = cocos2d::random() % 3 - 1;
 		sign1 = cocos2d::random() % 3 - 1;
 	}
-	float randX = this->getPosition().x + random() % 100 * sign;
-	float randY = this->getPosition().y + random() % 100 * sign1;
+	float randX = this->getPosition().x + cocos2d::random() % 100 * sign;
+	float randY = this->getPosition().y + cocos2d::random() % 100 * sign1;
 	Vec2 position = Vec2(randX, randY);
 	// soldier's position transfered to tilemap position
 	Vec2 tileCoord = static_cast<TiledMap*>(this->getParent()->getParent())->tileCoordForPosition(position);
@@ -42,14 +42,14 @@ Vec2 SoldierBase::RandomPosition() {
 }
 
 Vec2 WarFactory::RandomPosition() {
-	int sign = random() % 3 - 1;
-	int sign1 = random() % 3 - 1;
+	int sign = cocos2d::random() % 3 - 1;
+	int sign1 = cocos2d::random() % 3 - 1;
 	while (sign == 0 && sign1 == 0) {
-		sign = random() % 3 - 1;
-		sign1 = random() % 3 - 1;
+        sign = cocos2d::random() % 3 - 1;
+		sign1 = cocos2d::random() % 3 - 1;
 	}
-	float randX = this->getPosition().x + random() % 150*  sign;
-	float randY = this->getPosition().y + random() % 150 * sign1;
+    float randX = this->getPosition().x + cocos2d::random() % 150*  sign;
+    float randY = this->getPosition().y + cocos2d::random() % 150 * sign1;
 	Vec2 position = Vec2(randX, randY);
 	// tank's position transfered to tilemap position
 	Vec2 tileCoord = static_cast<TiledMap*>(this->getParent()->getParent())->tileCoordForPosition(position);
@@ -65,7 +65,7 @@ Vec2 WarFactory::RandomPosition() {
 
 //Build the building
 void SoldierBase::Build() {
-	auto animate =BuildingBase::getAnimateByName("soldierBase/soldierbase_", 0.1f, 23);
+	auto animate =BuildingBase::getAnimateByName("soldierBase", 0.1f, 23);
 	auto barSprite = Sprite::create("bar/loadingbar.png");
 	this->setProgressed(false);
 	ProgressTimer* progress = ProgressTimer::create(barSprite);
@@ -123,10 +123,11 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 		setSelected(true);
 		//TODO change this to vector
 		auto height = this->getContentSize().height ;
+		auto cache = Director::getInstance()->getTextureCache();
 		std::vector<Sprite*> temp_sprite;
 		int size = 2;
 		for (int i = 0; i < size; i++) {
-			auto temp = Sprite::create(StringUtils::format("unit/FighterUnit_%d.png", i + 1));
+			auto temp = Sprite::createWithTexture(cache->addImage(StringUtils::format("unit/FighterUnit_%d.png", i + 1)));
 			//make notes: do a little change to the position of the small icons
 			auto width = temp->getContentSize().width / 2;
 			temp->setScale(1.0);
@@ -142,7 +143,7 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 		//Click the small icon
 		for (auto i = 0; i < temp_sprite.size(); i++) {
 			auto temp = temp_sprite.at(i);
-			listener->onTouchBegan = [temp, temp_sprite, this, i](Touch *touch, Event *event) {
+			listener->onTouchBegan = [temp, temp_sprite, this, i,cache](Touch *touch, Event *event) {
 				auto target = static_cast<Sprite*>(event->getCurrentTarget());
 				auto locationInNode = target->convertToNodeSpace(touch->getLocation());
 				Size s = target->getContentSize();
@@ -152,7 +153,7 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 						return false;
 					}
 					this->setCreated(true);
-					auto temp_building = Sprite::create(StringUtils::format("unit/FighterUnit_%d.png", i + 1));
+					auto temp_building = Sprite::createWithTexture(cache->addImage(StringUtils::format("unit/FighterUnit_%d.png", i + 1)));
 					temp_building->setTag(i + 1);
 					/*
 					make notes:
@@ -341,7 +342,7 @@ bool WarFactory::onTouchBegan(Touch *touch, Event *event) {
 
 //Build the building
 void MoneyMine::Build() {
-	auto animate = BuildingBase::getAnimateByName("moneyMine/MinetoMoney_", 0.2f, 24);
+	auto animate = BuildingBase::getAnimateByName("moneyMine", 0.2f, 24);
 	auto barSprite = Sprite::create("bar/loadingbar.png");
 	this->setProgressed(false);
 	ProgressTimer* progress = ProgressTimer::create(barSprite);
@@ -383,7 +384,7 @@ void MoneyMine::Build() {
 
 //Build the building
 void WarFactory::Build() {
-	auto animate = BuildingBase::getAnimateByName("tankBase/tankbuilding_", 0.1f, 23);
+	auto animate = BuildingBase::getAnimateByName("tankBase", 0.1f, 23);
 	auto barSprite = Sprite::create("bar/loadingbar.png");
 	this->setProgressed(false);
 	ProgressTimer* progress = ProgressTimer::create(barSprite);
@@ -405,7 +406,7 @@ void WarFactory::Build() {
 		_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
 		this->setProgressed(true);
 		SimpleAudioEngine::getInstance()->playEffect(CONSTRUCTION, false);
-	}), CallFunc::create([] {BuildingBase::setIsBuilt(false); }), nullptr);
+	}), CallFunc::create([]{BuildingBase::setIsBuilt(false); }), nullptr);
 	progress->runAction(sequence);
 
 	// create a loading bar
@@ -429,7 +430,7 @@ void WarFactory::Build() {
 
 //Build the building
 void PowerPlant::Build() {
-	auto animate = PowerPlant::getAnimateByName("powerPlant/PowerBuilt_", 0.1f, 23);
+	auto animate = PowerPlant::getAnimateByName("powerPlant", 0.1f, 23);
 	auto barSprite = Sprite::create("bar/loadingbar.png");
 	this->setProgressed(false);
 	ProgressTimer* progress = ProgressTimer::create(barSprite);

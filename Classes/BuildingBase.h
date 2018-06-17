@@ -58,7 +58,7 @@ class SoldierBase :public BuildingBase {
 public:
 	static SoldierBase* create(const std::string& filename) {
 		SoldierBase *sprite = new SoldierBase();
-		if (sprite && sprite->initWithFile(filename))
+		if (sprite && sprite->initWithTexture(Director::getInstance()->getTextureCache()->addImage(filename)))
 		{
 			sprite->autorelease();
 			return sprite;
@@ -90,7 +90,7 @@ public:
 	
 	static MoneyMine* create(const std::string& filename) {
 		MoneyMine *sprite = new MoneyMine();
-		if (sprite && sprite->initWithFile(filename))
+		if (sprite && sprite->initWithTexture(Director::getInstance()->getTextureCache()->addImage(filename)))
 		{
 			sprite->autorelease();
 			return sprite;
@@ -118,7 +118,7 @@ class PowerPlant :public BuildingBase {
 public:
 	static PowerPlant* create(const std::string& filename) {
 		PowerPlant *sprite = new PowerPlant();
-		if (sprite && sprite->initWithFile(filename))
+		if (sprite && sprite->initWithTexture(Director::getInstance()->getTextureCache()->addImage(filename)))
 		{
 			sprite->autorelease();
 			return sprite;
@@ -145,7 +145,7 @@ class WarFactory :public BuildingBase {
 public:
 	static WarFactory* create(const std::string& filename) {
 		WarFactory *sprite = new WarFactory();
-		if (sprite && sprite->initWithFile(filename))
+		if (sprite && sprite->initWithTexture(Director::getInstance()->getTextureCache()->addImage(filename)))
 		{
 			sprite->autorelease();
 			return sprite;

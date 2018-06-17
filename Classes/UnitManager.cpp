@@ -4,10 +4,13 @@
 #include "GameScene.h"
 using namespace CocosDenshion;
 
-bool UnitManager::init(TiledMap * tiledMap) {
+bool UnitManager::init(TiledMap * tiledMap, std::shared_ptr<SocketServer> spserver,
+	std::shared_ptr<SocketClient> spclient) {
 	_building =  1;
 	_soider = 0;
 	_tiled_Map = tiledMap;
+	_socket_server = spserver;
+	_socket_client = spclient;
 	//this->schedule(schedule_selector(updateMessage), 5.0f / 60);
 	return true;
 }
@@ -30,16 +33,7 @@ void UnitManager::initBase() {
 	_tiled_Map->getTiledMap()->addChild(_base, 100);
 	_tiled_Map->getTiledMap()->setPosition(0 - _base->getPositionX() + vect.width * 2
 		, 0 - _base->getPositionY() + vect.height * 1.5);
-	// 预加载音效 preloading sound effect
-	SimpleAudioEngine::getInstance()->preloadEffect(CONSTRUCTION);
-	SimpleAudioEngine::getInstance()->preloadEffect(BUILD);
-	SimpleAudioEngine::getInstance()->preloadEffect(SOLDIER);
-	SimpleAudioEngine::getInstance()->preloadEffect(TANK);
-	SimpleAudioEngine::getInstance()->preloadEffect(DOG);
-	SimpleAudioEngine::getInstance()->preloadEffect(FIGHT);
-	SimpleAudioEngine::getInstance()->preloadEffect(LOST);
-	SimpleAudioEngine::getInstance()->preloadEffect(TANKBULLET);
-	SimpleAudioEngine::getInstance()->preloadEffect(EXPLODE);
+	
 }
 
 Vec2 UnitManager::getBasePosition(std::string layername) {
@@ -61,32 +55,17 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 			//if > 1 what in the vector isn't a building   如果SelectVector的容量>1,那么它一定不会包含建筑
 			auto enemy = tempSprite;
 			enemy->getHP()->setVisible(true);
+		
 			if (TiledMap::checkSize() > 1) {
 				for (auto temp : *TiledMap::getSelectedVector()) {
-					//if the enemy is in the attack range 如果敌人在攻击范围内
-				/*	if (temp->judgeAttack(tiledLocation) && TiledMap::checkMapGrid(tiledLocation)) {
-						temp->stopAllActions();
-						UnitManager::addMessages(msgs->newAttackMessage(temp->getUnitID(), enemy->getUnitID(), temp->getAttack()));
-						//attack(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
-
-
-						if (temp->judgeAttack(tiledLocation)) {
-							//TODO function attack
-						//	attack(temp, tempSprite);
-						}
-						else {
-							//TODO function tracing
-						}
-					}*/
-
+					if (enemy->getUnitID() == temp->getTargetID() && temp->isAttack()) {
+						return;
+					}
 					//Set the Type to Attack
 					temp->stopAllActions();
 					temp->clearAllType();
 					temp->setAttack(true);
 					temp->setTargetID(enemy->getUnitID());
-					UnitManager::addMessages(msgs->newAttackMessage(temp->getUnitID(), enemy->getUnitID(), temp->getAttack()));
-					//attackEffect(temp->getUnitID(), enemy->getUnitID());
-					//attack(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
 
 				}
 			}
@@ -95,28 +74,17 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 				if (TiledMap::checkSize() == 1) {
 					auto temp = TiledMap::getSelectedVector()->at(0);
 					//if not
+					if (enemy->getUnitID() == temp->getTargetID() && temp->isAttack()) {
+						return;
+					}
 					if (!temp->isBuilding()) {
-					/*
-						if (temp->judgeAttack(tiledLocation)) {
-						//	attack(temp, tempSprite);
-							//TODO function attack
-							temp->stopAllActions();
-							UnitManager::addMessages(msgs->newAttackMessage(temp->getUnitID(), enemy->getUnitID(), temp->getAttack()));
-							//attack(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
-								
-						}
-						else {
-							//TODO function tracing
-						}*/
+					
 						//Set the Type to Attack
 						temp->stopAllActions();
 						temp->clearAllType();
 						temp->setAttack(true);
 						auto id = enemy->getUnitID();
 						temp->setTargetID(id);
-						UnitManager::addMessages(msgs->newAttackMessage(temp->getUnitID(), enemy->getUnitID(), temp->getAttack()));
-						//attackEffect(temp->getUnitID(), enemy->getUnitID());
-						//attack(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
 					}
 				}
 			}
@@ -150,15 +118,24 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 						path_finder->initPathArithmetic(_tiled_Map, from, tiledLocation);
 						path_finder->findPath();
 						auto path = path_finder->getPath();
+						if (temp->getTargetPos().x != -1) {
+							if (temp->getTiledPosition() != temp->getTargetPos()
+								&& tiledLocation != temp->getTargetPos()) {
+								if (!TiledMap::checkPass(temp->getTargetPos())) {
+									TiledMap::setPass(temp->getTargetPos());
+								}
+							}
+						}
+						temp->setTargetPos(tiledLocation);
+						TiledMap::setUnpass(tiledLocation);
 						if (temp->getNumberOfRunningActions() == 0) {
-
+							temp->setAttack(false);
 							UnitManager::addMessages(msgs->newMoveMessage(temp->getUnitID(), path, tiledLocation));
-							temp->clearAllType();
-							temp->setMove(true);
 							//playerMoveWithWayPoints(temp->getUnitID(), path, tiledLocation);
 						}
 						else {
 							temp->stopAllActions();
+							temp->setAttack(false);
 							UnitManager::addMessages(msgs->newMoveMessage(temp->getUnitID(), path, tiledLocation));
 
 							temp->clearAllType();
@@ -211,15 +188,7 @@ void UnitManager::playerMoveWithWayPoints(int move_unit_id, std::vector<cocos2d:
 		return;
 	}
 	auto tiledLocation = path_points.back();
-	if (player->getTargetPos().x != -1) {
-		if (player->getTiledPosition() != player->getTargetPos()) {
-			if (!TiledMap::checkPass(player->getTargetPos())) {
-				TiledMap::setPass(player->getTargetPos());
-			}
-		}
-	}
-	player->setTargetPos(tiledLocation);
-	TiledMap::setUnpass(tiledLocation);
+	
 	/*change the direction of the unit according to the target end_point*/
 	Vec2 tarPos = _tiled_Map->locationForTilePos(_tiled_Map->locationForTilePos(end_point));
 	Vec2 myPos = _tiled_Map->locationForTilePos(player->getPosition());
@@ -240,15 +209,15 @@ void UnitManager::playerMoveWithWayPoints(int move_unit_id, std::vector<cocos2d:
 	switch ((player->getType())[0])
 	{
 	case 's':
-		animate = player->getAnimateByName("soldierRun/soldier", 0.2, 7);
+		animate = player->getAnimateByName("soldierRun", 0.2, 7);
 		speed = SOIDIER_SPEED;
 		break;
 	case 'd':
-		animate = player->getAnimateByName("dogRun/dog", 0.2, 5);
+		animate = player->getAnimateByName("dogRun", 0.2, 5);
 		speed = DOG_SPEED;
 		break;
 	case 't':
-		animate = player->getAnimateByName("tank/tank", 0.2, 7);
+		animate = player->getAnimateByName("tankRun", 0.2, 7);
 		speed = TANK_SPEED;
 		break;
 	default:
@@ -369,7 +338,8 @@ void UnitManager::attackEffect(int attacker_id, int under_attack_id) {
 	case 's':
 		SimpleAudioEngine::getInstance()->playEffect(FIGHT, false);
 		player->setTexture("unit/FighterUnit_2.png");
-		bullet = Sprite::create("soldierAttack/bullet.png");
+		bullet = Sprite::createWithTexture
+		(Director::getInstance()->getTextureCache()->addImage("soldierAttack/bullet.png"));
 		bullet->setPosition(player->getPosition());
 		bullet->setScale(0.2);
 		bullet->setFlippedX(true);
@@ -378,12 +348,13 @@ void UnitManager::attackEffect(int attacker_id, int under_attack_id) {
 	case 'd':
 		SimpleAudioEngine::getInstance()->playEffect(DOG, false);
 		player->setTexture("unit/FighterUnit_1.png");
-		dogAttack = player->getAnimateByName("dogAttack/dog_attack", 0.1, 6);
+		dogAttack = player->getAnimateByName("dogAttack", 0.1, 6);
 		isDog = true;
 		break;
 	case 't':
 		SimpleAudioEngine::getInstance()->playEffect(TANKBULLET, false);
-		bullet = Sprite::create("tank/tankBullet.png");
+		bullet = Sprite::createWithTexture
+		(Director::getInstance()->getTextureCache()->addImage("tank/tankBullet.png"));
 		bullet->setPosition(player->getPosition());
 		bullet->setScale(0.4);
 		_tiled_Map->getTiledMap()->addChild(bullet, 30);
@@ -435,7 +406,7 @@ void UnitManager::destroyEffect(Unit* unit,bool type) {
 	if (type) {
 		SimpleAudioEngine::getInstance()->playEffect(EXPLODE, false);
 		auto blast = Unit::create("explode1/explode0.png");
-		auto animate = blast->getAnimateByName("explode1/explode", 0.1f, 30);
+		auto animate = blast->getAnimateByName("explode", 0.1f, 30);
 		_tiled_Map->getTiledMap()->addChild(blast, 210);
 		blast->setPosition(unit->getPosition());
 		auto callfunc = CallFunc::create([=] {
@@ -470,6 +441,7 @@ void UnitManager::Building(int new_building_id, std::string new_building_type, i
 		moneyMine->Build();
 		TiledMap::newMapGrid(tiledLocation, new_building_id, moneyMine->getRange());
 		TiledMap::newMapId(new_building_id, moneyMine);
+		moneyMine->setTiledPosition(tiledLocation);
 		//					TiledMap::setUnpass(tiledLocation, moneyMine->getRange());
 		static_cast<TMXTiledMap*>(base->getParent())->addChild(moneyMine, 50);
 		tempScene->getVectorMine().pushBack(moneyMine);
@@ -492,6 +464,7 @@ void UnitManager::Building(int new_building_id, std::string new_building_type, i
 		powerPlant->Build();
 		TiledMap::newMapGrid(tiledLocation, new_building_id, powerPlant->getRange());
 		TiledMap::newMapId(new_building_id, powerPlant);
+		powerPlant->setTiledPosition(tiledLocation);
 		//							TiledMap::setUnpass(tiledLocation, powerPlant->getRange());
 		static_cast<TMXTiledMap*>(base->getParent())->addChild(powerPlant, 40);
 		tempScene->getVectorPower().pushBack(powerPlant);
@@ -514,6 +487,7 @@ void UnitManager::Building(int new_building_id, std::string new_building_type, i
 		soldierBase->Build();
 		TiledMap::newMapGrid(tiledLocation, new_building_id, soldierBase->getRange(), FIX_HEIGHT);
 		TiledMap::newMapId(new_building_id, soldierBase);
+		soldierBase->setTiledPosition(tiledLocation);
 		//							TiledMap::setUnpass(tiledLocation, soldierBase->getRange());
 		static_cast<TMXTiledMap*>(base->getParent())->addChild(soldierBase, 50);
 		tempScene->getVectorSoldier().pushBack(soldierBase);
@@ -524,7 +498,7 @@ void UnitManager::Building(int new_building_id, std::string new_building_type, i
 	else if (new_building_type == "W") {
 		WarFactory* warFactory = WarFactory::create("tankBase/tankbuilding_23.png");
 		warFactory->setUnitID(new_building_id);
-		warFactory->setCampID(1-base_id);
+		warFactory->setCampID(base_id);
 		if (warFactory->getCampID() == RED) {
 			warFactory->setColor(Color3B(221, 160, 221));
 		}
@@ -538,6 +512,7 @@ void UnitManager::Building(int new_building_id, std::string new_building_type, i
 		
 		TiledMap::newMapGrid(tiledLocation, new_building_id, warFactory->getRange(), FIX_HEIGHT);
 		TiledMap::newMapId(new_building_id, warFactory);
+		warFactory->setTiledPosition(tiledLocation);
 		//				TiledMap::setUnpass(tiledLocation, warFactory->getRange());
 		static_cast<TMXTiledMap*>(base->getParent())->addChild(warFactory, 50);
 		tempScene->getVectorFactory().pushBack(warFactory);
@@ -575,6 +550,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		TiledMap::newMapGrid(tiledLocation, dog->getUnitID());
 		TiledMap::newMapId(dog->getUnitID(), dog);
 		dog->setTiledPosition(tiledLocation);
+		dog->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
 		static_cast<TMXTiledMap*>(plant->getParent())->addChild(dog, 200);
 		//tempScene->getVectorDogs().pushBack(dog);
 		tempScene->getMoney()->spendMoney(dog->getGold());
@@ -602,6 +578,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		//		auto tiledLocation = tempScene->tileCoordForPosition(nodeLocation);
 		TiledMap::newMapGrid(tiledLocation, soldier->getUnitID());
 		TiledMap::newMapId(soldier->getUnitID(), soldier);
+		soldier->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
 		soldier->setTiledPosition(tiledLocation);
 		//	tempScene->getVectorSoldiers().pushBack(soldier);
 		tempScene->getMoney()->spendMoney(soldier->getGold());
@@ -630,6 +607,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		//		auto tiledLocation = tempScene->tileCoordForPosition(nodeLocation);
 		TiledMap::newMapGrid(tiledLocation, tank->getUnitID());
 		TiledMap::newMapId(tank->getUnitID(), tank);
+		tank->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
 		tank->setTiledPosition(tiledLocation);
 		//	tempScene->getVectorSoldiers().pushBack(soldier);
 		tempScene->getMoney()->spendMoney(tank->getGold());
@@ -666,7 +644,10 @@ void UnitManager::updateMessage(float delta) {
 		}
 		else if (orders[i].cmd_code() == GameMessage::CmdCode::GameMessage_CmdCode_MOV) {
 			path_points.erase(path_points.cend() - 1);
-			UnitManager::playerMoveWithWayPoints(orders[i].unit_0(), path_points ,path_points.back());
+			if (path_points.empty()) {
+				continue;
+			}
+			UnitManager::playerMoveWithWayPoints(orders[i].unit_0(), path_points , path_points.back());
 		}
 		
 	}

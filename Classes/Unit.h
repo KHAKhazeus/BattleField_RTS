@@ -12,15 +12,7 @@
 
 USING_NS_CC;
 
-#define CONSTRUCTION "construction.mp3"
-#define DOG "dogFinished.mp3"
-#define SOLDIER "soldierFinished.mp3"
-#define TANK "tankFinished.mp3"
-#define BUILD "Building.mp3"
-#define FIGHT "gun.mp3"
-#define LOST "unitLost.mp3"
-#define TANKBULLET "tankbullet.mp3"
-#define EXPLODE "explode.mp3"
+
 
 using namespace ui;
 
@@ -49,7 +41,7 @@ public:
 	// Get the aniamtion
 	static Unit* create(const std::string& filename) {
 		Unit *sprite = new Unit();
-		if (sprite && sprite->initWithFile(filename))
+		if (sprite && sprite->initWithTexture(TextureCache::getInstance()->addImage(filename)))
 		{
 			sprite->autorelease();
 			return sprite;
@@ -58,20 +50,7 @@ public:
 		return nullptr;
 	}
 	Animate * getAnimateByName(std::string animName, float delay, int animNum) {
-		Animation* animation = Animation::create();
-
-		for (unsigned int i = 0; i <= animNum; i++) {
-			// get the picture name
-			std::string frameName = animName;
-			frameName.append(StringUtils::format("%d", i)).append(".png");
-			// add the picture to spriteframe
-			animation->addSpriteFrameWithFile(frameName.c_str());
-		}
-		// set the properties of the animation
-		animation->setDelayPerUnit(delay);
-		// reset the animate
-		animation->setRestoreOriginalFrame(true);
-		// return the animate
+		auto animation = AnimationCache::getInstance()->getAnimation(animName);
 		Animate* animate = Animate::create(animation);
 		return animate;
 	}

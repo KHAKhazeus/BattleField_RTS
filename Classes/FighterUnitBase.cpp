@@ -185,6 +185,7 @@ void FighterUnitBase::autoAttack(float dt) {
 	if (isAutoAttack()) {
 		auto pos = searchEnemy();
 		if (pos.x != -1) {
+			this->setAttack(true);
 			auto tempNode = this->getParent()->getParent()->getParent();
 			auto tempScene = static_cast<GameScene*>(tempNode);
 			auto tempManager = tempScene->getUnitManager();
@@ -209,10 +210,11 @@ void FighterUnitBase::autoAttack(float dt) {
 		if (this->judgeAttack(pos)) {
 			this->stopAllActions();
 			tempManager->addMessages(tempManager->msgs->newAttackMessage(this->getUnitID(), enemy->getUnitID(), this->getAttack()));
-			//tempScene->getUnitManager()->attack(this->getUnitID(), enemy->getUnitID(), this->getAttack());
-			//tempScene->getUnitManager()->attackEffect(this, enemy);
 		}
 		else {
+			if (this->getType() == "d"&&enemy->isBuilding()) {
+				return;
+			}
 			PathArithmetic* path_finder = PathArithmetic::create();
 			auto tempMap = static_cast<TiledMap*>(this->getParent()->getParent());
 			if (!TiledMap::checkPass(pos)) {
@@ -223,58 +225,20 @@ void FighterUnitBase::autoAttack(float dt) {
 			path_finder->initPathArithmetic(tempMap, tiled_pos, pos);
 			path_finder->findPath();
 			auto path = path_finder->getPath();
+			if (this->getTargetPos().x != -1) {
+				if (this->getTiledPosition() != this->getTargetPos()
+					&& pos != this->getTargetPos()) {
+					if (!TiledMap::checkPass(this->getTargetPos())) {
+						TiledMap::setPass(this->getTargetPos());
+					}
+				}
+			}
+			this->setTargetPos(pos);
+			TiledMap::setUnpass(pos);
+
 			tempManager->addMessages(tempManager ->msgs->newMoveMessage(this->getUnitID(), path, pos));
 			//tempScene->getUnitManager()->playerMoveWithWayPoints(this->getUnitID(), path, pos);
-
 		}
 	}
 }
 
-
-
-/*
-void FighterUnitBase::moveTo(Vec2 pos) {
-	this->stopAllActions();
-/*void FighterUnitBase::moveTo(Vec2 pos) {
-	Animate* animate;
-	switch (getType())
-	{
-		case 's':
-			animate = getAnimateByName("soldierRun/soldier", 0.2f, 7);
-			break;
-		case 'd':
-			animate = getAnimateByName("dogRun/dog", 0.2f, 10);
-			break;
-		case 't':
-			animate = getAnimateByName("tank/tank", 0.2f, 7);
-		default:
-			break;
-	}
-	auto repeatanimate = RepeatForever::create(animate);
-	auto moveto = MoveTo::create(4.0f, pos);
-	runAction(repeatanimate);
-	auto callfunc = CallFunc::create([=] {
-		stopAction(repeatanimate);
-		switch (getType()) {
-			case 'd':
-				setTexture("unit/FighterUnit_1.png");
-				break;
-			case 's':
-				setTexture("unit/FighterUnit_2.png");
-				break;
-			case 't':
-				setTexture("unit/FighterUnit.png");
-				break;
-			default:
-				break;
-		}
-	});
-	auto sequence = Sequence::create(moveto, callfunc, NULL);
-	runAction(sequence);
-}*/
-/*
-void FighterUnitBase::attack(int id) {
-	auto tempSprtie = TiledMap::getUnitById(id);
-	auto tempAttack = this->getAttack();
-	//TODO 新增一个基类
-}*/
