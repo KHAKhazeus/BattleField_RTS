@@ -40,23 +40,24 @@ public:
     static SocketServer* create(int port_number);
     void startService();
     ~SocketServer();
+    void stopAccept();
+    void stopServer();
     
 private:
     SocketServer(int port_number);
     void startServerListen();
     void startAccept();
-    void stopAccept();
     bool checkStop();
-    void stopServer();
     void handleAccept(std::shared_ptr<ClientConnection> new_connection, const error_code &err);
     void readFromClient(std::shared_ptr<ClientConnection> client_connection);
     void readHandler(std::shared_ptr<ClientConnection> client_connection, const error_code &err);
     void startSend();
-    void combineMessages();
+    void loopSend();
+    std::string combineMessages();
     void sendMessages(std::string message);
     
     bool _error_flag{false}, _cancel_flag{false}, _stop_flag{false}, _stop_connect{false};
-    boost::asio::io_service _io;
+    static boost::asio::io_service *_io;
     tcp::acceptor _acceptor;
     std::mutex _mut;
     std::condition_variable _cond;
@@ -67,7 +68,7 @@ private:
     std::shared_ptr<std::thread> _send_thread{static_cast<std::thread*>(nullptr), [](std::thread*){}};
     std::vector<std::list<std::string>> _stored_lists;
     std::vector<std::string> _combined_messages;
-    boost::asio::io_service::work _work;
+    boost::asio::io_service::work* _work;
 };
 
 #endif /* __SOCKET_SERVER_H__ */

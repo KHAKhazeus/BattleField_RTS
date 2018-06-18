@@ -31,21 +31,17 @@ void NetworkLayer::initializeServerSide(){
     std::stringstream port_stream(portbox->getString());
     int port_number;
     port_stream >> port_number;
-    _socket_server.reset(static_cast<SocketServer*>(nullptr), [](SocketServer*){});
-    auto new_socket_server = SocketServer::create(port_number);
-    if(new_socket_server){
-        _socket_server.reset(new_socket_server);
+    if(!_socket_server){
+        auto new_socket_server = SocketServer::create(port_number);
+        if(new_socket_server){
+            _socket_server.reset(new_socket_server);
+        }
     }
-    else{
-        _socket_server.reset(static_cast<SocketServer*>(nullptr), [](SocketServer*){});
-    }
-    _socket_client.reset(static_cast<SocketClient*>(nullptr), [](SocketClient*){});
-    auto new_socket_client = SocketClient::create(ip, port_number);
-    if(new_socket_server){
-        _socket_client.reset(new_socket_client);
-    }
-    else{
-        _socket_client.reset(static_cast<SocketClient*>(nullptr), [](SocketClient*){});
+    if(!_socket_client){
+        auto new_socket_client = SocketClient::create(ip, port_number);
+        if(new_socket_client){
+            _socket_client.reset(new_socket_client);
+        }
     }
 }
 
@@ -57,20 +53,19 @@ void NetworkLayer::initializeClientSide(){
     std::stringstream port_stream(portbox->getString());
     int port_number;
     port_stream >> port_number;
-    _socket_client.reset(static_cast<SocketClient*>(nullptr), [](SocketClient*){});
-    auto new_socket_client = SocketClient::create(ip, port_number);
-    
-    if(new_socket_client){
-        _socket_client.reset(new_socket_client);
-    }
-    else{
-        _socket_client.reset(static_cast<SocketClient*>(nullptr), [](SocketClient*){});
+    if(!_socket_client){
+        auto new_socket_client = SocketClient::create(ip, port_number);
+        if(new_socket_client){
+            _socket_client.reset(new_socket_client);
+        }
     }
 }
 
 void NetworkLayer::resetClientAndServer(){
+    if(_socket_client){
+        _socket_client->stopClient();
+    }
     _socket_client.reset(static_cast<SocketClient*>(nullptr),[](SocketClient*){});
-    _socket_server.reset(static_cast<SocketServer*>(nullptr),[](SocketServer*){});
     log("%s", "Client and Server Reset");
 }
 
