@@ -61,7 +61,7 @@ SocketServer* SocketServer::create(int port_number){
     try{
         port_number = 8080;
         auto new_server = new SocketServer(port_number);
-        if(new_server){
+        if(new_server){	
             new_server->startServerListen();
         }
 		cocos2d::log("Server Startup Success\n");

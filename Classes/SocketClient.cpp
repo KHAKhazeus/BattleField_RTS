@@ -88,18 +88,12 @@ void SocketClient::stopClient(){
 
 std::string SocketClient::read_data_once(){
     std::unique_lock<std::mutex> lk(_mutex);
-    if(_message_set_deque.empty()){
-        _cond.wait(lk, [&]{
-            if(!_message_set_deque.empty()){
-                return true;
-            }
-            else{
-                return false;
-            }
-        });
+	while(_message_set_deque.empty()) {
+        _cond.wait(lk);
     }
-    std::string new_message = _message_set_deque.front();
+    auto new_message = _message_set_deque.front();
     _message_set_deque.pop_front();
+	lk.unlock();
     return new_message;
 }
 

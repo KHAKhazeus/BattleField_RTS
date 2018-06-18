@@ -32,7 +32,7 @@ public:
 	//TODO A campID towards a unique string?
 	Vec2 getBasePosition(std::string layername,int campId);
 	void initBase();
-	Base* getBase(){ return _base; }
+	Base* getBase(){ return _base_me; }
 	//
 	void checkWinOrLose();
 
@@ -86,7 +86,8 @@ private:
 	int _soider;
 	//the point to TiledMap
 	TiledMap * _tiled_Map;
-	Base * _base;
+	Base * _base_me;
+	Base * _base_en;
 
 	//Vector of the fightUnit created by us
 	Vector<Unit*> _unit_Vector;

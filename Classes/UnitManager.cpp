@@ -17,22 +17,44 @@ bool UnitManager::init(TiledMap * tiledMap, std::shared_ptr<SocketServer> spserv
 
 
 void UnitManager::initBase() {
-	auto pos = getBasePosition("ObjectLayer",RED);
-
-	_base = Base::create();
-	_base->setPosition(pos);
-	auto vect = _base->getBase()->getContentSize();
-	auto range = _base->getRange();
-	auto tiledPos = _tiled_Map->tileCoordForPosition(pos); //change the OpenGL coordinate to TiledMap
-	_base->setTiledPosition(tiledPos);
-	_base->setUnitID(_base->getIdCount());
-	_base->addIdCount();
-	TiledMap::newMapGrid(tiledPos, _base->getUnitID(), _base->getRange());
-	TiledMap::newMapId(_base->getUnitID(), _base);
+	auto myPos = getBasePosition("ObjectLayer",RED/* MY POSITION*/);
+	_base_me = Base::create();
+	_base_me->setColor(Color3B(221, 160, 221));
+	_base_me->setPosition(myPos);
+	auto vect = _base_me->getBase()->getContentSize();
+	auto range = _base_me->getRange();
+	auto tiledPos = _tiled_Map->tileCoordForPosition(myPos); //change the OpenGL coordinate to TiledMap
+	_base_me->setTiledPosition(tiledPos);
+	_base_me->setUnitID(_base_me->getIdCount());
+	_base_me->addIdCount();
+	TiledMap::newMapGrid(tiledPos, _base_me->getUnitID(), _base_me->getRange());
+	TiledMap::newMapId(_base_me->getUnitID(), _base_me);
 	//TODO set the camera to the Base
-	_tiled_Map->getTiledMap()->addChild(_base, 100);
-	_tiled_Map->getTiledMap()->setPosition(0 - _base->getPositionX() + vect.width * 2
-		, 0 - _base->getPositionY() + vect.height * 1.5);
+	_tiled_Map->getTiledMap()->addChild(_base_me, 100);
+	_tiled_Map->getTiledMap()->setPosition(0 - _base_me->getPositionX() + vect.width * 2
+		, 0 - _base_me->getPositionY() + vect.height * 1.5);
+
+	
+	auto enPos = getBasePosition("ObjectLayer", BLUE/*Enemy POSITION*/);
+	_base_en = Base::create();
+	_base_en->setPosition(enPos);
+	vect = _base_en->getBase()->getContentSize();
+	range = _base_en->getRange();
+	tiledPos = _tiled_Map->tileCoordForPosition(enPos); //change the OpenGL coordinate to TiledMap
+	_base_en->setColor(Color3B(65, 105, 225));
+	_base_en->setTiledPosition(tiledPos);
+	_base_en->setUnitID(_base_en->getIdCount());
+	_base_en->addIdCount();
+	TiledMap::newMapGrid(tiledPos, _base_en->getUnitID(), _base_en->getRange());
+	TiledMap::newMapId(_base_en->getUnitID(), _base_en);
+	//TODO set the camera to the Base
+	_tiled_Map->getTiledMap()->addChild(_base_en, 100);
+
+
+
+
+
+	
 	
 }
 
@@ -293,7 +315,13 @@ void UnitManager::delay(float dt) {
 }
 
 void UnitManager::attack(int attacker_id, int under_attack_id, int damage) {
+	if (!TiledMap::checkUnitId(attacker_id)) {
+		return;
+	}
 	auto player = TiledMap::getUnitById(attacker_id);
+	if (!TiledMap::checkUnitId(under_attack_id)) {
+		return;
+	}
 	auto enemy = TiledMap::getUnitById(under_attack_id);
 	auto attackNumber = player->getAttack();
 	//decrease the Hp
@@ -303,6 +331,9 @@ void UnitManager::attack(int attacker_id, int under_attack_id, int damage) {
 			auto callFunc = CallFunc::create([=] {
 				destroyEffect(enemy, true);
 				auto tiledLocation = _tiled_Map->tileCoordForPosition(enemy->getPosition());
+				if (!TiledMap::checkUnitId(under_attack_id)) {
+					return;
+				}
 				TiledMap::removeMapGrid(tiledLocation, enemy->getFixModel());
 				TiledMap::removeMapId(enemy->getUnitID());
 				_tiled_Map->getTiledMap()->removeChild(enemy);
@@ -312,6 +343,9 @@ void UnitManager::attack(int attacker_id, int under_attack_id, int damage) {
 		else {
 			auto callFunc = CallFunc::create([=] {
 				destroyEffect(enemy, false);
+				if (!TiledMap::checkUnitId(under_attack_id)) {
+					return;
+				}
 				TiledMap::removeMapGrid(enemy->getTiledPosition());
 				TiledMap::removeMapId(enemy->getUnitID());
 				if (!enemy->isBuilding()) {
