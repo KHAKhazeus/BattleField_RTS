@@ -26,6 +26,8 @@ static void problemLoading(const char* filename)
 void NetworkLayer::initializeServerSide(){
     auto color_layer = this->getChildByName("color_layer");
     auto portbox = static_cast<TextField *>(color_layer->getChildByName("portbox"));
+    auto ipbox = static_cast<TextField *>(color_layer->getChildByName("ipbox"));
+    auto ip = ipbox->getString();
     std::stringstream port_stream(portbox->getString());
     int port_number;
     port_stream >> port_number;
@@ -37,6 +39,14 @@ void NetworkLayer::initializeServerSide(){
     else{
         _socket_server.reset(static_cast<SocketServer*>(nullptr), [](SocketServer*){});
     }
+    _socket_client.reset(static_cast<SocketClient*>(nullptr), [](SocketClient*){});
+    auto new_socket_client = SocketClient::create(ip, port_number);
+    if(new_socket_server){
+        _socket_client.reset(new_socket_client);
+    }
+    else{
+        _socket_client.reset(static_cast<SocketClient*>(nullptr), [](SocketClient*){});
+    }
 }
 
 void NetworkLayer::initializeClientSide(){
@@ -47,10 +57,14 @@ void NetworkLayer::initializeClientSide(){
     std::stringstream port_stream(portbox->getString());
     int port_number;
     port_stream >> port_number;
+    _socket_client.reset(static_cast<SocketClient*>(nullptr), [](SocketClient*){});
     auto new_socket_client = SocketClient::create(ip, port_number);
     
     if(new_socket_client){
         _socket_client.reset(new_socket_client);
+    }
+    else{
+        _socket_client.reset(static_cast<SocketClient*>(nullptr), [](SocketClient*){});
     }
 }
 

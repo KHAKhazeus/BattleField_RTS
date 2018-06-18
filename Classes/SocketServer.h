@@ -55,7 +55,7 @@ private:
     void combineMessages();
     void sendMessages(std::string message);
     
-    bool _error_flag{false}, _cancel_flag{false}, _stop_flag{false};
+    bool _error_flag{false}, _cancel_flag{false}, _stop_flag{false}, _stop_connect{false};
     boost::asio::io_service _io;
     tcp::acceptor _acceptor;
     std::mutex _mut;
@@ -67,6 +67,7 @@ private:
     std::shared_ptr<std::thread> _send_thread{static_cast<std::thread*>(nullptr), [](std::thread*){}};
     std::vector<std::list<std::string>> _stored_lists;
     std::vector<std::string> _combined_messages;
+    boost::asio::io_service::work _work;
 };
 
 #endif /* __SOCKET_SERVER_H__ */
