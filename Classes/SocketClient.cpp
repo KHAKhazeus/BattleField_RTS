@@ -30,14 +30,15 @@ SocketClient* SocketClient::create(std::string server_ip, int port_nunber){
 
 void SocketClient::startClient(){
     //run() returns count_type which is a std::size_t
-    auto new_thread = new std::thread(std::bind(static_cast<std::size_t(boost::asio::io_service::*)()>(&boost::asio::io_service::run),
-                                                &_io));
+    auto new_thread = new std::thread(std::bind(static_cast<std::size_t(boost::asio::io_service::*)()>(&boost::asio::io_service::run),&_io));
+    //new_thread->detach();
     _exchange_thread.reset(new_thread);
+    _exchange_thread->detach();
     startConnect();
 }
 
 bool SocketClient::checkStop(){
-    if(_error_flag || _cancel_flag){
+    if(_error_flag || _cancel_flag || _stop_flag){
         stopClient();
         return true;
     }
@@ -66,11 +67,12 @@ void SocketClient::stopClient(){
                 std::string error_message = "Error";
                 _message_set_deque.push_back(error_message);
             }
-            _exchange_thread->join();
+            //_exchange_thread will exit after work destruct
             _io.stop();
             _cond.notify_one();
-            _socket.shutdown(tcp::socket::shutdown_both);
             _socket.close();
+            _read_thread->join();
+            _socket.shutdown(tcp::socket::shutdown_both);
         }
         catch(...){
             std::cerr << "Client Shutdown Error!" << std::endl;
@@ -151,6 +153,6 @@ bool SocketClient::writeMessages(std::string message_set){
 
 void SocketClient::startConnect(){
     std::cout << "Client Start Connecting" << std::endl;
-    std::cout << _endpoint.port() << _endpoint.address() << std::endl;
+    //std::cout << _endpoint.port() << _endpoint.address() << std::endl;
     _socket.async_connect(_endpoint, std::bind(&SocketClient::connectHandle, this, std::placeholders::_1));
 }
