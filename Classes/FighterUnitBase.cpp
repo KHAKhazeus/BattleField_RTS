@@ -191,8 +191,8 @@ void FighterUnitBase::autoAttack(float dt) {
 			auto tempManager = tempScene->getUnitManager();
 			auto id = TiledMap::getUnitIdByPosition(pos);
 			auto enemy = TiledMap::getUnitById(id);
+			//send attack message
 			tempManager->addMessages(tempManager->msgs->newAttackMessage(this->getUnitID(), enemy->getUnitID(), this->getAttack()));
-			//tempScene->getUnitManager()->attack(this->getUnitID(), enemy->getUnitID(), this->getAttack());
 		}
 	}
 	if (isAttack()) {
@@ -209,9 +209,11 @@ void FighterUnitBase::autoAttack(float dt) {
 		//Attack
 		if (this->judgeAttack(pos)) {
 			this->stopAllActions();
+			//send attack message
 			tempManager->addMessages(tempManager->msgs->newAttackMessage(this->getUnitID(), enemy->getUnitID(), this->getAttack()));
 		}
 		else {
+			//if dog is appointed to attack buildings nothing happen
 			if (this->getType() == "d"&&enemy->isBuilding()) {
 				return;
 			}
@@ -235,9 +237,8 @@ void FighterUnitBase::autoAttack(float dt) {
 			}
 			this->setTargetPos(pos);
 			TiledMap::setUnpass(pos);
-
+			//send tracing message
 			tempManager->addMessages(tempManager ->msgs->newMoveMessage(this->getUnitID(), path, pos));
-			//tempScene->getUnitManager()->playerMoveWithWayPoints(this->getUnitID(), path, pos);
 		}
 	}
 }

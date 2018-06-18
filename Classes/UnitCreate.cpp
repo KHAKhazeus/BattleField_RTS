@@ -224,11 +224,9 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 									tempScene->getPower()->checkPower(moneyMine->getElect())) {
 									auto id = moneyMine->getIdCount();
 									moneyMine->setUnitID(id);
-
+									//send building message
 									tempManager->addMessages(tempManager->msgs->newCreateBuildingMessage(moneyMine->getUnitID(), moneyMine->getType(),
 										this->getCampID(), this->getUnitID(),nodeLocation));
-									/*UnitManager::Building(moneyMine->getUnitID(), moneyMine->getType(), this->getCampID(), this->getUnitID(),
-										nodeLocation);*/
 								}
 								//delete moneyMine;
 							}
@@ -239,10 +237,10 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 								if (tempScene->getMoney()->checkMoney(powerPlant->getGold())) {
 									auto id = powerPlant->getIdCount();
 									powerPlant->setUnitID(id);
+									//send building message
 									tempManager->addMessages(tempManager->msgs->newCreateBuildingMessage(powerPlant->getUnitID(), powerPlant->getType(),BLUE,// this->getCampID(),
-										this->getUnitID(), nodeLocation));
-									/*UnitManager::Building(powerPlant->getUnitID(), powerPlant->getType(), this->getCampID(), this->getUnitID(),
-										nodeLocation);*/								}
+										this->getUnitID(), nodeLocation));								
+								}
 								//delete powerPlant;
 							}
 							else if (temp_building->getTag() == 3) {
@@ -253,10 +251,9 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 									tempScene->getPower()->checkPower(soldierBase->getElect())) {
 									auto id = soldierBase->getIdCount();
 									soldierBase->setUnitID(id);
+									//send building message
 									tempManager->addMessages(tempManager->msgs->newCreateBuildingMessage(soldierBase->getUnitID(), soldierBase->getType(), this->getCampID(), this->getUnitID()
 										, nodeLocation));
-									/*UnitManager::Building(soldierBase->getUnitID(), soldierBase->getType(), this->getCampID(), this->getUnitID(),
-										nodeLocation);*/
 								}
 								//delete soldierBase;
 							}
@@ -268,10 +265,10 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 									tempScene->getPower()->checkPower(warFactory->getElect())) {
 									auto id = warFactory->getIdCount();
 									warFactory->setUnitID(id);
+									//send building message
 									tempManager->addMessages(tempManager->msgs->newCreateBuildingMessage(warFactory->getUnitID(), warFactory->getType(), this->getCampID(),
 										this->getUnitID(),nodeLocation));
-									/*UnitManager::Building(warFactory->getUnitID(), warFactory->getType(), this->getCampID(), this->getUnitID(),
-										nodeLocation);*/
+									
 								}
 								//delete warFactory;
 							}

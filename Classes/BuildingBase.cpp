@@ -186,10 +186,9 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 								auto id = dog->getIdCount();
 								dog->setUnitID(id);
 								Vec2 nodeLocation = this->RandomPosition();
+								//send create message
 								tempManager->addMessages(tempManager->msgs->newCreateUnitMessage(dog->getUnitID(), dog->getType(),this->getCampID(),
 									this->getUnitID(), nodeLocation));
-								/*UnitManager::NewUnitCreate(dog->getUnitID(), dog->getType(), this->getCampID(),
-									this->getUnitID(), nodeLocation);*/
 							}
 							//delete dog;
 						}
@@ -201,10 +200,9 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 								auto id = soldier->getIdCount();
 								soldier->setUnitID(id);
 								Vec2 nodeLocation = this->RandomPosition();
+								//send create message
 								tempManager->addMessages(tempManager->msgs->newCreateUnitMessage(soldier->getUnitID(), soldier->getType(), this->getCampID(),
 									this->getUnitID(), nodeLocation));
-								/*UnitManager::NewUnitCreate(soldier->getUnitID(), soldier->getType(), this->getCampID(),
-									this->getUnitID(), nodeLocation);*/
 							}
 							//delete soldier;
 						}
@@ -306,12 +304,11 @@ bool WarFactory::onTouchBegan(Touch *touch, Event *event) {
 						Vec2 nodeLocation = this->RandomPosition();
 						auto id =tank->getIdCount();
 						tank->setUnitID(id);
+						//send create message
 						tempManager->addMessages(tempManager->msgs->newCreateUnitMessage(tank->getUnitID(), tank->getType(), this->getCampID(),
 							this->getUnitID(), nodeLocation));
-						/*UnitManager::NewUnitCreate(tank->getUnitID(), tank->getType(), this->getCampID(),
-							this->getUnitID(), nodeLocation);*/
 					}
-					///delete tank;
+					//delete tank;
 					auto tempNode = this->getParent()->getParent()->getParent();
 					tempNode->removeChild(temp_building, true);
 					this->setCreated(false);
