@@ -73,7 +73,6 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 					temp->clearAllType();
 					temp->setAttack(true);
 					temp->setTargetID(enemy->getUnitID());
-				//	msgs->newAttackMessage(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
 
 				}
 			}
@@ -93,7 +92,6 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 						temp->setAttack(true);
 						auto id = enemy->getUnitID();
 						temp->setTargetID(id);
-					//	msgs->newAttackMessage(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
 					}
 				}
 			}
@@ -140,18 +138,18 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 						log("SetUnpass %f,%f\n", tiledLocation.x, tiledLocation.y);
 						TiledMap::setUnpass(tiledLocation);
 						if (temp->getNumberOfRunningActions() == 0) {
-							temp->clearAllType();
-							temp->setMove(true);
-							UnitManager::addMessages(msgs->newMoveMessage(temp->getUnitID(), path, touch_point));
-							//playerMoveWithWayPoints(temp->getUnitID(), path, tiledLocation);
+							temp->setAttack(false);
+							//send the moving message
+							UnitManager::addMessages(msgs->newMoveMessage(temp->getUnitID(), path, tiledLocation));
 						}
 						else {
 							temp->stopAllActions();
+							temp->setAttack(false);
+							//send moving message
 							UnitManager::addMessages(msgs->newMoveMessage(temp->getUnitID(), path, tiledLocation));
 
 							temp->clearAllType();
 							temp->setMove(true);
-							//playerMoveWithWayPoints(temp->getUnitID(), path, tiledLocation);
 						}
 					}
 				}
@@ -407,21 +405,6 @@ void UnitManager::attackEffect(int attacker_id, int under_attack_id) {
 
 
 
-/*void UnitManager::autoAttack(float dt) {
-	if (_unit_Vector.size() > 0) {
-		for (auto i = 0; i < _unit_Vector.size(); i++) {
-			auto pos = _unit_Vector.at(i)->searchEnemy();
-			if (pos.x != -1) {
-				auto id = TiledMap::getUnitIdByPosition(pos);
-				auto enemy = TiledMap::getUnitById(id);
-				attack(_unit_Vector.at(i)->getUnitID(), enemy->getUnitID(), _unit_Vector.at(i)->getAttack());
-				attackEffect(_unit_Vector.at(i)->getUnitID(), enemy->getUnitID());
-			}
-		}
-	}
-}*/
-
-
 void UnitManager::destroyEffect(Unit* unit,bool type) {
 	if (type) {
 		SimpleAudioEngine::getInstance()->playEffect(EXPLODE, false);
@@ -640,32 +623,40 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 void UnitManager::updateMessage(float delta) {
 	std::vector<GameMessage>orders;
 	std::string packages;
+	//package all the message
 	packages = msgs->combineMessagesToString(this->getMessages());
 	if (packages == CLIENT_ERROR || packages == CLIENT_CANCEL) {
 		//To do
 	}
+	//unpackage the received message
 	orders=(msgs->parseMessagesFromString(packages));
+	//match the message and implement functions
 	for (unsigned int i = 0; i < orders.size(); i++) {
-		//to dispatch the orders
+		//read the path_points
 		std::vector<cocos2d::Vec2> path_points;
 		for (int j = 0; j < orders[i].mutable_grid_path()->grid_point_size(); j++) {
 			int x = orders[i].mutable_grid_path()->mutable_grid_point(j)->x();
 			int y = orders[i].mutable_grid_path()->mutable_grid_point(j)->y();
 			path_points.push_back(Vec2(x, y));
 		}
+		//if need to create new fighter unit
 		if (orders[i].cmd_code() == GameMessage::CmdCode::GameMessage_CmdCode_CRTBU) {
 			UnitManager::Building(orders[i].unit_0(), orders[i].create_type(), orders[i].base(), orders[i].building(),
 				path_points[0]);
 		}
+		//if attacking happens
 		else if (orders[i].cmd_code() == GameMessage::CmdCode::GameMessage_CmdCode_ATK) {
 			UnitManager::attack(orders[i].unit_0(), orders[i].unit_1(), orders[i].damage());
 			UnitManager::attackEffect(orders[i].unit_0(), orders[i].unit_1());
 		}
+		//if need to build new building
 		else if (orders[i].cmd_code() == GameMessage::CmdCode::GameMessage_CmdCode_CRTBD) {
 			UnitManager::NewUnitCreate(orders[i].unit_0(), orders[i].create_type(), orders[i].base(), orders[i].building(), 
 				path_points[0]);
 		}
+		//if unit needs to move
 		else if (orders[i].cmd_code() == GameMessage::CmdCode::GameMessage_CmdCode_MOV) {
+			//erase the repeated end_point
 			path_points.erase(path_points.cend() - 1);
 			if (path_points.empty()) {
 				continue;
@@ -674,6 +665,7 @@ void UnitManager::updateMessage(float delta) {
 		}
 		
 	}
+	//clear for new messages
 	this->getMessages().clear();
 
 }

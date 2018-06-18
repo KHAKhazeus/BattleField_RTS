@@ -198,13 +198,14 @@ void FighterUnitBase::autoAttack(float dt) {
 	if (isAutoAttack()) {
 		auto pos = searchEnemy();
 		if (pos.x != -1) {
+			this->setAttack(true);
 			auto tempNode = this->getParent()->getParent()->getParent();
 			auto tempScene = static_cast<GameScene*>(tempNode);
 			auto tempManager = tempScene->getUnitManager();
 			auto id = TiledMap::getUnitIdByPosition(pos);
 			auto enemy = TiledMap::getUnitById(id);
+			//send attack message
 			tempManager->addMessages(tempManager->msgs->newAttackMessage(this->getUnitID(), enemy->getUnitID(), this->getAttack()));
-			//tempScene->getUnitManager()->attack(this->getUnitID(), enemy->getUnitID(), this->getAttack());
 		}
 	}
 	if (isAttack()) {
@@ -219,13 +220,14 @@ void FighterUnitBase::autoAttack(float dt) {
 		auto tempManager = tempScene->getUnitManager();
 		//judge if the enemy is in the range
 		//Attack
-		if (this->judgeAttack(this->getTiledPosition(),pos)) {
+		if (this->judgeAttack(this->getTiledPosition(), pos)) {
 			this->stopAllActions();
+			//send attack message
 			tempManager->addMessages(tempManager->msgs->newAttackMessage(this->getUnitID(), enemy->getUnitID(), this->getAttack()));
 		}
 		else {
 			if (this->getTempPos().x != -1) {
-				if (this->judgeAttack(this->getTempPos(),pos)) {
+				if (this->judgeAttack(this->getTempPos(), pos)) {
 					TiledMap::setPass(this->getTargetPos());
 					TiledMap::updateMapGrid(this->getTiledPosition(), this->getTempPos());
 					this->setTiledPosition(this->getTempPos());
@@ -238,30 +240,33 @@ void FighterUnitBase::autoAttack(float dt) {
 				if (judgeTarPos()) {
 					return;
 				}
-			}
-			PathArithmetic* path_finder = PathArithmetic::create();
-			auto tempMap = static_cast<TiledMap*>(this->getParent()->getParent());
-			if (!TiledMap::checkPass(pos)) {
-				pos = tempMap->findFreeNear(pos);
-			}
-			auto temp_pos = TiledMap::getUnitById(this->getUnitID())->getPosition();
-			auto tiled_pos = tempMap->tileCoordForPosition(temp_pos);
-			path_finder->initPathArithmetic(tempMap, tiled_pos, pos);
-			path_finder->findPath();
-			auto path = path_finder->getPath();
-			if (this->getTargetPos().x != -1) {
-				if ( pos != this->getTargetPos() && this->getTiledPosition() != this->getTargetPos()) {
-					if (!TiledMap::checkPass(this->getTargetPos())) {
-						log("SetPass %f,%f\n", this->getTargetPos().x, this->getTargetPos().y);
-						TiledMap::setPass(this->getTargetPos());
+				//if dog is appointed to attack buildings nothing happen
+				if (this->getType() == "d" && enemy->isBuilding()) {
+					return;
+				}
+				PathArithmetic* path_finder = PathArithmetic::create();
+				auto tempMap = static_cast<TiledMap*>(this->getParent()->getParent());
+				if (!TiledMap::checkPass(pos)) {
+					pos = tempMap->findFreeNear(pos);
+				}
+				auto temp_pos = TiledMap::getUnitById(this->getUnitID())->getPosition();
+				auto tiled_pos = tempMap->tileCoordForPosition(temp_pos);
+				path_finder->initPathArithmetic(tempMap, tiled_pos, pos);
+				path_finder->findPath();
+				auto path = path_finder->getPath();
+				if (this->getTargetPos().x != -1) {
+					if (pos != this->getTargetPos() && this->getTiledPosition() != this->getTargetPos()) {
+						if (!TiledMap::checkPass(this->getTargetPos())) {
+							log("SetPass %f,%f\n", this->getTargetPos().x, this->getTargetPos().y);
+							TiledMap::setPass(this->getTargetPos());
+						}
 					}
 				}
+				this->setTargetPos(pos);
+				TiledMap::setUnpass(pos);
+				//send tracing message
+				tempManager->addMessages(tempManager->msgs->newMoveMessage(this->getUnitID(), path, pos));
 			}
-			this->setTargetPos(pos);
-			TiledMap::setUnpass(pos);
-
-			tempManager->addMessages(tempManager ->msgs->newMoveMessage(this->getUnitID(), path, pos));
-			//tempScene->getUnitManager()->playerMoveWithWayPoints(this->getUnitID(), path, pos);
 		}
 	}
 }
