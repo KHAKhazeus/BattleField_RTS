@@ -66,7 +66,7 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 					temp->clearAllType();
 					temp->setAttack(true);
 					temp->setTargetID(enemy->getUnitID());
-					msgs->newAttackMessage(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
+				//	msgs->newAttackMessage(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
 
 				}
 			}
@@ -86,7 +86,7 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 						temp->setAttack(true);
 						auto id = enemy->getUnitID();
 						temp->setTargetID(id);
-						msgs->newAttackMessage(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
+					//	msgs->newAttackMessage(temp->getUnitID(), enemy->getUnitID(), temp->getAttack());
 					}
 				}
 			}
@@ -540,6 +540,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 			dog->setColor(Color3B(65, 105, 225));
 		}
 		dog->addIdCount();
+		dog->setAutoAttack(true);
 		if (nodeLocation.x < plant->getPosition().x) {
 			dog->setFlippedX(true);
 		}
@@ -568,6 +569,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 			soldier->setColor(Color3B(65, 105, 225));
 		}
 		soldier->addIdCount();
+		soldier->setAutoAttack(true);
 		if (nodeLocation.x < plant->getPosition().x) {
 			soldier->setFlippedX(true);
 		}
@@ -596,6 +598,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 			tank->setColor(Color3B(65, 105, 225));
 		}
 		tank->addIdCount();
+		tank->setAutoAttack(true);
 		tank->setScale(0.4f);
 		if (nodeLocation.x < plant->getPosition().x) {
 			tank->setFlippedX(true);

@@ -8,6 +8,7 @@
 #include "SocketClient.h"
 #include <functional>
 #include <iostream>
+#include <cocos2d.h>
 #define MAX_LENGTH 8000
 
 SocketClient::~SocketClient(){
@@ -17,9 +18,11 @@ SocketClient::~SocketClient(){
 SocketClient* SocketClient::create(std::string server_ip, int port_nunber){
     try{
         auto new_client = new SocketClient(server_ip, port_nunber);
-        if(new_client){
-            new_client->startClient();
-        }
+       /* if(new_client){
+            new_client->startClient();	
+        }*/
+		new_client->_exchange_thread.reset(new std::thread(std::bind(static_cast<std::size_t(boost::asio::io_service::*)()>(&boost::asio::io_service::run),
+			&new_client->_io)));
         return new_client;
     }
     catch(...){
@@ -30,9 +33,10 @@ SocketClient* SocketClient::create(std::string server_ip, int port_nunber){
 
 void SocketClient::startClient(){
     //run() returns count_type which is a std::size_t
-    auto new_thread = new std::thread(std::bind(static_cast<std::size_t(boost::asio::io_service::*)()>(&boost::asio::io_service::run),
-                                                &_io));
-    _exchange_thread.reset(new_thread);
+  //  auto new_thread = new std::thread(std::bind(static_cast<std::size_t(boost::asio::io_service::*)()>(&boost::asio::io_service::run),
+                                            //    &_io));
+ //   _exchange_thread.reset(new_thread);
+	
     startConnect();
 }
 
@@ -52,11 +56,13 @@ void SocketClient::stopClient(){
             std::unique_lock<std::mutex> lock(_mutex);
             _stop_flag = true;
             if(_error_flag){
+				cocos2d::log("Client Error!\n");
                 std::cerr << "Client Error!" << std::endl;
                 std::string error_message = "Error";
                 _message_set_deque.push_back(error_message);
             }
             else if(_cancel_flag){
+				cocos2d::log("Client Successfully Cancelled!\n");
                 std::cout << "Client Successfully Cancelled" << std::endl;
                 std::string cancel_message = "Cancelled";
                 _message_set_deque.push_back(cancel_message);
@@ -114,11 +120,13 @@ void SocketClient::pushMessageSet(const error_code &err){
 
 void SocketClient::connectHandle(const error_code &err){
     if(!err){
+		cocos2d::log("Client Connected!\n");
         std::cout << "Client Connected" << std::endl;
         auto new_thread = new std::thread(std::bind(&SocketClient::readMessages, this));
         _read_thread.reset(new_thread);
     }
     else{
+		cocos2d::log("Failed to Connected!\n");
         std::cerr << "Failed to Connect" << std::endl;
         std::unique_lock<std::mutex> lock(_mutex);
         _error_flag = true;
@@ -150,6 +158,7 @@ bool SocketClient::writeMessages(std::string message_set){
 }
 
 void SocketClient::startConnect(){
+	cocos2d::log("start Connection!\n");
     std::cout << "Client Start Connecting" << std::endl;
     std::cout << _endpoint.port() << _endpoint.address() << std::endl;
     _socket.async_connect(_endpoint, std::bind(&SocketClient::connectHandle, this, std::placeholders::_1));

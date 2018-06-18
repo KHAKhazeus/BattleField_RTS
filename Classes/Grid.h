@@ -59,7 +59,7 @@ private:
 			_x = 0;
 		}
 		else if (x >= 128) {
-			x = 127;
+			_x = 127;
 		}
 		else {
 			_x = x;
@@ -68,14 +68,12 @@ private:
 			_y = 127;
 		}
 		else if (y >= 128) {
-			y = 0;
+			_y = 0;
 		}
 		else {
-			_y = 127;
+			_y = y;
 		}
 
-		
-		_y = 127-y;
 		_width = w;
 		_height = h;
 		return true;

@@ -9,6 +9,7 @@
 #include <iostream>
 #include <algorithm>
 #include <iterator>
+#include "cocos2d.h"
 #define MAX_LENGTH 8000
 
 ClientConnection::ClientConnection(boost::asio::io_service &io_service):_socket(io_service){};
@@ -59,10 +60,12 @@ SocketServer* SocketServer::create(int port_number){
         if(new_server){
             new_server->startServerListen();
         }
+		cocos2d::log("Server Startup Success\n");
         std::cout << "Server Startup Success" << std::endl;
         return new_server;
     }
     catch(...){
+		cocos2d::log("Server Startup Error\n");
         std::cerr << "Server Startup Error" << std::endl;
         return static_cast<SocketServer*>(nullptr);
     }
@@ -76,10 +79,12 @@ void SocketServer::startServerListen(){
         std::shared_ptr<std::thread> new_ptr(new_thread);
         _io_run_threads_vec.push_back(new_ptr);
         //_acceptor.listen();
+		cocos2d::log("Server Listening\n");
         std::cout << "Server Listening" << std::endl;
         _accept_thread.reset(new std::thread(std::bind(&SocketServer::startAccept, this)));
     }
     catch(...){
+		cocos2d::log("Server Acceptor Error\n");
         std::cerr << "Server Acceptor Error" << std::endl;
         _error_flag = true;
         checkStop();
@@ -88,6 +93,7 @@ void SocketServer::startServerListen(){
 
 void SocketServer::startAccept(){
     if(!checkStop()){
+		cocos2d::log("Start Accept");
         auto new_connection = ClientConnection::create(_io);
         _acceptor.async_accept(*(new_connection->getSocket()), std::bind(&SocketServer::handleAccept, this, new_connection, std::placeholders::_1));
     }
@@ -107,6 +113,7 @@ void SocketServer::handleAccept(std::shared_ptr<ClientConnection> new_connection
         _connections.push_back(new_connection);
         _stored_lists.push_back(std::list<std::string>());
         times++;
+		cocos2d::log("Client No.%d Connected.", times);
         std::cout << "Client No."<< times << " Connected. Info: IP " << new_connection->getSocket()->remote_endpoint().address()
         << " ; Port " << new_connection->getSocket()->remote_endpoint().port() << std::endl;
         auto new_thread = new std::thread(std::bind(&SocketServer::readFromClient, this, new_connection));
@@ -114,6 +121,8 @@ void SocketServer::handleAccept(std::shared_ptr<ClientConnection> new_connection
         _contact_threads_vector.push_back(connection_thread);
     }
     else{
+		cocos2d::log("Client Connect Failed. No.\n");
+		cocos2d::log("Server Handle Accept Error\n");
         std::cerr << "Client Connect Failed. No." << error_times << std::endl;
         std::cerr << "Server Handle Accept Error" << std::endl;
     }
@@ -128,6 +137,7 @@ void SocketServer::readFromClient(std::shared_ptr<ClientConnection> client_conne
 void SocketServer::readHandler(std::shared_ptr<ClientConnection> client_connection, const error_code &err){
     if(!err){
         auto &success_times = client_connection->getSuccessTimes();
+		cocos2d::log("Client Message Fetch Succeeded No.\n");
         std::cout << "Client Message Fetch Succeeded No." << success_times << std::endl;
         std::unique_lock<std::mutex> lk(_mut);
         _stored_lists[client_connection->getID()].push_back(*(client_connection->getBuffer()));
@@ -136,6 +146,7 @@ void SocketServer::readHandler(std::shared_ptr<ClientConnection> client_connecti
     }
     else{
         ++(client_connection->getFailureTimes());
+		cocos2d::log("Client Message Fetch Failed No.\n");
         std::cerr << "Client Message Fetch Failed No." << client_connection->getFailureTimes() << std::endl;
     }
 }
@@ -213,9 +224,11 @@ void SocketServer::stopServer(){
         std::unique_lock<std::mutex> lk(_mut);
         _stop_flag = true;
         if(_error_flag){
+			cocos2d::log("Server Error\n");
             std::cerr << "Server Error" << std::endl;
         }
         else if(_cancel_flag){
+			cocos2d::log("Server Cancelled.\n");
             std::cout << "Server Cancelled" << std::endl;
         }
         _io.stop();
@@ -240,6 +253,7 @@ void SocketServer::stopServer(){
         }
     }
     catch(...){
+		cocos2d::log("Server Shutdown Error\n");
         std::cerr << "Server Shutdown Error" << std::endl;
     }
 }

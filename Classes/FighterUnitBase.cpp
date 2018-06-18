@@ -170,7 +170,9 @@ Vec2 FighterUnitBase::searchEnemy() {
 			auto vecPos = Vec2(i, j);
 			if (TiledMap::checkBoundary(vecPos)) {
 				if (TiledMap::checkMapGrid(vecPos)) {
-					if (TiledMap::getUnitIdByPosition(vecPos) != getCampID()) {
+					auto id = TiledMap::getUnitIdByPosition(vecPos);
+					auto temp = TiledMap::getUnitById(id);
+					if (temp->getCampID() != getCampID()) {
 						return vecPos;
 					}
 				}
