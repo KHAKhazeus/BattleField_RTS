@@ -82,11 +82,11 @@ void LoadingScene::onEnter() {
 
 	auto textureCache = Director::getInstance()->getTextureCache();
 	auto AnimateCache = AnimationCache::getInstance();
-	AnimateCache->addAnimation(getAnimateByName("tankBase/tankbuilding_", 0.1f, 23), "tankBase");
+	AnimateCache->addAnimation(getAnimateByName("tankBase/tankbuilding_", 0.3f, 23), "tankBase");
 	textureCache->addImageAsync("unit/base_28.png", CC_CALLBACK_0(LoadingScene::loadingCallback, this));
-	AnimateCache->addAnimation(getAnimateByName("soldierBase/soldierbase_", 0.1f, 23), "soldierBase");
+	AnimateCache->addAnimation(getAnimateByName("soldierBase/soldierbase_", 0.2f, 23), "soldierBase");
 	textureCache->addImageAsync("unit/building_1.png", CC_CALLBACK_0(LoadingScene::loadingCallback, this));
-	AnimateCache->addAnimation(getAnimateByName("powerPlant/PowerBuilt_", 0.1f, 24), "powerPlant");
+	AnimateCache->addAnimation(getAnimateByName("powerPlant/PowerBuilt_", 0.2f, 24), "powerPlant");
 	textureCache->addImageAsync("unit/building_2.png", CC_CALLBACK_0(LoadingScene::loadingCallback, this));
 	AnimateCache->addAnimation(getAnimateByName("moneyMine/MinetoMoney_", 0.2f, 24), "moneyMine");
 	textureCache->addImageAsync("unit/building_3.png", CC_CALLBACK_0(LoadingScene::loadingCallback, this));

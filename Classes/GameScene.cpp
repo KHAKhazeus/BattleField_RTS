@@ -146,7 +146,7 @@ void GameScene::onEnterTransitionDidFinish() {
 	_unit_Manager->initBase();
 
 
-	_money->schedule(schedule_selector(Money::updateMoney), 1);
+	_money->schedule(schedule_selector(Money::updateMoney), 2);
 	_unit_Manager->schedule(schedule_selector(UnitManager::updateMessage), 5.0f / 60);
 
 

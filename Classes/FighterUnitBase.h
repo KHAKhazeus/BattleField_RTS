@@ -95,7 +95,7 @@ public:
 	}
 	Soldier() {
 		_lifeValue = 115;
-		_gold = 80;
+		_gold = 100;
 		_attackRange = 10;
 		_attack = 15;
 		_attackInterval = 0.2;
