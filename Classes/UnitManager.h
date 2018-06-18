@@ -30,7 +30,7 @@ public:
 	}
 	//TODO the measure to the layername
 	//TODO A campID towards a unique string?
-	Vec2 getBasePosition(std::string layername);
+	Vec2 getBasePosition(std::string layername,int campId);
 	void initBase();
 	Base* getBase(){ return _base; }
 	//

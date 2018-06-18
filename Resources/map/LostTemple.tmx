@@ -548,7 +548,7 @@
 </data>
  </layer>
  <objectgroup name="ObjectLayer">
-  <object id="50" name="Base" x="1792" y="3678.67" width="94.6667" height="97.3333"/>
-  <object id="52" name="BaseOpposite" x="2401.33" y="319.333" width="94.6667" height="96.6667"/>
+  <object id="50" name="BaseRed" x="1792" y="3678.67" width="94.6667" height="97.3333"/>
+  <object id="52" name="BaseBlue" x="2401.33" y="319.333" width="94.6667" height="96.6667"/>
  </objectgroup>
 </map>

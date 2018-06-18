@@ -17,7 +17,7 @@ bool UnitManager::init(TiledMap * tiledMap, std::shared_ptr<SocketServer> spserv
 
 
 void UnitManager::initBase() {
-	auto pos = getBasePosition("ObjectLayer");
+	auto pos = getBasePosition("ObjectLayer",RED);
 
 	_base = Base::create();
 	_base->setPosition(pos);
@@ -36,9 +36,16 @@ void UnitManager::initBase() {
 	
 }
 
-Vec2 UnitManager::getBasePosition(std::string layername) {
+Vec2 UnitManager::getBasePosition(std::string layername,int campId) {
 	auto group = _tiled_Map->getObjectGroup(layername);
-	auto spawnPoint = group->getObject("Base");
+	ValueMap spawnPoint;
+	if (campId == RED) {
+		spawnPoint = group->getObject("BaseRed");
+	}
+	else {
+		spawnPoint = group->getObject("BaseBlue");
+	}
+	
 	auto x = spawnPoint["x"].asFloat();
 	auto y = spawnPoint["y"].asFloat();
 	return Vec2(x, y);
@@ -121,14 +128,16 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 						path_finder->findPath();
 						auto path = path_finder->getPath();
 						if (temp->getTargetPos().x != -1) {
-							if (temp->getTiledPosition() != temp->getTargetPos()
-								&& tiledLocation != temp->getTargetPos()) {
+							if (tiledLocation != temp->getTargetPos() && 
+								temp->getTiledPosition() != temp->getTargetPos()) {
 								if (!TiledMap::checkPass(temp->getTargetPos())) {
+									log("SetPass %f,%f\n", temp->getTargetPos().x, temp->getTargetPos().y);
 									TiledMap::setPass(temp->getTargetPos());
 								}
 							}
 						}
 						temp->setTargetPos(tiledLocation);
+						log("SetUnpass %f,%f\n", tiledLocation.x, tiledLocation.y);
 						TiledMap::setUnpass(tiledLocation);
 						if (temp->getNumberOfRunningActions() == 0) {
 							temp->clearAllType();
@@ -233,6 +242,7 @@ void UnitManager::playerMoveWithWayPoints(int move_unit_id, std::vector<cocos2d:
 	auto callfunc = CallFunc::create([=] {
 		stopAction(repeatanimate);
 		TiledMap::updateMapGrid(player->getTiledPosition(), tiledLocation);
+		log("SetPass %f,%f\n", player->getTiledPosition().x, player->getTiledPosition().y);
 		player->setTiledPosition(tiledLocation);
 		switch ((player->getType())[0]) {
 	//	log("%f,%f  %f,%f", player->getTiledPosition().x, player->getTiledPosition().y,
@@ -262,8 +272,12 @@ void UnitManager::playerMoveWithWayPoints(int move_unit_id, std::vector<cocos2d:
 		}
 		Vec2 openGL_point = _tiled_Map->locationForTilePos(path_points[i]);
 			MoveTo* moveTo = MoveTo::create(speed, openGL_point);
-		//	auto action = Spawn::create(moveTo);
-			actionVector.pushBack(moveTo);
+			auto callfunc = CallFunc::create([=] {
+				player->setTempPos(path_points[i]);
+				log("player->set  %f,%f",player->getTempPos().x,player->getTempPos().y);
+			});
+			auto action = Spawn::create(moveTo,callfunc,NULL);
+			actionVector.pushBack(action);
 	}
 
 	actionVector.pushBack(callfunc);
@@ -302,6 +316,10 @@ void UnitManager::attack(int attacker_id, int under_attack_id, int damage) {
 				destroyEffect(enemy, false);
 				TiledMap::removeMapGrid(enemy->getTiledPosition());
 				TiledMap::removeMapId(enemy->getUnitID());
+				if (!enemy->isBuilding()) {
+					enemy->unscheduleAllSelectors();
+					TiledMap::setPass(enemy->getTargetPos());
+				}
 				_tiled_Map->getTiledMap()->removeChild(enemy);
 			});
 			this->runAction(callFunc);

@@ -151,10 +151,8 @@ void Tank::Create(Unit* warFactory) {
 	loadingBar->setVisible(false);
 }
 
-bool FighterUnitBase::judgeAttack(Vec2 pos) {
-	auto myLocation = this->getPosition();
-	auto myTiledLocaiton = getTiledPosition();
-	auto distance = sqrt(pow(myTiledLocaiton.x - pos.x, 2) + pow(myTiledLocaiton.y - pos.y, 2));
+bool FighterUnitBase::judgeAttack(Vec2 myPos,Vec2 pos) {
+	auto distance = sqrt(pow(myPos.x - pos.x, 2) + pow(myPos.y - pos.y, 2));
 	if (distance < this->getAttackRange()) {
 		return true;
 	}
@@ -164,7 +162,7 @@ bool FighterUnitBase::judgeAttack(Vec2 pos) {
 Vec2 FighterUnitBase::searchEnemy() {
 	auto curpos = getTiledPosition();
 	auto range = getAttackRange();
-	auto rect = GridRect::create(curpos.x - range / 2, curpos.y - range / 2, range, range);
+	auto rect = GridRect::create(curpos.x - range , curpos.y - range , range, range);
 	for (auto i = rect->getX(); i <= rect->getX() + rect->getWidth(); i++) {
 		for (auto j = rect->getY(); j <= rect->getY() + rect->getHeight(); j++) {
 			auto vecPos = Vec2(i, j);
@@ -181,6 +179,19 @@ Vec2 FighterUnitBase::searchEnemy() {
 	}
 	return Vec2(-1,-1);
 }
+
+bool FighterUnitBase::judgeTarPos() {
+	auto tarPos = this->getTargetPos();
+	auto enemyId = this->getTargetID();
+	auto enemy = TiledMap::getUnitById(enemyId);
+	auto enemyPos = enemy->getTiledPosition();
+	auto distance = sqrt(pow(tarPos.x - enemyPos.x, 2) + pow(tarPos.y - enemyPos.y, 2));
+	if (distance < this->getAttackRange()) {
+		return true;
+	}
+	return false;
+}
+
 
 
 void FighterUnitBase::autoAttack(float dt) {
@@ -208,11 +219,26 @@ void FighterUnitBase::autoAttack(float dt) {
 		auto tempManager = tempScene->getUnitManager();
 		//judge if the enemy is in the range
 		//Attack
-		if (this->judgeAttack(pos)) {
+		if (this->judgeAttack(this->getTiledPosition(),pos)) {
 			this->stopAllActions();
 			tempManager->addMessages(tempManager->msgs->newAttackMessage(this->getUnitID(), enemy->getUnitID(), this->getAttack()));
 		}
 		else {
+			if (this->getTempPos().x != -1) {
+				if (this->judgeAttack(this->getTempPos(),pos)) {
+					TiledMap::setPass(this->getTargetPos());
+					TiledMap::updateMapGrid(this->getTiledPosition(), this->getTempPos());
+					this->setTiledPosition(this->getTempPos());
+					this->stopAllActions();
+					tempManager->addMessages(tempManager->msgs->newAttackMessage(this->getUnitID(), enemy->getUnitID(), this->getAttack()));
+					return;
+				}
+			}
+			if (this->getTargetPos().x != -1) {
+				if (judgeTarPos()) {
+					return;
+				}
+			}
 			PathArithmetic* path_finder = PathArithmetic::create();
 			auto tempMap = static_cast<TiledMap*>(this->getParent()->getParent());
 			if (!TiledMap::checkPass(pos)) {
@@ -224,9 +250,9 @@ void FighterUnitBase::autoAttack(float dt) {
 			path_finder->findPath();
 			auto path = path_finder->getPath();
 			if (this->getTargetPos().x != -1) {
-				if (this->getTiledPosition() != this->getTargetPos()
-					&& pos != this->getTargetPos()) {
+				if ( pos != this->getTargetPos() && this->getTiledPosition() != this->getTargetPos()) {
 					if (!TiledMap::checkPass(this->getTargetPos())) {
+						log("SetPass %f,%f\n", this->getTargetPos().x, this->getTargetPos().y);
 						TiledMap::setPass(this->getTargetPos());
 					}
 				}

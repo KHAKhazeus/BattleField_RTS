@@ -61,9 +61,14 @@ public:
 	void attack(int id);
 
 	//to judge if the enemy is in the attack range
-	bool judgeAttack(Vec2 pos);
+	bool judgeAttack(Vec2 myPos,Vec2 pos);
 
+	//search for the position of enemy in attackrange
 	Vec2 searchEnemy();
+
+	//judge if the targetPos can attack the enemy
+	bool judgeTarPos();
+
 	void autoAttack(float dt);
 };
 
@@ -99,6 +104,7 @@ public:
 		setType(std::string("s"));
 		clearAllType();
 		setTargetPos(Vec2(-1,-1));
+		setTempPos(Vec2(-1, -1));
 	}
 	void Create(Unit*);
 };
@@ -134,6 +140,7 @@ public:
 		setType(std::string("d"));
 		clearAllType();
 		setTargetPos(Vec2(-1, -1));
+		setTempPos(Vec2(-1, -1));
 	}
 	void Create(Unit*);
 };
@@ -168,6 +175,7 @@ public:
 		setType(std::string("t"));
 		clearAllType();
 		setTargetPos(Vec2(-1, -1));
+		setTempPos(Vec2(-1, -1));
 	}
 	void Create(Unit*);
 };

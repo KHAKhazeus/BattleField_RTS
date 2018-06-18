@@ -37,6 +37,7 @@ protected:
 	bool _isAutoAttack;//if the unit are auto Attacking
 	Vec2 _tiledPos; //the tiledPostion of the Unit
 	Vec2 _targetPos;
+	Vec2 _tempPos; //this Postion is to store the move Position
 public:
 	// Get the aniamtion
 	static Unit* create(const std::string& filename) {
@@ -129,8 +130,11 @@ public:
 
 	virtual Vec2 searchEnemy(){ return Vec2(-1,-1); }
 	
-	void setTargetPos(Vec2 targetPos) { _targetPos = targetPos; }
+	void setTargetPos(Vec2 targetPos = Vec2(-1,-1)) { _targetPos = targetPos; }
 	Vec2 getTargetPos() { return _targetPos; }
+
+	void setTempPos(Vec2 tempPos) { _tempPos = tempPos; }
+	Vec2 getTempPos() { return _tempPos; }
 
 	//Unit death
 	void setDeath() {

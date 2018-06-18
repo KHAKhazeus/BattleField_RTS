@@ -11,6 +11,8 @@
 #include <cocos2d.h>
 #define MAX_LENGTH 8000
 
+boost::asio::io_service* SocketClient::_io = new boost::asio::io_service;
+
 SocketClient::~SocketClient(){
     stopClient();
 }
@@ -30,7 +32,7 @@ SocketClient* SocketClient::create(std::string server_ip, int port_nunber){
 }
 
 void SocketClient::startClient(){
-    auto new_thread = new std::thread(std::bind(static_cast<std::size_t(boost::asio::io_service::*)()>(&boost::asio::io_service::run),&_io));
+    auto new_thread = new std::thread(std::bind(static_cast<std::size_t(boost::asio::io_service::*)()>(&boost::asio::io_service::run),&(*_io)));
     //new_thread->detach();
     _exchange_thread.reset(new_thread);
     _exchange_thread->detach();
@@ -70,7 +72,7 @@ void SocketClient::stopClient(){
                 _message_set_deque.push_back(error_message);
             }
             //_exchange_thread will exit after work destruct
-            _io.stop();
+            _io->stop();
             _cond.notify_one();
             _socket.close();
             if(_read_thread){

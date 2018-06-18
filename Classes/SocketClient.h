@@ -25,7 +25,7 @@ public:
     ~SocketClient();
     void stopClient();
 private:
-    SocketClient(std::string server_ip, int port_number): _socket(_io), _endpoint(boost::asio::ip::address_v4::from_string(server_ip), port_number),_work(_io){
+    SocketClient(std::string server_ip, int port_number): _socket(*_io), _endpoint(boost::asio::ip::address_v4::from_string(server_ip), port_number),_work(*_io){
         _exchange_thread.reset(static_cast<std::thread*>(nullptr), [](std::thread*){});
         _read_thread.reset(static_cast<std::thread*>(nullptr), [](std::thread*){});
         //_io.restart();
@@ -43,7 +43,7 @@ private:
     
     std::mutex _mutex;
     std::condition_variable _cond;
-    boost::asio::io_service _io;
+    static boost::asio::io_service *_io;
     tcp::socket _socket;
     tcp::endpoint _endpoint;
     //unique?
