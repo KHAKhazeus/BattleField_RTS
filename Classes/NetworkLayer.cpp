@@ -329,10 +329,10 @@ bool NetworkLayer::init(){
 	else {
 		auto button_size = select_map->getCustomSize();
 		select_map->setScale(1.0);
-		select_map->setTitleText("Select Map");
+		select_map->setTitleText("Select Map Lost Temple");
 		select_map->setTitleFontName("Arial-Bold.ttf");
 		select_map->setTitleColor(Color3B(80, 80, 80));
-		select_map->setTitleFontSize(button_size.height / 3);
+		select_map->setTitleFontSize(button_size.height / 5);
 		select_map->setPosition(Vec2((reset->getPosition()).x, (reset->getPosition()).y - start_server_size.height / 2 - small_adjust));
 		select_map->addTouchEventListener([=](Ref* pSender, Widget::TouchEventType event_type) {
 			switch (event_type) {
@@ -343,9 +343,16 @@ bool NetworkLayer::init(){
 
 			case Widget::TouchEventType::ENDED: {
 				select_map->setScale(1.0);
-				
 
-				
+				if (select_map->getTitleText().compare("Select Map Lost Temple") == 0) {
+					select_map->setTitleText("Select Map Snow World");
+					TiledMap::setMapFlagSnow();
+				}
+				else if (select_map->getTitleText().compare("Select Map Snow World") == 0) {
+					select_map->setTitleText("Select Map Lost Temple");
+					TiledMap::setMapFlagLost();
+				}
+
 				break;
 			}
 

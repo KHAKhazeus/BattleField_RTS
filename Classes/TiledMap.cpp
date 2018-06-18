@@ -6,8 +6,12 @@ std::vector<Vector<Grid*>> TiledMap::_grid_Vector;
 std::map<int, Unit*> TiledMap::_idAndUnit_Map;
 std::vector<Unit*> TiledMap::_select_Vector;
 
+bool TiledMap::_map_flag = 0;
 bool TiledMap::init() {
-	_tiled_Map = TMXTiledMap::create("map/LostTemple.tmx");
+	if(_map_flag)
+		_tiled_Map = TMXTiledMap::create("map/Snow.tmx");
+	else
+		_tiled_Map = TMXTiledMap::create("map/LostTemple.tmx");
 	_tiled_Map->setAnchorPoint(Vec2::ZERO);
 	this->addChild(_tiled_Map);
 	return _tiled_Map;
