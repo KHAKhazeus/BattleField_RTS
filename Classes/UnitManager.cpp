@@ -444,7 +444,7 @@ void UnitManager::Building(int new_building_id, std::string new_building_type, i
 	if (new_building_type == "M") {
 		MoneyMine* moneyMine = MoneyMine::create("moneyMine/MinetoMoney_24.png");
 		moneyMine->setUnitID(new_building_id);
-		moneyMine->setCampID(1-base_id);
+		moneyMine->setCampID(base_id);
 		if (moneyMine->getCampID() == RED) {
 			moneyMine->setColor(Color3B(221, 160, 221));
 		}
