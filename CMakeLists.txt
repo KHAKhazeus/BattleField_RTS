@@ -181,7 +181,7 @@ set_target_properties(protobuff
 elseif(WINDOWS)
 set_target_properties(protobuff
 		PROPERTIES IMPORTED_LOCATION
-		"H:/BattleField_RTS/Classes/lib/Debug/Protobuf/libprotobuf.lib"
+		"C:/github/BattleField_RTS/Classes/lib/Debug/Protobuf/libprotobuf.lib"
 )
 
 #LINK_DIRECTORIES(${PROTOBUFF_LIB_PATH})
@@ -200,7 +200,7 @@ set_target_properties(boost
 elseif(WINDOWS)
 #set_target_properties(boost
 #			PROPERTIES IMPORTED_LOCATION
-#			D:\C++ project 2018\BattleField_RTS\Classes\lib\Debug\Boost\libboost_date_time-vc141-mt-gd-x32-1_67.lib
+#			C:\github\BattleField_RTS\Classes\lib\Debug\Boost\libboost_date_time-vc141-mt-gd-x32-1_67.lib
 #)
 link_directories(${BOOST_LIB_PATH})
 endif()
