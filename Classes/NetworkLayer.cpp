@@ -66,6 +66,7 @@ void NetworkLayer::resetClientAndServer(){
         _socket_client->stopClient();
     }
     _socket_client.reset(static_cast<SocketClient*>(nullptr),[](SocketClient*){});
+    _socket_server.reset(static_cast<SocketServer*>(nullptr),[](SocketServer*){});
     log("%s", "Client and Server Reset");
 }
 
