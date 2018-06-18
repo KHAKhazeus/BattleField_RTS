@@ -71,7 +71,9 @@ void SocketClient::stopClient(){
             _io.stop();
             _cond.notify_one();
             _socket.close();
-            _read_thread->join();
+            if(_read_thread){
+                _read_thread->join();
+            }
             _socket.shutdown(tcp::socket::shutdown_both);
         }
         catch(...){
