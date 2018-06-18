@@ -39,33 +39,36 @@ class SocketServer{
 public:
     static SocketServer* create(int port_number);
     void startService();
+    ~SocketServer();
+    void stopAccept();
+    void stopServer();
     
 private:
     SocketServer(int port_number);
     void startServerListen();
     void startAccept();
-    void stopAccept();
     bool checkStop();
-    void stopServer();
     void handleAccept(std::shared_ptr<ClientConnection> new_connection, const error_code &err);
     void readFromClient(std::shared_ptr<ClientConnection> client_connection);
     void readHandler(std::shared_ptr<ClientConnection> client_connection, const error_code &err);
     void startSend();
-    void combineMessages();
+    void loopSend();
+    std::string combineMessages();
     void sendMessages(std::string message);
     
-    bool _error_flag{false}, _cancel_flag{false}, _stop_flag{false};
+    bool _error_flag{false}, _cancel_flag{false}, _stop_flag{false}, _stop_connect{false};
+    static boost::asio::io_service *_io;
     tcp::acceptor _acceptor;
-    boost::asio::io_service _io;
     std::mutex _mut;
     std::condition_variable _cond;
     std::vector<std::shared_ptr<ClientConnection>> _connections;
     std::vector<std::shared_ptr<std::thread>> _io_run_threads_vec;
-    std::shared_ptr<std::thread> _accept_thread;
+    std::shared_ptr<std::thread> _accept_thread{static_cast<std::thread*>(nullptr), [](std::thread*){}};
     std::vector<std::shared_ptr<std::thread>> _contact_threads_vector;
-    std::shared_ptr<std::thread> _send_thread;
+    std::shared_ptr<std::thread> _send_thread{static_cast<std::thread*>(nullptr), [](std::thread*){}};
     std::vector<std::list<std::string>> _stored_lists;
     std::vector<std::string> _combined_messages;
+    boost::asio::io_service::work* _work;
 };
 
 #endif /* __SOCKET_SERVER_H__ */

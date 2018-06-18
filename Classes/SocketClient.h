@@ -22,17 +22,18 @@ using boost::system::error_code;
 class SocketClient{
 public:
     static SocketClient* create(std::string server_ip, int port_number);
-    
+    ~SocketClient();
+    void stopClient();
 private:
-    SocketClient(std::string server_ip, int port_number): _socket(_io), _endpoint(boost::asio::ip::address_v4::from_string(server_ip), port_number){
+    SocketClient(std::string server_ip, int port_number): _socket(*_io), _endpoint(boost::asio::ip::address_v4::from_string(server_ip), port_number),_work(*_io){
         _exchange_thread.reset(static_cast<std::thread*>(nullptr), [](std::thread*){});
         _read_thread.reset(static_cast<std::thread*>(nullptr), [](std::thread*){});
+        //_io.restart();
     }
     
     void startClient();
     void startConnect();
     bool checkStop();
-    void stopClient();
     void readMessages();
     void pushMessageSet(const error_code &err);
     bool writeMessages(std::string message_set);
@@ -42,7 +43,7 @@ private:
     
     std::mutex _mutex;
     std::condition_variable _cond;
-    boost::asio::io_service _io;
+    static boost::asio::io_service *_io;
     tcp::socket _socket;
     tcp::endpoint _endpoint;
     //unique?
@@ -53,6 +54,7 @@ private:
     
     std::deque<std::string> _message_set_deque;
     std::string _message_set_buffer;
+    boost::asio::io_service::work _work;
     
 };
 

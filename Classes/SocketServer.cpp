@@ -11,6 +11,8 @@
 #include <iterator>
 #define MAX_LENGTH 8000
 
+boost::asio::io_service* SocketServer::_io = new boost::asio::io_service;
+
 ClientConnection::ClientConnection(boost::asio::io_service &io_service):_socket(io_service){};
 
 std::shared_ptr<ClientConnection> ClientConnection::create(boost::asio::io_service &io_service){
@@ -44,29 +46,45 @@ int& ClientConnection::mutableID(){
     return _ID;
 }
 
-SocketServer::SocketServer(int port_number):_acceptor(_io, tcp::endpoint(boost::asio::ip::address_v4::any(), port_number)){
+SocketServer::SocketServer(int port_number):_acceptor(*_io, tcp::endpoint(tcp::v4(), port_number)){
+    _work = new boost::asio::io_service::work(*_io);
+    (*_io).restart();
+}
+
+SocketServer::~SocketServer(){
+    stopAccept();
+    stopServer();
 }
 
 SocketServer* SocketServer::create(int port_number){
     try{
+        port_number = 8080;
         auto new_server = new SocketServer(port_number);
-        if(!new_server){
+        if(new_server){
             new_server->startServerListen();
         }
+        std::cout << "Server Startup Success" << std::endl;
         return new_server;
     }
     catch(...){
+        std::cerr << "Server Startup Error" << std::endl;
         return static_cast<SocketServer*>(nullptr);
     }
 }
 
 void SocketServer::startServerListen(){
     try{
-        for(auto thread: _io_run_threads_vec){
-            thread.reset(new std::thread(std::bind(static_cast<std::size_t(boost::asio::io_service::*)()>(&boost::asio::io_service::run),
-                                                   &_io)));
-        }
-        //_acceptor.listen();
+        //!Extend
+        auto new_thread = new std::thread(std::bind(static_cast<std::size_t(boost::asio::io_service::*)()>(&boost::asio::io_service::run),&(*_io)));
+        new_thread->detach();
+        std::shared_ptr<std::thread> new_ptr;
+        new_ptr.reset(new_thread);
+        _io_run_threads_vec.push_back(new_ptr);
+        new_thread = new std::thread(std::bind(static_cast<std::size_t(boost::asio::io_service::*)()>(&boost::asio::io_service::run),&(*_io)));
+        new_thread->detach();
+        new_ptr.reset(new_thread);
+        _io_run_threads_vec.push_back(new_ptr);
+        _acceptor.listen();
         std::cout << "Server Listening" << std::endl;
         _accept_thread.reset(new std::thread(std::bind(&SocketServer::startAccept, this)));
     }
@@ -78,16 +96,21 @@ void SocketServer::startServerListen(){
 }
 
 void SocketServer::startAccept(){
-    if(!checkStop()){
-        auto new_connection = ClientConnection::create(_io);
+    if((!checkStop()) && (!_stop_connect)){
+        auto new_connection = ClientConnection::create(*_io);
         _acceptor.async_accept(*(new_connection->getSocket()), std::bind(&SocketServer::handleAccept, this, new_connection, std::placeholders::_1));
     }
 }
 
 void SocketServer::stopAccept(){
-    //Exception?
-    _acceptor.close();
-    _accept_thread->join();
+    try{
+        _stop_connect = true;
+        _acceptor.close();
+        _accept_thread->join();
+    }
+    catch(...){
+        std::cerr << "No Acceptor" << std::endl;
+    }
 }
 
 void SocketServer::handleAccept(std::shared_ptr<ClientConnection> new_connection, const error_code &err){
@@ -105,8 +128,12 @@ void SocketServer::handleAccept(std::shared_ptr<ClientConnection> new_connection
         _contact_threads_vector.push_back(connection_thread);
     }
     else{
+        error_times++;
         std::cerr << "Client Connect Failed. No." << error_times << std::endl;
         std::cerr << "Server Handle Accept Error" << std::endl;
+    }
+    if(_stop_connect || _stop_flag || _error_flag){
+        startAccept();
     }
 }
 
@@ -137,37 +164,47 @@ void SocketServer::startService(){
 }
 
 void SocketServer::startSend(){
-    _send_thread.reset(new std::thread(std::bind(&SocketServer::combineMessages,this)));
+    _send_thread.reset(new std::thread(std::bind(&SocketServer::loopSend,this)));
 }
 
-void SocketServer::combineMessages(){
-    if(!checkStop()){
-        std::vector<std::string> raw_messages;
-        std::vector<GameMessage> processed_messages;
-        std::vector<GameMessage> buffer;
+void SocketServer::loopSend(){
+    while(true){
         if(!checkStop()){
-            for(auto list: _stored_lists){
-                std::unique_lock<std::mutex> lk(_mut);
-                if(list.empty()){
-                    _cond.wait(lk, [=]{
-                        if(list.empty()){
-                            return false;
-                        }
-                        else{
-                            return true;
-                        }
-                    });
-                }
+            auto message = combineMessages();
+            sendMessages(message);
+        }
+        else{
+            break;
+        }
+    }
+}
+
+std::string SocketServer::combineMessages(){
+    std::vector<std::string> raw_messages;
+    std::vector<GameMessage> processed_messages;
+    std::vector<GameMessage> buffer;
+    if(!checkStop()){
+        for(auto list: _stored_lists){
+            std::unique_lock<std::mutex> lk(_mut);
+            if(list.empty()){
+                _cond.wait(lk);
+            }
+            if(!list.empty()){
                 auto message_string = list.front();
                 list.pop_front();
                 buffer = GameMessageInterface::parseMessagesFromString(message_string);
                 //!
                 std::copy(std::make_move_iterator(buffer.begin()), std::make_move_iterator(buffer.end()), std::back_inserter(processed_messages));
-                lk.unlock();
             }
+            lk.unlock();
         }
+    }
+    if(!processed_messages.empty()){
         auto combined_message = GameMessageInterface::combineMessagesToString(processed_messages);
-        sendMessages(combined_message);
+        return combined_message;
+    }
+    else{
+        return "";
     }
 }
 
@@ -186,12 +223,10 @@ void SocketServer::sendMessages(std::string message){
             }
         });
     }
-    combineMessages();
 }
 
 bool SocketServer::checkStop(){
-    if(_error_flag || _cancel_flag){
-        stopServer();
+    if(_error_flag || _cancel_flag || _stop_flag){
         return true;
     }
     else{
@@ -203,26 +238,44 @@ void SocketServer::stopServer(){
     try{
         std::unique_lock<std::mutex> lk(_mut);
         _stop_flag = true;
+        lk.unlock();
         if(_error_flag){
             std::cerr << "Server Error" << std::endl;
         }
         else if(_cancel_flag){
             std::cout << "Server Cancelled" << std::endl;
         }
-        _io.stop();
+        else{
+            std::cout << "Server Shutdown" << std::endl;
+        }
+        delete _work;
+        (*_io).stop();
+//        for(auto thread: _io_run_threads_vec){
+//            if(thread){
+//                thread->join();
+//            }
+//        }   will exit after work destruct
+        for(auto thread: _contact_threads_vector){
+            if(thread){
+                thread->join();
+            }
+        }
+        if(_send_thread){
+            _cond.notify_one();
+            _send_thread->join();
+        }
+        if(_accept_thread && (!_stop_connect)){
+            _accept_thread->join();
+        }
         for(auto _connection: _connections){
             auto socket_ptr = _connection->getSocket();
-            socket_ptr->shutdown(tcp::socket::shutdown_both);
+            error_code err;
+            socket_ptr->shutdown(tcp::socket::shutdown_both, err);
+            if(!err){
+                throw boost::system::system_error(err);
+            }
             socket_ptr->close();
         }
-        for(auto thread: _io_run_threads_vec){
-            thread->join();
-        }
-        _cond.notify_all();
-        for(auto thread: _contact_threads_vector){
-            thread->join();
-        }
-        _send_thread->join();
     }
     catch(...){
         std::cerr << "Server Shutdown Error" << std::endl;
