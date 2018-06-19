@@ -19,7 +19,6 @@ bool UnitManager::init(TiledMap * tiledMap, std::shared_ptr<SocketServer> spserv
 void UnitManager::initBase() {
 	auto myPos = getBasePosition("ObjectLayer",RED/* MY POSITION*/);
 	_base_me = Base::create();
-	_base_me->setColor(Color3B(221, 160, 221));
 	_base_me->setPosition(myPos);
 	auto vect = _base_me->getBase()->getContentSize();
 	auto range = _base_me->getRange();
