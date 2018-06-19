@@ -21,7 +21,7 @@ bool Base::init(int campID) {
 	auto cache = Director::getInstance()->getTextureCache();
 	_base = Unit::create("unit/base_28.png");
 	// create a loading bar
-	if (this->getCampID() == RED) {
+	if (this->getCampID() == REDCAMP) {
 		_base->setColor(Color3B(221, 160, 221));
 	}
 	else {
