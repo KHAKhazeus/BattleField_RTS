@@ -85,7 +85,7 @@ void TcpConnection::do_close()
 		socket_.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
 		if (!ec)
 			throw boost::system::error_code(ec);
-		socket_.close();
+ 		socket_.close();
 
 
 	}
