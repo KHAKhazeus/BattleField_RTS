@@ -234,10 +234,10 @@ void FighterUnitBase::autoAttack(float dt) {
 		else {
 			if (this->getTempPos().x != -1) {
 				if (this->judgeAttack(this->getTempPos(), pos)) {
+					if (!TiledMap::checkPass(this->getTempPos())) {
+						return;
+					}
 					TiledMap::setPass(this->getTargetPos());
-					TiledMap::updateMapGrid(this->getTiledPosition(), this->getTempPos());
-					this->setTiledPosition(this->getTempPos());
-					this->stopAllActions();
 					tempManager->addMessages(tempManager->msgs->newAttackMessage(this->getUnitID(), enemy->getUnitID(), this->getAttack()));
 					return;
 				}

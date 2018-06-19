@@ -351,7 +351,7 @@ void GameScene::onTouchEnded(Touch* touch, Event* event) {
 
 	//select by point
 	if (rect_width * rect_height < 100.0) {
-		_unit_Manager->selectUnitsByPoint(touch_point);
+		_unit_Manager->selectUnitsByPoint(map_point);
 	}
 	//select by rect
 	else {

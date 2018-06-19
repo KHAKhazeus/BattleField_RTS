@@ -19,7 +19,7 @@ bool UnitManager::init(TiledMap * tiledMap, std::shared_ptr<SocketServer> spserv
 void UnitManager::initBase() {
 	auto myPos = getBasePosition("ObjectLayer",RED/* MY POSITION*/);
 	_base_me = Base::create();
-	_base_me->setColor(Color3B(221, 160, 221));
+	
 	_base_me->setPosition(myPos);
 	auto vect = _base_me->getBase()->getContentSize();
 	auto range = _base_me->getRange();
@@ -320,6 +320,8 @@ void UnitManager::attack(int attacker_id, int under_attack_id, int damage) {
 	}
 	auto player = TiledMap::getUnitById(attacker_id);
 	if (!TiledMap::checkUnitId(under_attack_id)) {
+		player->clearAllType();
+		player->setAutoAttack(true);
 		return;
 	}
 	auto enemy = TiledMap::getUnitById(under_attack_id);
@@ -697,6 +699,15 @@ void UnitManager::updateMessage(float delta) {
 		}
 		//if attacking happens
 		else if (orders[i].cmd_code() == GameMessage::CmdCode::GameMessage_CmdCode_ATK) {
+			auto attackerId = orders[i].unit_0();
+			auto attacker = TiledMap::getUnitById(attackerId);
+			if (attacker->isMove()) {
+				TiledMap::updateMapGrid(attacker->getTiledPosition(), attacker->getTempPos());
+				attacker->setTiledPosition(attacker->getTempPos());
+				attacker->stopAllActions();
+				attacker->clearAllType();
+				attacker->setAttack(true);
+			}
 			UnitManager::attack(orders[i].unit_0(), orders[i].unit_1(), orders[i].damage());
 			UnitManager::attackEffect(orders[i].unit_0(), orders[i].unit_1());
 		}
@@ -712,6 +723,9 @@ void UnitManager::updateMessage(float delta) {
 			if (path_points.empty()) {
 				continue;
 			}
+			auto id = orders[i].unit_0();
+			auto player = TiledMap::getUnitById(id);
+			player->setMove(true);
 			UnitManager::playerMoveWithWayPoints(orders[i].unit_0(), path_points , path_points.back());
 		}
 		

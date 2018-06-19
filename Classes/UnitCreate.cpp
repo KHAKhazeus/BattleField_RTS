@@ -20,6 +20,7 @@ bool Base::init() {
 	auto cache = Director::getInstance()->getTextureCache();
 	_base = Unit::create("unit/base_28.png");
 	// create a loading bar
+	_base->setColor(Color3B(221, 160, 221));
 	auto loadingBar = LoadingBar::create("bar/planeHP.png");
 	loadingBar->setScaleX(0.4f);
 	loadingBar->setScaleY(0.1f);
