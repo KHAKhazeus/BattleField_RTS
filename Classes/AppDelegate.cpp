@@ -153,7 +153,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
 
     auto scene = MenuScene::createScene();
-    //auto scene = MenuScene::createScene();
+    //auto scene = GameScene::createScene(NULL, NULL);
 
 
 
