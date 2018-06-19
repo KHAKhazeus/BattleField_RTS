@@ -8,69 +8,49 @@
 #include <iostream>
 #include <cocos2d.h>
 #include "ui/CocosGUI.h"
+#include "Grid.h"
+#include "Unit.h"
+#include "BattleField_RTS.h"
 
 USING_NS_CC;
+
 using namespace ui;
 
 // a base class for buildngs
-class BuildingBase :public cocos2d::Sprite
+class BuildingBase :public Unit
 {
 protected:
-	int _lifeValue;//life value for the building
-	LoadingBar* _HP;//hp bar of the building
-	float _HPInterval;//interval of the building's hp
-	int _buildID;//ID of the building
-	int _campID;//building belongs to which side
 	int _gold;//expence to build the building
-	float _buildTime;//time needed to build the building
 	int _elect;//electricity spent to build the building
 	LoadingBar* _buildBar;// the bar diaplayed during building
-	bool _isSelected;
+	static bool _isbuilt; //to judge whether there is builiding built
 	bool _isCreated;
+	
 public:
-
-	//set and get the building's lifevalue
-	void setLifeValue(int lifeValue) { _lifeValue = lifeValue; }
-	int getLifeValue() { return _lifeValue; }
-
-	//set and get the building's life bar
-	void setHP(LoadingBar* HP) { _HP = HP; }
-	LoadingBar* getHP() { return _HP; }
-
-	//set and get the HPInterval
-	void setHPInterval(float HPInterval) { _HPInterval = HPInterval; }
-	int getHPInterval() { return _HPInterval; }
 
 	//set and get the cost for the building
 	void setGold(int gold) { _gold = gold; }
 	int getGold() { return _gold; }
 
-	//set and get the ID for the building
-	void setBuildID(int ID) { _buildID = ID; }
-	int getBuildID() { return _buildID; }
-
-	//set and get the building time for the building
-	void setBuildTime(float time) { _buildTime = time; }
-	int getBuildTime() { return _buildTime; }
-
 	//set and get the building time for the building
 	void setElect(float elect) { _elect = elect; }
 	int getElect() { return _elect; }
-
-	void setSelected(bool selected) { _isSelected = selected; }
-	bool getSelected() { return _isSelected; }
-
+	
 	void setCreated(bool created) { _isCreated = created; }
 	bool getCreated() { return _isCreated; }
 
-	//set and get the side for the building
-	void setCampID(int ID) { _campID = ID; }
-	int getCampID() { return _campID; }
 
+	//set the boolean ...
+	//get the boolean to judge if there is a builing built
+	static bool getIsBuilt();
+	static void setIsBuilt(bool judge);
+
+	virtual bool judgeAttack(Vec2 pos) {
+		return false;
+	}
+
+	int getAttack() { return 0; }
 	
-	
-	// Get the aniamtion
-	Animate* getAnimateByName(std::string animName, float delay, int animNum);
 };
 
 //the derived class for SoldierBase
@@ -78,7 +58,7 @@ class SoldierBase :public BuildingBase {
 public:
 	static SoldierBase* create(const std::string& filename) {
 		SoldierBase *sprite = new SoldierBase();
-		if (sprite && sprite->initWithFile(filename))
+		if (sprite && sprite->initWithTexture(Director::getInstance()->getTextureCache()->addImage(filename)))
 		{
 			sprite->autorelease();
 			return sprite;
@@ -91,6 +71,11 @@ public:
 		_gold = 500;
 		_elect = 10;
 		_lifeValue = 900;
+		setRange(2);
+		setFixModel(FIX_HEIGHT);
+		//
+		setIsBuilding(true);
+		setType(std::string("S"));
 	}
 
 	Vec2 RandomPosition();
@@ -105,7 +90,7 @@ public:
 	
 	static MoneyMine* create(const std::string& filename) {
 		MoneyMine *sprite = new MoneyMine();
-		if (sprite && sprite->initWithFile(filename))
+		if (sprite && sprite->initWithTexture(Director::getInstance()->getTextureCache()->addImage(filename)))
 		{
 			sprite->autorelease();
 			return sprite;
@@ -118,6 +103,11 @@ public:
 		_gold = 2000;
 		_elect = 40;
 		_lifeValue = 1000;
+		setRange(2);
+		setFixModel(FIX_SQUARE);
+		//
+		setIsBuilding(true);
+		setType(std::string("M"));
 	}
 
 	void Build();
@@ -128,7 +118,7 @@ class PowerPlant :public BuildingBase {
 public:
 	static PowerPlant* create(const std::string& filename) {
 		PowerPlant *sprite = new PowerPlant();
-		if (sprite && sprite->initWithFile(filename))
+		if (sprite && sprite->initWithTexture(Director::getInstance()->getTextureCache()->addImage(filename)))
 		{
 			sprite->autorelease();
 			return sprite;
@@ -141,6 +131,11 @@ public:
 		_gold = 600;
 		_elect = 150;
 		_lifeValue = 750;
+		setRange(1);
+		setFixModel(FIX_SQUARE);
+		//
+		setIsBuilding(true);
+		setType(std::string("P"));
 	}
 
 	void Build();
@@ -150,7 +145,7 @@ class WarFactory :public BuildingBase {
 public:
 	static WarFactory* create(const std::string& filename) {
 		WarFactory *sprite = new WarFactory();
-		if (sprite && sprite->initWithFile(filename))
+		if (sprite && sprite->initWithTexture(Director::getInstance()->getTextureCache()->addImage(filename)))
 		{
 			sprite->autorelease();
 			return sprite;
@@ -163,7 +158,13 @@ public:
 		_gold = 2000;
 		_elect = 50;
 		_lifeValue = 1200;
+		setRange(2);
+		setFixModel(FIX_HEIGHT);
+		//
+		setIsBuilding(true);
+		setType(std::string("W"));
 	}
+	
 
 	Vec2 RandomPosition();
 	void Build();

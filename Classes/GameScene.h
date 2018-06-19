@@ -5,21 +5,8 @@
 #include "UnitManager.h"
 #include "BuildingBase.h"
 #include "FighterUnitBase.h"
+#include "MouseRect.h"
 USING_NS_CC;
-
-//Class of mouse rect selection
-class MouseRect : public cocos2d::DrawNode
-{
-public:
-	CREATE_FUNC(MouseRect);
-
-	//Start point and end point
-	Vec2 start, end;
-
-	virtual void update(float delta);
-
-	void reset();
-};
 
 //Main Class of Game Scene
 class GameScene :public cocos2d::Scene {
@@ -51,10 +38,12 @@ private:
 	Vector<Soldier*>_soldiers;
 	Vector<Dog*>_dogs;
 	Vector<Tank*>_tanks;
+	static std::shared_ptr<SocketServer> _socket_server;
+	static std::shared_ptr<SocketClient> _socket_client;
 
 public:
 	
-	static cocos2d::Scene* createScene();
+	static cocos2d::Scene* createScene(std::shared_ptr<SocketServer> spserver, std::shared_ptr<SocketClient> spclient);
 	virtual bool init();
 	virtual void update(float dt) override;
 	
@@ -71,6 +60,8 @@ public:
 	Power* getPower() { return _power; }
 
 	TiledMap* getMap() { return _tiled_Map; }
+
+	UnitManager* getUnitManager() { return _unit_Manager; }
 
 	CREATE_FUNC(GameScene);
 	//turn the coordinate of OpenGL to TileMap
@@ -106,8 +97,6 @@ public:
 	//Mouse listener
 	void onMouseMove(Event* event);
 
-	//The function of Touch
-	
 
 };
 

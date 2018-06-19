@@ -23,6 +23,9 @@
  ****************************************************************************/
 
 #include "AppDelegate.h"
+#include "MenuScene.h"
+#include <string>
+//#include "HelloWorldScene.h"
 #include "HelloWorldScene.h"
 #include "GameScene.h"
 
@@ -43,10 +46,29 @@ using namespace CocosDenshion;
 
 USING_NS_CC;
 
-static cocos2d::Size designResolutionSize = cocos2d::Size(1024, 720);
-static cocos2d::Size smallResolutionSize = cocos2d::Size(480, 320);
-static cocos2d::Size mediumResolutionSize = cocos2d::Size(1024, 720);
-static cocos2d::Size largeResolutionSize = cocos2d::Size(2048, 1440);
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
+    static cocos2d::Size designResolutionSize = cocos2d::Size(1280, 720);
+    static cocos2d::Size smallResolutionSize = cocos2d::Size(320, 180);
+    static cocos2d::Size mediumResolutionSize = cocos2d::Size(640, 360);
+    static cocos2d::Size largeResolutionSize = cocos2d::Size(1280, 720);
+#else
+    //temporarily set to avoid error
+    static cocos2d::Size designResolutionSize = cocos2d::Size(1280, 720);
+    static cocos2d::Size smallResolutionSize = cocos2d::Size(320,180);
+    static cocos2d::Size mediumResolutionSize = cocos2d::Size(640, 360);
+    static cocos2d::Size largeResolutionSize = cocos2d::Size(1280, 720);
+#endif
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
+    static std::string resource_path_prefix("MAC");
+#elif (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+    static std::string resource_path_prefix("WIN32");
+#else
+//temporarily set to avoid error
+    static std::string resource_path_prefix("MAC");
+#endif
+
 
 AppDelegate::AppDelegate()
 {
@@ -98,28 +120,42 @@ bool AppDelegate::applicationDidFinishLaunching() {
     director->setAnimationInterval(1.0f / 60);
 
     // Set the design resolution
-    glview->setDesignResolutionSize(designResolutionSize.width, designResolutionSize.height, ResolutionPolicy::NO_BORDER);
+    glview->setDesignResolutionSize(designResolutionSize.width, designResolutionSize.height, ResolutionPolicy::FIXED_HEIGHT);
     auto frameSize = glview->getFrameSize();
+    std::vector<std::string> set_search_paths;
     // if the frame's height is larger than the height of medium size.
     if (frameSize.height > mediumResolutionSize.height)
     {        
         director->setContentScaleFactor(MIN(largeResolutionSize.height/designResolutionSize.height, largeResolutionSize.width/designResolutionSize.width));
+        set_search_paths.push_back(resource_path_prefix + "/large");
     }
     // if the frame's height is larger than the height of small size.
     else if (frameSize.height > smallResolutionSize.height)
     {        
         director->setContentScaleFactor(MIN(mediumResolutionSize.height/designResolutionSize.height, mediumResolutionSize.width/designResolutionSize.width));
+        set_search_paths.push_back(resource_path_prefix + "/medium");
     }
     // if the frame's height is smaller than the height of medium size.
     else
     {        
         director->setContentScaleFactor(MIN(smallResolutionSize.height/designResolutionSize.height, smallResolutionSize.width/designResolutionSize.width));
+        set_search_paths.push_back(resource_path_prefix + "/small");
     }
+    
+    set_search_paths.push_back("fonts");
+    set_search_paths.push_back("Musics");
+    
+    FileUtils::getInstance()->setSearchPaths(set_search_paths);
 
     register_all_packages();
 
     // create a scene. it's an autorelease object
-    auto scene = GameScene::createScene();
+
+
+    auto scene = MenuScene::createScene();
+    //auto scene = GameScene::createScene(NULL, NULL);
+
+
 
     // run
     director->runWithScene(scene);
