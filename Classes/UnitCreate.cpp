@@ -14,13 +14,19 @@ Base* Base::create(int campID) {
 }
 
 bool Base::init(int campID) {
-	if(!Sprite::init()) {
+	if (!Sprite::init()) {
 		return false;
 	}
+	setCampID(campID);
 	auto cache = Director::getInstance()->getTextureCache();
 	_base = Unit::create("unit/base_28.png");
 	// create a loading bar
-	_base->setColor(Color3B(221, 160, 221));
+	if (this->getCampID() == RED) {
+		_base->setColor(Color3B(221, 160, 221));
+	}
+	else {
+		_base->setColor(Color3B(65, 105, 225));
+	}
 	auto loadingBar = LoadingBar::create("bar/planeHP.png");
 	loadingBar->setScaleX(0.4f);
 	loadingBar->setScaleY(0.1f);
@@ -37,10 +43,10 @@ bool Base::init(int campID) {
 	// set the HP interval
 	this->setHPInterval(this->getHP()->getPercent() / (float)this->getLifeValue());
 	loadingBar->setVisible(false);
-	_base->setPosition(0,0);
+	_base->setPosition(0, 0);
 	//
 	setIsBuilding(true);
-	setCampID(campID);
+
 
 	setRange(2);
 	setFixModel(FIX_SQUARE);
@@ -55,6 +61,7 @@ bool Base::init(int campID) {
 	listener->onTouchEnded = CC_CALLBACK_2(Base::onTouchEnded, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, _base);
 
+
 	return true;
 }
 //Click the Base building
@@ -64,6 +71,11 @@ bool Base::init(int campID) {
 
 
 bool Base::onTouchBegan(Touch *touch, Event *event) {
+	auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
+	auto tempManager = tempScene->getUnitManager();
+	if (this->getCampID() != tempManager->_myCamp) {
+		return false;
+	}
 	auto cache = Director::getInstance()->getTextureCache();
 	auto target = static_cast<Sprite*>(event->getCurrentTarget());
 	Vec2 locationInNode = target->convertToNodeSpace(touch->getLocation());
@@ -77,8 +89,8 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 		setSelected(true);
 
 		//TODO change this to vector
-
-		auto height = this->getPosition().y * 0.3;
+		auto height = this->getContentSize().height;
+		//auto height = this->getPosition().y * 0.3;
 		std::vector<Sprite *> temp_sprite;
 		std::vector<bool> boolean_tag;
 		int size = 4;
@@ -88,8 +100,10 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 			auto width = -temp->getContentSize().width/2;
 			temp->setScale(0.3);
 			//devided it into size(a num) pieces
-			temp->setPosition( width - width* 3 * static_cast<float> (i) / size,
-				height);
+			/*temp->setPosition(width - width* 3 * static_cast<float> (i) / size,
+				height);*/
+			temp->setPosition(width - width * 3 * static_cast<float> (i) / size,
+				height+100);
 			temp_sprite.push_back(temp);
 			this->addChild(temp);
 		}
@@ -159,7 +173,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 						tempNode below is a pointer to the TiledMap Layer
 						get the world coordination of temp to set the Positon of the temp_building
 					*/
-					auto tempNode = _base->getParent()->getParent()->getParent();
+					auto tempNode = this->getParent()->getParent()->getParent();
 					auto pos = this->convertToWorldSpace(temp->getPosition());
 					temp_building->setOpacity(75);
 					temp_building->setPosition(pos);
@@ -239,7 +253,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 									auto id = powerPlant->getIdCount();
 									powerPlant->setUnitID(id);
 									//send building message
-									tempManager->addMessages(tempManager->msgs->newCreateBuildingMessage(powerPlant->getUnitID(), powerPlant->getType(),BLUE,// this->getCampID(),
+									tempManager->addMessages(tempManager->msgs->newCreateBuildingMessage(powerPlant->getUnitID(), powerPlant->getType(), this->getCampID(),
 										this->getUnitID(), nodeLocation));								
 								}
 								//delete powerPlant;
@@ -274,7 +288,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 								//delete warFactory;
 							}
 						}
-						auto tempNode = _base->getParent()->getParent()->getParent();
+						auto tempNode = this->getParent()->getParent()->getParent();
 						tempNode->removeChild(temp_building,true);
 						setCreated(false);
 					};

@@ -85,7 +85,11 @@ void SoldierBase::Build() {
 		listener->onTouchBegan = CC_CALLBACK_2(SoldierBase::onTouchBegan, this);
 		_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
 		this->setProgressed(true);
-		SimpleAudioEngine::getInstance()->playEffect(CONSTRUCTION, false);
+		auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
+		auto tempManager = tempScene->getUnitManager();
+		if (this->getCampID() == tempManager->_myCamp) {
+			SimpleAudioEngine::getInstance()->playEffect(CONSTRUCTION, false);
+		}
 	}), CallFunc::create([] {BuildingBase::setIsBuilt(false); }), nullptr);
 	progress->runAction(sequence);
 
@@ -109,6 +113,11 @@ void SoldierBase::Build() {
 
 }
 bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
+	auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
+	auto tempManager = tempScene->getUnitManager();
+	if (this->getCampID() != tempManager->_myCamp) {
+		return false;
+	}
 	auto target = static_cast<Sprite*>(event->getCurrentTarget());
 	Vec2 locationInNode = target->convertToNodeSpace(touch->getLocation());
 	Size s = target->getContentSize();
@@ -237,6 +246,11 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 }
 
 bool WarFactory::onTouchBegan(Touch *touch, Event *event) {
+	auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
+	auto tempManager = tempScene->getUnitManager();
+	if (this->getCampID() != tempManager->_myCamp) {
+		return false;
+	}
 	auto target = static_cast<Sprite*>(event->getCurrentTarget());
 	Vec2 locationInNode = target->convertToNodeSpace(touch->getLocation());
 	Size s = target->getContentSize();
@@ -356,7 +370,11 @@ void MoneyMine::Build() {
 	auto sequence = Sequence::create(pft, CallFunc::create([=] {
 		this->removeChild(progress, true);
 		this->setProgressed(true);
-		SimpleAudioEngine::getInstance()->playEffect(CONSTRUCTION, false);
+		auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
+		auto tempManager = tempScene->getUnitManager();
+		if (this->getCampID() == tempManager->_myCamp) {
+			SimpleAudioEngine::getInstance()->playEffect(CONSTRUCTION, false);
+		}
 	}), CallFunc::create([] {BuildingBase::setIsBuilt(false); }), nullptr);
 	progress->runAction(sequence);
 
@@ -402,7 +420,11 @@ void WarFactory::Build() {
 		listener->onTouchBegan = CC_CALLBACK_2(WarFactory::onTouchBegan,this);
 		_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
 		this->setProgressed(true);
-		SimpleAudioEngine::getInstance()->playEffect(CONSTRUCTION, false);
+		auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
+		auto tempManager = tempScene->getUnitManager();
+		if (this->getCampID() == tempManager->_myCamp) {
+			SimpleAudioEngine::getInstance()->playEffect(CONSTRUCTION, false);
+		}
 	}), CallFunc::create([]{BuildingBase::setIsBuilt(false); }), nullptr);
 	progress->runAction(sequence);
 
@@ -444,7 +466,11 @@ void PowerPlant::Build() {
 	auto sequence = Sequence::create(pft, CallFunc::create([=] {
 		this->removeChild(progress, true);
 		this->setProgressed(true);
-		SimpleAudioEngine::getInstance()->playEffect(CONSTRUCTION, false);
+		auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
+		auto tempManager = tempScene->getUnitManager();
+		if (this->getCampID() == tempManager->_myCamp) {
+			SimpleAudioEngine::getInstance()->playEffect(CONSTRUCTION, false);
+		}
 	}), CallFunc::create([] {BuildingBase::setIsBuilt(false); }), nullptr);
 	progress->runAction(sequence);
 

@@ -51,14 +51,16 @@ public:
 
 	//the unit destroy effect
 	void destroyEffect(Unit *unit,bool type);
-	static void Building(int new_building_id, std::string new_building_type, int base_id, int from_building_id,
+	void Building(int new_building_id, std::string new_building_type, int base_id, int from_building_id,
 		cocos2d::Vec2 position);
-	static void NewUnitCreate(int new_unit_id, std::string new_unit_type, int base_id, int from_building_id,
+	void NewUnitCreate(int new_unit_id, std::string new_unit_type, int base_id, int from_building_id,
 		cocos2d::Vec2 position);
 
 	void updateMessage(float delta);
 
-	
+	int _myCamp;
+	int _enCamp;
+
 	void autoAttack(float dt);
 
 	Vector<Unit*>& getUnitVector() { return _unit_Vector; }
@@ -89,8 +91,7 @@ private:
 	Base * _base_me;
 	Base * _base_en;
 
-	int _myCamp;
-	int _enCamp;
+	
 
 
 	//Vector of the fightUnit created by us

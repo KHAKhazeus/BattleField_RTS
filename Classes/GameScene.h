@@ -32,12 +32,6 @@ private:
 
 	//vector for unit
 	Vector<MoneyMine*> _moneyMine;
-	Vector<PowerPlant*> _powerPlant;
-	Vector<WarFactory*>_warFactory;
-	Vector<SoldierBase*>_soldierBase;
-	Vector<Soldier*>_soldiers;
-	Vector<Dog*>_dogs;
-	Vector<Tank*>_tanks;
 	static std::shared_ptr<SocketServer> _socket_server;
 	static std::shared_ptr<SocketClient> _socket_client;
 
@@ -48,12 +42,6 @@ public:
 	virtual void update(float dt) override;
 	
 	Vector<MoneyMine*>& getVectorMine() { return _moneyMine; }
-	Vector<PowerPlant*>& getVectorPower() { return _powerPlant; }
-	Vector<SoldierBase*>& getVectorSoldier() { return _soldierBase; }
-	Vector<WarFactory*>& getVectorFactory() { return _warFactory; }
-	Vector<Soldier*>& getVectorSoldiers() { return _soldiers; }
-	Vector<Dog*>& getVectorDogs() { return _dogs; }
-	Vector<Tank*>& getVectorTanks() { return _tanks; }
 
 	Money* getMoney() { return _money; }
 

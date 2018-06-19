@@ -53,7 +53,11 @@ void Soldier::Create(Unit* soldierBase) {
 		soldierBase->removeChild(progress, true);
 		this->setVisible(true);
 		Soldier::setIsCreated(false);
-		SimpleAudioEngine::getInstance()->playEffect(SOLDIER, false);
+		auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
+		auto tempManager = tempScene->getUnitManager();
+		if (this->getCampID() == tempManager->_myCamp) {
+			SimpleAudioEngine::getInstance()->playEffect(SOLDIER, false);
+		}
 		//this->schedule(schedule_selector(FighterUnitBase::autoAttack), 2);
 	}), nullptr);
 	progress->runAction(sequence);
@@ -92,7 +96,11 @@ void Dog::Create(Unit* soldierBase) {
 		soldierBase->removeChild(progress, true);
 		this->setVisible(true);
 		Dog::setIsCreated(false);
-		SimpleAudioEngine::getInstance()->playEffect(DOG, false);
+		auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
+		auto tempManager = tempScene->getUnitManager();
+		if (this->getCampID() == tempManager->_myCamp) {
+			SimpleAudioEngine::getInstance()->playEffect(DOG, false);
+		}
 		//this->schedule(schedule_selector(FighterUnitBase::autoAttack), 2);
 	}), nullptr);
 	progress->runAction(sequence);
@@ -132,7 +140,11 @@ void Tank::Create(Unit* warFactory) {
 		warFactory->removeChild(progress, true);
 		this->setVisible(true);
 		Tank::setIsCreated(false);
-		SimpleAudioEngine::getInstance()->playEffect(TANK, false);
+		auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
+		auto tempManager = tempScene->getUnitManager();
+		if (this->getCampID() == tempManager->_myCamp) {
+			SimpleAudioEngine::getInstance()->playEffect(TANK, false);
+		}
 		//this->schedule(schedule_selector(FighterUnitBase::autoAttack), 2);
 	}), nullptr);
 	progress->runAction(sequence);

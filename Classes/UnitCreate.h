@@ -20,6 +20,7 @@ public:
 	bool init(int campID);
 	//TODO get the Sprite . A better Way?
 	Unit * getBase(); 
+
 	//get the range of the Base
 	int getMaxRange();
 	//get the boolean if we can build a building

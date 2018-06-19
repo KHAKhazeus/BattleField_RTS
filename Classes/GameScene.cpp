@@ -134,7 +134,7 @@ void GameScene::onEnterTransitionDidFinish() {
 
 
 	_money->schedule(schedule_selector(Money::updateMoney), 2);
-	_unit_Manager->schedule(schedule_selector(UnitManager::updateMessage), 5.0f / 60);
+	_unit_Manager->schedule(schedule_selector(UnitManager::updateMessage), 2.0);
 
 
 	//TODO initial the money and power
