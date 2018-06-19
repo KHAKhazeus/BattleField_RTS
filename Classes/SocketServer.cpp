@@ -198,9 +198,11 @@ void SocketServer::button_start()
 	char total[4 + 1] = "";
 	sprintf(total, "%4d", static_cast<int>(connections_.size()));
 
+	std::vector<std::string> campGroup = { "RED","BULE" };
+
 	for (auto i = 0; i < connections_.size(); i++)
 	{
-		connections_[i]->write_data("PLAYER" + std::string(total) + std::to_string(i + 1));
+		connections_[i]->write_data("PLAYER" + campGroup.at(i));
 	}
 	connection_num_ = connections_.size();
 	cocos2d::log("ConnectionSize %d\n", connection_num_);
@@ -260,7 +262,6 @@ void SocketServer::remove_connection(TcpConnection::pointer p)
 	//		connections_.erase(std::remove(connections_.begin(), connections_.end(), p), connections_.end());
 	std::unique_lock<std::mutex> lock(delete_mutex_);
 	auto position = std::find(connections_.begin(), connections_.end(), p);
-
 	if (position == connections_.end())
 		std::cout << "delete not succ\n";
 	else

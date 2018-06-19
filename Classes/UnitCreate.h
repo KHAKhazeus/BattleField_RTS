@@ -16,8 +16,8 @@ private:
 	bool _isCreated;
 public:
 	
-	static Base* create();
-	bool init();
+	static Base* create(int campID);
+	bool init(int campID);
 	//TODO get the Sprite . A better Way?
 	Unit * getBase(); 
 	//get the range of the Base

@@ -11,14 +11,22 @@ bool UnitManager::init(TiledMap * tiledMap, std::shared_ptr<SocketServer> spserv
 	_tiled_Map = tiledMap;
 	_socket_server = spserver;
 	_socket_client = spclient;
+	_myCamp = _socket_client->camp();
+	if (_myCamp == RED) {
+		_enCamp = BLUE;
+	}
+	else {
+		_enCamp = RED;
+	}
+
 	//this->schedule(schedule_selector(updateMessage), 5.0f / 60);
 	return true;
 }
 
 
 void UnitManager::initBase() {
-	auto myPos = getBasePosition("ObjectLayer",RED/* MY POSITION*/);
-	_base_me = Base::create();
+	auto myPos = getBasePosition("ObjectLayer",_myCamp);
+	_base_me = Base::create(_myCamp);
 	_base_me->setPosition(myPos);
 	auto vect = _base_me->getBase()->getContentSize();
 	auto range = _base_me->getRange();
@@ -30,12 +38,19 @@ void UnitManager::initBase() {
 	TiledMap::newMapId(_base_me->getUnitID(), _base_me);
 	//TODO set the camera to the Base
 	_tiled_Map->getTiledMap()->addChild(_base_me, 100);
-	_tiled_Map->getTiledMap()->setPosition(0 - _base_me->getPositionX() + vect.width * 2
-		, 0 - _base_me->getPositionY() + vect.height * 1.5);
+	if (_myCamp == BLUE) {
+		_tiled_Map->getTiledMap()->setPosition(0 - _base_me->getPositionX() + vect.width * 2
+			, 0 - _base_me->getPositionY() + vect.height * 2.0);
+	}
+	else {
+		_tiled_Map->getTiledMap()->setPosition(0 - _base_me->getPositionX() + vect.width * 2
+			, 0 - _base_me->getPositionY() + vect.height * 1.5);
+	}
+	
 
 	
-	auto enPos = getBasePosition("ObjectLayer", BLUE/*Enemy POSITION*/);
-	_base_en = Base::create();
+	auto enPos = getBasePosition("ObjectLayer", _enCamp);
+	_base_en = Base::create(_enCamp);
 	_base_en->setPosition(enPos);
 	vect = _base_en->getBase()->getContentSize();
 	range = _base_en->getRange();

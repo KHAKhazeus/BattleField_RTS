@@ -13,10 +13,12 @@
 #include "GameMessageInterface.h"
 #include "SocketMessage.h"
 #include "GameMessageOperation.h"
+#include "BattleField_RTS.h"
 #include <thread>
 #include <memory>
 #include <string>
 #include <mutex>
+
 
 
 using boost::asio::ip::tcp;
