@@ -65,7 +65,7 @@ Vec2 WarFactory::RandomPosition() {
 
 //Build the building
 void SoldierBase::Build() {
-	auto animate =BuildingBase::getAnimateByName("soldierBase", 0.1f, 23);
+	auto animate =BuildingBase::getAnimateByName("soldierBase", 0.2f, 23);
 	auto barSprite = Sprite::create("bar/loadingbar.png");
 	this->setProgressed(false);
 	ProgressTimer* progress = ProgressTimer::create(barSprite);
@@ -77,7 +77,7 @@ void SoldierBase::Build() {
 	Vec2 pos = Vec2(this->getPosition().x, this->getPosition().y);
 	progress->setPosition(Vec2(120, 200));
 	this->addChild(progress);
-	auto pft = ProgressFromTo::create(2.3f, progress->getPercentage(), 100);
+	auto pft = ProgressFromTo::create(4.6f, progress->getPercentage(), 100);
 	this->runAction(animate);
 	auto sequence = Sequence::create(pft,CallFunc::create([=] {
 		this->removeChild(progress,true);
@@ -339,7 +339,7 @@ bool WarFactory::onTouchBegan(Touch *touch, Event *event) {
 
 //Build the building
 void MoneyMine::Build() {
-	auto animate = BuildingBase::getAnimateByName("moneyMine", 0.2f, 24);
+	auto animate = BuildingBase::getAnimateByName("moneyMine", 0.3f, 24);
 	auto barSprite = Sprite::create("bar/loadingbar.png");
 	this->setProgressed(false);
 	ProgressTimer* progress = ProgressTimer::create(barSprite);
@@ -381,7 +381,7 @@ void MoneyMine::Build() {
 
 //Build the building
 void WarFactory::Build() {
-	auto animate = BuildingBase::getAnimateByName("tankBase", 0.1f, 23);
+	auto animate = BuildingBase::getAnimateByName("tankBase", 0.3f, 23);
 	auto barSprite = Sprite::create("bar/loadingbar.png");
 	this->setProgressed(false);
 	ProgressTimer* progress = ProgressTimer::create(barSprite);
@@ -394,7 +394,7 @@ void WarFactory::Build() {
 	Vec2 pos = Vec2(this->getPosition().x, this->getPosition().y);
 	progress->setPosition(Vec2(120, 160));
 	this->addChild(progress);
-	auto pft = ProgressFromTo::create(2.3f, progress->getPercentage(), 100);
+	auto pft = ProgressFromTo::create(6.9f, progress->getPercentage(), 100);
 	this->runAction(animate);
 	auto sequence = Sequence::create(pft, CallFunc::create([=] {
 		this->removeChild(progress, true);
@@ -427,7 +427,7 @@ void WarFactory::Build() {
 
 //Build the building
 void PowerPlant::Build() {
-	auto animate = PowerPlant::getAnimateByName("powerPlant", 0.1f, 23);
+	auto animate = PowerPlant::getAnimateByName("powerPlant", 0.2f, 23);
 	auto barSprite = Sprite::create("bar/loadingbar.png");
 	this->setProgressed(false);
 	ProgressTimer* progress = ProgressTimer::create(barSprite);
@@ -439,7 +439,7 @@ void PowerPlant::Build() {
 	Vec2 pos = Vec2(this->getPosition().x, this->getPosition().y);
 	progress->setPosition(Vec2(60, 100));
 	this->addChild(progress);
-	auto pft = ProgressFromTo::create(2.3f, progress->getPercentage(), 100);
+	auto pft = ProgressFromTo::create(4.6f, progress->getPercentage(), 100);
 	this->runAction(animate);
 	auto sequence = Sequence::create(pft, CallFunc::create([=] {
 		this->removeChild(progress, true);

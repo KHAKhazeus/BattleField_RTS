@@ -447,6 +447,19 @@ void UnitManager::destroyEffect(Unit* unit,bool type) {
 		_tiled_Map->getTiledMap()->addChild(blast, 210);
 		blast->setPosition(unit->getPosition());
 		auto callfunc = CallFunc::create([=] {
+			if (unit->getType() == "M") {
+				static_cast<GameScene*>(this->getParent())->getVectorMine().popBack();
+			}
+			else if (unit->getType() == "P") {
+				auto tempScene = static_cast<GameScene*>(this->getParent());
+				int power = tempScene->getPower()->getPower();
+				if (power <= 150) {
+					tempScene->getPower()->spendPower(power);
+				}
+				else {
+					tempScene->getPower()->spendPower(150);
+				}
+			}
 			_tiled_Map->getTiledMap()->removeChild(blast);
 		});
 		auto action = Sequence::create(animate, callfunc, NULL);
@@ -583,12 +596,13 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		dog->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
 		Dog::setIsCreated(true);
 		dog->Create(plant);
+		dog->schedule(schedule_selector(FighterUnitBase::autoAttack), 2);
 		//		TiledMap::setUnpass(tiledLocation);
 		//		auto tiledLocation = tempScene->tileCoordForPosition(nodeLocation);
 		TiledMap::newMapGrid(tiledLocation, dog->getUnitID());
 		TiledMap::newMapId(dog->getUnitID(), dog);
 		dog->setTiledPosition(tiledLocation);
-		dog->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
+		
 		static_cast<TMXTiledMap*>(plant->getParent())->addChild(dog, 200);
 		//tempScene->getVectorDogs().pushBack(dog);
 		tempScene->getMoney()->spendMoney(dog->getGold());
@@ -612,12 +626,13 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		soldier->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
 		Soldier::setIsCreated(true);
 		soldier->Create(plant);
+		soldier->schedule(schedule_selector(FighterUnitBase::autoAttack), 2);
 		//		TiledMap::setUnpass(tiledLocation);
 		static_cast<TMXTiledMap*>(plant->getParent())->addChild(soldier, 200);
 		//		auto tiledLocation = tempScene->tileCoordForPosition(nodeLocation);
 		TiledMap::newMapGrid(tiledLocation, soldier->getUnitID());
 		TiledMap::newMapId(soldier->getUnitID(), soldier);
-		soldier->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
+		
 		soldier->setTiledPosition(tiledLocation);
 		//	tempScene->getVectorSoldiers().pushBack(soldier);
 		tempScene->getMoney()->spendMoney(soldier->getGold());
@@ -642,12 +657,13 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		tank->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
 		Tank::setIsCreated(true);
 		tank->Create(plant);
+		tank->schedule(schedule_selector(FighterUnitBase::autoAttack), 2);
 		//		TiledMap::setUnpass(tiledLocation);
 		static_cast<TMXTiledMap*>(plant->getParent())->addChild(tank, 200);
 		//		auto tiledLocation = tempScene->tileCoordForPosition(nodeLocation);
 		TiledMap::newMapGrid(tiledLocation, tank->getUnitID());
 		TiledMap::newMapId(tank->getUnitID(), tank);
-		tank->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
+		
 		tank->setTiledPosition(tiledLocation);
 		//	tempScene->getVectorSoldiers().pushBack(soldier);
 		tempScene->getMoney()->spendMoney(tank->getGold());

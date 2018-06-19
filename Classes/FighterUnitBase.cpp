@@ -54,6 +54,7 @@ void Soldier::Create(Unit* soldierBase) {
 		this->setVisible(true);
 		Soldier::setIsCreated(false);
 		SimpleAudioEngine::getInstance()->playEffect(SOLDIER, false);
+		//this->schedule(schedule_selector(FighterUnitBase::autoAttack), 2);
 	}), nullptr);
 	progress->runAction(sequence);
 	// create a loading bar
@@ -92,6 +93,7 @@ void Dog::Create(Unit* soldierBase) {
 		this->setVisible(true);
 		Dog::setIsCreated(false);
 		SimpleAudioEngine::getInstance()->playEffect(DOG, false);
+		//this->schedule(schedule_selector(FighterUnitBase::autoAttack), 2);
 	}), nullptr);
 	progress->runAction(sequence);
 	// create a loading bar
@@ -131,6 +133,7 @@ void Tank::Create(Unit* warFactory) {
 		this->setVisible(true);
 		Tank::setIsCreated(false);
 		SimpleAudioEngine::getInstance()->playEffect(TANK, false);
+		//this->schedule(schedule_selector(FighterUnitBase::autoAttack), 2);
 	}), nullptr);
 	progress->runAction(sequence);
 	// create a loading bar

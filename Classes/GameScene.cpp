@@ -146,7 +146,7 @@ void GameScene::onEnterTransitionDidFinish() {
 	_unit_Manager->initBase();
 
 
-	_money->schedule(schedule_selector(Money::updateMoney), 1);
+	_money->schedule(schedule_selector(Money::updateMoney), 2);
 	_unit_Manager->schedule(schedule_selector(UnitManager::updateMessage), 5.0f / 60);
 
 
@@ -334,8 +334,17 @@ void GameScene::onTouchMoved(Touch* touch, Event* event) {
 }
 
 void GameScene::onTouchEnded(Touch* touch, Event* event) {
-	Vec2 touch_point = touch->getLocation() - _tiled_Map->getTiledMap()->getPosition();
-	mouse_rect->end = touch_point;
+	Vec2 touch_point = touch->getLocation();
+	if (touch_point.x < 0)
+		touch_point.x = 0;
+	if (touch_point.y < 0)
+		touch_point.y = 0;
+	if (touch_point.x > _screen_width)
+		touch_point.x = _screen_width;
+	if (touch_point.y > _screen_height)
+		touch_point.y = _screen_height;
+	Vec2 map_point = touch_point - _tiled_Map->getTiledMap()->getPosition();
+	mouse_rect->end = map_point;
 
 	float rect_width = fabs(mouse_rect->start.x - mouse_rect->end.x);
 	float rect_height = fabs(mouse_rect->start.y - mouse_rect->end.y);

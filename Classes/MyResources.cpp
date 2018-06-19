@@ -1,7 +1,7 @@
 #include "MyResources.h"
 #include "GameScene.h"
 bool Money::init() {
-	_money = 10000;
+	_money = 5100;
 	char temp[50];
 	sprintf(temp, "%d", _money);
 	_label =  Label::create(temp, "fonts/arial.ttf", 32);
