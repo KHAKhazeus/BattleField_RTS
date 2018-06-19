@@ -95,7 +95,7 @@ public:
 	}
 	Soldier() {
 		_lifeValue = 115;
-		_gold = 100;
+		_gold = 200;
 		_attackRange = 10;
 		_attack = 15;
 		_attackInterval = 0.2;
@@ -131,7 +131,7 @@ public:
 	}
 	Dog() {
 		_lifeValue = 100;
-		_gold = 150;
+		_gold = 250;
 		_attackRange = 2;
 		_attack = 20;
 		_attackInterval = 0.2;
@@ -166,7 +166,7 @@ public:
 	}
 	Tank() {
 		_lifeValue = 440;
-		_gold = 500;
+		_gold = 600;
 		_attackRange = 15;
 		_attack = 30;
 		_attackInterval = 0.5;
