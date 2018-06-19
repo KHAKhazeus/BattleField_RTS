@@ -40,7 +40,7 @@ public:
 		for (auto temp : msg)
 		{
 			//cocos2d::log("%s\n", temp);
-			GameMessage gms;
+			GameMessageGroup gms;
 			gms.ParseFromString(temp);
 			gameMessageSet.MergeFrom(gms);
 		}

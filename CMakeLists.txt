@@ -93,6 +93,7 @@ list(APPEND GAME_HEADER
      Classes/NetworkLayer.h
      Classes/SocketClient.h
      Classes/SocketServer.h
+	 Classes/SocketMessage.h
      Classes/GameScene.h
      Classes/Grid.h
      Classes/MyResources.h

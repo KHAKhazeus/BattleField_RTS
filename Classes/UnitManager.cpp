@@ -671,7 +671,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 }
 
 void UnitManager::updateMessage(float delta) {
-	std::vector<GameMessage>orders;
+	std::vector<GameMessage> orders;
 	std::string packages;
 	//package all the message
 	packages = msgs->combineMessagesToString(this->getMessages());
