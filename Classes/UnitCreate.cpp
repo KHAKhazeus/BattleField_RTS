@@ -3,9 +3,9 @@
 #include "SimpleAudioEngine.h"
 using namespace CocosDenshion;
 
-Base* Base::create() {
+Base* Base::create(int campID) {
 	auto base = new Base();
-	if (base && base->init()) {
+	if (base && base->init(campID)) {
 		base->autorelease();
 		return base;
 	}
@@ -13,7 +13,7 @@ Base* Base::create() {
 	return NULL;
 }
 
-bool Base::init() {
+bool Base::init(int campID) {
 	if(!Sprite::init()) {
 		return false;
 	}
@@ -40,7 +40,7 @@ bool Base::init() {
 	_base->setPosition(0,0);
 	//
 	setIsBuilding(true);
-	setCampID(RED);
+	setCampID(campID);
 
 	setRange(2);
 	setFixModel(FIX_SQUARE);

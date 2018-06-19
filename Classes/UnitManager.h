@@ -89,6 +89,10 @@ private:
 	Base * _base_me;
 	Base * _base_en;
 
+	int _myCamp;
+	int _enCamp;
+
+
 	//Vector of the fightUnit created by us
 	Vector<Unit*> _unit_Vector;
 

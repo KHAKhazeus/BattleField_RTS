@@ -75,7 +75,7 @@ void SocketClient::do_close()
 
 int SocketClient::camp() const
 {
-	while (!start_flag_);
+//	while (!start_flag_);
 	return camp_;
 }
 
@@ -125,8 +125,14 @@ void SocketClient::handle_connect(const error_code& error)
 			}
 			char header[4 + 1] = "";
 			strncat(header, data + 10, 4);
-			total_ = atoi(header);
-			camp_ = atoi(data + 14);
+	//		total_ = atoi(header);
+			if (data[10] == 'R') {
+				camp_ = RED;
+			}
+			else if (data[10] == 'B') {
+				camp_ = BLUE;
+			}
+	//		camp_ = atoi(data + 14);
 			cocos2d::log("GettheCamp %d", camp_);
 			start_flag_ = true;
 			boost::asio::async_read(socket_,
