@@ -12,11 +12,11 @@ bool UnitManager::init(TiledMap * tiledMap, std::shared_ptr<SocketServer> spserv
 	_socket_server = spserver;
 	_socket_client = spclient;
 	_myCamp = _socket_client->camp();
-	if (_myCamp == RED) {
-		_enCamp = BLUE;
+	if (_myCamp == REDCAMP) {
+		_enCamp = BLUECAMP;
 	}
 	else {
-		_enCamp = RED;
+		_enCamp = REDCAMP;
 	}
 
 	//this->schedule(schedule_selector(updateMessage), 5.0f / 60);
@@ -38,7 +38,7 @@ void UnitManager::initBase() {
 	TiledMap::newMapId(_base_me->getUnitID(), _base_me);
 	//TODO set the camera to the Base
 	_tiled_Map->getTiledMap()->addChild(_base_me, 100);
-	if (_myCamp == BLUE) {
+	if (_myCamp == BLUECAMP) {
 		_tiled_Map->getTiledMap()->setPosition(0 - _base_me->getPositionX() + vect.width * 2
 			, 0 - _base_me->getPositionY() + vect.height * 2.0);
 	}
@@ -75,7 +75,7 @@ void UnitManager::initBase() {
 Vec2 UnitManager::getBasePosition(std::string layername,int campId) {
 	auto group = _tiled_Map->getObjectGroup(layername);
 	ValueMap spawnPoint;
-	if (campId == RED) {
+	if (campId == REDCAMP) {
 		spawnPoint = group->getObject("BaseRed");
 	}
 	else {
@@ -495,7 +495,7 @@ void UnitManager::Building(int new_building_id, std::string new_building_type, i
 		MoneyMine* moneyMine = MoneyMine::create("moneyMine/MinetoMoney_24.png");
 		moneyMine->setUnitID(new_building_id);
 		moneyMine->setCampID(base_id);
-		if (moneyMine->getCampID() == RED) {
+		if (moneyMine->getCampID() == REDCAMP) {
 			moneyMine->setColor(Color3B(221, 160, 221));
 		}
 		else {
@@ -518,7 +518,7 @@ void UnitManager::Building(int new_building_id, std::string new_building_type, i
 		PowerPlant* powerPlant = PowerPlant::create("powerPlant/PowerBuilt_24.png");
 		powerPlant->setUnitID(new_building_id);
 		powerPlant->setCampID(base_id);
-		if (powerPlant->getCampID() == RED) {
+		if (powerPlant->getCampID() == REDCAMP) {
 			powerPlant->setColor(Color3B(221, 160, 221));
 		}
 		else {
@@ -541,7 +541,7 @@ void UnitManager::Building(int new_building_id, std::string new_building_type, i
 		SoldierBase* soldierBase = SoldierBase::create("soldierBase/soldierBase_23.png");
 		soldierBase->setUnitID(new_building_id);
 		soldierBase->setCampID(base_id);
-		if (soldierBase->getCampID() == RED) {
+		if (soldierBase->getCampID() == REDCAMP) {
 			soldierBase->setColor(Color3B(221, 160, 221));
 		}
 		else {
@@ -565,7 +565,7 @@ void UnitManager::Building(int new_building_id, std::string new_building_type, i
 		WarFactory* warFactory = WarFactory::create("tankBase/tankbuilding_23.png");
 		warFactory->setUnitID(new_building_id);
 		warFactory->setCampID(base_id);
-		if (warFactory->getCampID() == RED) {
+		if (warFactory->getCampID() == REDCAMP) {
 			warFactory->setColor(Color3B(221, 160, 221));
 		}
 		else {
@@ -597,7 +597,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		Dog* dog = Dog::create("dogRun/dog0.png");
 		dog->setUnitID(new_unit_id);
 		dog->setCampID(base_id);
-		if (dog->getCampID() == RED) {
+		if (dog->getCampID() == REDCAMP) {
 			dog->setColor(Color3B(255, 0, 0));
 		}
 		else {
@@ -627,7 +627,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		Soldier* soldier = Soldier::create("soldierRun/soldierstand.png");
 		soldier->setUnitID(new_unit_id);
 		soldier->setCampID(base_id);
-		if (soldier->getCampID() == RED) {
+		if (soldier->getCampID() == REDCAMP) {
 			soldier->setColor(Color3B(255, 0, 0));
 		}
 		else {
@@ -657,7 +657,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		Tank* tank = Tank::create("tank/tank0.png");
 		tank->setUnitID(new_unit_id);
 		tank->setCampID(base_id);
-		if (tank->getCampID() == RED) {
+		if (tank->getCampID() == REDCAMP) {
 			tank->setColor(Color3B(221, 160, 221));
 		}
 		else {

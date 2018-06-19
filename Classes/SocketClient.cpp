@@ -127,10 +127,16 @@ void SocketClient::handle_connect(const error_code& error)
 			strncat(header, data + 10, 4);
 	//		total_ = atoi(header);
 			if (data[10] == 'R') {
-				camp_ = RED;
+				camp_ = REDCAMP;
 			}
 			else if (data[10] == 'B') {
-				camp_ = BLUE;
+				camp_ = BLUECAMP;
+			}
+			if (data[11] == 'L') {
+				setMapselect(LOSTTEMP);
+			}
+			else if (data[11] == 'S') {
+				setMapselect(SNOWMAP);
 			}
 	//		camp_ = atoi(data + 14);
 			cocos2d::log("GettheCamp %d", camp_);

@@ -12,6 +12,7 @@
 #include <thread>
 #include <vector>
 #include <list>
+#include "BattleField_RTS.h"
 #include "SocketMessage.h"
 #include "GameMessageOperation.h"
 #include "include/boost/asio.hpp"
@@ -35,6 +36,8 @@ public:
 
 	void write_data(std::string s);
 
+	
+
 	std::string read_data();
 	bool error()const { return error_flag_; }
 
@@ -51,7 +54,7 @@ private:
 
 	void check_timer();
 	void delete_from_parent();
-
+	
 	tcp::socket socket_;
 	SocketServer* parent;
 	bool error_flag_{ false };
@@ -80,6 +83,8 @@ public:
 	*/
 	std::vector<TcpConnection::pointer> get_connection() const;
 
+	void setMapselect(int mapID) { _mapselect = mapID; }
+	int getMapselect() { return _mapselect; }
 	/**
 	* \brief remove a connction, if there is a connction
 	* \param p tcp connection
@@ -120,6 +125,7 @@ private:
 	std::thread *thread_, *button_thread_{ nullptr };
 	std::mutex delete_mutex_;
 	bool error_flag_{ false };
+	int _mapselect { LOSTTEMP };
 	std::condition_variable data_cond_;
 };
 

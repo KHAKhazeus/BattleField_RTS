@@ -86,6 +86,8 @@ public:
 	*/
 	bool error()const { return error_flag_; }
 
+	void setMapselect(int mapID) { _mapSelect = mapID; }
+	int getMapselect() { return _mapSelect; }
 	/**
 	* \brief start from 1
 	* \return camp number
@@ -110,6 +112,8 @@ private:
 
 	void start_connect();
 
+	
+
 	void handle_connect(const error_code& error);
 
 	void handle_read_header(const error_code& error);
@@ -130,6 +134,7 @@ private:
 
 	std::thread *thread_, *read_thread_;
 	int camp_, total_;
+	int _mapSelect;
 
 	std::condition_variable data_cond_;
 	std::mutex mut;

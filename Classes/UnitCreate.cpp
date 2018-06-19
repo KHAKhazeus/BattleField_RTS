@@ -239,7 +239,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 									auto id = powerPlant->getIdCount();
 									powerPlant->setUnitID(id);
 									//send building message
-									tempManager->addMessages(tempManager->msgs->newCreateBuildingMessage(powerPlant->getUnitID(), powerPlant->getType(),BLUE,// this->getCampID(),
+									tempManager->addMessages(tempManager->msgs->newCreateBuildingMessage(powerPlant->getUnitID(), powerPlant->getType(),BLUECAMP,// this->getCampID(),
 										this->getUnitID(), nodeLocation));								
 								}
 								//delete powerPlant;

@@ -3,8 +3,8 @@
 
 #define FIX_SQUARE 0
 #define FIX_HEIGHT 1
-#define RED 99
-#define BLUE 66
+#define REDCAMP 99
+#define BLUECAMP 66
 #define MONEYMINE_GOLD 2000
 #define WARFACTORY_GOLD 2000
 #define SOLDIERBASE_GOLD 500
@@ -24,7 +24,8 @@
 #define LOST "unitLost.mp3"
 #define TANKBULLET "tankbullet.mp3"
 #define EXPLODE "explode.mp3"
-
+#define LOSTTEMP 13
+#define SNOWMAP  9
 
 
 #endif // !_BATTLEFIELD_RTS

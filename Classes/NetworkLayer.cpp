@@ -8,6 +8,7 @@
 #include "NetworkLayer.h"
 #include "SimpleAudioEngine.h"
 #include "MenuScene.h"
+#include "BattleField_RTS.h"
 #include "GameMessageOperation.h"
 #include "LoadingScene.h"
 
@@ -352,16 +353,19 @@ bool NetworkLayer::init(){
 
 			case Widget::TouchEventType::ENDED: {
 				select_map->setScale(1.0);
+				if (_socket_server != NULL) {
+					if (select_map->getTitleText().compare("Select Map Lost Temple") == 0) {
+						select_map->setTitleText("Select Map Snow World");
+						_socket_server->setMapselect(SNOWMAP);
+						TiledMap::setMapFlagSnow();
+					}
+					else if (select_map->getTitleText().compare("Select Map Snow World") == 0) {
+						select_map->setTitleText("Select Map Lost Temple");
+						_socket_server->setMapselect(LOSTTEMP);
+						TiledMap::setMapFlagLost();
 
-				if (select_map->getTitleText().compare("Select Map Lost Temple") == 0) {
-					select_map->setTitleText("Select Map Snow World");
-					TiledMap::setMapFlagSnow();
+					}
 				}
-				else if (select_map->getTitleText().compare("Select Map Snow World") == 0) {
-					select_map->setTitleText("Select Map Lost Temple");
-					TiledMap::setMapFlagLost();
-				}
-
 				break;
 			}
 
@@ -538,6 +542,14 @@ void NetworkLayer::startSchedule(float dt) {
 }
 void NetworkLayer::wait_start() {
 	unscheduleAllSelectors();
+	auto map = _socket_client->getMapselect();
+	cocos2d::log("%d\n", map);
+	if (_socket_client->getMapselect() == LOSTTEMP) {
+		TiledMap::setMapFlagLost();
+	}
+	else if (_socket_client->getMapselect() == SNOWMAP) {
+		TiledMap::setMapFlagSnow();
+	}
 	auto gameScene = LoadingScene::createScene(_socket_server, _socket_client);
 	this->addChild(gameScene);
 	

@@ -100,8 +100,8 @@ public:
 	//find free grid near
 	Vec2 findFreeNear(Vec2 position);
 
-	static void setMapFlagLost() { _map_flag = 0; }
-	static void setMapFlagSnow() { _map_flag = 1; }
+	static void setMapFlagLost() { _map_flag = LOSTTEMP; }
+	static void setMapFlagSnow() { _map_flag = SNOWMAP; }
 	
 	
 	CREATE_FUNC(TiledMap);
@@ -120,7 +120,7 @@ private:
 	//The Pointer to the collidable Layer
 	TMXLayer* _collidable;
 	//The flag to select map
-	static bool _map_flag;
+	static int _map_flag;
 };
 
  // !_TILEDMAP
