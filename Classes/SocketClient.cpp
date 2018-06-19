@@ -9,153 +9,199 @@
 #include <functional>
 #include <iostream>
 #include <cocos2d.h>
+#include <algorithm>
 #define MAX_LENGTH 8000
 
-boost::asio::io_service* SocketClient::_io = new boost::asio::io_service;
-
-SocketClient::~SocketClient(){
-    stopClient();
+SocketClient* SocketClient::create(std::string ip, int port)
+{
+	auto s = new SocketClient(ip, port);
+	s->thread_ = new std::thread(
+		std::bind(static_cast<std::size_t(boost::asio::io_service::*)()>(&boost::asio::io_service::run),
+			&s->io_service_));
+	//	s->thread_->detach();
+	return s;
 }
 
-SocketClient* SocketClient::create(std::string server_ip, int port_nunber){
-    try{
-        auto new_client = new SocketClient(server_ip, port_nunber);
-		if(new_client){
-            new_client->startClient();	
-        }
-        return new_client;
-    }
-    catch(...){
-        std::cerr << "Failed to Create Client" << std::endl;
-        return static_cast<SocketClient*>(nullptr);
-    }
+std::vector<GameMessage> SocketClient::get_game_messages()
+{
+	auto game_message_set_stirng = read_data();
+	return GameMessageOperation::stringToVector(game_message_set_stirng);
 }
 
-void SocketClient::startClient(){
-    auto new_thread = new std::thread(std::bind(static_cast<std::size_t(boost::asio::io_service::*)()>(&boost::asio::io_service::run),&(*_io)));
-    //new_thread->detach();
-    _exchange_thread.reset(new_thread);
-    _exchange_thread->detach();
-    startConnect();
+void SocketClient::send_game_message(const std::vector<GameMessage>& vec_game_msg)
+{
+	auto set_string = GameMessageOperation::vectorToString(vec_game_msg);
+	write_data(set_string);
 }
 
-bool SocketClient::checkStop(){
-    if(_error_flag || _cancel_flag || _stop_flag){
-        stopClient();
-        return true;
-    }
-    else{
-        return false;
-    }
+void SocketClient::send_string(std::string s)
+{
+	if (error_flag_)
+		return;
+	write_data(s);
 }
 
-void SocketClient::stopClient(){
-    if(!_stop_flag){
-        try{
-            std::unique_lock<std::mutex> lock(_mutex);
-            _stop_flag = true;
-            if(_error_flag){
-				cocos2d::log("Client Error!\n");
-                std::cerr << "Client Error!" << std::endl;
-                std::string error_message = "Error";
-                _message_set_deque.push_back(error_message);
-            }
-            else if(_cancel_flag){
-				cocos2d::log("Client Successfully Cancelled!\n");
-                std::cout << "Client Successfully Cancelled" << std::endl;
-                std::string cancel_message = "Cancelled";
-                _message_set_deque.push_back(cancel_message);
-            }
-            else{
-                std::cerr << "Unknown Errors" << std::endl;
-                std::string error_message = "Error";
-                _message_set_deque.push_back(error_message);
-            }
-            //_exchange_thread will exit after work destruct
-            _io->stop();
-            _cond.notify_one();
-            _socket.close();
-            if(_read_thread){
-                _read_thread->join();
-            }
-            _socket.shutdown(tcp::socket::shutdown_both);
-        }
-        catch(...){
-            std::cerr << "Client Shutdown Error!" << std::endl;
-        }
-    }
+std::string SocketClient::get_string()
+{
+	return read_data();
 }
 
-std::string SocketClient::read_data_once(){
-    std::unique_lock<std::mutex> lk(_mutex);
-	while(_message_set_deque.empty()) {
-        _cond.wait(lk);
-    }
-    auto new_message = _message_set_deque.front();
-    _message_set_deque.pop_front();
+void SocketClient::do_close()
+{
+	try {
+		std::lock_guard<std::mutex> lk{ mut };
+		error_flag_ = true;
+		SocketMessage empty_msg;
+		memcpy(empty_msg.data(), "0001\0", 5);
+		read_msg_deque_.push_back(empty_msg);
+		data_cond_.notify_one();
+		io_service_.stop();
+		error_code ec;
+		socket_.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
+		if (!ec)
+			throw boost::system::error_code(ec);
+		socket_.close();
+		thread_->join();
+
+
+	}
+	catch (std::exception&e)
+	{
+
+		e.what();
+	}
+
+}
+
+int SocketClient::camp() const
+{
+	while (!start_flag_);
+	return camp_;
+}
+
+int SocketClient::total() const
+{
+	while (!start_flag_);
+	return total_;
+}
+
+void SocketClient::write_data(std::string s)
+{
+	SocketMessage msg;
+	if (s.size() == 0)
+	{
+		s = std::string("\0");
+		msg.body_length(1);
+	}
+	else
+		msg.body_length(s.size());
+	memcpy(msg.body(), &s[0u], msg.body_length());
+	msg.encode_header();
+	boost::asio::write(socket_,
+		boost::asio::buffer(msg.data(), msg.length()));
+}
+
+void SocketClient::start_connect()
+{
+	socket_.async_connect(endpoint_,
+		std::bind(&SocketClient::handle_connect, this,
+			std::placeholders::_1));
+}
+
+void SocketClient::handle_connect(const error_code& error)
+{
+	try
+	{
+		if (!error)
+		{
+
+			std::cout << "connected\n";
+			char data[30] = { 0 };
+			error_code error;
+			size_t length = socket_.read_some(boost::asio::buffer(data, 30), error);
+			if (error || length < 10) {
+				cocos2d::log("Empty Message\n");
+				throw boost::system::error_code(error);
+			}
+			char header[4 + 1] = "";
+			strncat(header, data + 10, 4);
+			total_ = atoi(header);
+			camp_ = atoi(data + 14);
+			cocos2d::log("GettheCamp %d", camp_);
+			start_flag_ = true;
+			boost::asio::async_read(socket_,
+				boost::asio::buffer(read_msg_.data(), SocketMessage::header_length),
+				std::bind(&SocketClient::handle_read_header, this,
+					std::placeholders::_1));
+
+		}
+		else
+		{
+			std::cerr << "failed to connect" << std::endl;
+			//			throw asio::system_error(error);
+			error_flag_ = true;
+
+		}
+	}
+	catch (std::exception& e)
+	{
+		//		std::terminate();
+		//		do_close();
+		std::cerr << "Exception in connection: " << e.what() << "\n";
+	}
+}
+
+void SocketClient::handle_read_header(const error_code& error)
+{
+	if (!error && read_msg_.decode_header())
+	{
+		boost::asio::async_read(socket_,
+			boost::asio::buffer(read_msg_.body(), read_msg_.body_length()),
+			std::bind(&SocketClient::handle_read_body, this,
+				std::placeholders::_1));
+	}
+	else
+	{
+		do_close();
+	}
+}
+
+void SocketClient::handle_read_body(const error_code& error)
+{
+	if (!error)
+	{
+		std::lock_guard<std::mutex> lk{ mut };
+		read_msg_deque_.push_back(read_msg_);
+		data_cond_.notify_one();
+		std::cout << "read completed\n";
+
+		boost::asio::async_read(socket_,
+			boost::asio::buffer(read_msg_.data(), SocketMessage::header_length),
+			std::bind(&SocketClient::handle_read_header, this,
+				std::placeholders::_1));
+	}
+	else
+	{
+		do_close();
+	}
+}
+
+std::string SocketClient::read_data()
+{
+	if (error_flag_)
+		return "";
+	std::unique_lock<std::mutex> lk{ mut };
+	while (read_msg_deque_.empty())
+		data_cond_.wait(lk);
+	auto read_msg = read_msg_deque_.front();
+	read_msg_deque_.pop_front();
 	lk.unlock();
-    return new_message;
+	auto ret = std::string(read_msg.body(), read_msg.body_length());
+	return ret;
 }
 
-void SocketClient::readMessages(){
-    if(!checkStop()){
-        boost::asio::async_read(_socket, boost::asio::buffer(&_message_set_buffer, MAX_LENGTH), std::bind(&SocketClient::pushMessageSet, this, std::placeholders::_1));
-    }
+void SocketClient::close()
+{
+	do_close();
 }
 
-void SocketClient::pushMessageSet(const error_code &err){
-    if(!err){
-        _message_set_deque.push_back(_message_set_buffer);
-        readMessages();
-    }
-    else{
-        std::unique_lock<std::mutex> lock(_mutex);
-        _error_flag = true;
-    }
-}
-
-void SocketClient::connectHandle(const error_code &err){
-    if(!err){
-		cocos2d::log("Client Connected!\n");
-        std::cout << "Client Connected" << std::endl;
-        auto new_thread = new std::thread(std::bind(&SocketClient::readMessages, this));
-        _read_thread.reset(new_thread);
-    }
-    else{
-		cocos2d::log("Failed to Connected!\n");
-        std::cerr << "Failed to Connect" << std::endl;
-        std::unique_lock<std::mutex> lock(_mutex);
-        _error_flag = true;
-        lock.unlock();
-        checkStop();
-    }
-}
-
-//if successfully called the async_write, then return true. Not to say transmitting would be successful.
-bool SocketClient::writeMessages(std::string message_set){
-    if(!checkStop()){
-        static int times = 0;
-        static int error_times = 0;
-        boost::asio::async_write(_socket, boost::asio::buffer(message_set), [](const error_code &err, std::size_t bytes_transferred){
-            if(!err){
-                times ++;
-                std::cout << times << ".: Successfully Upload Messages, bytes transferred: " << bytes_transferred << std::endl;
-            }
-            else{
-                error_times ++;
-                std::cout << error_times << ".: Error Upload Messages, bytes transferred: " << bytes_transferred << "Missing Bytes: Unknown" << std::endl;
-            }
-        });
-        return true;
-    }
-    else{
-        return false;
-    }
-}
-
-void SocketClient::startConnect(){
-	cocos2d::log("start Connection!\n");
-    std::cout << "Client Start Connecting" << std::endl;
-    //std::cout << _endpoint.port() << _endpoint.address() << std::endl;
-    _socket.async_connect(_endpoint, std::bind(&SocketClient::connectHandle, this, std::placeholders::_1));
-}

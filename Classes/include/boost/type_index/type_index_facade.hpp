@@ -41,11 +41,11 @@ namespace boost { namespace typeindex {
 /// public:
 ///     typedef std::type_info type_info_t;
 /// private:
-///     const type_info_t* data_;
+///     const type_info_t* _data;
 ///
 /// public:
 ///     stl_type_index(const type_info_t& data) noexcept
-///         : data_(&data)
+///         : _data(&data)
 ///     {}
 /// // ...
 /// };

@@ -8,6 +8,7 @@
 #include "NetworkLayer.h"
 #include "SimpleAudioEngine.h"
 #include "MenuScene.h"
+#include "GameMessageOperation.h"
 #include "LoadingScene.h"
 
 #ifdef TEST
@@ -63,7 +64,7 @@ void NetworkLayer::initializeClientSide(){
 
 void NetworkLayer::resetClientAndServer(){
     if(_socket_client){
-        _socket_client->stopClient();
+        _socket_client->do_close();
     }
     _socket_client.reset(static_cast<SocketClient*>(nullptr),[](SocketClient*){});
     _socket_server.reset(static_cast<SocketServer*>(nullptr),[](SocketServer*){});
@@ -113,6 +114,9 @@ bool NetworkLayer::init(){
                 case Widget::TouchEventType::ENDED:{
                     start_server->setScale(1.0);
                     NetworkLayer::initializeServerSide();    //need to be extended
+			//		auto temp = _socket_client->getGameMessages();
+			//		auto str = GameMessageOperation::vectorToString(temp);
+			//		cocos2d::log("%s", str);
                     break;
                 }
                     
@@ -266,7 +270,12 @@ bool NetworkLayer::init(){
                     start_client->setScale(1.0);
                     auto ip_string = ipbox->getString();
                     auto port_string = portbox->getString();
-                    NetworkLayer::initializeClientSide();    //need to be extended
+					if (_socket_client == NULL) {
+						NetworkLayer::initializeClientSide();    //need to be extended
+						this->schedule(schedule_selector(NetworkLayer::startSchedule), 0.1f);
+					}
+                   
+
                     break;
                 }
                     
@@ -388,11 +397,14 @@ bool NetworkLayer::init(){
                     
                 case Widget::TouchEventType::ENDED:{
                     start_game->setScale(1.0);
-					if (_socket_server != NULL) {
+				/*	if (_socket_server != NULL) {
 						_socket_server->startService();
-					}
+					}*/
+					_socket_server->button_start();
+				/*	auto temp = _socket_client->get_game_messages();
+					auto str = GameMessageOperation::vectorToString(temp);
+					cocos2d::log("%s", str);*/
 					auto gameScene = LoadingScene::createScene(_socket_server, _socket_client);
-					//	Director::getInstance()->replaceScene(gameSceneAnimate);
 					this->addChild(gameScene);
 
                     //need to be extended
@@ -516,4 +528,17 @@ void NetworkLayer::close(Node* pSender){
     targets.pushBack(pSender);
     fadeOutIteration(targets);
     pSender->scheduleOnce(schedule_selector(NetworkLayer::removeLayer), 0.5);
+}
+
+
+void NetworkLayer::startSchedule(float dt) {
+	if (_socket_client->started()) {
+		wait_start();
+	}
+}
+void NetworkLayer::wait_start() {
+	unscheduleAllSelectors();
+	auto gameScene = LoadingScene::createScene(_socket_server, _socket_client);
+	this->addChild(gameScene);
+	
 }

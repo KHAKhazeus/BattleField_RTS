@@ -12,63 +12,116 @@
 #include <thread>
 #include <vector>
 #include <list>
+#include "SocketMessage.h"
+#include "GameMessageOperation.h"
 #include "include/boost/asio.hpp"
 #include "GameMessageInterface.h"
 using boost::asio::ip::tcp;
 using boost::system::error_code;
 
-class ClientConnection{
+typedef std::shared_ptr<tcp::socket> socket_ptr;
+
+class SocketServer;
+class TcpConnection
+	: public std::enable_shared_from_this<TcpConnection>
+{
 public:
-    tcp::socket* getSocket();
-    std::string* getBuffer();
-    int& getSuccessTimes();
-    int& getFailureTimes();
-    int& mutableID();
-    const int& getID();
-    static std::shared_ptr<ClientConnection> create(boost::asio::io_service &io_service);
+	typedef std::shared_ptr<TcpConnection> pointer;
+	//	~TcpConnection();
+	static pointer create(boost::asio::io_service& io_service, SocketServer* parent);
+	tcp::socket& socket();
+
+	void start();
+
+	void write_data(std::string s);
+
+	std::string read_data();
+	bool error()const { return error_flag_; }
+
+
+	void do_close();
 private:
-    ClientConnection(boost::asio::io_service &io_service);
-    int _ID;
-    tcp::socket _socket;
-    std::string _message_buffer;
-    int _success_times;
-    int _failure_times;
+
+	void handle_read_header(const error_code& error);
+
+	void handle_read_body(const error_code& error);
+
+
+	TcpConnection(boost::asio::io_service& io_service, SocketServer* parent);;
+
+	void check_timer();
+	void delete_from_parent();
+
+	tcp::socket socket_;
+	SocketServer* parent;
+	bool error_flag_{ false };
+
+	SocketMessage read_msg_;
+	std::deque<SocketMessage> read_msg_deque_;
+	std::condition_variable data_cond_;
+	std::mutex mut_;
+	//	asio::steady_timer steady_timer_;
+
 };
 
-class SocketServer{
+class SocketServer
+{
 public:
-    static SocketServer* create(int port_number);
-    void startService();
-    ~SocketServer();
-    void stopAccept();
-    void stopServer();
-    
+
+	static SocketServer* create(int port = 8080);
+	//	~SocketServer() { acceptor_.close(); io_service_->stop(); }
+	/**
+	* \brief close the server
+	*/
+	void close();
+	/**
+	* \brief
+	* \return TcpConnection vector
+	*/
+	std::vector<TcpConnection::pointer> get_connection() const;
+
+	/**
+	* \brief remove a connction, if there is a connction
+	* \param p tcp connection
+	*/
+	void remove_connection(TcpConnection::pointer p);
+	/**
+	* \brief start the game
+	*/
+	void button_start();
+
+	/**
+	* \brief
+	* \return if error occured
+	*/
+	bool error() const;
+
+	/**
+	* \brief
+	* \return total connction number
+	*/
+	int connection_num() const;
 private:
-    SocketServer(int port_number);
-    void startServerListen();
-    void startAccept();
-    bool checkStop();
-    void handleAccept(std::shared_ptr<ClientConnection> new_connection, const error_code &err);
-    void readFromClient(std::shared_ptr<ClientConnection> client_connection);
-    void readHandler(std::shared_ptr<ClientConnection> client_connection, const error_code &err);
-    void startSend();
-    void loopSend();
-    std::string combineMessages();
-    void sendMessages(std::string message);
-    
-    bool _error_flag{false}, _cancel_flag{false}, _stop_flag{false}, _stop_connect{false};
-    static boost::asio::io_service *_io;
-    tcp::acceptor _acceptor;
-    std::mutex _mut;
-    std::condition_variable _cond;
-    std::vector<std::shared_ptr<ClientConnection>> _connections;
-    std::vector<std::shared_ptr<std::thread>> _io_run_threads_vec;
-    std::shared_ptr<std::thread> _accept_thread{static_cast<std::thread*>(nullptr), [](std::thread*){}};
-    std::vector<std::shared_ptr<std::thread>> _contact_threads_vector;
-    std::shared_ptr<std::thread> _send_thread{static_cast<std::thread*>(nullptr), [](std::thread*){}};
-    std::vector<std::list<std::string>> _stored_lists;
-    std::vector<std::string> _combined_messages;
-    boost::asio::io_service::work* _work;
+	SocketServer(int port);
+	void start_accept();
+
+	void handle_accept(TcpConnection::pointer new_connection,
+		const error_code& error);
+
+	void loop_process();
+
+
+	tcp::acceptor acceptor_;
+	std::vector<TcpConnection::pointer> connections_;
+	int connection_num_;
+
+	static boost::asio::io_service* io_service_;
+
+	std::thread *thread_, *button_thread_{ nullptr };
+	std::mutex delete_mutex_;
+	bool error_flag_{ false };
+	std::condition_variable data_cond_;
 };
+
 
 #endif /* __SOCKET_SERVER_H__ */

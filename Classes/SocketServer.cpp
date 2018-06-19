@@ -10,294 +10,290 @@
 #include <algorithm>
 #include <iterator>
 #include "cocos2d.h"
-#define MAX_LENGTH 8000
 
-boost::asio::io_service* SocketServer::_io = new boost::asio::io_service;
+boost::asio::io_service* SocketServer::io_service_ = new boost::asio::io_service;
 
-ClientConnection::ClientConnection(boost::asio::io_service &io_service):_socket(io_service){};
+//TcpConnection::~TcpConnection()
+//{
+//	std::cout << "delete";
+//	delete_from_parent();
+//}
 
-std::shared_ptr<ClientConnection> ClientConnection::create(boost::asio::io_service &io_service){
-    auto ptr = new ClientConnection(io_service);
-    std::shared_ptr<ClientConnection> new_shared;
-    new_shared.reset(ptr);
-    return new_shared;
+TcpConnection::pointer TcpConnection::create(boost::asio::io_service& io_service, SocketServer* parent)
+{
+	return pointer(new TcpConnection(io_service, parent));
 }
 
-tcp::socket* ClientConnection::getSocket(){
-    return &_socket;
+tcp::socket& TcpConnection::socket()
+{
+	return socket_;
 }
 
-std::string* ClientConnection::getBuffer(){
-    return &_message_buffer;
+void TcpConnection::start()
+{
+	//	
+	//	_timer_.async_wait(std::bind(&TcpConnection::check_timer, this));
+	//	steady_timer_.expires_from_now(std::chrono::seconds(60));
+	boost::asio::async_read(socket_,
+		boost::asio::buffer(read_msg_.data(), SocketMessage::header_length),
+		std::bind(&TcpConnection::handle_read_header, this,
+			std::placeholders::_1));
 }
 
-int& ClientConnection::getSuccessTimes(){
-    return _success_times;
+void TcpConnection::write_data(std::string s)
+{
+	if (error_flag_) return;
+	SocketMessage msg;
+	if (s.size() == 0)
+	{
+		s = std::string("\0");
+		msg.body_length(1);
+	}
+	else
+		msg.body_length(s.size());
+	memcpy(msg.body(), &s[0u], msg.body_length());
+	msg.encode_header();
+	boost::asio::write(socket_,
+		boost::asio::buffer(msg.data(), msg.length()));
 }
 
-int& ClientConnection::getFailureTimes(){
-    return _failure_times;
+std::string TcpConnection::read_data()
+{
+	if (error_flag_)
+		return "";
+	std::unique_lock<std::mutex> lk{ mut_ };
+	while (read_msg_deque_.empty())
+		data_cond_.wait(lk);
+	auto read_msg = read_msg_deque_.front();
+	read_msg_deque_.pop_front();
+	lk.unlock();
+	auto ret = std::string(read_msg.body(), read_msg.body_length());
+	return ret;
 }
 
-const int& ClientConnection::getID(){
-    return _ID;
+void TcpConnection::do_close()
+{
+	try {
+		//		steady_timer_.cancel();
+		error_flag_ = true;
+		SocketMessage empty_msg;
+		memcpy(empty_msg.data(), "0001\0", 5);
+		read_msg_deque_.push_back(empty_msg);
+		read_msg_deque_.push_back(empty_msg);
+		data_cond_.notify_one();
+		error_code ec;
+		socket_.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
+		if (!ec)
+			throw boost::system::error_code(ec);
+		socket_.close();
+
+
+	}
+	catch (std::exception&e)
+	{
+		e.what();
+	}
+	delete_from_parent();
 }
 
-int& ClientConnection::mutableID(){
-    return _ID;
+void TcpConnection::handle_read_header(const error_code& error)
+{
+	if (!error && read_msg_.decode_header())
+	{
+		//		steady_timer_.expires_from_now(std::chrono::seconds(10));
+		std::cout << "here\n";
+		boost::asio::async_read(socket_,
+			boost::asio::buffer(read_msg_.body(), read_msg_.body_length()),
+			std::bind(&TcpConnection::handle_read_body, this,
+				std::placeholders::_1));
+	}
+	else
+	{
+		do_close();
+	}
 }
 
-SocketServer::SocketServer(int port_number):_acceptor(*_io, tcp::endpoint(tcp::v4(), port_number)){
-    _work = new boost::asio::io_service::work(*_io);
-    (*_io).restart();
+void TcpConnection::handle_read_body(const error_code& error)
+{
+	if (!error)
+	{
+		//		steady_timer_.expires_from_now(std::chrono::seconds(10));
+		std::lock_guard<std::mutex> lk{ mut_ };
+		read_msg_deque_.push_back(read_msg_);
+		data_cond_.notify_one();
+		boost::asio::async_read(socket_,
+			boost::asio::buffer(read_msg_.data(), SocketMessage::header_length),
+			std::bind(&TcpConnection::handle_read_header, this,
+				std::placeholders::_1));
+	}
+	else
+	{
+		do_close();
+	}
 }
 
-SocketServer::~SocketServer(){
-    stopAccept();
-    stopServer();
+TcpConnection::TcpConnection(boost::asio::io_service& io_service, SocketServer* parent) :
+	socket_(io_service), parent(parent)
+	//,steady_timer_(io_service)
+{
+	std::cout << "new tcp" << std::endl;
 }
 
-SocketServer* SocketServer::create(int port_number){
-    try{
-        port_number = 8080;
-        auto new_server = new SocketServer(port_number);
-        if(new_server){	
-            new_server->startServerListen();
-        }
-		cocos2d::log("Server Startup Success\n");
-        std::cout << "Server Startup Success" << std::endl;
-        return new_server;
-    }
-    catch(...){
-		cocos2d::log("Server Startup Error\n");
-        std::cerr << "Server Startup Error" << std::endl;
-        return static_cast<SocketServer*>(nullptr);
-    }
+//void TcpConnection::check_timer()
+//{
+//	if (steady_timer_.expires_at() <= std::chrono::steady_clock::now())
+//	{
+//		// The deadline has passed. The socket is closed so that any outstanding
+//		// asynchronous operations are cancelled.
+//		do_close();
+//		steady_timer_.expires_at(std::chrono::steady_clock::time_point::max());
+//		return;
+//	}
+//
+//	// Put the actor back to sleep.
+//	steady_timer_.async_wait(std::bind(&TcpConnection::check_timer, this));
+//}
+
+
+void TcpConnection::delete_from_parent()
+{
+	if (parent)
+		shared_from_this()->parent->remove_connection(shared_from_this());
+	parent = nullptr;
 }
 
-void SocketServer::startServerListen(){
-    try{
-        //!Extend
-        auto new_thread = new std::thread(std::bind(static_cast<std::size_t(boost::asio::io_service::*)()>(&boost::asio::io_service::run),&(*_io)));
-        new_thread->detach();
-        std::shared_ptr<std::thread> new_ptr;
-        new_ptr.reset(new_thread);
-        _io_run_threads_vec.push_back(new_ptr);
 
-        //_acceptor.listen();
-		cocos2d::log("Server Listening\n");
-
-        new_thread = new std::thread(std::bind(static_cast<std::size_t(boost::asio::io_service::*)()>(&boost::asio::io_service::run),&(*_io)));
-        new_thread->detach();
-        new_ptr.reset(new_thread);
-        _io_run_threads_vec.push_back(new_ptr);
-        _acceptor.listen();
-
-        std::cout << "Server Listening" << std::endl;
-        _accept_thread.reset(new std::thread(std::bind(&SocketServer::startAccept, this)));
-    }
-    catch(...){
-		cocos2d::log("Server Acceptor Error\n");
-        std::cerr << "Server Acceptor Error" << std::endl;
-        _error_flag = true;
-        checkStop();
-    }
+SocketServer* SocketServer::create(int port)
+{
+	//	io_service_ = new asio::io_service;
+	auto s = new SocketServer(port);
+	s->thread_ = new std::thread(
+		std::bind(static_cast<std::size_t(boost::asio::io_service::*)()>(&boost::asio::io_service::run),
+			io_service_));
+	return s;
 }
 
-void SocketServer::startAccept(){
-    if((!checkStop()) && (!_stop_connect)){
-		cocos2d::log("Start Accept");
-        auto new_connection = ClientConnection::create(*_io);
+void SocketServer::close()
+{
+	try {
+		connections_.clear();
 
-        _acceptor.async_accept(*(new_connection->getSocket()), std::bind(&SocketServer::handleAccept, this, new_connection, std::placeholders::_1));
-    }
+		io_service_->stop();
+		acceptor_.close();
+		//		thread_ = nullptr;
+		thread_->join();
+		delete io_service_;
+	}
+	catch (std::exception&e)
+	{
+		std::cerr << e.what() << std::endl;
+	}
+	io_service_ = new boost::asio::io_service;
 }
 
-void SocketServer::stopAccept(){
-    try{
-        _stop_connect = true;
-        _acceptor.close();
-        _accept_thread->join();
-    }
-    catch(...){
-        std::cerr << "No Acceptor" << std::endl;
-    }
+void SocketServer::button_start()
+{
+	acceptor_.close();
+	using namespace std; // For sprintf and memcpy.
+	char total[4 + 1] = "";
+	sprintf(total, "%4d", static_cast<int>(connections_.size()));
+
+	for (auto i = 0; i < connections_.size(); i++)
+	{
+		connections_[i]->write_data("PLAYER" + std::string(total) + std::to_string(i + 1));
+	}
+	connection_num_ = connections_.size();
+	cocos2d::log("ConnectionSize %d\n", connection_num_);
+	this->button_thread_ = new std::thread(std::bind(&SocketServer::loop_process, this));
+	button_thread_->detach();
 }
 
-void SocketServer::handleAccept(std::shared_ptr<ClientConnection> new_connection, const error_code &err){
-    static int times = 0;
-    static int error_times = 0;
-    if(!err){
-        new_connection->mutableID() = times;
-        _connections.push_back(new_connection);
-        _stored_lists.push_back(std::list<std::string>());
-        times++;
-		cocos2d::log("Client No.%d Connected.", times);
-        std::cout << "Client No."<< times << " Connected. Info: IP " << new_connection->getSocket()->remote_endpoint().address()
-        << " ; Port " << new_connection->getSocket()->remote_endpoint().port() << std::endl;
-        auto new_thread = new std::thread(std::bind(&SocketServer::readFromClient, this, new_connection));
-        std::shared_ptr<std::thread> connection_thread(new_thread);
-        _contact_threads_vector.push_back(connection_thread);
-    }
-    else{
-
-		cocos2d::log("Client Connect Failed. No.\n");
-		cocos2d::log("Server Handle Accept Error\n");
-        error_times++;
-        std::cerr << "Client Connect Failed. No." << error_times << std::endl;
-        std::cerr << "Server Handle Accept Error" << std::endl;
-    }
-    if(_stop_connect || _stop_flag || _error_flag){
-        startAccept();
-    }
+bool SocketServer::error() const
+{
+	return error_flag_;
 }
 
-void SocketServer::readFromClient(std::shared_ptr<ClientConnection> client_connection){
-    if(!checkStop()){
-        boost::asio::async_read(*(client_connection->getSocket()), boost::asio::buffer(client_connection->getBuffer(), MAX_LENGTH), std::bind(&SocketServer::readHandler, this, client_connection, std::placeholders::_1));
-    }
+int SocketServer::connection_num() const
+{
+	return connections_.size();
 }
 
-void SocketServer::readHandler(std::shared_ptr<ClientConnection> client_connection, const error_code &err){
-    if(!err){
-        auto &success_times = client_connection->getSuccessTimes();
-		cocos2d::log("Client Message Fetch Succeeded No.\n");
-        std::cout << "Client Message Fetch Succeeded No." << success_times << std::endl;
-        std::unique_lock<std::mutex> lk(_mut);
-        _stored_lists[client_connection->getID()].push_back(*(client_connection->getBuffer()));
-        lk.unlock();
-        readFromClient(client_connection);
-    }
-    else{
-        ++(client_connection->getFailureTimes());
-		cocos2d::log("Client Message Fetch Failed No.\n");
-        std::cerr << "Client Message Fetch Failed No." << client_connection->getFailureTimes() << std::endl;
-    }
+SocketServer::SocketServer(int port) :
+	acceptor_(*io_service_, tcp::endpoint(tcp::v4(), port))
+{
+	start_accept();
 }
 
-void SocketServer::startService(){
-    stopAccept();
-    startSend();
+void SocketServer::loop_process()
+{
+	while (true)
+	{
+		if (connections_.size() != connection_num_)
+		{
+			error_flag_ = true;
+			break;
+		}
+		//			throw std::exception{"lost connection"};
+		std::unique_lock<std::mutex> lock(delete_mutex_);
+		std::vector<std::string> ret;
+		for (auto r : connections_)
+		{
+			if (r->error())
+				//				break;
+				error_flag_ |= r->error();
+			ret.push_back(r->read_data());
+		}
+		auto game_msg = GameMessageOperation::combineMessage(ret);
+
+		for (auto r : connections_)
+			r->write_data(game_msg);
+	}
 }
 
-void SocketServer::startSend(){
-    _send_thread.reset(new std::thread(std::bind(&SocketServer::loopSend,this)));
+std::vector<TcpConnection::pointer> SocketServer::get_connection() const
+{
+	return connections_;
 }
 
-void SocketServer::loopSend(){
-    while(true){
-        if(!checkStop()){
-            auto message = combineMessages();
-            sendMessages(message);
-        }
-        else{
-            break;
-        }
-    }
+void SocketServer::remove_connection(TcpConnection::pointer p)
+{
+	//		connections_.erase(std::remove(connections_.begin(), connections_.end(), p), connections_.end());
+	std::unique_lock<std::mutex> lock(delete_mutex_);
+	auto position = std::find(connections_.begin(), connections_.end(), p);
+
+	if (position == connections_.end())
+		std::cout << "delete not succ\n";
+	else
+		connections_.erase(position);
+	std::cout << "delete succ\n";
 }
 
-std::string SocketServer::combineMessages(){
-    std::vector<std::string> raw_messages;
-    std::vector<GameMessage> processed_messages;
-    std::vector<GameMessage> buffer;
-    if(!checkStop()){
-        for(auto list: _stored_lists){
-            std::unique_lock<std::mutex> lk(_mut);
-            if(list.empty()){
-                _cond.wait(lk);
-            }
-            if(!list.empty()){
-                auto message_string = list.front();
-                list.pop_front();
-                buffer = GameMessageInterface::parseMessagesFromString(message_string);
-                //!
-                std::copy(std::make_move_iterator(buffer.begin()), std::make_move_iterator(buffer.end()), std::back_inserter(processed_messages));
-            }
-            lk.unlock();
-        }
-    }
-    if(!processed_messages.empty()){
-        auto combined_message = GameMessageInterface::combineMessagesToString(processed_messages);
-        return combined_message;
-    }
-    else{
-        return "";
-    }
+
+void SocketServer::start_accept()
+{
+	TcpConnection::pointer new_connection =
+		TcpConnection::create(acceptor_.get_io_service(), this);
+
+	acceptor_.async_accept(new_connection->socket(),
+		std::bind(&SocketServer::handle_accept, this, new_connection,
+			std::placeholders::_1));
+	std::cout << "start accept " << std::endl;
 }
 
-void SocketServer::sendMessages(std::string message){
-    static int write_success_times = 0;
-    static int write_failure_times = 0;
-    for(auto client_connection: _connections){
-        boost::asio::async_write(*(client_connection->getSocket()), boost::asio::buffer(message), [=](const error_code &err, std::size_t bytes_transferred){
-            if(!err){
-                write_success_times++;
-                std::cout << write_success_times << ".: Successfully Transferred Messages to No." << client_connection->getID() << "Client, bytes transferred: " << bytes_transferred << std::endl;
-            }
-            else{
-                write_failure_times++;
-                std::cout << write_failure_times << ".: Error Upload Messages to No." << client_connection->getID() << "Client, bytes transferred: " << bytes_transferred << "Missing Bytes: Unknown" << std::endl;
-            }
-        });
-    }
+void SocketServer::handle_accept(TcpConnection::pointer new_connection, const error_code& error)
+{
+	std::cout << "handle_accept\n";
+	if (!error)
+	{
+		cocos2d::log("connection + 1");
+		connections_.push_back(new_connection);
+		std::cout << new_connection->socket().remote_endpoint().address()
+			<< ":" << new_connection->socket().remote_endpoint().port() << std::endl;
+		new_connection->start();
+	}
+	start_accept();
+	//			std::cout << "handle accept\n";
 }
 
-bool SocketServer::checkStop(){
-    if(_error_flag || _cancel_flag || _stop_flag){
-        return true;
-    }
-    else{
-        return false;
-    }
-}
 
-void SocketServer::stopServer(){
-    try{
-        std::unique_lock<std::mutex> lk(_mut);
-        _stop_flag = true;
-        lk.unlock();
-        if(_error_flag){
-			cocos2d::log("Server Error\n");
-            std::cerr << "Server Error" << std::endl;
-        }
-        else if(_cancel_flag){
-			cocos2d::log("Server Cancelled.\n");
-            std::cout << "Server Cancelled" << std::endl;
-        }
-        else{
-            std::cout << "Server Shutdown" << std::endl;
-        }
-        delete _work;
-        (*_io).stop();
-//        for(auto thread: _io_run_threads_vec){
-//            if(thread){
-//                thread->join();
-//            }
-//        }   will exit after work destruct
-        for(auto thread: _contact_threads_vector){
-            if(thread){
-                thread->join();
-            }
-        }
-        if(_send_thread){
-            _cond.notify_one();
-            _send_thread->join();
-        }
-        if(_accept_thread && (!_stop_connect)){
-            _accept_thread->join();
-        }
-        for(auto _connection: _connections){
-            auto socket_ptr = _connection->getSocket();
-            error_code err;
-            socket_ptr->shutdown(tcp::socket::shutdown_both, err);
-            if(!err){
-                throw boost::system::system_error(err);
-            }
-            socket_ptr->close();
-        }
-    }
-    catch(...){
-		cocos2d::log("Server Shutdown Error\n");
-        std::cerr << "Server Shutdown Error" << std::endl;
-    }
-}
+

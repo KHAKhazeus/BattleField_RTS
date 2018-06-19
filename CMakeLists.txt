@@ -107,6 +107,7 @@ list(APPEND GAME_HEADER
 	Classes/BattleField_RTS.h
 	Classes/GameMessageInterface.h
 	Classes/LoadingScene.h
+	Classes/GameMessageOperation.h
      )
 
 if(ANDROID)

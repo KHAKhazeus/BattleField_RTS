@@ -19,10 +19,11 @@ private:
     float _node_height;
     float _node_width;
     cocos2d::EventListenerTouchOneByOne* _swallow_listner;
-    std::shared_ptr<SocketServer> _socket_server{static_cast<SocketServer*>(nullptr),[](SocketServer*){}};
-    std::shared_ptr<SocketClient> _socket_client{static_cast<SocketClient*>(nullptr),[](SocketClient*){}};
+   
 public:
-    
+	std::shared_ptr<SocketServer> _socket_server{ static_cast<SocketServer*>(nullptr),[](SocketServer*) {} };
+	std::shared_ptr<SocketClient> _socket_client{ static_cast<SocketClient*>(nullptr),[](SocketClient*) {} };
+
     virtual bool init() override;
     
     virtual void onExit() override;
@@ -35,6 +36,10 @@ public:
     
     void removeLayer(float dt);
     
+	void startSchedule(float dt);
+
+	void wait_start();
+
     static void fadeOutIteration(cocos2d::Vector<Node*> targets);
     
     void initializeServerSide();

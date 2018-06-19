@@ -662,8 +662,9 @@ void UnitManager::updateMessage(float delta) {
 	if (packages == CLIENT_ERROR || packages == CLIENT_CANCEL) {
 		//To do
 	}
+	getSocketClient()->send_game_message(this->getMessages());
 	//unpackage the received message
-	orders=(msgs->parseMessagesFromString(packages));
+	orders = getSocketClient()->get_game_messages();
 	//match the message and implement functions
 	for (unsigned int i = 0; i < orders.size(); i++) {
 		//read the path_points
