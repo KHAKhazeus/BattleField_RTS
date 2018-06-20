@@ -152,39 +152,18 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 				else {
 					//TODO function to move to the Position
 					for (auto temp : *TiledMap::getSelectedVector()) {
-						Vec2 from = _tiled_Map->tileCoordForPosition(temp->getPosition());
-						if (!_tiled_Map->checkPass(tiledLocation)) {
-							tiledLocation = _tiled_Map->findFreeNear(tiledLocation);
-						}
-						PathArithmetic* path_finder = PathArithmetic::create();
-						path_finder->initPathArithmetic(_tiled_Map, from, tiledLocation);
-						path_finder->findPath();
-						auto path = path_finder->getPath();
-						if (temp->getTargetPos().x != -1) {
-							if (tiledLocation != temp->getTargetPos() &&
-								temp->getTiledPosition() != temp->getTargetPos()) {
-								if (!TiledMap::checkPass(temp->getTargetPos())) {
-									log("SetPass %f,%f\n", temp->getTargetPos().x, temp->getTargetPos().y);
-									TiledMap::setPass(temp->getTargetPos());
-								}
-							}
-						}
-						temp->setTargetPos(tiledLocation);
-						log("SetUnpass %f,%f\n", tiledLocation.x, tiledLocation.y);
-						TiledMap::setUnpass(tiledLocation);
+						std::vector<Vec2> path = { tiledLocation };
 						if (temp->getNumberOfRunningActions() == 0) {
-							temp->setAttack(false);
-							//send the moving message
+							temp->clearAllType();
+							temp->setMove(true);
 							UnitManager::addMessages(msgs->newMoveMessage(temp->getUnitID(), path, tiledLocation));
 						}
 						else {
 							temp->stopAllActions();
-							temp->setAttack(false);
-							//send moving message
-							UnitManager::addMessages(msgs->newMoveMessage(temp->getUnitID(), path, tiledLocation));
-
 							temp->clearAllType();
 							temp->setMove(true);
+							//send moving message
+							UnitManager::addMessages(msgs->newMoveMessage(temp->getUnitID(), path, tiledLocation));
 						}
 					}
 				}
@@ -275,7 +254,7 @@ void UnitManager::playerMoveWithWayPoints(int move_unit_id, std::vector<cocos2d:
 	auto callfunc = CallFunc::create([=] {
 		stopAction(repeatanimate);
 		TiledMap::updateMapGrid(player->getTiledPosition(), tiledLocation);
-		log("SetPass %f,%f\n", player->getTiledPosition().x, player->getTiledPosition().y);
+	//	log("SetPass %f,%f\n", player->getTiledPosition().x, player->getTiledPosition().y);
 		player->setTiledPosition(tiledLocation);
 		switch ((player->getType())[0]) {
 			//	log("%f,%f  %f,%f", player->getTiledPosition().x, player->getTiledPosition().y,
@@ -300,14 +279,11 @@ void UnitManager::playerMoveWithWayPoints(int move_unit_id, std::vector<cocos2d:
 	});
 	Sequence *sequence;
 	for (int i = 0; i < path_points.size(); i++) {
-		if (i == 0) {
-			//	TiledMap::setUnpass(tiledLocation);
-		}
 		Vec2 openGL_point = _tiled_Map->locationForTilePos(path_points[i]);
 		MoveTo* moveTo = MoveTo::create(speed, openGL_point);
 		auto callfunc = CallFunc::create([=] {
 			player->setTempPos(path_points[i]);
-			log("player->set  %f,%f", player->getTempPos().x, player->getTempPos().y);
+//			log("player->set  %f,%f", player->getTempPos().x, player->getTempPos().y);
 		});
 		auto action = Spawn::create(moveTo, callfunc, NULL);
 		actionVector.pushBack(action);
@@ -374,7 +350,9 @@ void UnitManager::attack(int attacker_id, int under_attack_id, int damage) {
 				TiledMap::removeMapId(enemy->getUnitID());
 				if (!enemy->isBuilding()) {
 					enemy->unscheduleAllSelectors();
-					TiledMap::setPass(enemy->getTargetPos());
+					if (enemy->getTargetPos().x != -1) {
+						TiledMap::setPass(enemy->getTargetPos());
+					}
 				}
 				_tiled_Map->getTiledMap()->removeChild(enemy);
 			});
@@ -667,6 +645,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		//		auto tiledLocation = tempScene->tileCoordForPosition(nodeLocation);
 		TiledMap::newMapGrid(tiledLocation, dog->getUnitID());
 		TiledMap::newMapId(dog->getUnitID(), dog);
+		dog->setAnchorPoint(Vec2(0, 0.5));
 		dog->setTiledPosition(tiledLocation);
 
 		static_cast<TMXTiledMap*>(plant->getParent())->addChild(dog, 200);
@@ -705,7 +684,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		//		auto tiledLocation = tempScene->tileCoordForPosition(nodeLocation);
 		TiledMap::newMapGrid(tiledLocation, soldier->getUnitID());
 		TiledMap::newMapId(soldier->getUnitID(), soldier);
-
+		soldier->setAnchorPoint(Vec2(0, 0.5));
 		soldier->setTiledPosition(tiledLocation);
 		//	tempScene->getVectorSoldiers().pushBack(soldier);
 		if (base_id == this->_myCamp) {
@@ -743,7 +722,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		//		auto tiledLocation = tempScene->tileCoordForPosition(nodeLocation);
 		TiledMap::newMapGrid(tiledLocation, tank->getUnitID());
 		TiledMap::newMapId(tank->getUnitID(), tank);
-
+		tank->setAnchorPoint(Vec2(0, 0.5));
 		tank->setTiledPosition(tiledLocation);
 		//	tempScene->getVectorSoldiers().pushBack(soldier);
 		if (base_id == this->_myCamp) {
@@ -812,7 +791,28 @@ void UnitManager::updateMessage(float delta) {
 			}
 			auto player = TiledMap::getUnitById(id);
 			player->setMove(true);
-			UnitManager::playerMoveWithWayPoints(orders[i].unit_0(), path_points, path_points.back());
+			auto pos = path_points.at(0);
+			PathArithmetic* path_finder = PathArithmetic::create();
+			auto tempMap = _tiled_Map;
+			if (!TiledMap::checkPass(pos)){
+				pos = tempMap->findFreeNear(pos);
+			}
+			log("%f ,%f", pos.x, pos.y);
+			auto tiled_pos = tempMap->tileCoordForPosition(player->getPosition());
+			path_finder->initPathArithmetic(tempMap, tiled_pos, pos);
+			path_finder->findPath();
+			auto path = path_finder->getPath();
+			if (player->getTargetPos().x != -1) {
+				if (pos != player->getTargetPos() && player->getTiledPosition() != player->getTargetPos()) {
+					if (!TiledMap::checkPass(player->getTargetPos())) {
+//						log("SetPass %f,%f\n", this->getTargetPos().x, this->getTargetPos().y);
+						TiledMap::setPass(player->getTargetPos());
+					}
+				}
+			}
+			player->setTargetPos(pos);
+			TiledMap::setUnpass(pos);
+			UnitManager::playerMoveWithWayPoints(orders[i].unit_0(), path, pos);
 		}
 
 	}
