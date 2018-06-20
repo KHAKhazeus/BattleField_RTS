@@ -12,6 +12,7 @@
 //#include "GameMessage.pb.h"
 #include "GameMessageInterface.h"
 #include "SocketMessage.h"
+#include "BattleField_RTS.h"
 #include "GameMessageOperation.h"
 #include <thread>
 #include <memory>
@@ -39,6 +40,9 @@ public:
 	* \brief close the socket
 	*/
 	void close();
+
+	void setMapselect(int mapID) { _mapSelect = mapID; }
+	int getMapselect() { return _mapSelect; }
 
 	/**
 	* \brief start a socket
@@ -128,10 +132,11 @@ private:
 
 	std::thread *thread_, *read_thread_;
 	int camp_, total_;
+	int _mapSelect;
 
 	std::condition_variable data_cond_;
 	std::mutex mut;
 };
 
 
-#endif /* __SOCKET_CLIENT_H__ */
+#endif /* __SOCKET_CLIENT_H__*/ 

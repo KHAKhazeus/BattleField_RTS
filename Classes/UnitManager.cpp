@@ -40,7 +40,7 @@ void UnitManager::initBase() {
 	_tiled_Map->getTiledMap()->addChild(_base_me, 100);
 	if (_myCamp == BLUECAMP) {
 		_tiled_Map->getTiledMap()->setPosition(0 - _base_me->getPositionX() + vect.width * 2
-			, 0 - _base_me->getPositionY() + vect.height * 2.0);
+			, 0 - _base_me->getPositionY() + vect.height * 2.5);
 	}
 	else {
 		_tiled_Map->getTiledMap()->setPosition(0 - _base_me->getPositionX() + vect.width * 2

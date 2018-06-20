@@ -208,14 +208,24 @@ void SocketServer::button_start()
 	char total[4 + 1] = "";
 	sprintf(total, "%4d", static_cast<int>(connections_.size()));
 
+	std::vector<std::string> campGroup = { "R","B" };
+	char map;
+	if (getMapselect() == LOSTTEMP) {
+		map = 'L';
+	}
+	else if (getMapselect() == SNOWMAP) {
+		map = 'S';
+	}
+
+
 	for (auto i = 0; i < connections_.size(); i++)
 	{
-		connections_[i]->write_data("PLAYER" + std::string(total) + std::to_string(i + 1));
+		connections_[i]->write_data("PLAYER" + campGroup.at(i) + map);
 	}
 	connection_num_ = connections_.size();
 	cocos2d::log("ConnectionSize %d\n", connection_num_);
 	this->button_thread_ = new std::thread(std::bind(&SocketServer::loop_process, this));
-	//button_thread_->detach();
+	button_thread_->detach();
 }
 
 bool SocketServer::error() const
