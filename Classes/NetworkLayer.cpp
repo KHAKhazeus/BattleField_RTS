@@ -8,7 +8,6 @@
 #include "NetworkLayer.h"
 #include "SimpleAudioEngine.h"
 #include "MenuScene.h"
-#include "BattleField_RTS.h"
 #include "GameMessageOperation.h"
 #include "LoadingScene.h"
 
@@ -26,39 +25,57 @@ static void problemLoading(const char* filename)
 }
 
 void NetworkLayer::initializeServerSide(){
-    auto color_layer = this->getChildByName("color_layer");
-    auto portbox = static_cast<TextField *>(color_layer->getChildByName("portbox"));
-    auto ipbox = static_cast<TextField *>(color_layer->getChildByName("ipbox"));
-    auto ip = ipbox->getString();
-    std::stringstream port_stream(portbox->getString());
-    int port_number;
-    port_stream >> port_number;
-    if(!_socket_server){
-        auto new_socket_server = SocketServer::create(port_number);
-        if(new_socket_server){
-            _socket_server.reset(new_socket_server);
+    if(!server && !client){
+        auto color_layer = this->getChildByName("color_layer");
+        auto portbox = static_cast<TextField *>(color_layer->getChildByName("portbox"));
+        auto ipbox = static_cast<TextField *>(color_layer->getChildByName("ipbox"));
+        auto ip = ipbox->getString();
+        std::stringstream port_stream(portbox->getString());
+        int port_number;
+        port_stream >> port_number;
+        try{
+            if(!_socket_server){
+                auto new_socket_server = SocketServer::create(port_number);
+                if(new_socket_server){
+                    _socket_server.reset(new_socket_server);
+                }
+            }
+            if(!_socket_client){
+                auto new_socket_client = SocketClient::create(ip, port_number);
+                if(new_socket_client){
+                    _socket_client.reset(new_socket_client);
+                }
+            }
+            server = true;
         }
-    }
-    if(!_socket_client){
-        auto new_socket_client = SocketClient::create(ip, port_number);
-        if(new_socket_client){
-            _socket_client.reset(new_socket_client);
+        catch(boost::system::system_error){
+            _socket_client.reset(static_cast<SocketClient*>(nullptr),[](SocketClient*){});
+            std::cerr << "Server Or Client Create Denied, Resetting, Try Again" << std::endl;
         }
     }
 }
 
 void NetworkLayer::initializeClientSide(){
-    auto color_layer = this->getChildByName("color_layer");
-    auto ipbox = static_cast<TextField *>(color_layer->getChildByName("ipbox"));
-    auto portbox = static_cast<TextField *>(color_layer->getChildByName("portbox"));
-    auto ip = ipbox->getString();
-    std::stringstream port_stream(portbox->getString());
-    int port_number;
-    port_stream >> port_number;
-    if(!_socket_client){
-        auto new_socket_client = SocketClient::create(ip, port_number);
-        if(new_socket_client){
-            _socket_client.reset(new_socket_client);
+    if(!server && !client){
+        auto color_layer = this->getChildByName("color_layer");
+        auto ipbox = static_cast<TextField *>(color_layer->getChildByName("ipbox"));
+        auto portbox = static_cast<TextField *>(color_layer->getChildByName("portbox"));
+        auto ip = ipbox->getString();
+        std::stringstream port_stream(portbox->getString());
+        int port_number;
+        port_stream >> port_number;
+        try{
+            if((!_socket_client)){
+                auto new_socket_client = SocketClient::create(ip, port_number);
+                if(new_socket_client){
+                    _socket_client.reset(new_socket_client);
+                }
+            }
+            client = true;
+        }
+        catch(boost::system::system_error){
+            _socket_client.reset(static_cast<SocketClient*>(nullptr),[](SocketClient*){});
+            std::cerr << "Client Create Denied, Resetting, Try Again" << std::endl;
         }
     }
 }
@@ -67,8 +84,13 @@ void NetworkLayer::resetClientAndServer(){
     if(_socket_client){
         _socket_client->do_close();
     }
+    if(_socket_server){
+        _socket_server->close();
+    }
     _socket_client.reset(static_cast<SocketClient*>(nullptr),[](SocketClient*){});
     _socket_server.reset(static_cast<SocketServer*>(nullptr),[](SocketServer*){});
+    client = false;
+    server = false;
     log("%s", "Client and Server Reset");
 }
 
@@ -271,10 +293,12 @@ bool NetworkLayer::init(){
                     start_client->setScale(1.0);
                     auto ip_string = ipbox->getString();
                     auto port_string = portbox->getString();
-					if (_socket_client == NULL) {
+					if ((_socket_client == NULL) && !_socket_server) {
 						NetworkLayer::initializeClientSide();    //need to be extended
-						this->schedule(schedule_selector(NetworkLayer::startSchedule), 0.1f);
 					}
+                    if(client && _socket_client){
+                        this->schedule(schedule_selector(NetworkLayer::startSchedule), 0.1f);
+                    }
                    
 
                     break;
@@ -356,14 +380,11 @@ bool NetworkLayer::init(){
 				if (_socket_server != NULL) {
 					if (select_map->getTitleText().compare("Select Map Lost Temple") == 0) {
 						select_map->setTitleText("Select Map Snow World");
-						_socket_server->setMapselect(SNOWMAP);
 						TiledMap::setMapFlagSnow();
 					}
 					else if (select_map->getTitleText().compare("Select Map Snow World") == 0) {
 						select_map->setTitleText("Select Map Lost Temple");
-						_socket_server->setMapselect(LOSTTEMP);
 						TiledMap::setMapFlagLost();
-
 					}
 				}
 				break;
@@ -404,7 +425,9 @@ bool NetworkLayer::init(){
 				/*	if (_socket_server != NULL) {
 						_socket_server->startService();
 					}*/
-					_socket_server->button_start();
+                    if(_socket_server){
+                        _socket_server->button_start();
+                    }
 				/*	auto temp = _socket_client->get_game_messages();
 					auto str = GameMessageOperation::vectorToString(temp);
 					cocos2d::log("%s", str);*/
@@ -536,7 +559,7 @@ void NetworkLayer::close(Node* pSender){
 
 
 void NetworkLayer::startSchedule(float dt) {
-	if (_socket_client->started()) {
+	if ( _socket_client && _socket_client->started()) {
 		wait_start();
 	}
 }
@@ -546,6 +569,7 @@ void NetworkLayer::wait_start() {
 	cocos2d::log("%d\n", map);
 	if (_socket_client->getMapselect() == LOSTTEMP) {
 		TiledMap::setMapFlagLost();
+		
 	}
 	else if (_socket_client->getMapselect() == SNOWMAP) {
 		TiledMap::setMapFlagSnow();

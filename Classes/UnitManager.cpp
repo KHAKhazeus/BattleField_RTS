@@ -40,7 +40,7 @@ void UnitManager::initBase() {
 	_tiled_Map->getTiledMap()->addChild(_base_me, 100);
 	if (_myCamp == BLUECAMP) {
 		_tiled_Map->getTiledMap()->setPosition(0 - _base_me->getPositionX() + vect.width * 2
-			, 0 - _base_me->getPositionY() + vect.height * 2.0);
+			, 0 - _base_me->getPositionY() + vect.height * 2.5);
 	}
 	else {
 		_tiled_Map->getTiledMap()->setPosition(0 - _base_me->getPositionX() + vect.width * 2
@@ -397,8 +397,11 @@ void UnitManager::attackEffect(int attacker_id, int under_attack_id) {
 	}
 	auto enemy = TiledMap::getUnitById(under_attack_id);
 	/*change the direction of the unit according to the target position*/
-	Vec2 tarPos = _tiled_Map->locationForTilePos(enemy->getPosition());
-	Vec2 myPos = _tiled_Map->locationForTilePos(player->getPosition());
+//	Vec2 tarPos = _tiled_Map->locationForTilePos(enemy->getPosition());
+	Vec2 tarPos = enemy->getPosition();
+	auto Pos111 = player->getPosition();
+//	Vec2 myPos = _tiled_Map->locationForTilePos(Pos111);
+	auto myPos = Pos111;
 	float angle = atan2((tarPos.y - myPos.y), (tarPos.x - myPos.x)) * 180 / 3.14159;
 	if (player->isFlippedX()) {
 		player->setFlippedX(false);
@@ -777,6 +780,9 @@ void UnitManager::updateMessage(float delta) {
 		//if attacking happens
 		else if (orders[i].cmd_code() == GameMessage::CmdCode::GameMessage_CmdCode_ATK) {
 			auto attackerId = orders[i].unit_0();
+			if (!TiledMap::checkUnitId(attackerId)) {
+				continue;
+			}
 			auto attacker = TiledMap::getUnitById(attackerId);
 			if (attacker->isMove()) {
 				TiledMap::updateMapGrid(attacker->getTiledPosition(), attacker->getTempPos());
@@ -801,6 +807,9 @@ void UnitManager::updateMessage(float delta) {
 				continue;
 			}
 			auto id = orders[i].unit_0();
+			if (!TiledMap::checkUnitId(id)) {
+				continue;
+			}
 			auto player = TiledMap::getUnitById(id);
 			player->setMove(true);
 			UnitManager::playerMoveWithWayPoints(orders[i].unit_0(), path_points, path_points.back());

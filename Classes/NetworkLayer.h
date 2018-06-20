@@ -19,6 +19,8 @@ private:
     float _node_height;
     float _node_width;
     cocos2d::EventListenerTouchOneByOne* _swallow_listner;
+    bool client{false};
+    bool server{false};
    
 public:
 	std::shared_ptr<SocketServer> _socket_server{ static_cast<SocketServer*>(nullptr),[](SocketServer*) {} };
