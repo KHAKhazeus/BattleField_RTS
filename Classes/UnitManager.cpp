@@ -475,14 +475,16 @@ void UnitManager::destroyEffect(Unit* unit, bool type) {
 		auto animate = blast->getAnimateByName("explode", 0.1f, 30);
 		_tiled_Map->getTiledMap()->addChild(blast, 210);
 		blast->setPosition(unit->getPosition());
+		auto buildingType = unit->getType();
+		auto campID = unit->getCampID();
 		auto callfunc = CallFunc::create([=] {
-			if (unit->getType() == "M") {
-				if (unit->getCampID() == this->_myCamp) {
+			if (buildingType == "M") {
+				if (campID == this->_myCamp) {
 					static_cast<GameScene*>(this->getParent())->getVectorMine().popBack();
 				}
 			}
-			else if (unit->getType() == "P") {
-				if (unit->getCampID() == this->_myCamp) {
+			else if (buildingType == "P") {
+				if (campID == this->_myCamp) {
 					auto tempScene = static_cast<GameScene*>(this->getParent());
 					int power = tempScene->getPower()->getPower();
 					if (power <= 150) {
