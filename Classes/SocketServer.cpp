@@ -89,6 +89,9 @@ void TcpConnection::do_close()
 
 
 	}
+    catch (boost::system::system_error){
+        std::cerr << "Server ShutDowned with Process Left" << std::endl;
+    }
 	catch (std::exception&e)
 	{
 		e.what();

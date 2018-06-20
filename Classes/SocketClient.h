@@ -97,7 +97,7 @@ public:
 	int total() const;
 
 private:
-	SocketClient::SocketClient(std::string ip, int port) : socket_(io_service_),
+	SocketClient(std::string ip, int port) : socket_(io_service_),
 		endpoint_(boost::asio::ip::address_v4::from_string(ip), port)
 	{
 		start();

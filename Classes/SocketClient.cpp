@@ -87,18 +87,25 @@ int SocketClient::total() const
 
 void SocketClient::write_data(std::string s)
 {
-	SocketMessage msg;
-	if (s.size() == 0)
-	{
-		s = std::string("\0");
-		msg.body_length(1);
-	}
-	else
-		msg.body_length(s.size());
-	memcpy(msg.body(), &s[0u], msg.body_length());
-	msg.encode_header();
-	boost::asio::write(socket_,
-		boost::asio::buffer(msg.data(), msg.length()));
+    static int times = 0;
+    try{
+        SocketMessage msg;
+        if (s.size() == 0)
+        {
+            s = std::string("\0");
+            msg.body_length(1);
+        }
+        else
+            msg.body_length(s.size());
+        memcpy(msg.body(), &s[0u], msg.body_length());
+        msg.encode_header();
+        boost::asio::write(socket_,
+                           boost::asio::buffer(msg.data(), msg.length()));
+    }
+    catch(boost::system::system_error){
+        times++;
+        std::cerr << "Lost Connection, No. " << times << std::endl;
+    }
 }
 
 void SocketClient::start_connect()
