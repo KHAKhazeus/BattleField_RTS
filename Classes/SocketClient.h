@@ -13,12 +13,10 @@
 #include "GameMessageInterface.h"
 #include "SocketMessage.h"
 #include "GameMessageOperation.h"
-#include "BattleField_RTS.h"
 #include <thread>
 #include <memory>
 #include <string>
 #include <mutex>
-
 
 
 using boost::asio::ip::tcp;
@@ -86,8 +84,6 @@ public:
 	*/
 	bool error()const { return error_flag_; }
 
-	void setMapselect(int mapID) { _mapSelect = mapID; }
-	int getMapselect() { return _mapSelect; }
 	/**
 	* \brief start from 1
 	* \return camp number
@@ -101,7 +97,7 @@ public:
 	int total() const;
 
 private:
-	SocketClient::SocketClient(std::string ip, int port) : socket_(io_service_),
+	SocketClient(std::string ip, int port) : socket_(io_service_),
 		endpoint_(boost::asio::ip::address_v4::from_string(ip), port)
 	{
 		start();
@@ -111,8 +107,6 @@ private:
 	void write_data(std::string s);
 
 	void start_connect();
-
-	
 
 	void handle_connect(const error_code& error);
 
@@ -134,7 +128,6 @@ private:
 
 	std::thread *thread_, *read_thread_;
 	int camp_, total_;
-	int _mapSelect;
 
 	std::condition_variable data_cond_;
 	std::mutex mut;

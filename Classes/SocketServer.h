@@ -70,7 +70,7 @@ private:
 class SocketServer
 {
 public:
-
+    ~SocketServer();
 	static SocketServer* create(int port = 8080);
 	//	~SocketServer() { acceptor_.close(); io_service_->stop(); }
 	/**
@@ -106,6 +106,8 @@ public:
 	* \return total connction number
 	*/
 	int connection_num() const;
+    
+    bool stop{false};
 private:
 	SocketServer(int port);
 	void start_accept();

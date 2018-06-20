@@ -85,8 +85,13 @@ void TcpConnection::do_close()
 		socket_.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
 		if (!ec)
 			throw boost::system::error_code(ec);
- 		socket_.close();
+		socket_.close();
+
+
 	}
+    catch (boost::system::system_error){
+        std::cerr << "Server ShutDowned with Process Left" << std::endl;
+    }
 	catch (std::exception&e)
 	{
 		e.what();
@@ -160,6 +165,11 @@ void TcpConnection::delete_from_parent()
 	parent = nullptr;
 }
 
+SocketServer::~SocketServer(){
+    this->close();
+    delete thread_;
+    delete button_thread_;
+}
 
 SocketServer* SocketServer::create(int port)
 {
@@ -181,12 +191,14 @@ void SocketServer::close()
 		//		thread_ = nullptr;
 		thread_->join();
 		delete io_service_;
+        io_service_ = new boost::asio::io_service;
+        stop = true;
+        button_thread_->join();
 	}
 	catch (std::exception&e)
 	{
 		std::cerr << e.what() << std::endl;
 	}
-	io_service_ = new boost::asio::io_service;
 }
 
 void SocketServer::button_start()
@@ -196,22 +208,14 @@ void SocketServer::button_start()
 	char total[4 + 1] = "";
 	sprintf(total, "%4d", static_cast<int>(connections_.size()));
 
-	std::vector<std::string> campGroup = { "R","B" };
-	char map;
-	if (getMapselect() == LOSTTEMP) {
-		map = 'L';
-	}
-	else if (getMapselect() == SNOWMAP) {
-		map = 'S';
-	}
 	for (auto i = 0; i < connections_.size(); i++)
 	{
-		connections_[i]->write_data("PLAYER" + campGroup.at(i) + map);
+		connections_[i]->write_data("PLAYER" + std::string(total) + std::to_string(i + 1));
 	}
 	connection_num_ = connections_.size();
 	cocos2d::log("ConnectionSize %d\n", connection_num_);
 	this->button_thread_ = new std::thread(std::bind(&SocketServer::loop_process, this));
-	button_thread_->detach();
+	//button_thread_->detach();
 }
 
 bool SocketServer::error() const
@@ -234,25 +238,35 @@ void SocketServer::loop_process()
 {
 	while (true)
 	{
-		if (connections_.size() != connection_num_)
-		{
-			error_flag_ = true;
-			break;
-		}
-		//			throw std::exception{"lost connection"};
-		std::unique_lock<std::mutex> lock(delete_mutex_);
-		std::vector<std::string> ret;
-		for (auto r : connections_)
-		{
-			if (r->error())
-				//				break;
-				error_flag_ |= r->error();
-			ret.push_back(r->read_data());
-		}
-		auto game_msg = GameMessageOperation::combineMessage(ret);
-
-		for (auto r : connections_)
-			r->write_data(game_msg);
+        static int times = 0;
+        try{
+            if(stop){
+                break;
+            }
+            if (connections_.size() != connection_num_)
+            {
+                error_flag_ = true;
+                break;
+            }
+            //            throw std::exception{"lost connection"};
+            std::unique_lock<std::mutex> lock(delete_mutex_);
+            std::vector<std::string> ret;
+            for (auto r : connections_)
+            {
+                if (r->error())
+                    //                break;
+                    error_flag_ |= r->error();
+                ret.push_back(r->read_data());
+            }
+            auto game_msg = GameMessageOperation::combineMessage(ret);
+            
+            for (auto r : connections_)
+                r->write_data(game_msg);
+        }
+        catch(std::exception &e){
+            times ++;
+            std::cerr << "Connection Lost No. " << times << std::endl;
+        }
 	}
 }
 
@@ -266,6 +280,7 @@ void SocketServer::remove_connection(TcpConnection::pointer p)
 	//		connections_.erase(std::remove(connections_.begin(), connections_.end(), p), connections_.end());
 	std::unique_lock<std::mutex> lock(delete_mutex_);
 	auto position = std::find(connections_.begin(), connections_.end(), p);
+
 	if (position == connections_.end())
 		std::cout << "delete not succ\n";
 	else
