@@ -85,7 +85,7 @@ public:
 	//To check if the vector is empty
 	static int checkSize();
 	//To get the Pointer to the SelectedVector
-	static const std::vector<Unit*>* getSelectedVector();
+	static std::vector<Unit*>* getSelectedVector();
 
 
 
