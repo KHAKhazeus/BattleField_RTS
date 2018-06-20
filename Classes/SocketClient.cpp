@@ -75,7 +75,7 @@ void SocketClient::do_close()
 
 int SocketClient::camp() const
 {
-//	while (!start_flag_);
+	while (!start_flag_);
 	return camp_;
 }
 
@@ -87,18 +87,25 @@ int SocketClient::total() const
 
 void SocketClient::write_data(std::string s)
 {
-	SocketMessage msg;
-	if (s.size() == 0)
-	{
-		s = std::string("\0");
-		msg.body_length(1);
-	}
-	else
-		msg.body_length(s.size());
-	memcpy(msg.body(), &s[0u], msg.body_length());
-	msg.encode_header();
-	boost::asio::write(socket_,
-		boost::asio::buffer(msg.data(), msg.length()));
+    static int times = 0;
+    try{
+        SocketMessage msg;
+        if (s.size() == 0)
+        {
+            s = std::string("\0");
+            msg.body_length(1);
+        }
+        else
+            msg.body_length(s.size());
+        memcpy(msg.body(), &s[0u], msg.body_length());
+        msg.encode_header();
+        boost::asio::write(socket_,
+                           boost::asio::buffer(msg.data(), msg.length()));
+    }
+    catch(boost::system::system_error){
+        times++;
+        std::cerr << "Lost Connection, No. " << times << std::endl;
+    }
 }
 
 void SocketClient::start_connect()
@@ -125,20 +132,8 @@ void SocketClient::handle_connect(const error_code& error)
 			}
 			char header[4 + 1] = "";
 			strncat(header, data + 10, 4);
-	//		total_ = atoi(header);
-			if (data[10] == 'R') {
-				camp_ = REDCAMP;
-			}
-			else if (data[10] == 'B') {
-				camp_ = BLUECAMP;
-			}
-			if (data[11] == 'L') {
-				setMapselect(LOSTTEMP);
-			}
-			else if (data[11] == 'S') {
-				setMapselect(SNOWMAP);
-			}
-	//		camp_ = atoi(data + 14);
+			total_ = atoi(header);
+			camp_ = atoi(data + 14);
 			cocos2d::log("GettheCamp %d", camp_);
 			start_flag_ = true;
 			boost::asio::async_read(socket_,
