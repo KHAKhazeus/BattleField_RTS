@@ -56,14 +56,12 @@ void SocketClient::do_close()
 		read_msg_deque_.push_back(empty_msg);
 		data_cond_.notify_one();
 		io_service_.stop();
+        std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 		error_code ec;
 		socket_.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
-		if (!ec)
-			throw boost::system::error_code(ec);
 		socket_.close();
-		thread_->join();
-
-
+        thread_->join();
+        delete thread_;
 	}
 	catch (std::exception&e)
 	{
@@ -128,7 +126,7 @@ void SocketClient::handle_connect(const error_code& error)
 			size_t length = socket_.read_some(boost::asio::buffer(data, 30), error);
 			if (error || length < 10) {
 				cocos2d::log("Empty Message\n");
-				throw boost::system::error_code(error);
+				//throw boost::system::error_code(error);
 			}
 			char header[4 + 1] = "";
 			strncat(header, data + 10, 4);
@@ -159,7 +157,7 @@ void SocketClient::handle_connect(const error_code& error)
 		}
 		else
 		{
-			std::cerr << "failed to connect" << std::endl;
+			std::cerr << "failed to connect, Please Retry" << std::endl;
 			//			throw asio::system_error(error);
 			error_flag_ = true;
 

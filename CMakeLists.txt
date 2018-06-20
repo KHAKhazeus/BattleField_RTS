@@ -34,7 +34,7 @@ project(${APP_NAME})
 #!elseif(MACOSX)
 #cocos2d-x-3.17
 
-set(COCOS2DX_ROOT_PATH $ENV{COCOS_X_ROOT})
+set(COCOS2DX_ROOT_PATH $ENV{COCOS_X_ROOT}/cocos2d-x-3.17)
 
 #set(COCOS2DX_ROOT_PATH $ENV{COCOS_X_ROOT})
 

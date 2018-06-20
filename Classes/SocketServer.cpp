@@ -189,11 +189,15 @@ void SocketServer::close()
 		io_service_->stop();
 		acceptor_.close();
 		//		thread_ = nullptr;
-		thread_->join();
+        if(thread_){
+            thread_->join();
+        }
 		delete io_service_;
         io_service_ = new boost::asio::io_service;
         stop = true;
-        button_thread_->join();
+        if(button_thread_){
+            button_thread_->join();
+        }
 	}
 	catch (std::exception&e)
 	{
