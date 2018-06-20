@@ -82,7 +82,17 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 	Size s = target->getContentSize();
 	auto rect = Rect(s.width / 4, s.height / 4, s.width / 2, s.height / 2);
 
-	if (rect.containsPoint(locationInNode) && !BuildingBase::getIsBuilt()) {	//if click is valid
+	if (rect.containsPoint(locationInNode)) {	//if click is valid
+		if (tempManager->_myCamp == REDCAMP) {
+			if (BuildingBase::getRedIsBuilt()) {
+				return false;
+			}
+		}
+		else {
+			if (BuildingBase::getBlueIsBuilt()) {
+				return false;
+			}
+		}
 		if (getSelected() || isCreated()) { 
 			return false;
 		}

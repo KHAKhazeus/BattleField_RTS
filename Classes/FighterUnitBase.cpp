@@ -7,35 +7,60 @@
 using namespace CocosDenshion;
 #include "GameScene.h"
 
-bool Soldier::_isBeingCreated = false;
-
-bool Soldier::getIsCreated() {
-	return _isBeingCreated;
+bool Soldier::_redIsBeingCreated = false;
+bool Soldier::_blueIsBeingCreated = false;
+bool Soldier::getRedIsCreated() {
+	return _redIsBeingCreated;
 }
 
-void Soldier::setIsCreated(bool judge) {
-	_isBeingCreated = judge;
+void Soldier::setRedIsCreated(bool judge) {
+	_redIsBeingCreated = judge;
 }
 
-bool Dog::_isBeingCreated = false;
-
-bool Dog::getIsCreated() {
-	return _isBeingCreated;
+bool Soldier::getBlueIsCreated() {
+	return _blueIsBeingCreated;
 }
 
-void Dog::setIsCreated(bool judge) {
-	_isBeingCreated = judge;
+void Soldier::setBlueIsCreated(bool judge) {
+	_blueIsBeingCreated = judge;
 }
 
-bool Tank::_isBeingCreated = false;
-
-bool Tank::getIsCreated() {
-	return _isBeingCreated;
+bool Dog::_redIsBeingCreated = false;
+bool Dog::_blueIsBeingCreated = false;
+bool Dog::getRedIsCreated() {
+	return _redIsBeingCreated;
 }
 
-void Tank::setIsCreated(bool judge) {
-	_isBeingCreated = judge;
+void Dog::setRedIsCreated(bool judge) {
+	_redIsBeingCreated = judge;
 }
+
+bool Dog::getBlueIsCreated() {
+	return _blueIsBeingCreated;
+}
+
+void Dog::setBlueIsCreated(bool judge) {
+	_blueIsBeingCreated = judge;
+}
+
+bool Tank::_redIsBeingCreated = false;
+bool Tank::_blueIsBeingCreated = false;
+bool Tank::getRedIsCreated() {
+	return _redIsBeingCreated;
+}
+
+void Tank::setRedIsCreated(bool judge) {
+	_redIsBeingCreated = judge;
+}
+
+bool Tank::getBlueIsCreated() {
+	return _blueIsBeingCreated;
+}
+
+void Tank::setBlueIsCreated(bool judge) {
+	_blueIsBeingCreated = judge;
+}
+
 void Soldier::Create(Unit* soldierBase) {
 	this->setVisible(false);
 	auto barSprite = Sprite::create("bar/loadingbar.png");
@@ -52,13 +77,17 @@ void Soldier::Create(Unit* soldierBase) {
 	auto sequence = Sequence::create(pft, CallFunc::create([=] {
 		soldierBase->removeChild(progress, true);
 		this->setVisible(true);
-		Soldier::setIsCreated(false);
+		if (this->getCampID() == REDCAMP) {
+			Soldier::setRedIsCreated(false);
+		}
+		else {
+			Soldier::setBlueIsCreated(false);
+		}
 		auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
 		auto tempManager = tempScene->getUnitManager();
 		if (this->getCampID() == tempManager->_myCamp) {
 			SimpleAudioEngine::getInstance()->playEffect(SOLDIER, false);
 		}
-		//this->schedule(schedule_selector(FighterUnitBase::autoAttack), 2);
 	}), nullptr);
 	progress->runAction(sequence);
 	// create a loading bar
@@ -95,7 +124,12 @@ void Dog::Create(Unit* soldierBase) {
 	auto sequence = Sequence::create(pft, CallFunc::create([=] {
 		soldierBase->removeChild(progress, true);
 		this->setVisible(true);
-		Dog::setIsCreated(false);
+		if (this->getCampID() == REDCAMP) {
+			Dog::setRedIsCreated(false);
+		}
+		else {
+			Dog::setBlueIsCreated(false);
+		}
 		auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
 		auto tempManager = tempScene->getUnitManager();
 		if (this->getCampID() == tempManager->_myCamp) {
@@ -139,7 +173,12 @@ void Tank::Create(Unit* warFactory) {
 	auto sequence = Sequence::create(pft, CallFunc::create([=] {
 		warFactory->removeChild(progress, true);
 		this->setVisible(true);
-		Tank::setIsCreated(false);
+		if (this->getCampID() == REDCAMP) {
+			Tank::setRedIsCreated(false);
+		}
+		else {
+			Tank::setBlueIsCreated(false);
+		}
 		auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
 		auto tempManager = tempScene->getUnitManager();
 		if (this->getCampID() == tempManager->_myCamp) {

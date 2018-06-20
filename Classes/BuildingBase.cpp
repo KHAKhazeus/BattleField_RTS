@@ -8,17 +8,25 @@
 #include "SimpleAudioEngine.h"
 using namespace CocosDenshion;
 
-bool BuildingBase::_isbuilt = false;
+bool BuildingBase::_redIsBuilt = false;
 
-bool BuildingBase::getIsBuilt() {
-	return _isbuilt;
+bool BuildingBase::_blueIsBuilt = false;
+
+bool BuildingBase::getRedIsBuilt() {
+	return _redIsBuilt;
 }
 
-void BuildingBase::setIsBuilt(bool judge) {
-	_isbuilt = judge;
+void BuildingBase::setRedIsBuilt(bool judge) {
+	_redIsBuilt = judge;
 }
 
+bool BuildingBase::getBlueIsBuilt() {
+	return _blueIsBuilt;
+}
 
+void BuildingBase::setBlueIsBuilt(bool judge) {
+	_blueIsBuilt = judge;
+}
 
 Vec2 SoldierBase::RandomPosition() {
     int sign = cocos2d::random() % 3 - 1;
@@ -90,7 +98,14 @@ void SoldierBase::Build() {
 		if (this->getCampID() == tempManager->_myCamp) {
 			SimpleAudioEngine::getInstance()->playEffect(CONSTRUCTION, false);
 		}
-	}), CallFunc::create([] {BuildingBase::setIsBuilt(false); }), nullptr);
+	}), CallFunc::create([this] {
+		if (this->getCampID() == REDCAMP) {
+			BuildingBase::setRedIsBuilt(false);
+		}
+		else {
+			BuildingBase::setBlueIsBuilt(false);
+		}
+	}), nullptr);
 	progress->runAction(sequence);
 
 	// create a loading bar
@@ -125,7 +140,17 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 	this->setSelected(false);
 	this->setCreated(false);
 
-	if (rect.containsPoint(locationInNode) && !Soldier::getIsCreated() && !Dog::getIsCreated()) {	//if click is valid
+	if (rect.containsPoint(locationInNode)) {	//if click is valid
+		if (tempManager->_myCamp == REDCAMP) {
+			if (Soldier::getRedIsCreated()||Dog::getRedIsCreated()) {
+				return false;
+			}
+		}
+		else {
+			if (Soldier::getBlueIsCreated() || Dog::getBlueIsCreated()) {
+				return false;
+			}
+		}
 		if (getSelected() || getCreated()) {
 			return false;
 		}
@@ -257,7 +282,17 @@ bool WarFactory::onTouchBegan(Touch *touch, Event *event) {
 	auto rect = Rect(0, 0, s.width, s.height);
 	this->setSelected(false);
 	this->setCreated(false);
-	if (rect.containsPoint(locationInNode) && !Tank::getIsCreated()) {	//if click is valid
+	if (rect.containsPoint(locationInNode)) {	//if click is valid
+		if (tempManager->_myCamp == REDCAMP) {
+			if (Tank::getRedIsCreated()) {
+				return false;
+			}
+		}
+		else {
+			if (Tank::getBlueIsCreated()) {
+				return false;
+			}
+		}
 		if (this->getSelected() || this->getCreated()) {
 			return false;
 		}
@@ -375,7 +410,14 @@ void MoneyMine::Build() {
 		if (this->getCampID() == tempManager->_myCamp) {
 			SimpleAudioEngine::getInstance()->playEffect(CONSTRUCTION, false);
 		}
-	}), CallFunc::create([] {BuildingBase::setIsBuilt(false); }), nullptr);
+	}), CallFunc::create([this] {
+		if (this->getCampID() == REDCAMP) {
+			BuildingBase::setRedIsBuilt(false);
+		}
+		else {
+			BuildingBase::setBlueIsBuilt(false);
+		}
+	}), nullptr);
 	progress->runAction(sequence);
 
 	// create a loading bar
@@ -425,7 +467,14 @@ void WarFactory::Build() {
 		if (this->getCampID() == tempManager->_myCamp) {
 			SimpleAudioEngine::getInstance()->playEffect(CONSTRUCTION, false);
 		}
-	}), CallFunc::create([]{BuildingBase::setIsBuilt(false); }), nullptr);
+	}), CallFunc::create([this] {
+		if (this->getCampID() == REDCAMP) {
+			BuildingBase::setRedIsBuilt(false);
+		}
+		else {
+			BuildingBase::setBlueIsBuilt(false);
+		}
+	}), nullptr);
 	progress->runAction(sequence);
 
 	// create a loading bar
@@ -471,7 +520,14 @@ void PowerPlant::Build() {
 		if (this->getCampID() == tempManager->_myCamp) {
 			SimpleAudioEngine::getInstance()->playEffect(CONSTRUCTION, false);
 		}
-	}), CallFunc::create([] {BuildingBase::setIsBuilt(false); }), nullptr);
+	}), CallFunc::create([this] {
+		if (this->getCampID() == REDCAMP) {
+			BuildingBase::setRedIsBuilt(false);
+		}
+		else {
+			BuildingBase::setBlueIsBuilt(false);
+		}
+	}), nullptr);
 	progress->runAction(sequence);
 
 	// create a loading bar

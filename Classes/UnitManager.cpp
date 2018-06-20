@@ -506,7 +506,12 @@ void UnitManager::Building(int new_building_id, std::string new_building_type, i
 		}
 		moneyMine->addIdCount();
 		moneyMine->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
-		BuildingBase::setIsBuilt(true);
+		if (base_id == REDCAMP) {
+			BuildingBase::setRedIsBuilt(true);
+		}
+		else {
+			BuildingBase::setBlueIsBuilt(true);
+		}
 		moneyMine->Build();
 		TiledMap::newMapGrid(tiledLocation, new_building_id, moneyMine->getRange());
 		TiledMap::newMapId(new_building_id, moneyMine);
@@ -531,7 +536,12 @@ void UnitManager::Building(int new_building_id, std::string new_building_type, i
 		}
 		powerPlant->addIdCount();
 		powerPlant->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
-		BuildingBase::setIsBuilt(true);
+		if (base_id == REDCAMP) {
+			BuildingBase::setRedIsBuilt(true);
+		}
+		else {
+			BuildingBase::setBlueIsBuilt(true);
+		}
 		powerPlant->Build();
 		TiledMap::newMapGrid(tiledLocation, new_building_id, powerPlant->getRange());
 		TiledMap::newMapId(new_building_id, powerPlant);
@@ -555,7 +565,12 @@ void UnitManager::Building(int new_building_id, std::string new_building_type, i
 		}
 		soldierBase->addIdCount();
 		soldierBase->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
-		BuildingBase::setIsBuilt(true);
+		if (base_id == REDCAMP) {
+			BuildingBase::setRedIsBuilt(true);
+		}
+		else {
+			BuildingBase::setBlueIsBuilt(true);
+		}
 		soldierBase->Build();
 		TiledMap::newMapGrid(tiledLocation, new_building_id, soldierBase->getRange(), FIX_HEIGHT);
 		TiledMap::newMapId(new_building_id, soldierBase);
@@ -579,7 +594,12 @@ void UnitManager::Building(int new_building_id, std::string new_building_type, i
 		}
 		warFactory->addIdCount();
 		warFactory->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
-		BuildingBase::setIsBuilt(true);
+		if (base_id == REDCAMP) {
+			BuildingBase::setRedIsBuilt(true);
+		}
+		else {
+			BuildingBase::setBlueIsBuilt(true);
+		}
 		warFactory->Build();
 
 		TiledMap::newMapGrid(tiledLocation, new_building_id, warFactory->getRange(), FIX_HEIGHT);
@@ -616,7 +636,12 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		}
 		auto tiledLocation = tempTiledMap->tileCoordForPosition(nodeLocation);
 		dog->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
-		Dog::setIsCreated(true);
+		if (base_id == REDCAMP) {
+			Dog::setRedIsCreated(true);
+		}
+		else {
+			Dog::setBlueIsCreated(true);
+		}
 		dog->Create(plant);
 		dog->schedule(schedule_selector(FighterUnitBase::autoAttack), 2);
 		//		TiledMap::setUnpass(tiledLocation);
@@ -648,7 +673,12 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		}
 		auto tiledLocation = tempTiledMap->tileCoordForPosition(nodeLocation);
 		soldier->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
-		Soldier::setIsCreated(true);
+		if (base_id == REDCAMP) {
+			Soldier::setRedIsCreated(true);
+		}
+		else {
+			Soldier::setBlueIsCreated(true);
+		}
 		soldier->Create(plant);
 		soldier->schedule(schedule_selector(FighterUnitBase::autoAttack), 2);
 		//		TiledMap::setUnpass(tiledLocation);
@@ -681,7 +711,12 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		}
 		auto tiledLocation = tempTiledMap->tileCoordForPosition(nodeLocation);
 		tank->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
-		Tank::setIsCreated(true);
+		if (base_id == REDCAMP) {
+			Tank::setRedIsCreated(true);
+		}
+		else {
+			Tank::setBlueIsCreated(true);
+		}
 		tank->Create(plant);
 		tank->schedule(schedule_selector(FighterUnitBase::autoAttack), 2);
 		//		TiledMap::setUnpass(tiledLocation);

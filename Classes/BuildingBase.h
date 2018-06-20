@@ -23,7 +23,8 @@ protected:
 	int _gold;//expence to build the building
 	int _elect;//electricity spent to build the building
 	LoadingBar* _buildBar;// the bar diaplayed during building
-	static bool _isbuilt; //to judge whether there is builiding built
+	static bool _redIsBuilt; //to judge whether there is a red builiding built
+	static bool _blueIsBuilt;//to judge whether there is a blue builiding built
 	bool _isCreated;
 	
 public:
@@ -42,8 +43,11 @@ public:
 
 	//set the boolean ...
 	//get the boolean to judge if there is a builing built
-	static bool getIsBuilt();
-	static void setIsBuilt(bool judge);
+	static bool getRedIsBuilt();
+	static void setRedIsBuilt(bool judge);
+
+	static bool getBlueIsBuilt();
+	static void setBlueIsBuilt(bool judge);
 
 	virtual bool judgeAttack(Vec2 pos) {
 		return false;
