@@ -216,7 +216,7 @@ bool FighterUnitBase::judgeAttack(Vec2 myPos,Vec2 pos) {
 Vec2 FighterUnitBase::searchEnemy() {
 	auto curpos = getTiledPosition();
 	auto range = getAttackRange();
-	auto rect = GridRect::create(curpos.x - range , curpos.y - range , range, range);
+	auto rect = GridRect::create(curpos.x - range/2 , curpos.y - range/2 , range, range);
 	for (auto i = rect->getX(); i <= rect->getX() + rect->getWidth(); i++) {
 		for (auto j = rect->getY(); j <= rect->getY() + rect->getHeight(); j++) {
 			auto vecPos = Vec2(i, j);
@@ -342,13 +342,13 @@ void FighterUnitBase::autoAttack(float dt) {
 	else if (isAutoAttack()) {
 		auto pos = searchEnemy();
 		if (pos.x != -1) {
-			this->setAttack(true);
+			this->setMove(false);
 			auto tempNode = this->getParent()->getParent()->getParent();
 			auto tempScene = static_cast<GameScene*>(tempNode);
 			auto tempManager = tempScene->getUnitManager();
-			if (!TiledMap::checkUnitId(this->getTargetID())) {
+		/*	if (!TiledMap::checkUnitId(this->getTargetID())) {
 				return;
-			}
+			}*/
 			auto id = TiledMap::getUnitIdByPosition(pos);
 			auto enemy = TiledMap::getUnitById(id);
 			//send attack message
