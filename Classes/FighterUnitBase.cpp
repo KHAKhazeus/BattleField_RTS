@@ -249,25 +249,11 @@ bool FighterUnitBase::judgeTarPos() {
 
 
 void FighterUnitBase::autoAttack(float dt) {
-	if (isAutoAttack()) {
-		auto pos = searchEnemy();
-		if (pos.x != -1) {
-			this->setAttack(true);
-			auto tempNode = this->getParent()->getParent()->getParent();
-			auto tempScene = static_cast<GameScene*>(tempNode);
-			auto tempManager = tempScene->getUnitManager();
-			if (!TiledMap::checkUnitId(this->getTargetID())) {
-				return;
-			}
-			auto id = TiledMap::getUnitIdByPosition(pos);
-			auto enemy = TiledMap::getUnitById(id);
-			//send attack message
-			tempManager->addMessages(tempManager->msgs->newAttackMessage(this->getUnitID(), enemy->getUnitID(), this->getAttack()));
-		}
-	}
 	if (isAttack()) {
 		auto m = this;
 		if (!TiledMap::checkUnitId(this->getTargetID())) {
+			this->clearAllType();
+			this->setAutoAttack(true);
 			return;
 		}
 		auto enemy = TiledMap::getUnitById(this->getTargetID());
@@ -353,5 +339,21 @@ void FighterUnitBase::autoAttack(float dt) {
 			}
 		}
 	}
+	else if (isAutoAttack()) {
+		auto pos = searchEnemy();
+		if (pos.x != -1) {
+			this->setAttack(true);
+			auto tempNode = this->getParent()->getParent()->getParent();
+			auto tempScene = static_cast<GameScene*>(tempNode);
+			auto tempManager = tempScene->getUnitManager();
+			if (!TiledMap::checkUnitId(this->getTargetID())) {
+				return;
+			}
+			auto id = TiledMap::getUnitIdByPosition(pos);
+			auto enemy = TiledMap::getUnitById(id);
+			//send attack message
+			tempManager->addMessages(tempManager->msgs->newAttackMessage(this->getUnitID(), enemy->getUnitID(), this->getAttack()));
+		}
+	}	
 }
 

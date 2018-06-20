@@ -342,6 +342,15 @@ void UnitManager::attack(int attacker_id, int under_attack_id, int damage) {
 	//decrease the Hp
 	enemy->setLifeValue(enemy->getLifeValue() - attackNumber);
 	if (enemy->getLifeValue() <= 0 && TiledMap::checkMapGrid(enemy->getTiledPosition())) {
+		if (!TiledMap::getSelectedVector()->empty()) {
+			auto selectedVector = TiledMap::getSelectedVector();
+			for (auto i = selectedVector->begin(); i != selectedVector->end(); i++) {
+				if (enemy->getUnitID() == (*i)->getUnitID()) {
+					selectedVector->erase(i);
+					break;
+				}
+			}
+		}
 		if (enemy->isBuilding()) {
 			auto callFunc = CallFunc::create([=] {
 				destroyEffect(enemy, true);
@@ -370,7 +379,6 @@ void UnitManager::attack(int attacker_id, int under_attack_id, int damage) {
 				_tiled_Map->getTiledMap()->removeChild(enemy);
 			});
 			this->runAction(callFunc);
-
 		}
 	}
 	if (enemy->getHP() != nullptr) {
@@ -380,7 +388,13 @@ void UnitManager::attack(int attacker_id, int under_attack_id, int damage) {
 
 
 void UnitManager::attackEffect(int attacker_id, int under_attack_id) {
+	if (!TiledMap::checkUnitId(attacker_id)) {
+		return;
+	}
 	auto player = TiledMap::getUnitById(attacker_id);
+	if (!TiledMap::checkUnitId(under_attack_id)) {
+		return;
+	}
 	auto enemy = TiledMap::getUnitById(under_attack_id);
 	/*change the direction of the unit according to the target position*/
 	Vec2 tarPos = _tiled_Map->locationForTilePos(enemy->getPosition());
@@ -461,14 +475,16 @@ void UnitManager::destroyEffect(Unit* unit, bool type) {
 		auto animate = blast->getAnimateByName("explode", 0.1f, 30);
 		_tiled_Map->getTiledMap()->addChild(blast, 210);
 		blast->setPosition(unit->getPosition());
+		auto buildingType = unit->getType();
+		auto campID = unit->getCampID();
 		auto callfunc = CallFunc::create([=] {
-			if (unit->getType() == "M") {
-				if (unit->getCampID() == this->_myCamp) {
+			if (buildingType == "M") {
+				if (campID == this->_myCamp) {
 					static_cast<GameScene*>(this->getParent())->getVectorMine().popBack();
 				}
 			}
-			else if (unit->getType() == "P") {
-				if (unit->getCampID() == this->_myCamp) {
+			else if (buildingType == "P") {
+				if (campID == this->_myCamp) {
 					auto tempScene = static_cast<GameScene*>(this->getParent());
 					int power = tempScene->getPower()->getPower();
 					if (power <= 150) {
@@ -643,7 +659,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 			Dog::setBlueIsCreated(true);
 		}
 		dog->Create(plant);
-		dog->schedule(schedule_selector(FighterUnitBase::autoAttack), 2);
+		dog->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
 		//		TiledMap::setUnpass(tiledLocation);
 		//		auto tiledLocation = tempScene->tileCoordForPosition(nodeLocation);
 		TiledMap::newMapGrid(tiledLocation, dog->getUnitID());
@@ -680,7 +696,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 			Soldier::setBlueIsCreated(true);
 		}
 		soldier->Create(plant);
-		soldier->schedule(schedule_selector(FighterUnitBase::autoAttack), 2);
+		soldier->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
 		//		TiledMap::setUnpass(tiledLocation);
 		static_cast<TMXTiledMap*>(plant->getParent())->addChild(soldier, 200);
 		//		auto tiledLocation = tempScene->tileCoordForPosition(nodeLocation);
@@ -718,7 +734,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 			Tank::setBlueIsCreated(true);
 		}
 		tank->Create(plant);
-		tank->schedule(schedule_selector(FighterUnitBase::autoAttack), 2);
+		tank->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
 		//		TiledMap::setUnpass(tiledLocation);
 		static_cast<TMXTiledMap*>(plant->getParent())->addChild(tank, 200);
 		//		auto tiledLocation = tempScene->tileCoordForPosition(nodeLocation);

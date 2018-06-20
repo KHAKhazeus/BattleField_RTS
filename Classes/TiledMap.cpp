@@ -326,7 +326,7 @@ int TiledMap::checkSize() {
 	return _select_Vector.size();
 }
 
-const std::vector<Unit*>* TiledMap::getSelectedVector() {
+std::vector<Unit*>* TiledMap::getSelectedVector() {
 	return &_select_Vector;
 }
 

@@ -86,8 +86,6 @@ void TcpConnection::do_close()
 		if (!ec)
 			throw boost::system::error_code(ec);
  		socket_.close();
-
-
 	}
 	catch (std::exception&e)
 	{
