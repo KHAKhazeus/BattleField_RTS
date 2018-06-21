@@ -71,7 +71,7 @@ void LoadingScene::onEnter() {
 	Scene::onEnter();
 
 	SimpleAudioEngine::getInstance()->preloadEffect(CONSTRUCTION);
-//	SimpleAudioEngine::getInstance()->preloadEffect(BUILD);
+	SimpleAudioEngine::getInstance()->preloadEffect(BUILD);
 	SimpleAudioEngine::getInstance()->preloadEffect(SOLDIER);
 	SimpleAudioEngine::getInstance()->preloadEffect(TANK);
 	SimpleAudioEngine::getInstance()->preloadEffect(DOG);

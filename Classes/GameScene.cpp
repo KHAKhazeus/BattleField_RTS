@@ -306,6 +306,9 @@ void GameScene::mapScroll() {
 }
 
 bool GameScene::onTouchBegan(Touch* touch, Event* event) {
+	if (end_flag) {
+		return false;
+	}
 	Vec2 touch_point = touch->getLocation();
 	mouse_rect->start = touch_point - _tiled_Map->getTiledMap()->getPosition();
 	mouse_rect->end = touch_point - _tiled_Map->getTiledMap()->getPosition();
@@ -321,6 +324,7 @@ void GameScene::onTouchMoved(Touch* touch, Event* event) {
 }
 
 void GameScene::onTouchEnded(Touch* touch, Event* event) {
+	
 	Vec2 touch_point = touch->getLocation();
 	if (touch_point.x < 0)
 		touch_point.x = 0;
@@ -345,4 +349,76 @@ void GameScene::onTouchEnded(Touch* touch, Event* event) {
 		_unit_Manager->selectUnitsByRect(mouse_rect);
 	}
 	mouse_rect->reset();
+}
+
+void GameScene::WinOrLose(int win) {
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	auto _background = Sprite::create("Menu/MainBackground.png");
+	_background->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+	_background->setPosition(visibleSize.width / 2, visibleSize.height / 2);
+	this->addChild(_background);
+
+	end_flag = true;
+	if (win) {
+		auto label = Label::createWithSystemFont("You Win", "Arial-Bold.ttf", 128);
+		label->setAnchorPoint(Point(0.0f, 0.0f));
+		label->setPosition(visibleSize.width / 2 - 250, visibleSize.height*0.7);
+		addChild(label);
+	}
+	else {
+		auto label = Label::createWithSystemFont("You Lose", "Arial-Bold.ttf", 128);
+		label->setAnchorPoint(Point(0.0f, 0.0f));
+		label->setPosition(visibleSize.width / 2 - 250, visibleSize.height*0.7);
+		addChild(label);
+	}
+
+	auto quit_button = Button::create("Menu/OrangeButton.png", "Menu/OrangeButtonHighlight.png");
+	quit_button->setScale(1.0);
+	auto button_size = quit_button->getCustomSize();
+	float small_adjust = button_size.height / 4;
+	float height_start_point = (visibleSize.height / 2 - button_size.height * 2 - small_adjust);
+	quit_button->setTitleText("Quit Game");
+	quit_button->setTitleFontName("Arial-Bold.ttf");
+	quit_button->setTitleColor(Color3B(80, 80, 80));
+	quit_button->setTitleFontSize(button_size.height / 3);
+	quit_button->setPosition(Vec2(visibleSize.width / 2, height_start_point - button_size.height - small_adjust * 2));
+	quit_button->addTouchEventListener([=](Ref* pSender, Widget::TouchEventType event_type) {
+		switch (event_type) {
+		case Widget::TouchEventType::BEGAN: {
+			quit_button->setScale(1.05);
+			break;
+		}
+
+		case Widget::TouchEventType::ENDED: {
+			quit_button->setScale(1.0);
+			GameScene::menuCloseCallback(this);
+			break;
+		}
+
+		case Widget::TouchEventType::CANCELED: {
+			quit_button->setScale(1.0);
+			break;
+		}
+
+		default:
+			break;
+		}
+	});
+
+	this->addChild(quit_button, 0);
+}
+
+
+void GameScene::menuCloseCallback(Ref* pSender)
+{
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WP8) || (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
+	MessageBox("You pressed the close button. Windows Store Apps do not implement a close button.", "Alert");
+	return;
+#endif
+	// program finished, release scene
+	Director::getInstance()->end();
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+	exit(0);
+#endif
 }

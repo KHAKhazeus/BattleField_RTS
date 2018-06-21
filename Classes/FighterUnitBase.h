@@ -56,9 +56,6 @@ public:
 	void setTiledPosition(Vec2 pos) { _tiledPos = pos; }
 	Vec2 getTiledPosition() { return _tiledPos; }
 	
-	//attack action
-	//@@param is the enemy's ID
-	void attack(int id);
 
 	//to judge if the enemy is in the attack range
 	bool judgeAttack(Vec2 myPos,Vec2 pos);
@@ -157,6 +154,7 @@ class Tank :public FighterUnitBase
 {
 	static bool _redIsBeingCreated;//find if there is a unit being created
 	static bool _blueIsBeingCreated;//find if there is a unit being created
+	static bool _isPlayEffect;//judge if there had been tanks playing sound effect
 public:
 	//set and judge whether there is a unit being created
 	static void setRedIsCreated(bool created);
@@ -164,6 +162,10 @@ public:
 
 	static void setBlueIsCreated(bool created);
 	static bool getBlueIsCreated();
+
+
+	static void setPlayEffect(bool judge);
+	static bool Tank::getPlayEffect();
 
 	//unit's creating function
 	static Tank* create(const std::string& filename) {
