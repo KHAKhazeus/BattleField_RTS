@@ -11,6 +11,7 @@
 #include <cmath>
 #include "SocketClient.h"
 #include "SocketServer.h"
+#include "FighterUnitBase.h"
 USING_NS_CC;
 
 class UnitManager :public cocos2d::Node {
@@ -34,7 +35,7 @@ public:
 	void initBase();
 	Base* getBase(){ return _base_me; }
 	//
-	void checkWinOrLose();
+	void checkWinOrLose(int win);
 
 	void selectUnitsByPoint(Vec2 touch_point);
 	void selectUnitsByRect(MouseRect* mouse_rect);
@@ -61,9 +62,8 @@ public:
 	int _myCamp;
 	int _enCamp;
 
-	void autoAttack(float dt);
 
-	Vector<Unit*>& getUnitVector() { return _unit_Vector; }
+	std::vector<FighterUnitBase*>& getUnitVector() { return _unit_Vector; }
 
 //	void attack(Unit *player,Unit *target);
 
@@ -80,7 +80,6 @@ public:
 //	void attack(Unit *player,Unit *target);
 
 
-
 private:
 	//the count of _building
 	int _building;
@@ -91,11 +90,10 @@ private:
 	Base * _base_me;
 	Base * _base_en;
 
-	
 
 
 	//Vector of the fightUnit created by us
-	Vector<Unit*> _unit_Vector;
+	std::vector<FighterUnitBase*> _unit_Vector;
 
 	std::shared_ptr<SocketClient> _socket_client{ static_cast<SocketClient*>(nullptr),[](SocketClient*) {} };
 	std::shared_ptr<SocketServer> _socket_server{ static_cast<SocketServer*>(nullptr),[](SocketServer*) {} };

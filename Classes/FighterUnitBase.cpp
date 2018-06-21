@@ -61,6 +61,13 @@ void Tank::setBlueIsCreated(bool judge) {
 	_blueIsBeingCreated = judge;
 }
 
+bool Tank:: _isPlayEffect = false;
+void Tank::setPlayEffect(bool judge) {
+	_isPlayEffect = judge;
+}
+bool Tank::getPlayEffect() {
+	return _isPlayEffect;
+}
 void Soldier::Create(Unit* soldierBase) {
 	this->setVisible(false);
 	auto barSprite = Sprite::create("bar/loadingbar.png");

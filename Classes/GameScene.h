@@ -6,6 +6,7 @@
 #include "BuildingBase.h"
 #include "FighterUnitBase.h"
 #include "MouseRect.h"
+#include "MenuScene.h"
 USING_NS_CC;
 
 //Main Class of Game Scene
@@ -41,6 +42,7 @@ public:
 	virtual bool init();
 	virtual void update(float dt) override;
 	
+	bool end_flag;
 	Vector<MoneyMine*>& getVectorMine() { return _moneyMine; }
 
 	Money* getMoney() { return _money; }
@@ -50,6 +52,9 @@ public:
 	TiledMap* getMap() { return _tiled_Map; }
 
 	UnitManager* getUnitManager() { return _unit_Manager; }
+
+	void WinOrLose(int win);
+
 
 	CREATE_FUNC(GameScene);
 	//turn the coordinate of OpenGL to TileMap
@@ -85,7 +90,7 @@ public:
 	//Mouse listener
 	void onMouseMove(Event* event);
 
-
+	void menuCloseCallback(cocos2d::Ref* pSender);
 };
 
 

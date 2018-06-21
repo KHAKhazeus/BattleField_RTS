@@ -32,12 +32,10 @@ void UnitManager::initBase() {
 	auto range = _base_me->getRange();
 	auto tiledPos = _tiled_Map->tileCoordForPosition(myPos); //change the OpenGL coordinate to TiledMap
 	_base_me->setTiledPosition(tiledPos);
-	_base_me->setUnitID(_base_me->getIdCount());
-	_base_me->addIdCount();
-	TiledMap::newMapGrid(tiledPos, _base_me->getUnitID(), _base_me->getRange());
-	TiledMap::newMapId(_base_me->getUnitID(), _base_me);
+	_base_me->setType("B");
+	_base_me->setProgressed(true);
 	//TODO set the camera to the Base
-	_tiled_Map->getTiledMap()->addChild(_base_me, 100);
+	
 	if (_myCamp == BLUECAMP) {
 		_tiled_Map->getTiledMap()->setPosition(0 - _base_me->getPositionX() + vect.width * 2
 			, 0 - _base_me->getPositionY() + vect.height * 2.0);
@@ -54,20 +52,33 @@ void UnitManager::initBase() {
 	_base_en->setPosition(enPos);
 	vect = _base_en->getBase()->getContentSize();
 	range = _base_en->getRange();
-	tiledPos = _tiled_Map->tileCoordForPosition(enPos); //change the OpenGL coordinate to TiledMap
-	_base_en->setTiledPosition(tiledPos);
-	_base_en->setUnitID(_base_en->getIdCount());
-	_base_en->addIdCount();
-	TiledMap::newMapGrid(tiledPos, _base_en->getUnitID(), _base_en->getRange());
+	auto tiledPos1 = _tiled_Map->tileCoordForPosition(enPos); //change the OpenGL coordinate to TiledMap
+	_base_en->setTiledPosition(tiledPos1);
+	_base_en->setProgressed(true);
+	_base_en->setType("B");
+	
+
+	if (_myCamp == BLUECAMP) {
+		_base_en->setUnitID(_base_en->getIdCount());
+		_base_en->addIdCount();
+		_base_me->setUnitID(_base_me->getIdCount());
+		_base_me->addIdCount();
+	}
+	else {
+		_base_me->setUnitID(_base_me->getIdCount());
+		_base_me->addIdCount();
+		_base_en->setUnitID(_base_en->getIdCount());
+		_base_en->addIdCount();
+	}
+
+	TiledMap::newMapGrid(tiledPos1, _base_en->getUnitID(), _base_en->getRange());
 	TiledMap::newMapId(_base_en->getUnitID(), _base_en);
 	//TODO set the camera to the Base
 	_tiled_Map->getTiledMap()->addChild(_base_en, 100);
 
-
-
-
-
-
+	TiledMap::newMapGrid(tiledPos, _base_me->getUnitID(), _base_me->getRange());
+	TiledMap::newMapId(_base_me->getUnitID(), _base_me);
+	_tiled_Map->getTiledMap()->addChild(_base_me, 100);
 
 }
 
@@ -327,8 +338,7 @@ void UnitManager::attack(int attacker_id, int under_attack_id, int damage) {
 					break;
 				}
 			}
-		}
-		if (enemy->isBuilding()) {
+
 			auto callFunc = CallFunc::create([=] {
 				destroyEffect(enemy, true);
 				auto tiledLocation = _tiled_Map->tileCoordForPosition(enemy->getPosition());
@@ -361,8 +371,10 @@ void UnitManager::attack(int attacker_id, int under_attack_id, int damage) {
 		}
 	}
 	if (enemy->getHP() != nullptr) {
+		enemy->getHP()->setVisible(true);
 		enemy->getHP()->setPercent(enemy->getHPInterval() * static_cast<float>(enemy->getLifeValue()));
 	}
+
 }
 
 
@@ -415,7 +427,7 @@ void UnitManager::attackEffect(int attacker_id, int under_attack_id) {
 		isDog = true;
 		break;
 	case 't':
-		SimpleAudioEngine::getInstance()->playEffect(TANKBULLET, false);
+		//SimpleAudioEngine::getInstance()->playEffect(TANKBULLET, false);
 		bullet = Sprite::createWithTexture
 		(Director::getInstance()->getTextureCache()->addImage("tank/tankBullet.png"));
 		bullet->setPosition(player->getPosition());
@@ -459,7 +471,18 @@ void UnitManager::destroyEffect(Unit* unit, bool type) {
 		blast->setPosition(unit->getPosition());
 		auto buildingType = unit->getType();
 		auto campID = unit->getCampID();
+		if (buildingType == "B") {
+			if (campID == this->_myCamp) {//my base destroyed
+				this->checkWinOrLose(0);
+				return;
+			}
+			else {
+				this->checkWinOrLose(1);
+				return;
+			}
+		}
 		auto callfunc = CallFunc::create([=] {
+				
 			if (buildingType == "M") {
 				if (campID == this->_myCamp) {
 					static_cast<GameScene*>(this->getParent())->getVectorMine().popBack();
@@ -648,7 +671,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		TiledMap::newMapId(dog->getUnitID(), dog);
 		dog->setAnchorPoint(Vec2(0, 0.5));
 		dog->setTiledPosition(tiledLocation);
-
+		this->getUnitVector().push_back(dog);
 		static_cast<TMXTiledMap*>(plant->getParent())->addChild(dog, 200);
 		//tempScene->getVectorDogs().pushBack(dog);
 		if (base_id == this->_myCamp) {
@@ -686,6 +709,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		TiledMap::newMapGrid(tiledLocation, soldier->getUnitID());
 		TiledMap::newMapId(soldier->getUnitID(), soldier);
 		soldier->setAnchorPoint(Vec2(0, 0.5));
+		this->getUnitVector().push_back(soldier);
 		soldier->setTiledPosition(tiledLocation);
 		//	tempScene->getVectorSoldiers().pushBack(soldier);
 		if (base_id == this->_myCamp) {
@@ -724,6 +748,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		TiledMap::newMapGrid(tiledLocation, tank->getUnitID());
 		TiledMap::newMapId(tank->getUnitID(), tank);
 		tank->setAnchorPoint(Vec2(0, 1.0));
+		this->getUnitVector().push_back(tank);
 		tank->setTiledPosition(tiledLocation);
 		//	tempScene->getVectorSoldiers().pushBack(soldier);
 		if (base_id == this->_myCamp) {
@@ -820,4 +845,15 @@ void UnitManager::updateMessage(float delta) {
 	//clear for new messages
 	this->getMessages().clear();
 
+}
+
+void UnitManager::checkWinOrLose(int win) {
+	auto tempScene = static_cast<GameScene*>(this->getParent());
+	//this->unschedule(schedule_selector(UnitManager::updateMessage));
+	std::vector<FighterUnitBase*> tempVector = this->getUnitVector();
+	for (int i = 0; i < tempVector.size(); i++) {
+		tempVector.at(i)->unschedule(schedule_selector(FighterUnitBase::autoAttack));
+	}
+	tempScene->getMoney()->unschedule(schedule_selector(Money::updateMoney));
+	tempScene->WinOrLose(win);
 }
