@@ -87,6 +87,7 @@ void TcpConnection::do_close()
 			cocos2d::log("111");
 			throw boost::system::error_code(ec);
 		}try {
+
 			socket_.close();
 			cocos2d::log("Socket closed!");
 		}

@@ -251,6 +251,7 @@ bool FighterUnitBase::judgeTarPos() {
 void FighterUnitBase::autoAttack(float dt) {
 	if (isAttack()) {
 		auto m = this;
+		this->setAutoAttack(false);
 		if (!TiledMap::checkUnitId(this->getTargetID())) {
 			this->clearAllType();
 			this->setAutoAttack(true);
@@ -274,7 +275,7 @@ void FighterUnitBase::autoAttack(float dt) {
 					if (!TiledMap::checkPass(this->getTempPos())) {
 						return;
 					}
-					TiledMap::setPass(this->getTargetPos());
+		
 					tempManager->addMessages(tempManager->msgs->newAttackMessage(this->getUnitID(), enemy->getUnitID(), this->getAttack()));
 					return;
 				}
@@ -308,7 +309,12 @@ void FighterUnitBase::autoAttack(float dt) {
 			auto tempNode = this->getParent()->getParent()->getParent();
 			auto tempScene = static_cast<GameScene*>(tempNode);
 			auto tempManager = tempScene->getUnitManager();
-		/*	if (!TiledMap::checkUnitId(this->getTargetID())) {
+		/*	if (!TiledM
+		
+		
+		
+		
+		ap::checkUnitId(this->getTargetID())) {
 				return;
 			}*/
 			auto id = TiledMap::getUnitIdByPosition(pos);

@@ -32,8 +32,9 @@ void UnitManager::initBase() {
 	auto range = _base_me->getRange();
 	auto tiledPos = _tiled_Map->tileCoordForPosition(myPos); //change the OpenGL coordinate to TiledMap
 	_base_me->setTiledPosition(tiledPos);
-	_base_me->setUnitID(_base_me->getIdCount());
-	_base_me->addIdCount();
+	_base_me->setType("B");
+	
+	
 	TiledMap::newMapGrid(tiledPos, _base_me->getUnitID(), _base_me->getRange());
 	TiledMap::newMapId(_base_me->getUnitID(), _base_me);
 	//TODO set the camera to the Base
@@ -54,11 +55,24 @@ void UnitManager::initBase() {
 	_base_en->setPosition(enPos);
 	vect = _base_en->getBase()->getContentSize();
 	range = _base_en->getRange();
-	tiledPos = _tiled_Map->tileCoordForPosition(enPos); //change the OpenGL coordinate to TiledMap
-	_base_en->setTiledPosition(tiledPos);
-	_base_en->setUnitID(_base_en->getIdCount());
-	_base_en->addIdCount();
-	TiledMap::newMapGrid(tiledPos, _base_en->getUnitID(), _base_en->getRange());
+	auto tiledPos1 = _tiled_Map->tileCoordForPosition(enPos); //change the OpenGL coordinate to TiledMap
+	_base_en->setTiledPosition(tiledPos1);
+	_base_en->setType("B");
+
+	if (_base_me->getCampID() == REDCAMP) {
+		_base_me->setUnitID(_base_me->getIdCount());
+		_base_me->addIdCount();
+		_base_en->setUnitID(_base_en->getIdCount());
+		_base_en->addIdCount();
+	}
+	else {
+		_base_en->setUnitID(_base_en->getIdCount());
+		_base_en->addIdCount();
+		_base_me->setUnitID(_base_me->getIdCount());
+		_base_me->addIdCount();
+	}
+	
+	TiledMap::newMapGrid(tiledPos1, _base_en->getUnitID(), _base_en->getRange());
 	TiledMap::newMapId(_base_en->getUnitID(), _base_en);
 	//TODO set the camera to the Base
 	_tiled_Map->getTiledMap()->addChild(_base_en, 100);
@@ -765,12 +779,16 @@ void UnitManager::updateMessage(float delta) {
 			}
 			auto attacker = TiledMap::getUnitById(attackerId);
 			if (attacker->isMove()) {
+				if (!TiledMap::checkBoundary(attacker->getTempPos())||TiledMap::checkMapGrid(attacker->getTempPos())) {
+					continue;
+				}
 				TiledMap::updateMapGrid(attacker->getTiledPosition(), attacker->getTempPos());
 				attacker->setTiledPosition(attacker->getTempPos());
-				attacker->stopAllActions();
 				attacker->clearAllType();
+				TiledMap::setPass(attacker->getTargetPos());
 				attacker->setAttack(true);
 			}
+			attacker->stopAllActions();
 			UnitManager::attack(orders[i].unit_0(), orders[i].unit_1(), orders[i].damage());
 			UnitManager::attackEffect(orders[i].unit_0(), orders[i].unit_1());
 		}

@@ -143,7 +143,8 @@ void TiledMap::updateMapGrid(Vec2 oldPos, Vec2 newPos) {
 	auto y = static_cast<int> (oldPos.y + 0.1);
 	auto grid = _grid_Vector.at(x).at(y);
 	grid->setPass(true);
-	_gridAndId_Map.erase(grid);
+	_gridAndId_Map.erase(grid
+	);
 }
 
 void TiledMap::removeMapGrid(Vec2 Pos) {
