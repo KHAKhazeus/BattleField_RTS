@@ -18,7 +18,7 @@ private:
 	static std::shared_ptr<SocketServer> _socket_server;
 	static std::shared_ptr<SocketClient> _socket_client;
 public:
-	static Scene* createScene(std::shared_ptr<SocketServer> spserver,std::shared_ptr<SocketClient> spclient);
+	static Scene* createScene();
 	virtual bool init();
 	virtual void onEnter();
 	CREATE_FUNC(LoadingScene);

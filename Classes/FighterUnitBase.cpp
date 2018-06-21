@@ -287,26 +287,7 @@ void FighterUnitBase::autoAttack(float dt) {
 				if (this->getType() == "d" && enemy->isBuilding()) {
 					return;
 				}
-				PathArithmetic* path_finder = PathArithmetic::create();
-				auto tempMap = static_cast<TiledMap*>(this->getParent()->getParent());
-				if (!TiledMap::checkPass(pos)) {
-					pos = tempMap->findFreeNear(pos);
-				}
-				auto temp_pos = TiledMap::getUnitById(this->getUnitID())->getPosition();
-				auto tiled_pos = tempMap->tileCoordForPosition(temp_pos);
-				path_finder->initPathArithmetic(tempMap, tiled_pos, pos);
-				path_finder->findPath();
-				auto path = path_finder->getPath();
-				if (this->getTargetPos().x != -1) {
-					if (pos != this->getTargetPos() && this->getTiledPosition() != this->getTargetPos()) {
-						if (!TiledMap::checkPass(this->getTargetPos())) {
-//							log("SetPass %f,%f\n", this->getTargetPos().x, this->getTargetPos().y);
-							TiledMap::setPass(this->getTargetPos());
-						}
-					}
-				}
-				this->setTargetPos(pos);
-				TiledMap::setUnpass(pos);
+				std::vector<Vec2> path = { pos };
 				//send tracing message
 				tempManager->addMessages(tempManager->msgs->newMoveMessage(this->getUnitID(), path, pos));
 			}

@@ -1,14 +1,13 @@
 #include "LoadingScene.h"
+#include "MenuScene.h"
 std::shared_ptr<SocketServer> LoadingScene::_socket_server;
 std::shared_ptr<SocketClient> LoadingScene::_socket_client;
 
 
 
-Scene* LoadingScene::createScene(std::shared_ptr<SocketServer> spserver, std::shared_ptr<SocketClient> spclient) {
+Scene* LoadingScene::createScene() {
 	auto scene = Scene::create();
 	auto loadingScene = LoadingScene::create();
-	_socket_client = spclient;
-	_socket_server = spserver;
 	scene->addChild(loadingScene);
 	return scene;
 }
@@ -43,7 +42,7 @@ void LoadingScene::loadingCallback() {
 	_loadingBar->setPercent((_count / 8.0) * 100);
 	log("%d", _count);
 	if(_count == 12) {
-		auto gameScene = GameScene::createScene(_socket_server,_socket_client);
+		auto gameScene = MenuScene::createScene();
 		auto gameSceneAnimate = TransitionFade::create(1.0f, gameScene);
 		Director::getInstance()->replaceScene(gameSceneAnimate);
 	}

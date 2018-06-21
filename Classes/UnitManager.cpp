@@ -216,17 +216,18 @@ void UnitManager::playerMoveWithWayPoints(int move_unit_id, std::vector<cocos2d:
 	Vec2 tarPos = _tiled_Map->locationForTilePos(_tiled_Map->locationForTilePos(end_point));
 	Vec2 myPos = _tiled_Map->locationForTilePos(player->getPosition());
 	float angle = atan2((tarPos.y - myPos.y), (tarPos.x - myPos.x)) * 180 / 3.14159;
-	if (player->isFlippedX()) {
-		player->setFlippedX(false);
+	if (player->getType().at(0) != 't') {
+		if (player->isFlippedX()) {
+			player->setFlippedX(false);
+		}
+		if (tarPos.x < myPos.x) {
+			player->setFlippedX(true);
+			player->setRotation(angle - 180);
+		}
+		else {
+			player->setRotation(angle);
+		}
 	}
-	if (tarPos.x < myPos.x) {
-		player->setFlippedX(true);
-		player->setRotation(angle - 180);
-	}
-	else {
-		player->setRotation(angle);
-	}
-
 	Animate* animate;
 	float speed;
 	switch ((player->getType())[0])
@@ -266,7 +267,7 @@ void UnitManager::playerMoveWithWayPoints(int move_unit_id, std::vector<cocos2d:
 			player->setTexture("unit/FighterUnit_2.png");
 			break;
 		case 't':
-			player->setTexture("unit/FighterUnit.png");
+		//	player->setTexture("unit/FighterUnit.png");
 			break;
 		default:
 			break;
@@ -375,21 +376,21 @@ void UnitManager::attackEffect(int attacker_id, int under_attack_id) {
 	}
 	auto enemy = TiledMap::getUnitById(under_attack_id);
 	/*change the direction of the unit according to the target position*/
-//	Vec2 tarPos = _tiled_Map->locationForTilePos(enemy->getPosition());
-	Vec2 tarPos = enemy->getPosition();
+	Vec2 tarPos = _tiled_Map->locationForTilePos(enemy->getPosition());
 	auto Pos111 = player->getPosition();
-//	Vec2 myPos = _tiled_Map->locationForTilePos(Pos111);
-	auto myPos = Pos111;
+	Vec2 myPos = _tiled_Map->locationForTilePos(Pos111);
 	float angle = atan2((tarPos.y - myPos.y), (tarPos.x - myPos.x)) * 180 / 3.14159;
-	if (player->isFlippedX()) {
-		player->setFlippedX(false);
-	}
-	if (tarPos.x < myPos.x) {
-		player->setFlippedX(true);
-		player->setRotation(angle - 180);
-	}
-	else {
-		player->setRotation(angle);
+	if (player->getType().at(0) != 't') {
+		if (player->isFlippedX()) {
+			player->setFlippedX(false);
+		}
+		if (tarPos.x < myPos.x) {
+			player->setFlippedX(true);
+			player->setRotation(angle - 180);
+		}
+		else {
+			player->setRotation(angle);
+		}
 	}
 	auto type = (player->getType())[0];
 	auto pos = enemy->getPosition();
@@ -409,7 +410,7 @@ void UnitManager::attackEffect(int attacker_id, int under_attack_id) {
 		break;
 	case 'd':
 		SimpleAudioEngine::getInstance()->playEffect(DOG, false);
-		player->setTexture("unit/FighterUnit_1.png");
+	//	player->setTexture("unit/FighterUnit_1.png");
 		dogAttack = player->getAnimateByName("dogAttack", 0.1, 6);
 		isDog = true;
 		break;
@@ -722,7 +723,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		//		auto tiledLocation = tempScene->tileCoordForPosition(nodeLocation);
 		TiledMap::newMapGrid(tiledLocation, tank->getUnitID());
 		TiledMap::newMapId(tank->getUnitID(), tank);
-		tank->setAnchorPoint(Vec2(0, 0.5));
+		tank->setAnchorPoint(Vec2(0, 1.0));
 		tank->setTiledPosition(tiledLocation);
 		//	tempScene->getVectorSoldiers().pushBack(soldier);
 		if (base_id == this->_myCamp) {

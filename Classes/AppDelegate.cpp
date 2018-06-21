@@ -27,6 +27,7 @@
 #include <string>
 //#include "HelloWorldScene.h"
 #include "HelloWorldScene.h"
+#include "LoadingScene.h"
 #include "GameScene.h"
 
 // #define USE_AUDIO_ENGINE 1
@@ -152,7 +153,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     // create a scene. it's an autorelease object
 
 
-    auto scene = MenuScene::createScene();
+    auto scene = LoadingScene::createScene();
     //auto scene = GameScene::createScene(NULL, NULL);
 
 

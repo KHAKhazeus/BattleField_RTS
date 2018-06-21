@@ -373,10 +373,12 @@ bool NetworkLayer::init(){
 				if (_socket_server != NULL) {
 					if (select_map->getTitleText().compare("Select Map Lost Temple") == 0) {
 						select_map->setTitleText("Select Map Snow World");
+						_socket_server->setMapselect(SNOWMAP);
 						TiledMap::setMapFlagSnow();
 					}
 					else if (select_map->getTitleText().compare("Select Map Snow World") == 0) {
 						select_map->setTitleText("Select Map Lost Temple");
+						_socket_server->setMapselect(LOSTTEMP);
 						TiledMap::setMapFlagLost();
 					}
 				}
@@ -424,8 +426,9 @@ bool NetworkLayer::init(){
 				/*	auto temp = _socket_client->get_game_messages();
 					auto str = GameMessageOperation::vectorToString(temp);
 					cocos2d::log("%s", str);*/
-					auto gameScene = LoadingScene::createScene(_socket_server, _socket_client);
-					this->addChild(gameScene);
+					auto gameScene = GameScene::createScene(_socket_server, _socket_client);
+					auto sceneAniamte = TransitionCrossFade::create(0.5f,gameScene);
+					Director::getInstance()->replaceScene(sceneAniamte);
 
                     //need to be extended
                     break;
@@ -567,7 +570,7 @@ void NetworkLayer::wait_start() {
 	else if (_socket_client->getMapselect() == SNOWMAP) {
 		TiledMap::setMapFlagSnow();
 	}
-	auto gameScene = LoadingScene::createScene(_socket_server, _socket_client);
-	this->addChild(gameScene);
-	
+	auto gameScene = GameScene::createScene(_socket_server, _socket_client);
+	auto sceneAniamte = TransitionCrossFade::create(0.5f, gameScene);
+	Director::getInstance()->replaceScene(sceneAniamte);	
 }
