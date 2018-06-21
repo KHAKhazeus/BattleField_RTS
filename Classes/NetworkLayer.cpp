@@ -25,52 +25,58 @@ static void problemLoading(const char* filename)
 }
 
 void NetworkLayer::initializeServerSide(){
-    auto color_layer = this->getChildByName("color_layer");
-    auto portbox = static_cast<TextField *>(color_layer->getChildByName("portbox"));
-    auto ipbox = static_cast<TextField *>(color_layer->getChildByName("ipbox"));
-    auto ip = ipbox->getString();
-    std::stringstream port_stream(portbox->getString());
-    int port_number;
-    port_stream >> port_number;
-    try{
-        if(!_socket_server){
-            auto new_socket_server = SocketServer::create(port_number);
-            if(new_socket_server){
-                _socket_server.reset(new_socket_server);
+    if(!server && !client){
+        auto color_layer = this->getChildByName("color_layer");
+        auto portbox = static_cast<TextField *>(color_layer->getChildByName("portbox"));
+        auto ipbox = static_cast<TextField *>(color_layer->getChildByName("ipbox"));
+        auto ip = ipbox->getString();
+        std::stringstream port_stream(portbox->getString());
+        int port_number;
+        port_stream >> port_number;
+        try{
+            if(!_socket_server){
+                auto new_socket_server = SocketServer::create(port_number);
+                if(new_socket_server){
+                    _socket_server.reset(new_socket_server);
+                }
             }
-        }
-        if(!_socket_client){
-            auto new_socket_client = SocketClient::create(ip, port_number);
-            if(new_socket_client){
-                _socket_client.reset(new_socket_client);
+            if(!_socket_client){
+                auto new_socket_client = SocketClient::create(ip, port_number);
+                if(new_socket_client){
+                    _socket_client.reset(new_socket_client);
+                }
             }
+            server = true;
         }
-    }
-    catch(boost::system::system_error){
-        _socket_client.reset(static_cast<SocketClient*>(nullptr),[](SocketClient*){});
-        std::cerr << "Server Or Client Create Denied, Resetting, Try Again" << std::endl;
+        catch(boost::system::system_error){
+            _socket_client.reset(static_cast<SocketClient*>(nullptr),[](SocketClient*){});
+            std::cerr << "Server Or Client Create Denied, Resetting, Try Again" << std::endl;
+        }
     }
 }
 
 void NetworkLayer::initializeClientSide(){
-    auto color_layer = this->getChildByName("color_layer");
-    auto ipbox = static_cast<TextField *>(color_layer->getChildByName("ipbox"));
-    auto portbox = static_cast<TextField *>(color_layer->getChildByName("portbox"));
-    auto ip = ipbox->getString();
-    std::stringstream port_stream(portbox->getString());
-    int port_number;
-    port_stream >> port_number;
-    try{
-        if(!_socket_client){
-            auto new_socket_client = SocketClient::create(ip, port_number);
-            if(new_socket_client){
-                _socket_client.reset(new_socket_client);
+    if(!server && !client){
+        auto color_layer = this->getChildByName("color_layer");
+        auto ipbox = static_cast<TextField *>(color_layer->getChildByName("ipbox"));
+        auto portbox = static_cast<TextField *>(color_layer->getChildByName("portbox"));
+        auto ip = ipbox->getString();
+        std::stringstream port_stream(portbox->getString());
+        int port_number;
+        port_stream >> port_number;
+        try{
+            if((!_socket_client)){
+                auto new_socket_client = SocketClient::create(ip, port_number);
+                if(new_socket_client){
+                    _socket_client.reset(new_socket_client);
+                }
             }
+            client = true;
         }
-    }
-    catch(boost::system::system_error){
-        _socket_client.reset(static_cast<SocketClient*>(nullptr),[](SocketClient*){});
-        std::cerr << "Client Create Denied, Resetting, Try Again" << std::endl;
+        catch(boost::system::system_error){
+            _socket_client.reset(static_cast<SocketClient*>(nullptr),[](SocketClient*){});
+            std::cerr << "Client Create Denied, Resetting, Try Again" << std::endl;
+        }
     }
 }
 
@@ -83,6 +89,8 @@ void NetworkLayer::resetClientAndServer(){
     }
     _socket_client.reset(static_cast<SocketClient*>(nullptr),[](SocketClient*){});
     _socket_server.reset(static_cast<SocketServer*>(nullptr),[](SocketServer*){});
+    client = false;
+    server = false;
     log("%s", "Client and Server Reset");
 }
 
@@ -285,11 +293,10 @@ bool NetworkLayer::init(){
                     start_client->setScale(1.0);
                     auto ip_string = ipbox->getString();
                     auto port_string = portbox->getString();
-					if (_socket_client == NULL) {
+					if ((_socket_client == NULL) && !_socket_server) {
 						NetworkLayer::initializeClientSide();    //need to be extended
-						this->schedule(schedule_selector(NetworkLayer::startSchedule), 0.1f);
 					}
-                    if(_socket_client){
+                    if(client && _socket_client){
                         this->schedule(schedule_selector(NetworkLayer::startSchedule), 0.1f);
                     }
                    
@@ -420,16 +427,15 @@ bool NetworkLayer::init(){
 				/*	if (_socket_server != NULL) {
 						_socket_server->startService();
 					}*/
-                    if(_socket_server){
+                    if(_socket_server && _socket_client){
                         _socket_server->button_start();
+						auto gameScene = GameScene::createScene(_socket_server, _socket_client);
+						auto sceneAniamte = TransitionCrossFade::create(0.5f, gameScene);
+						Director::getInstance()->replaceScene(sceneAniamte);
                     }
 				/*	auto temp = _socket_client->get_game_messages();
 					auto str = GameMessageOperation::vectorToString(temp);
 					cocos2d::log("%s", str);*/
-					auto gameScene = GameScene::createScene(_socket_server, _socket_client);
-					auto sceneAniamte = TransitionCrossFade::create(0.5f,gameScene);
-					Director::getInstance()->replaceScene(sceneAniamte);
-
                     //need to be extended
                     break;
                 }
@@ -555,7 +561,7 @@ void NetworkLayer::close(Node* pSender){
 
 
 void NetworkLayer::startSchedule(float dt) {
-	if (_socket_client->started()) {
+	if ( _socket_client && _socket_client->started()) {
 		wait_start();
 	}
 }

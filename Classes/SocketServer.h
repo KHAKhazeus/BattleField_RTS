@@ -36,19 +36,14 @@ public:
 
 	void write_data(std::string s);
 
-	
-
 	std::string read_data();
 	bool error()const { return error_flag_; }
-
 
 	void do_close();
 private:
 
 	void handle_read_header(const error_code& error);
-
 	void handle_read_body(const error_code& error);
-
 
 	TcpConnection(boost::asio::io_service& io_service, SocketServer* parent);;
 

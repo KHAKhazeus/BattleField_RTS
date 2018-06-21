@@ -82,14 +82,21 @@ void TcpConnection::do_close()
 		read_msg_deque_.push_back(empty_msg);
 		data_cond_.notify_one();
 		error_code ec;
-		socket_.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
-		if (!ec)
+		socket_.shutdown(boost::asio::ip::tcp::socket::shutdown_receive, ec);
+		if (!ec) {
+			cocos2d::log("111");
 			throw boost::system::error_code(ec);
-		socket_.close();
-
-
+		}try {
+			socket_.close();
+			cocos2d::log("Socket closed!");
+		}
+		catch (boost::system::system_error &ec) {
+			cocos2d::log("Socket closed!");
+			std::cerr << "Socket closed!";
+		}
 	}
-    catch (boost::system::system_error){
+	catch (boost::system::system_error) {
+		cocos2d::log("Socket closed!");
         std::cerr << "Server ShutDowned with Process Left" << std::endl;
     }
 	catch (std::exception&e)
@@ -110,15 +117,21 @@ void TcpConnection::handle_read_header(const error_code& error)
 			std::bind(&TcpConnection::handle_read_body, this,
 				std::placeholders::_1));
 	}
-	else
+	else if(error_flag_ == true)
 	{
+		return;
+	}
+	else {
 		do_close();
 	}
 }
 
 void TcpConnection::handle_read_body(const error_code& error)
 {
-	if (!error)
+	if (error_flag_) {
+		true;
+	}
+	else if (!error)
 	{
 		//		steady_timer_.expires_from_now(std::chrono::seconds(10));
 		std::lock_guard<std::mutex> lk{ mut_ };
@@ -129,8 +142,7 @@ void TcpConnection::handle_read_body(const error_code& error)
 			std::bind(&TcpConnection::handle_read_header, this,
 				std::placeholders::_1));
 	}
-	else
-	{
+	else {
 		do_close();
 	}
 }
@@ -189,11 +201,15 @@ void SocketServer::close()
 		io_service_->stop();
 		acceptor_.close();
 		//		thread_ = nullptr;
-		thread_->join();
+        if(thread_){
+            thread_->join();
+        }
 		delete io_service_;
         io_service_ = new boost::asio::io_service;
         stop = true;
-        button_thread_->join();
+        if(button_thread_){
+            button_thread_->join();
+        }
 	}
 	catch (std::exception&e)
 	{
@@ -274,7 +290,7 @@ void SocketServer::loop_process()
                 r->write_data(game_msg);
         }
         catch(std::exception &e){
-            times ++;
+            times++;
             std::cerr << "Connection Lost No. " << times << std::endl;
         }
 	}
