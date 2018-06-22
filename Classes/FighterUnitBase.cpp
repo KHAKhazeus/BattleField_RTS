@@ -251,6 +251,7 @@ bool FighterUnitBase::judgeTarPos() {
 void FighterUnitBase::autoAttack(float dt) {
 	if (isAttack()) {
 		auto m = this;
+		this->setAutoAttack(false);
 		if (!TiledMap::checkUnitId(this->getTargetID())) {
 			this->clearAllType();
 			this->setAutoAttack(true);
@@ -264,7 +265,6 @@ void FighterUnitBase::autoAttack(float dt) {
 		//judge if the enemy is in the range
 		//Attack
 		if (this->judgeAttack(this->getTiledPosition(), pos)) {
-			this->stopAllActions();
 			//send attack message
 			tempManager->addMessages(tempManager->msgs->newAttackMessage(this->getUnitID(), enemy->getUnitID(), this->getAttack()));
 		}
@@ -274,7 +274,6 @@ void FighterUnitBase::autoAttack(float dt) {
 					if (!TiledMap::checkPass(this->getTempPos())) {
 						return;
 					}
-					TiledMap::setPass(this->getTargetPos());
 					tempManager->addMessages(tempManager->msgs->newAttackMessage(this->getUnitID(), enemy->getUnitID(), this->getAttack()));
 					return;
 				}

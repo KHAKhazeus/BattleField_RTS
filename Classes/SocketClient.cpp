@@ -41,8 +41,6 @@ void SocketClient::do_close()
 
 		io_service_.stop();
         std::this_thread::sleep_for(std::chrono::milliseconds(1500));
-		
-		
 	}
 	catch (std::exception&e)
 	{

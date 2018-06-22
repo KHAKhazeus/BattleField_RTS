@@ -137,13 +137,21 @@ void TiledMap::newMapGrid(Vec2 newPos, int id,int range,int fix_modle) {
 }
 
 void TiledMap::updateMapGrid(Vec2 oldPos, Vec2 newPos) {
+	
 	auto id = getUnitIdByPosition(oldPos);
-	newMapGrid(newPos,id);
-	auto x = static_cast<int> (oldPos.x + 0.1);
-	auto y = static_cast<int> (oldPos.y + 0.1);
-	auto grid = _grid_Vector.at(x).at(y);
-	grid->setPass(true);
-	_gridAndId_Map.erase(grid);
+	auto nx = static_cast<int> (newPos.x + 0.1);
+	auto ny = static_cast<int> (newPos.y + 0.1);
+	auto ox = static_cast<int> (oldPos.x + 0.1);
+	auto oy = static_cast<int> (oldPos.y + 0.1);
+	auto newgrid = _grid_Vector.at(nx).at(ny);
+	auto oldgrid = _grid_Vector.at(ox).at(oy);
+	if (newgrid == oldgrid) {
+		return;
+	}
+	_gridAndId_Map.insert({ newgrid,id });
+	newgrid->setPass(false);
+	_gridAndId_Map.erase(oldgrid);
+	oldgrid->setPass(true);
 }
 
 void TiledMap::removeMapGrid(Vec2 Pos) {
@@ -151,7 +159,6 @@ void TiledMap::removeMapGrid(Vec2 Pos) {
 	auto y = static_cast<int> (Pos.y + 0.1);
 	auto grid = _grid_Vector.at(x).at(y);
 	auto id = getUnitIdByPosition(Pos);
-	removeMapId(id);
 	_gridAndId_Map.erase(grid);
 	grid->setPass(true);
 }
@@ -194,7 +201,6 @@ void TiledMap::removeMapGrid(Vec2 pos, int fix_model) {
 		default:
 			break;
 	}
-	removeMapId(id);
 }
 
 
@@ -246,18 +252,16 @@ void TiledMap::setPass(Vec2 Pos) {
 }
 
 Vec2 TiledMap::tileCoordForPosition(Vec2 position) {
-	int x = static_cast<int>
-		(position.x / (_tiled_Map->getTileSize().width / CC_CONTENT_SCALE_FACTOR()));
+	int x = static_cast<int>(position.x) / 32;
 	float pointHeight = _tiled_Map->getTileSize().height / CC_CONTENT_SCALE_FACTOR();
-	int y = static_cast<int>
-		((_tiled_Map->getMapSize().height * pointHeight - position.y) / pointHeight);
+	int y = 127 - static_cast<int>(position.y) / 32;
 	return Vec2(x, y);
 }
 
 Vec2 TiledMap::locationForTilePos(Vec2 position) {
-	int x = (int)(position.x*(_tiled_Map->getTileSize().width / CC_CONTENT_SCALE_FACTOR()));
+	int x = position.x * 32 + 16;
 	float pointHeight = _tiled_Map->getTileSize().height / CC_CONTENT_SCALE_FACTOR();
-	int y = (int)((_tiled_Map->getMapSize().height * pointHeight) - (position.y * pointHeight));
+	int y = (127 - position.y) * 32 + 16;
 	return Point(x, y);
 }
 
@@ -346,4 +350,9 @@ Vec2 TiledMap::findFreeNear(Vec2 position) {
 		}
 	}
 	return Vec2(-1, -1);
+}
+
+
+Vec2 TiledMap::changeOPGL(Vec2 pos) {
+	return locationForTilePos(tileCoordForPosition(pos));
 }

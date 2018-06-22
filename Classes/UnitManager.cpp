@@ -27,7 +27,7 @@ bool UnitManager::init(TiledMap * tiledMap, std::shared_ptr<SocketServer> spserv
 void UnitManager::initBase() {
 	auto myPos = getBasePosition("ObjectLayer", _myCamp);
 	_base_me = Base::create(_myCamp);
-	_base_me->setPosition(myPos);
+	_base_me->setPosition(_tiled_Map->changeOPGL(myPos));
 	auto vect = _base_me->getBase()->getContentSize();
 	auto range = _base_me->getRange();
 	auto tiledPos = _tiled_Map->tileCoordForPosition(myPos); //change the OpenGL coordinate to TiledMap
@@ -51,7 +51,7 @@ void UnitManager::initBase() {
 
 	auto enPos = getBasePosition("ObjectLayer", _enCamp);
 	_base_en = Base::create(_enCamp);
-	_base_en->setPosition(enPos);
+	_base_en->setPosition((_tiled_Map->changeOPGL(enPos)));
 	vect = _base_en->getBase()->getContentSize();
 	range = _base_en->getRange();
 	tiledPos = _tiled_Map->tileCoordForPosition(enPos); //change the OpenGL coordinate to TiledMap
@@ -87,7 +87,7 @@ Vec2 UnitManager::getBasePosition(std::string layername, int campId) {
 }
 
 void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
-	auto tiledLocation = _tiled_Map->tileCoordForPosition(touch_point);
+	auto tiledLocation = _tiled_Map->tileCoordForPosition(_tiled_Map->changeOPGL(touch_point));
 	//judge if there is a unit in the Grid  判断该瓦片上是否有单位
 	if (TiledMap::checkMapGrid(tiledLocation)) {
 		auto id = TiledMap::getUnitIdByPosition(tiledLocation);
@@ -403,11 +403,12 @@ void UnitManager::attackEffect(int attacker_id, int under_attack_id) {
 		player->setTexture("unit/FighterUnit_2.png");
 		bullet = Sprite::createWithTexture
 		(Director::getInstance()->getTextureCache()->addImage("soldierAttack/bullet.png"));
-		bullet->setPosition(player->getPosition());
+		bullet->setPosition(_tiled_Map->changeOPGL(player->getPosition()));
 		bullet->setScale(0.2);
 		bullet->setFlippedX(true);
 		_tiled_Map->getTiledMap()->addChild(bullet, 30);
 		break;
+
 	case 'd':
 		SimpleAudioEngine::getInstance()->playEffect(DOG, false);
 	//	player->setTexture("unit/FighterUnit_1.png");
@@ -418,7 +419,7 @@ void UnitManager::attackEffect(int attacker_id, int under_attack_id) {
 		SimpleAudioEngine::getInstance()->playEffect(TANKBULLET, false);
 		bullet = Sprite::createWithTexture
 		(Director::getInstance()->getTextureCache()->addImage("tank/tankBullet.png"));
-		bullet->setPosition(player->getPosition());
+		bullet->setPosition((_tiled_Map->changeOPGL(player->getPosition())));
 		bullet->setScale(0.4);
 		_tiled_Map->getTiledMap()->addChild(bullet, 30);
 		break;
@@ -456,7 +457,7 @@ void UnitManager::destroyEffect(Unit* unit, bool type) {
 		auto blast = Unit::create("explode1/explode0.png");
 		auto animate = blast->getAnimateByName("explode", 0.1f, 30);
 		_tiled_Map->getTiledMap()->addChild(blast, 210);
-		blast->setPosition(unit->getPosition());
+		blast->setPosition((_tiled_Map->changeOPGL(unit->getPosition())));
 		auto buildingType = unit->getType();
 		auto campID = unit->getCampID();
 		auto callfunc = CallFunc::create([=] {
@@ -503,7 +504,7 @@ void UnitManager::Building(int new_building_id, std::string new_building_type, i
 			moneyMine->setColor(Color3B(65, 105, 225));
 		}
 		moneyMine->addIdCount();
-		moneyMine->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
+		moneyMine->setPosition(_tiled_Map->changeOPGL(Vec2(nodeLocation.x, nodeLocation.y)));
 		if (base_id == REDCAMP) {
 			BuildingBase::setRedIsBuilt(true);
 		}
@@ -533,7 +534,7 @@ void UnitManager::Building(int new_building_id, std::string new_building_type, i
 			powerPlant->setColor(Color3B(65, 105, 225));
 		}
 		powerPlant->addIdCount();
-		powerPlant->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
+		powerPlant->setPosition(_tiled_Map->changeOPGL(Vec2(nodeLocation.x, nodeLocation.y)));
 		if (base_id == REDCAMP) {
 			BuildingBase::setRedIsBuilt(true);
 		}
@@ -562,7 +563,7 @@ void UnitManager::Building(int new_building_id, std::string new_building_type, i
 			soldierBase->setColor(Color3B(65, 105, 225));
 		}
 		soldierBase->addIdCount();
-		soldierBase->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
+		soldierBase->setPosition(_tiled_Map->changeOPGL(Vec2(nodeLocation.x, nodeLocation.y)));
 		if (base_id == REDCAMP) {
 			BuildingBase::setRedIsBuilt(true);
 		}
@@ -591,7 +592,7 @@ void UnitManager::Building(int new_building_id, std::string new_building_type, i
 			warFactory->setColor(Color3B(65, 105, 225));
 		}
 		warFactory->addIdCount();
-		warFactory->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
+		warFactory->setPosition(_tiled_Map->changeOPGL(Vec2(nodeLocation.x, nodeLocation.y)));
 		if (base_id == REDCAMP) {
 			BuildingBase::setRedIsBuilt(true);
 		}
@@ -633,7 +634,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 			dog->setFlippedX(true);
 		}
 		auto tiledLocation = tempTiledMap->tileCoordForPosition(nodeLocation);
-		dog->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
+		dog->setPosition(_tiled_Map->changeOPGL(Vec2(nodeLocation.x, nodeLocation.y)));
 		if (base_id == REDCAMP) {
 			Dog::setRedIsCreated(true);
 		}
@@ -641,12 +642,14 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 			Dog::setBlueIsCreated(true);
 		}
 		dog->Create(plant);
-		dog->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
+		if (base_id == _myCamp) {
+			dog->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
+		}
 		//		TiledMap::setUnpass(tiledLocation);
 		//		auto tiledLocation = tempScene->tileCoordForPosition(nodeLocation);
 		TiledMap::newMapGrid(tiledLocation, dog->getUnitID());
 		TiledMap::newMapId(dog->getUnitID(), dog);
-		dog->setAnchorPoint(Vec2(0, 0.5));
+//		dog->setAnchorPoint(Vec2(0, 0.5));
 		dog->setTiledPosition(tiledLocation);
 
 		static_cast<TMXTiledMap*>(plant->getParent())->addChild(dog, 200);
@@ -671,7 +674,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 			soldier->setFlippedX(true);
 		}
 		auto tiledLocation = tempTiledMap->tileCoordForPosition(nodeLocation);
-		soldier->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
+		soldier->setPosition(_tiled_Map->changeOPGL(Vec2(nodeLocation.x, nodeLocation.y)));
 		if (base_id == REDCAMP) {
 			Soldier::setRedIsCreated(true);
 		}
@@ -679,13 +682,15 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 			Soldier::setBlueIsCreated(true);
 		}
 		soldier->Create(plant);
-		soldier->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
+		if (base_id == _myCamp) {
+			soldier->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
+		}
 		//		TiledMap::setUnpass(tiledLocation);
 		static_cast<TMXTiledMap*>(plant->getParent())->addChild(soldier, 200);
 		//		auto tiledLocation = tempScene->tileCoordForPosition(nodeLocation);
 		TiledMap::newMapGrid(tiledLocation, soldier->getUnitID());
 		TiledMap::newMapId(soldier->getUnitID(), soldier);
-		soldier->setAnchorPoint(Vec2(0, 0.5));
+//		soldier->setAnchorPoint(Vec2(0, 0.5));
 		soldier->setTiledPosition(tiledLocation);
 		//	tempScene->getVectorSoldiers().pushBack(soldier);
 		if (base_id == this->_myCamp) {
@@ -709,7 +714,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 			tank->setFlippedX(true);
 		}
 		auto tiledLocation = tempTiledMap->tileCoordForPosition(nodeLocation);
-		tank->setPosition(Vec2(nodeLocation.x, nodeLocation.y));
+		tank->setPosition(_tiled_Map->changeOPGL(Vec2(nodeLocation.x, nodeLocation.y)));
 		if (base_id == REDCAMP) {
 			Tank::setRedIsCreated(true);
 		}
@@ -717,13 +722,15 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 			Tank::setBlueIsCreated(true);
 		}
 		tank->Create(plant);
-		tank->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
+		if (base_id == _myCamp) {
+			tank->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
+		}
 		//		TiledMap::setUnpass(tiledLocation);
 		static_cast<TMXTiledMap*>(plant->getParent())->addChild(tank, 200);
 		//		auto tiledLocation = tempScene->tileCoordForPosition(nodeLocation);
 		TiledMap::newMapGrid(tiledLocation, tank->getUnitID());
 		TiledMap::newMapId(tank->getUnitID(), tank);
-		tank->setAnchorPoint(Vec2(0, 1.0));
+//		tank->setAnchorPoint(Vec2(0, 1.0));
 		tank->setTiledPosition(tiledLocation);
 		//	tempScene->getVectorSoldiers().pushBack(soldier);
 		if (base_id == this->_myCamp) {
@@ -765,12 +772,16 @@ void UnitManager::updateMessage(float delta) {
 			}
 			auto attacker = TiledMap::getUnitById(attackerId);
 			if (attacker->isMove()) {
+				if (!TiledMap::checkBoundary(attacker->getTempPos()) || !TiledMap::checkMapGrid(attacker->getTempPos())) {
+					continue;
+				}
 				TiledMap::updateMapGrid(attacker->getTiledPosition(), attacker->getTempPos());
 				attacker->setTiledPosition(attacker->getTempPos());
-				attacker->stopAllActions();
+				TiledMap::setPass(attacker->getTargetPos());
 				attacker->clearAllType();
 				attacker->setAttack(true);
 			}
+			attacker->stopAllActions();
 			UnitManager::attack(orders[i].unit_0(), orders[i].unit_1(), orders[i].damage());
 			UnitManager::attackEffect(orders[i].unit_0(), orders[i].unit_1());
 		}

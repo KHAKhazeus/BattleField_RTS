@@ -76,6 +76,7 @@ public:
 	//To check the Id if has been removed already
 	static bool checkUnitId(int id);
 
+	Vec2 changeOPGL(Vec2 pos);
 
 	//_selected_Vector API
 	//@@param the Pointer to the Unit
