@@ -307,7 +307,12 @@ void FighterUnitBase::autoAttack(float dt) {
 			auto tempNode = this->getParent()->getParent()->getParent();
 			auto tempScene = static_cast<GameScene*>(tempNode);
 			auto tempManager = tempScene->getUnitManager();
-		/*	if (!TiledMap::checkUnitId(this->getTargetID())) {
+		/*	if (!TiledM
+		
+		
+		
+		
+		ap::checkUnitId(this->getTargetID())) {
 				return;
 			}*/
 			auto id = TiledMap::getUnitIdByPosition(pos);

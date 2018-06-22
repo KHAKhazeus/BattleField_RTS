@@ -90,8 +90,7 @@ void TcpConnection::do_close()
 		try {
 			cocos2d::log("Socket closed\n");
 			socket_.close(ec);
-		}
-		catch (boost::system::system_error &ec) {
+		}catch (boost::system::system_error &ec) {
 			cocos2d::log("Socket closed!");
 			std::cerr << "Socket closed!";
 		}
