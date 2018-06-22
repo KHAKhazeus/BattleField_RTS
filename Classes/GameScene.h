@@ -50,6 +50,8 @@ public:
 	TiledMap* getMap() { return _tiled_Map; }
 
 	UnitManager* getUnitManager() { return _unit_Manager; }
+	
+	void winOrLose(bool win);
 
 	CREATE_FUNC(GameScene);
 	//turn the coordinate of OpenGL to TileMap
@@ -85,7 +87,7 @@ public:
 	//Mouse listener
 	void onMouseMove(Event* event);
 
-
+	void menuCloseCallback(cocos2d::Ref* pSender);
 };
 
 

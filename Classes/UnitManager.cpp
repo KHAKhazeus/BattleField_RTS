@@ -344,6 +344,14 @@ void UnitManager::attack(int attacker_id, int under_attack_id, int damage) {
 				}
 			}
 		}
+		if (enemy->getCampID() == this->_myCamp) {
+			checkWinOrLose(false);
+			return;
+		}
+		else {
+			checkWinOrLose(true);
+			return;
+		}
 		if (enemy->isBuilding()) {
 			auto callFunc = CallFunc::create([=] {
 				destroyEffect(enemy, true);
@@ -415,7 +423,7 @@ void UnitManager::attackEffect(int attacker_id, int under_attack_id) {
 	Animate* dogAttack;
 	switch (type) {
 	case 's':
-		SimpleAudioEngine::getInstance()->playEffect(FIGHT, false);
+	//	SimpleAudioEngine::getInstance()->playEffect(FIGHT, false);
 		player->setTexture("unit/FighterUnit_2.png");
 		bullet = Sprite::createWithTexture
 		(Director::getInstance()->getTextureCache()->addImage("soldierAttack/bullet.png"));
@@ -426,13 +434,13 @@ void UnitManager::attackEffect(int attacker_id, int under_attack_id) {
 		break;
 
 	case 'd':
-		SimpleAudioEngine::getInstance()->playEffect(DOG, false);
+	//	SimpleAudioEngine::getInstance()->playEffect(DOG, false);
 	//	player->setTexture("unit/FighterUnit_1.png");
 		dogAttack = player->getAnimateByName("dogAttack", 0.1, 6);
 		isDog = true;
 		break;
 	case 't':
-		SimpleAudioEngine::getInstance()->playEffect(TANKBULLET, false);
+	//	SimpleAudioEngine::getInstance()->playEffect(TANKBULLET, false);
 		bullet = Sprite::createWithTexture
 		(Director::getInstance()->getTextureCache()->addImage("tank/tankBullet.png"));
 		bullet->setPosition((_tiled_Map->changeOPGL(player->getPosition())));
@@ -847,4 +855,10 @@ void UnitManager::updateMessage(float delta) {
 	//clear for new messages
 	this->getMessages().clear();
 
+}
+
+
+void UnitManager::checkWinOrLose(bool win) {
+	auto tempScene = static_cast<GameScene*>(this->getParent());
+	tempScene->winOrLose(win);
 }
