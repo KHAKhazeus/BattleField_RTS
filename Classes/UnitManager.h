@@ -34,7 +34,7 @@ public:
 	void initBase();
 	Base* getBase(){ return _base_me; }
 	//
-	void checkWinOrLose();
+	void checkWinOrLose(int win);
 
 	void selectUnitsByPoint(Vec2 touch_point);
 	void selectUnitsByRect(MouseRect* mouse_rect);

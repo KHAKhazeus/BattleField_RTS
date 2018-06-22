@@ -47,6 +47,8 @@ public:
 
 	Power* getPower() { return _power; }
 
+	void winOrLose(int win);
+
 	TiledMap* getMap() { return _tiled_Map; }
 
 	UnitManager* getUnitManager() { return _unit_Manager; }
@@ -84,7 +86,7 @@ public:
 
 	//Mouse listener
 	void onMouseMove(Event* event);
-
+	void menuCloseCallback(cocos2d::Ref* pSender);
 
 };
 

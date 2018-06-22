@@ -33,10 +33,8 @@ void UnitManager::initBase() {
 	auto tiledPos = _tiled_Map->tileCoordForPosition(myPos); //change the OpenGL coordinate to TiledMap
 	_base_me->setTiledPosition(tiledPos);
 	_base_me->setType("B");
+	_base_me->setProgressed(true);
 	
-	
-	TiledMap::newMapGrid(tiledPos, _base_me->getUnitID(), _base_me->getRange());
-	TiledMap::newMapId(_base_me->getUnitID(), _base_me);
 	//TODO set the camera to the Base
 	_tiled_Map->getTiledMap()->addChild(_base_me, 100);
 	if (_myCamp == BLUECAMP) {
@@ -58,6 +56,7 @@ void UnitManager::initBase() {
 	auto tiledPos1 = _tiled_Map->tileCoordForPosition(enPos); //change the OpenGL coordinate to TiledMap
 	_base_en->setTiledPosition(tiledPos1);
 	_base_en->setType("B");
+	_base_en->setProgressed(true);
 
 	if (_base_me->getCampID() == REDCAMP) {
 		_base_me->setUnitID(_base_me->getIdCount());
@@ -71,6 +70,8 @@ void UnitManager::initBase() {
 		_base_me->setUnitID(_base_me->getIdCount());
 		_base_me->addIdCount();
 	}
+	TiledMap::newMapGrid(tiledPos, _base_me->getUnitID(), _base_me->getRange());
+	TiledMap::newMapId(_base_me->getUnitID(), _base_me);
 	
 	TiledMap::newMapGrid(tiledPos1, _base_en->getUnitID(), _base_en->getRange());
 	TiledMap::newMapId(_base_en->getUnitID(), _base_en);
@@ -341,6 +342,14 @@ void UnitManager::attack(int attacker_id, int under_attack_id, int damage) {
 					break;
 				}
 			}
+		}
+		if (enemy->getCampID() == this->_myCamp) {
+			checkWinOrLose(0);
+			return;
+		}
+		else {
+			checkWinOrLose(1);
+			return;
 		}
 		if (enemy->isBuilding()) {
 			auto callFunc = CallFunc::create([=] {
@@ -655,7 +664,9 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 			Dog::setBlueIsCreated(true);
 		}
 		dog->Create(plant);
-		dog->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
+		if (dog->getCampID() == _myCamp) {
+			dog->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
+		}
 		//		TiledMap::setUnpass(tiledLocation);
 		//		auto tiledLocation = tempScene->tileCoordForPosition(nodeLocation);
 		TiledMap::newMapGrid(tiledLocation, dog->getUnitID());
@@ -693,7 +704,9 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 			Soldier::setBlueIsCreated(true);
 		}
 		soldier->Create(plant);
-		soldier->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
+		if (soldier->getCampID() == _myCamp) {
+			soldier->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
+		}
 		//		TiledMap::setUnpass(tiledLocation);
 		static_cast<TMXTiledMap*>(plant->getParent())->addChild(soldier, 200);
 		//		auto tiledLocation = tempScene->tileCoordForPosition(nodeLocation);
@@ -731,7 +744,9 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 			Tank::setBlueIsCreated(true);
 		}
 		tank->Create(plant);
-		tank->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
+		if (tank->getCampID() == _myCamp) {
+			tank->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
+		}
 		//		TiledMap::setUnpass(tiledLocation);
 		static_cast<TMXTiledMap*>(plant->getParent())->addChild(tank, 200);
 		//		auto tiledLocation = tempScene->tileCoordForPosition(nodeLocation);
@@ -838,4 +853,9 @@ void UnitManager::updateMessage(float delta) {
 	//clear for new messages
 	this->getMessages().clear();
 
+}
+
+void UnitManager::checkWinOrLose(int win) {
+	auto tempScene = static_cast<GameScene*>(this->getParent());
+	tempScene->winOrLose(win);
 }
