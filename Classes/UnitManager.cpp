@@ -34,7 +34,6 @@ void UnitManager::initBase() {
 	_base_me->setTiledPosition(tiledPos);
 	_base_me->setType("B");
 	_base_me->setProgressed(true);
-	
 	//TODO set the camera to the Base
 	_tiled_Map->getTiledMap()->addChild(_base_me, 100);
 	if (_myCamp == BLUECAMP) {
@@ -80,13 +79,6 @@ void UnitManager::initBase() {
 	TiledMap::newMapId(_base_en->getUnitID(), _base_en);
 	//TODO set the camera to the Base
 	_tiled_Map->getTiledMap()->addChild(_base_en, 100);
-
-
-
-
-
-
-
 }
 
 Vec2 UnitManager::getBasePosition(std::string layername, int campId) {
@@ -293,7 +285,9 @@ void UnitManager::playerMoveWithWayPoints(int move_unit_id, std::vector<cocos2d:
 		log("%s", "Done!");
 		if (player->isMove()) {
 			player->setMove(false);
-			player->setAutoAttack(true);
+			if (!player->isAttack()) {
+				player->setAutoAttack(true);
+			}
 		}
 	});
 	Sequence *sequence;
@@ -301,7 +295,7 @@ void UnitManager::playerMoveWithWayPoints(int move_unit_id, std::vector<cocos2d:
 		Vec2 openGL_point = _tiled_Map->locationForTilePos(path_points[i]);
 		MoveTo* moveTo = MoveTo::create(speed, openGL_point);
 		auto callfunc = CallFunc::create([=] {
-			player->setTempPos(path_points[i]);
+			player->setTempPos(Vec2(-1, -1));
 //			log("player->set  %f,%f", player->getTempPos().x, player->getTempPos().y);
 		});
 		auto action = Spawn::create(moveTo, callfunc, NULL);
