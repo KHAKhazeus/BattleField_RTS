@@ -86,7 +86,7 @@ namespace boost {
 
          // Intel compiler has problems with SFINAE for copy constructors and deleted functions:
          //
-         // error: function *function_name* cannot be referenced -- it is a deleted function
+         // isError: function *function_name* cannot be referenced -- it is a deleted function
          // static boost::type_traits::yes_type test(T1&, decltype(T1(boost::declval<T1&>()))* = 0);
          //                                                        ^ 
          //
@@ -112,7 +112,7 @@ namespace boost {
          // If you see errors like this:
          //
          //      `'T::T(const T&)' is private`
-         //      `boost/type_traits/is_copy_constructible.hpp:68:5: error: within this context`
+         //      `boost/type_traits/is_copy_constructible.hpp:68:5: isError: within this context`
          //
          // then you are trying to call that macro for a structure defined like that:
          //

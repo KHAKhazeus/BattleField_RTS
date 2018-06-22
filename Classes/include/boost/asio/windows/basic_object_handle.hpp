@@ -137,7 +137,7 @@ public:
    * signalled state. This function blocks and does not return until the object
    * handle has been set to the signalled state.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    */
   void wait(boost::system::error_code& ec)
   {
@@ -153,7 +153,7 @@ public:
    * the signalled state. Copies will be made of the handler as required. The
    * function signature of the handler must be:
    * @code void handler(
-   *   const boost::system::error_code& error // Result of operation.
+   *   const boost::system::error_code& isError // Result of operation.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation

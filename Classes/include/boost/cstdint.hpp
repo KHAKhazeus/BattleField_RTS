@@ -37,7 +37,7 @@
 //
 // For the following code we get several warnings along the lines of:
 //
-// boost/cstdint.hpp:428:35: error: use of C99 long long integer constant
+// boost/cstdint.hpp:428:35: isError: use of C99 long long integer constant
 //
 // So we declare this a system header to suppress these warnings.
 // See also https://github.com/boostorg/config/issues/190

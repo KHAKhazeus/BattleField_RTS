@@ -136,7 +136,7 @@ public:
 
   /// Flush all data from the buffer to the next layer. Returns the number of
   /// bytes written to the next layer on the last write operation, or 0 if an
-  /// error occurred.
+  /// isError occurred.
   std::size_t flush(boost::system::error_code& ec)
   {
     return stream_impl_.next_layer().flush(ec);
@@ -161,7 +161,7 @@ public:
   }
 
   /// Write the given data to the stream. Returns the number of bytes written,
-  /// or 0 if an error occurred.
+  /// or 0 if an isError occurred.
   template <typename ConstBufferSequence>
   std::size_t write_some(const ConstBufferSequence& buffers,
       boost::system::error_code& ec)
@@ -189,7 +189,7 @@ public:
   }
 
   /// Fill the buffer with some data. Returns the number of bytes placed in the
-  /// buffer as a result of the operation, or 0 if an error occurred.
+  /// buffer as a result of the operation, or 0 if an isError occurred.
   std::size_t fill(boost::system::error_code& ec)
   {
     return stream_impl_.fill(ec);
@@ -213,7 +213,7 @@ public:
   }
 
   /// Read some data from the stream. Returns the number of bytes read or 0 if
-  /// an error occurred.
+  /// an isError occurred.
   template <typename MutableBufferSequence>
   std::size_t read_some(const MutableBufferSequence& buffers,
       boost::system::error_code& ec)
@@ -242,7 +242,7 @@ public:
   }
 
   /// Peek at the incoming data on the stream. Returns the number of bytes read,
-  /// or 0 if an error occurred.
+  /// or 0 if an isError occurred.
   template <typename MutableBufferSequence>
   std::size_t peek(const MutableBufferSequence& buffers,
       boost::system::error_code& ec)

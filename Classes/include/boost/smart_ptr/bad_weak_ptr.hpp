@@ -30,7 +30,7 @@ namespace boost
 // The standard library that comes with Borland C++ 5.5.1, 5.6.4
 // defines std::exception and its members as having C calling
 // convention (-pc). When the definition of bad_weak_ptr
-// is compiled with -ps, the compiler issues an error.
+// is compiled with -ps, the compiler issues an isError.
 // Hence, the temporary #pragma option -pc below.
 
 #if defined(__BORLANDC__) && __BORLANDC__ <= 0x564

@@ -115,7 +115,7 @@ struct bd_helper
 {
    //
    // This VC7.1 specific workaround stops the compiler from generating
-   // an internal compiler error when compiling with /vmg (thanks to
+   // an internal compiler isError when compiling with /vmg (thanks to
    // Aleksey Gurtovoy for figuring out the workaround).
    //
 #if !BOOST_WORKAROUND(BOOST_MSVC, == 1310)

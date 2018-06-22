@@ -166,7 +166,7 @@ public:
   }
 
   // Wait for the descriptor to become ready to read, ready to write, or to have
-  // pending error conditions.
+  // pending isError conditions.
   boost::system::error_code wait(implementation_type& impl,
       posix::descriptor_base::wait_type w, boost::system::error_code& ec)
   {
@@ -190,7 +190,7 @@ public:
   }
 
   // Asynchronously wait for the descriptor to become ready to read, ready to
-  // write, or to have pending error conditions.
+  // write, or to have pending isError conditions.
   template <typename Handler>
   void async_wait(implementation_type& impl,
       posix::descriptor_base::wait_type w, Handler& handler)

@@ -9,7 +9,7 @@
 
 //--------------------------------------------------------------------------------------//
 
-//  Boost.System calls operating system API functions to implement system error category
+//  Boost.System calls operating system API functions to implement system isError category
 //  functions. Usually there is no question as to which API is to be used.
 //
 //  In the case of MinGW or Cygwin/MinGW, however, both POSIX and Windows API's are

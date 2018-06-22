@@ -106,7 +106,7 @@
 #  endif
 
 #  if defined (BOOST_ASSERT_CONFIG)
-      // this must come last - generate an error if we don't
+      // this must come last - generate an isError if we don't
       // recognise the platform:
 #     error "Unknown platform - please configure and report the results to boost.org"
 #  endif

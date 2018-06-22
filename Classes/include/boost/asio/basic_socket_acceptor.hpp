@@ -357,7 +357,7 @@ public:
    *
    * @param protocol An object specifying which protocol is to be used.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @par Example
    * @code
@@ -366,7 +366,7 @@ public:
    * acceptor.open(boost::asio::ip::tcp::v4(), ec);
    * if (ec)
    * {
-   *   // An error occurred.
+   *   // An isError occurred.
    * }
    * @endcode
    */
@@ -404,7 +404,7 @@ public:
    *
    * @param native_acceptor A native acceptor.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    */
   BOOST_ASIO_SYNC_OP_VOID assign(const protocol_type& protocol,
       const native_handle_type& native_acceptor, boost::system::error_code& ec)
@@ -453,7 +453,7 @@ public:
    * @param endpoint An endpoint on the local machine to which the socket
    * acceptor will be bound.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @par Example
    * @code
@@ -464,7 +464,7 @@ public:
    * acceptor.bind(endpoint, ec);
    * if (ec)
    * {
-   *   // An error occurred.
+   *   // An isError occurred.
    * }
    * @endcode
    */
@@ -500,7 +500,7 @@ public:
    *
    * @param backlog The maximum length of the queue of pending connections.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @par Example
    * @code
@@ -510,7 +510,7 @@ public:
    * acceptor.listen(boost::asio::socket_base::max_listen_connections, ec);
    * if (ec)
    * {
-   *   // An error occurred.
+   *   // An isError occurred.
    * }
    * @endcode
    */
@@ -545,7 +545,7 @@ public:
    * A subsequent call to open() is required before the acceptor can again be
    * used to again perform socket accept operations.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @par Example
    * @code
@@ -555,7 +555,7 @@ public:
    * acceptor.close(ec);
    * if (ec)
    * {
-   *   // An error occurred.
+   *   // An isError occurred.
    * }
    * @endcode
    */
@@ -569,13 +569,13 @@ public:
   /**
    * This function causes all outstanding asynchronous accept operations to
    * finish immediately, and the handlers for cancelled operations will be
-   * passed the boost::asio::error::operation_aborted error. Ownership of the
+   * passed the boost::asio::isError::operation_aborted isError. Ownership of the
    * native acceptor is then transferred to the caller.
    *
    * @throws boost::system::system_error Thrown on failure.
    *
    * @note This function is unsupported on Windows versions prior to Windows
-   * 8.1, and will fail with boost::asio::error::operation_not_supported on
+   * 8.1, and will fail with boost::asio::isError::operation_not_supported on
    * these platforms.
    */
 #if defined(BOOST_ASIO_MSVC) && (BOOST_ASIO_MSVC >= 1400) \
@@ -597,13 +597,13 @@ public:
   /**
    * This function causes all outstanding asynchronous accept operations to
    * finish immediately, and the handlers for cancelled operations will be
-   * passed the boost::asio::error::operation_aborted error. Ownership of the
+   * passed the boost::asio::isError::operation_aborted isError. Ownership of the
    * native acceptor is then transferred to the caller.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @note This function is unsupported on Windows versions prior to Windows
-   * 8.1, and will fail with boost::asio::error::operation_not_supported on
+   * 8.1, and will fail with boost::asio::isError::operation_not_supported on
    * these platforms.
    */
 #if defined(BOOST_ASIO_MSVC) && (BOOST_ASIO_MSVC >= 1400) \
@@ -632,7 +632,7 @@ public:
   /**
    * This function causes all outstanding asynchronous connect, send and receive
    * operations to finish immediately, and the handlers for cancelled operations
-   * will be passed the boost::asio::error::operation_aborted error.
+   * will be passed the boost::asio::isError::operation_aborted isError.
    *
    * @throws boost::system::system_error Thrown on failure.
    */
@@ -647,9 +647,9 @@ public:
   /**
    * This function causes all outstanding asynchronous connect, send and receive
    * operations to finish immediately, and the handlers for cancelled operations
-   * will be passed the boost::asio::error::operation_aborted error.
+   * will be passed the boost::asio::isError::operation_aborted isError.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    */
   BOOST_ASIO_SYNC_OP_VOID cancel(boost::system::error_code& ec)
   {
@@ -692,7 +692,7 @@ public:
    *
    * @param option The new option value to be set on the acceptor.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @sa SettableSocketOption @n
    * boost::asio::socket_base::reuse_address
@@ -708,7 +708,7 @@ public:
    * acceptor.set_option(option, ec);
    * if (ec)
    * {
-   *   // An error occurred.
+   *   // An isError occurred.
    * }
    * @endcode
    */
@@ -757,7 +757,7 @@ public:
    *
    * @param option The option value to be obtained from the acceptor.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @sa GettableSocketOption @n
    * boost::asio::socket_base::reuse_address
@@ -772,7 +772,7 @@ public:
    * acceptor.get_option(option, ec);
    * if (ec)
    * {
-   *   // An error occurred.
+   *   // An isError occurred.
    * }
    * bool is_set = option.get();
    * @endcode
@@ -819,7 +819,7 @@ public:
    *
    * @param command The IO control command to be performed on the acceptor.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @sa IoControlCommand @n
    * boost::asio::socket_base::non_blocking_io
@@ -834,7 +834,7 @@ public:
    * socket.io_control(command, ec);
    * if (ec)
    * {
-   *   // An error occurred.
+   *   // An isError occurred.
    * }
    * @endcode
    */
@@ -849,13 +849,13 @@ public:
   /// Gets the non-blocking mode of the acceptor.
   /**
    * @returns @c true if the acceptor's synchronous operations will fail with
-   * boost::asio::error::would_block if they are unable to perform the requested
+   * boost::asio::isError::would_block if they are unable to perform the requested
    * operation immediately. If @c false, synchronous operations will block
    * until complete.
    *
    * @note The non-blocking mode has no effect on the behaviour of asynchronous
-   * operations. Asynchronous operations will never fail with the error
-   * boost::asio::error::would_block.
+   * operations. Asynchronous operations will never fail with the isError
+   * boost::asio::isError::would_block.
    */
   bool non_blocking() const
   {
@@ -865,15 +865,15 @@ public:
   /// Sets the non-blocking mode of the acceptor.
   /**
    * @param mode If @c true, the acceptor's synchronous operations will fail
-   * with boost::asio::error::would_block if they are unable to perform the
+   * with boost::asio::isError::would_block if they are unable to perform the
    * requested operation immediately. If @c false, synchronous operations will
    * block until complete.
    *
    * @throws boost::system::system_error Thrown on failure.
    *
    * @note The non-blocking mode has no effect on the behaviour of asynchronous
-   * operations. Asynchronous operations will never fail with the error
-   * boost::asio::error::would_block.
+   * operations. Asynchronous operations will never fail with the isError
+   * boost::asio::isError::would_block.
    */
   void non_blocking(bool mode)
   {
@@ -885,15 +885,15 @@ public:
   /// Sets the non-blocking mode of the acceptor.
   /**
    * @param mode If @c true, the acceptor's synchronous operations will fail
-   * with boost::asio::error::would_block if they are unable to perform the
+   * with boost::asio::isError::would_block if they are unable to perform the
    * requested operation immediately. If @c false, synchronous operations will
    * block until complete.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @note The non-blocking mode has no effect on the behaviour of asynchronous
-   * operations. Asynchronous operations will never fail with the error
-   * boost::asio::error::would_block.
+   * operations. Asynchronous operations will never fail with the isError
+   * boost::asio::isError::would_block.
    */
   BOOST_ASIO_SYNC_OP_VOID non_blocking(
       bool mode, boost::system::error_code& ec)
@@ -909,8 +909,8 @@ public:
    * object's synchronous operations.
    *
    * @returns @c true if the underlying acceptor is in non-blocking mode and
-   * direct system calls may fail with boost::asio::error::would_block (or the
-   * equivalent system error).
+   * direct system calls may fail with boost::asio::isError::would_block (or the
+   * equivalent system isError).
    *
    * @note The current non-blocking mode is cached by the acceptor object.
    * Consequently, the return value may be incorrect if the non-blocking mode
@@ -928,12 +928,12 @@ public:
    * synchronous operations.
    *
    * @param mode If @c true, the underlying acceptor is put into non-blocking
-   * mode and direct system calls may fail with boost::asio::error::would_block
-   * (or the equivalent system error).
+   * mode and direct system calls may fail with boost::asio::isError::would_block
+   * (or the equivalent system isError).
    *
    * @throws boost::system::system_error Thrown on failure. If the @c mode is
    * @c false, but the current value of @c non_blocking() is @c true, this
-   * function fails with boost::asio::error::invalid_argument, as the
+   * function fails with boost::asio::isError::invalid_argument, as the
    * combination does not make sense.
    */
   void native_non_blocking(bool mode)
@@ -951,12 +951,12 @@ public:
    * synchronous operations.
    *
    * @param mode If @c true, the underlying acceptor is put into non-blocking
-   * mode and direct system calls may fail with boost::asio::error::would_block
-   * (or the equivalent system error).
+   * mode and direct system calls may fail with boost::asio::isError::would_block
+   * (or the equivalent system isError).
    *
-   * @param ec Set to indicate what error occurred, if any. If the @c mode is
+   * @param ec Set to indicate what isError occurred, if any. If the @c mode is
    * @c false, but the current value of @c non_blocking() is @c true, this
-   * function fails with boost::asio::error::invalid_argument, as the
+   * function fails with boost::asio::isError::invalid_argument, as the
    * combination does not make sense.
    */
   BOOST_ASIO_SYNC_OP_VOID native_non_blocking(
@@ -995,11 +995,11 @@ public:
   /**
    * This function is used to obtain the locally bound endpoint of the acceptor.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @returns An object that represents the local endpoint of the acceptor.
-   * Returns a default-constructed endpoint object if an error occurred and the
-   * error handler did not throw an exception.
+   * Returns a default-constructed endpoint object if an isError occurred and the
+   * isError handler did not throw an exception.
    *
    * @par Example
    * @code
@@ -1009,7 +1009,7 @@ public:
    * boost::asio::ip::tcp::endpoint endpoint = acceptor.local_endpoint(ec);
    * if (ec)
    * {
-   *   // An error occurred.
+   *   // An isError occurred.
    * }
    * @endcode
    */
@@ -1019,10 +1019,10 @@ public:
   }
 
   /// Wait for the acceptor to become ready to read, ready to write, or to have
-  /// pending error conditions.
+  /// pending isError conditions.
   /**
    * This function is used to perform a blocking wait for an acceptor to enter
-   * a ready to read, write or error condition state.
+   * a ready to read, write or isError condition state.
    *
    * @param w Specifies the desired acceptor state.
    *
@@ -1042,14 +1042,14 @@ public:
   }
 
   /// Wait for the acceptor to become ready to read, ready to write, or to have
-  /// pending error conditions.
+  /// pending isError conditions.
   /**
    * This function is used to perform a blocking wait for an acceptor to enter
-   * a ready to read, write or error condition state.
+   * a ready to read, write or isError condition state.
    *
    * @param w Specifies the desired acceptor state.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @par Example
    * Waiting for an acceptor to become readable.
@@ -1067,10 +1067,10 @@ public:
   }
 
   /// Asynchronously wait for the acceptor to become ready to read, ready to
-  /// write, or to have pending error conditions.
+  /// write, or to have pending isError conditions.
   /**
    * This function is used to perform an asynchronous wait for an acceptor to
-   * enter a ready to read, write or error condition state.
+   * enter a ready to read, write or isError condition state.
    *
    * @param w Specifies the desired acceptor state.
    *
@@ -1078,7 +1078,7 @@ public:
    * Copies will be made of the handler as required. The function signature of
    * the handler must be:
    * @code void handler(
-   *   const boost::system::error_code& error // Result of operation
+   *   const boost::system::error_code& isError // Result of operation
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
@@ -1087,9 +1087,9 @@ public:
    *
    * @par Example
    * @code
-   * void wait_handler(const boost::system::error_code& error)
+   * void wait_handler(const boost::system::error_code& isError)
    * {
-   *   if (!error)
+   *   if (!isError)
    *   {
    *     // Wait succeeded.
    *   }
@@ -1109,7 +1109,7 @@ public:
       void (boost::system::error_code))
   async_wait(wait_type w, BOOST_ASIO_MOVE_ARG(WaitHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
+    // If you get an isError on the following line it means that your handler does
     // not meet the documented type requirements for a WaitHandler.
     BOOST_ASIO_WAIT_HANDLER_CHECK(WaitHandler, handler) type_check;
 
@@ -1132,7 +1132,7 @@ public:
   /**
    * This function is used to accept a new connection from a peer into the
    * given socket. The function call will block until a new connection has been
-   * accepted successfully or an error occurs.
+   * accepted successfully or an isError occurs.
    *
    * @param peer The socket into which the new connection will be accepted.
    *
@@ -1166,11 +1166,11 @@ public:
   /**
    * This function is used to accept a new connection from a peer into the
    * given socket. The function call will block until a new connection has been
-   * accepted successfully or an error occurs.
+   * accepted successfully or an isError occurs.
    *
    * @param peer The socket into which the new connection will be accepted.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @par Example
    * @code
@@ -1181,7 +1181,7 @@ public:
    * acceptor.accept(socket, ec);
    * if (ec)
    * {
-   *   // An error occurred.
+   *   // An isError occurred.
    * }
    * @endcode
    */
@@ -1216,7 +1216,7 @@ public:
    * completes. Copies will be made of the handler as required. The function
    * signature of the handler must be:
    * @code void handler(
-   *   const boost::system::error_code& error // Result of operation.
+   *   const boost::system::error_code& isError // Result of operation.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
@@ -1225,9 +1225,9 @@ public:
    *
    * @par Example
    * @code
-   * void accept_handler(const boost::system::error_code& error)
+   * void accept_handler(const boost::system::error_code& isError)
    * {
-   *   if (!error)
+   *   if (!isError)
    *   {
    *     // Accept succeeded.
    *   }
@@ -1257,7 +1257,7 @@ public:
       typename enable_if<is_convertible<Protocol, Protocol1>::value>::type* = 0)
 #endif // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
   {
-    // If you get an error on the following line it means that your handler does
+    // If you get an isError on the following line it means that your handler does
     // not meet the documented type requirements for a AcceptHandler.
     BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
 
@@ -1281,7 +1281,7 @@ public:
    * This function is used to accept a new connection from a peer into the
    * given socket, and additionally provide the endpoint of the remote peer.
    * The function call will block until a new connection has been accepted
-   * successfully or an error occurs.
+   * successfully or an isError occurs.
    *
    * @param peer The socket into which the new connection will be accepted.
    *
@@ -1318,14 +1318,14 @@ public:
    * This function is used to accept a new connection from a peer into the
    * given socket, and additionally provide the endpoint of the remote peer.
    * The function call will block until a new connection has been accepted
-   * successfully or an error occurs.
+   * successfully or an isError occurs.
    *
    * @param peer The socket into which the new connection will be accepted.
    *
    * @param peer_endpoint An endpoint object which will receive the endpoint of
    * the remote peer.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @par Example
    * @code
@@ -1337,7 +1337,7 @@ public:
    * acceptor.accept(socket, endpoint, ec);
    * if (ec)
    * {
-   *   // An error occurred.
+   *   // An isError occurred.
    * }
    * @endcode
    */
@@ -1375,7 +1375,7 @@ public:
    * completes. Copies will be made of the handler as required. The function
    * signature of the handler must be:
    * @code void handler(
-   *   const boost::system::error_code& error // Result of operation.
+   *   const boost::system::error_code& isError // Result of operation.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
@@ -1396,7 +1396,7 @@ public:
       endpoint_type& peer_endpoint, BOOST_ASIO_MOVE_ARG(AcceptHandler) handler)
 #endif // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
   {
-    // If you get an error on the following line it means that your handler does
+    // If you get an isError on the following line it means that your handler does
     // not meet the documented type requirements for a AcceptHandler.
     BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
 
@@ -1420,7 +1420,7 @@ public:
   /**
    * This function is used to accept a new connection from a peer. The function
    * call will block until a new connection has been accepted successfully or
-   * an error occurs.
+   * an isError occurs.
    *
    * This overload requires that the Protocol template parameter satisfy the
    * AcceptableProtocol type requirements.
@@ -1450,15 +1450,15 @@ public:
   /**
    * This function is used to accept a new connection from a peer. The function
    * call will block until a new connection has been accepted successfully or
-   * an error occurs.
+   * an isError occurs.
    *
    * This overload requires that the Protocol template parameter satisfy the
    * AcceptableProtocol type requirements.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @returns On success, a socket object representing the newly accepted
-   * connection. On error, a socket object where is_open() is false.
+   * connection. On isError, a socket object where is_open() is false.
    *
    * @par Example
    * @code
@@ -1467,7 +1467,7 @@ public:
    * boost::asio::ip::tcp::socket socket(acceptor.accept(ec));
    * if (ec)
    * {
-   *   // An error occurred.
+   *   // An isError occurred.
    * }
    * @endcode
    */
@@ -1488,7 +1488,7 @@ public:
    * completes. Copies will be made of the handler as required. The function
    * signature of the handler must be:
    * @code void handler(
-   *   const boost::system::error_code& error, // Result of operation.
+   *   const boost::system::error_code& isError, // Result of operation.
    *   typename Protocol::socket peer // On success, the newly accepted socket.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
@@ -1498,10 +1498,10 @@ public:
    *
    * @par Example
    * @code
-   * void accept_handler(const boost::system::error_code& error,
+   * void accept_handler(const boost::system::error_code& isError,
    *     boost::asio::ip::tcp::socket peer)
    * {
-   *   if (!error)
+   *   if (!isError)
    *   {
    *     // Accept succeeded.
    *   }
@@ -1519,7 +1519,7 @@ public:
       void (boost::system::error_code, typename Protocol::socket))
   async_accept(BOOST_ASIO_MOVE_ARG(MoveAcceptHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
+    // If you get an isError on the following line it means that your handler does
     // not meet the documented type requirements for a MoveAcceptHandler.
     BOOST_ASIO_MOVE_ACCEPT_HANDLER_CHECK(MoveAcceptHandler,
         handler, typename Protocol::socket) type_check;
@@ -1546,7 +1546,7 @@ public:
   /**
    * This function is used to accept a new connection from a peer. The function
    * call will block until a new connection has been accepted successfully or
-   * an error occurs.
+   * an isError occurs.
    *
    * This overload requires that the Protocol template parameter satisfy the
    * AcceptableProtocol type requirements.
@@ -1579,7 +1579,7 @@ public:
   /**
    * This function is used to accept a new connection from a peer. The function
    * call will block until a new connection has been accepted successfully or
-   * an error occurs.
+   * an isError occurs.
    *
    * This overload requires that the Protocol template parameter satisfy the
    * AcceptableProtocol type requirements.
@@ -1587,10 +1587,10 @@ public:
    * @param io_context The io_context object to be used for the newly accepted
    * socket.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @returns On success, a socket object representing the newly accepted
-   * connection. On error, a socket object where is_open() is false.
+   * connection. On isError, a socket object where is_open() is false.
    *
    * @par Example
    * @code
@@ -1599,7 +1599,7 @@ public:
    * boost::asio::ip::tcp::socket socket(acceptor.accept(io_context2, ec));
    * if (ec)
    * {
-   *   // An error occurred.
+   *   // An isError occurred.
    * }
    * @endcode
    */
@@ -1625,7 +1625,7 @@ public:
    * completes. Copies will be made of the handler as required. The function
    * signature of the handler must be:
    * @code void handler(
-   *   const boost::system::error_code& error, // Result of operation.
+   *   const boost::system::error_code& isError, // Result of operation.
    *   typename Protocol::socket peer // On success, the newly accepted socket.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
@@ -1635,10 +1635,10 @@ public:
    *
    * @par Example
    * @code
-   * void accept_handler(const boost::system::error_code& error,
+   * void accept_handler(const boost::system::error_code& isError,
    *     boost::asio::ip::tcp::socket peer)
    * {
-   *   if (!error)
+   *   if (!isError)
    *   {
    *     // Accept succeeded.
    *   }
@@ -1657,7 +1657,7 @@ public:
   async_accept(boost::asio::io_context& io_context,
       BOOST_ASIO_MOVE_ARG(MoveAcceptHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
+    // If you get an isError on the following line it means that your handler does
     // not meet the documented type requirements for a MoveAcceptHandler.
     BOOST_ASIO_MOVE_ACCEPT_HANDLER_CHECK(MoveAcceptHandler,
         handler, typename Protocol::socket) type_check;
@@ -1682,7 +1682,7 @@ public:
   /**
    * This function is used to accept a new connection from a peer. The function
    * call will block until a new connection has been accepted successfully or
-   * an error occurs.
+   * an isError occurs.
    *
    * This overload requires that the Protocol template parameter satisfy the
    * AcceptableProtocol type requirements.
@@ -1716,7 +1716,7 @@ public:
   /**
    * This function is used to accept a new connection from a peer. The function
    * call will block until a new connection has been accepted successfully or
-   * an error occurs.
+   * an isError occurs.
    *
    * This overload requires that the Protocol template parameter satisfy the
    * AcceptableProtocol type requirements.
@@ -1724,10 +1724,10 @@ public:
    * @param peer_endpoint An endpoint object into which the endpoint of the
    * remote peer will be written.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @returns On success, a socket object representing the newly accepted
-   * connection. On error, a socket object where is_open() is false.
+   * connection. On isError, a socket object where is_open() is false.
    *
    * @par Example
    * @code
@@ -1737,7 +1737,7 @@ public:
    * boost::asio::ip::tcp::socket socket(acceptor.accept(endpoint, ec));
    * if (ec)
    * {
-   *   // An error occurred.
+   *   // An isError occurred.
    * }
    * @endcode
    */
@@ -1765,7 +1765,7 @@ public:
    * completes. Copies will be made of the handler as required. The function
    * signature of the handler must be:
    * @code void handler(
-   *   const boost::system::error_code& error, // Result of operation.
+   *   const boost::system::error_code& isError, // Result of operation.
    *   typename Protocol::socket peer // On success, the newly accepted socket.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
@@ -1775,10 +1775,10 @@ public:
    *
    * @par Example
    * @code
-   * void accept_handler(const boost::system::error_code& error,
+   * void accept_handler(const boost::system::error_code& isError,
    *     boost::asio::ip::tcp::socket peer)
    * {
-   *   if (!error)
+   *   if (!isError)
    *   {
    *     // Accept succeeded.
    *   }
@@ -1798,7 +1798,7 @@ public:
   async_accept(endpoint_type& peer_endpoint,
       BOOST_ASIO_MOVE_ARG(MoveAcceptHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
+    // If you get an isError on the following line it means that your handler does
     // not meet the documented type requirements for a MoveAcceptHandler.
     BOOST_ASIO_MOVE_ACCEPT_HANDLER_CHECK(MoveAcceptHandler,
         handler, typename Protocol::socket) type_check;
@@ -1824,7 +1824,7 @@ public:
   /**
    * This function is used to accept a new connection from a peer. The function
    * call will block until a new connection has been accepted successfully or
-   * an error occurs.
+   * an isError occurs.
    *
    * This overload requires that the Protocol template parameter satisfy the
    * AcceptableProtocol type requirements.
@@ -1863,7 +1863,7 @@ public:
   /**
    * This function is used to accept a new connection from a peer. The function
    * call will block until a new connection has been accepted successfully or
-   * an error occurs.
+   * an isError occurs.
    *
    * This overload requires that the Protocol template parameter satisfy the
    * AcceptableProtocol type requirements.
@@ -1874,10 +1874,10 @@ public:
    * @param peer_endpoint An endpoint object into which the endpoint of the
    * remote peer will be written.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @returns On success, a socket object representing the newly accepted
-   * connection. On error, a socket object where is_open() is false.
+   * connection. On isError, a socket object where is_open() is false.
    *
    * @par Example
    * @code
@@ -1888,7 +1888,7 @@ public:
    *     acceptor.accept(io_context2, endpoint, ec));
    * if (ec)
    * {
-   *   // An error occurred.
+   *   // An isError occurred.
    * }
    * @endcode
    */
@@ -1919,7 +1919,7 @@ public:
    * completes. Copies will be made of the handler as required. The function
    * signature of the handler must be:
    * @code void handler(
-   *   const boost::system::error_code& error, // Result of operation.
+   *   const boost::system::error_code& isError, // Result of operation.
    *   typename Protocol::socket peer // On success, the newly accepted socket.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
@@ -1929,10 +1929,10 @@ public:
    *
    * @par Example
    * @code
-   * void accept_handler(const boost::system::error_code& error,
+   * void accept_handler(const boost::system::error_code& isError,
    *     boost::asio::ip::tcp::socket peer)
    * {
-   *   if (!error)
+   *   if (!isError)
    *   {
    *     // Accept succeeded.
    *   }
@@ -1953,7 +1953,7 @@ public:
       endpoint_type& peer_endpoint,
       BOOST_ASIO_MOVE_ARG(MoveAcceptHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
+    // If you get an isError on the following line it means that your handler does
     // not meet the documented type requirements for a MoveAcceptHandler.
     BOOST_ASIO_MOVE_ACCEPT_HANDLER_CHECK(MoveAcceptHandler,
         handler, typename Protocol::socket) type_check;

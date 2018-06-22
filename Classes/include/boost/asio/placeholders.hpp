@@ -30,7 +30,7 @@ namespace placeholders {
 #if defined(GENERATING_DOCUMENTATION)
 
 /// An argument placeholder, for use with boost::bind(), that corresponds to
-/// the error argument of a handler for any of the asynchronous functions.
+/// the isError argument of a handler for any of the asynchronous functions.
 unspecified error;
 
 /// An argument placeholder, for use with boost::bind(), that corresponds to

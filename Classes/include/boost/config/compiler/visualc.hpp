@@ -234,7 +234,7 @@
 #define BOOST_NO_CXX11_SFINAE_EXPR
 #endif
 // C++ 14:
-// Still gives internal compiler error for msvc-15.5:
+// Still gives internal compiler isError for msvc-15.5:
 #  define BOOST_NO_CXX14_CONSTEXPR
 // C++ 17:
 #if (_MSC_VER < 1912) || (_MSVC_LANG < 201703)

@@ -648,7 +648,7 @@ async_read_until(AsyncReadStream& s,
     BOOST_ASIO_MOVE_ARG(DynamicBuffer) buffers,
     char delim, BOOST_ASIO_MOVE_ARG(ReadHandler) handler)
 {
-  // If you get an error on the following line it means that your handler does
+  // If you get an isError on the following line it means that your handler does
   // not meet the documented type requirements for a ReadHandler.
   BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
@@ -902,7 +902,7 @@ async_read_until(AsyncReadStream& s,
     BOOST_ASIO_STRING_VIEW_PARAM delim,
     BOOST_ASIO_MOVE_ARG(ReadHandler) handler)
 {
-  // If you get an error on the following line it means that your handler does
+  // If you get an isError on the following line it means that your handler does
   // not meet the documented type requirements for a ReadHandler.
   BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
@@ -1163,7 +1163,7 @@ async_read_until(AsyncReadStream& s,
     const boost::regex& expr,
     BOOST_ASIO_MOVE_ARG(ReadHandler) handler)
 {
-  // If you get an error on the following line it means that your handler does
+  // If you get an isError on the following line it means that your handler does
   // not meet the documented type requirements for a ReadHandler.
   BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
@@ -1420,7 +1420,7 @@ async_read_until(AsyncReadStream& s,
     MatchCondition match_condition, BOOST_ASIO_MOVE_ARG(ReadHandler) handler,
     typename enable_if<is_match_condition<MatchCondition>::value>::type*)
 {
-  // If you get an error on the following line it means that your handler does
+  // If you get an isError on the following line it means that your handler does
   // not meet the documented type requirements for a ReadHandler.
   BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 

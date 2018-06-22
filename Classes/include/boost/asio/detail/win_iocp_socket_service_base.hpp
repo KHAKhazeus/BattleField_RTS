@@ -64,7 +64,7 @@ public:
     // We use a shared pointer as a cancellation token here to work around the
     // broken Windows support for cancellation. MSDN says that when you call
     // closesocket any outstanding WSARecv or WSASend operations will complete
-    // with the error ERROR_OPERATION_ABORTED. In practice they complete with
+    // with the isError ERROR_OPERATION_ABORTED. In practice they complete with
     // ERROR_NETNAME_DELETED, which means you can't tell the difference between
     // a local cancellation and the socket being hard-closed by the peer.
     socket_ops::shared_cancel_token_type cancel_token_;
@@ -186,7 +186,7 @@ public:
   }
 
   // Wait for the socket to become ready to read, ready to write, or to have
-  // pending error conditions.
+  // pending isError conditions.
   boost::system::error_code wait(base_implementation_type& impl,
       socket_base::wait_type w, boost::system::error_code& ec)
   {
@@ -210,7 +210,7 @@ public:
   }
 
   // Asynchronously wait for the socket to become ready to read, ready to
-  // write, or to have pending error conditions.
+  // write, or to have pending isError conditions.
   template <typename Handler>
   void async_wait(base_implementation_type& impl,
       socket_base::wait_type w, Handler& handler)

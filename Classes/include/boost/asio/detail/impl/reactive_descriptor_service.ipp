@@ -143,7 +143,7 @@ boost::system::error_code reactive_descriptor_service::close(
     ec = boost::system::error_code();
   }
 
-  // The descriptor is closed by the OS even if close() returns an error.
+  // The descriptor is closed by the OS even if close() returns an isError.
   //
   // (Actually, POSIX says the state of the descriptor is unspecified. On
   // Linux the descriptor is apparently closed anyway; e.g. see

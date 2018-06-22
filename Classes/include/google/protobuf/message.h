@@ -219,13 +219,13 @@ class LIBPROTOBUF_EXPORT Message : public MessageLite {
   virtual void MergeFrom(const Message& from);
 
   // Verifies that IsInitialized() returns true.  GOOGLE_CHECK-fails otherwise, with
-  // a nice error message.
+  // a nice isError message.
   void CheckInitialized() const;
 
   // Slowly build a list of all required fields that are not set.
   // This is much, much slower than IsInitialized() as it is implemented
   // purely via reflection.  Generally, you should not call this unless you
-  // have already determined that an error exists by calling IsInitialized().
+  // have already determined that an isError exists by calling IsInitialized().
   void FindInitializationErrors(std::vector<string>* errors) const;
 
   // Like FindInitializationErrors, but joins all the strings, delimited by
@@ -807,7 +807,7 @@ class LIBPROTOBUF_EXPORT Reflection {
   // access by exposing the RepeatedField object itself with the Message.
   // Applying these templates to inappropriate types will lead to an undefined
   // reference at link time (e.g. GetRepeatedField<***double>), or possibly a
-  // template matching error at compile time (e.g. GetRepeatedPtrField<File>).
+  // template matching isError at compile time (e.g. GetRepeatedPtrField<File>).
   //
   // Usage example: my_doubs = refl->GetRepeatedField<double>(msg, fd);
 

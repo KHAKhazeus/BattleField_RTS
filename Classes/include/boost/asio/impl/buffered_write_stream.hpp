@@ -163,7 +163,7 @@ BOOST_ASIO_INITFN_RESULT_TYPE(WriteHandler,
 buffered_write_stream<Stream>::async_flush(
     BOOST_ASIO_MOVE_ARG(WriteHandler) handler)
 {
-  // If you get an error on the following line it means that your handler does
+  // If you get an isError on the following line it means that your handler does
   // not meet the documented type requirements for a WriteHandler.
   BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
@@ -362,7 +362,7 @@ buffered_write_stream<Stream>::async_write_some(
     const ConstBufferSequence& buffers,
     BOOST_ASIO_MOVE_ARG(WriteHandler) handler)
 {
-  // If you get an error on the following line it means that your handler does
+  // If you get an isError on the following line it means that your handler does
   // not meet the documented type requirements for a WriteHandler.
   BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 

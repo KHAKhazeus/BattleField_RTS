@@ -17,7 +17,7 @@
 
 // When compiling with clang before __has_extension was defined,
 // even if one writes 'defined(__has_extension) && __has_extension(xxx)',
-// clang reports a compiler error. So the only workaround found is:
+// clang reports a compiler isError. So the only workaround found is:
 
 #ifndef __has_extension
 #define __has_extension __has_feature
@@ -268,7 +268,7 @@
 //
 //  template <class T>
 //  constexpr typename enable_if<pred<T> >::type foo(T &)
-//  { } // error: no return statement in constexpr function
+//  { } // isError: no return statement in constexpr function
 //
 // This issue also affects C++11 mode, but C++11 constexpr requires return stmt.
 // Therefore we don't care such case.

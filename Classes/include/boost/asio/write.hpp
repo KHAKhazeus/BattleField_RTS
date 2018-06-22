@@ -45,7 +45,7 @@ namespace asio {
  * @li All of the data in the supplied buffers has been written. That is, the
  * bytes transferred is equal to the sum of the buffer sizes.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * write_some function.
@@ -87,7 +87,7 @@ std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers,
  * @li All of the data in the supplied buffers has been written. That is, the
  * bytes transferred is equal to the sum of the buffer sizes.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * write_some function.
@@ -99,7 +99,7 @@ std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers,
  * of the buffer sizes indicates the maximum number of bytes to write to the
  * stream.
  *
- * @param ec Set to indicate what error occurred, if any.
+ * @param ec Set to indicate what isError occurred, if any.
  *
  * @returns The number of bytes transferred.
  *
@@ -147,7 +147,7 @@ std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers,
  * must be:
  * @code std::size_t completion_condition(
  *   // Result of latest write_some operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // Number of bytes transferred so far.
  *   std::size_t bytes_transferred
@@ -201,7 +201,7 @@ std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers,
  * must be:
  * @code std::size_t completion_condition(
  *   // Result of latest write_some operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // Number of bytes transferred so far.
  *   std::size_t bytes_transferred
@@ -210,10 +210,10 @@ std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers,
  * non-zero return value indicates the maximum number of bytes to be written on
  * the next call to the stream's write_some function.
  *
- * @param ec Set to indicate what error occurred, if any.
+ * @param ec Set to indicate what isError occurred, if any.
  *
- * @returns The number of bytes written. If an error occurs, returns the total
- * number of bytes successfully transferred prior to the error.
+ * @returns The number of bytes written. If an isError occurs, returns the total
+ * number of bytes successfully transferred prior to the isError.
  */
 template <typename SyncWriteStream, typename ConstBufferSequence,
     typename CompletionCondition>
@@ -230,7 +230,7 @@ std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers,
  *
  * @li All of the data in the supplied dynamic buffer sequence has been written.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * write_some function.
@@ -264,7 +264,7 @@ std::size_t write(SyncWriteStream& s,
  *
  * @li All of the data in the supplied dynamic buffer sequence has been written.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * write_some function.
@@ -275,7 +275,7 @@ std::size_t write(SyncWriteStream& s,
  * @param buffers The dynamic buffer sequence from which data will be written.
  * Successfully written data is automatically consumed from the buffers.
  *
- * @param ec Set to indicate what error occurred, if any.
+ * @param ec Set to indicate what isError occurred, if any.
  *
  * @returns The number of bytes transferred.
  *
@@ -315,7 +315,7 @@ std::size_t write(SyncWriteStream& s,
  * must be:
  * @code std::size_t completion_condition(
  *   // Result of latest write_some operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // Number of bytes transferred so far.
  *   std::size_t bytes_transferred
@@ -360,7 +360,7 @@ std::size_t write(SyncWriteStream& s,
  * must be:
  * @code std::size_t completion_condition(
  *   // Result of latest write_some operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // Number of bytes transferred so far.
  *   std::size_t bytes_transferred
@@ -369,10 +369,10 @@ std::size_t write(SyncWriteStream& s,
  * non-zero return value indicates the maximum number of bytes to be written on
  * the next call to the stream's write_some function.
  *
- * @param ec Set to indicate what error occurred, if any.
+ * @param ec Set to indicate what isError occurred, if any.
  *
- * @returns The number of bytes written. If an error occurs, returns the total
- * number of bytes successfully transferred prior to the error.
+ * @returns The number of bytes written. If an isError occurs, returns the total
+ * number of bytes successfully transferred prior to the isError.
  */
 template <typename SyncWriteStream, typename DynamicBuffer,
     typename CompletionCondition>
@@ -393,7 +393,7 @@ std::size_t write(SyncWriteStream& s,
  *
  * @li All of the data in the supplied basic_streambuf has been written.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * write_some function.
@@ -422,7 +422,7 @@ std::size_t write(SyncWriteStream& s, basic_streambuf<Allocator>& b);
  *
  * @li All of the data in the supplied basic_streambuf has been written.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * write_some function.
@@ -432,7 +432,7 @@ std::size_t write(SyncWriteStream& s, basic_streambuf<Allocator>& b);
  *
  * @param b The basic_streambuf object from which data will be written.
  *
- * @param ec Set to indicate what error occurred, if any.
+ * @param ec Set to indicate what isError occurred, if any.
  *
  * @returns The number of bytes transferred.
  *
@@ -467,7 +467,7 @@ std::size_t write(SyncWriteStream& s, basic_streambuf<Allocator>& b,
  * must be:
  * @code std::size_t completion_condition(
  *   // Result of latest write_some operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // Number of bytes transferred so far.
  *   std::size_t bytes_transferred
@@ -507,7 +507,7 @@ std::size_t write(SyncWriteStream& s, basic_streambuf<Allocator>& b,
  * must be:
  * @code std::size_t completion_condition(
  *   // Result of latest write_some operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // Number of bytes transferred so far.
  *   std::size_t bytes_transferred
@@ -516,10 +516,10 @@ std::size_t write(SyncWriteStream& s, basic_streambuf<Allocator>& b,
  * non-zero return value indicates the maximum number of bytes to be written on
  * the next call to the stream's write_some function.
  *
- * @param ec Set to indicate what error occurred, if any.
+ * @param ec Set to indicate what isError occurred, if any.
  *
- * @returns The number of bytes written. If an error occurs, returns the total
- * number of bytes successfully transferred prior to the error.
+ * @returns The number of bytes written. If an isError occurs, returns the total
+ * number of bytes successfully transferred prior to the isError.
  */
 template <typename SyncWriteStream, typename Allocator,
     typename CompletionCondition>
@@ -549,7 +549,7 @@ std::size_t write(SyncWriteStream& s, basic_streambuf<Allocator>& b,
  * @li All of the data in the supplied buffers has been written. That is, the
  * bytes transferred is equal to the sum of the buffer sizes.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * async_write_some function, and is known as a <em>composed operation</em>. The
@@ -569,10 +569,10 @@ std::size_t write(SyncWriteStream& s, basic_streambuf<Allocator>& b,
  * Copies will be made of the handler as required. The function signature of
  * the handler must be:
  * @code void handler(
- *   const boost::system::error_code& error, // Result of operation.
+ *   const boost::system::error_code& isError, // Result of operation.
  *
  *   std::size_t bytes_transferred           // Number of bytes written from the
- *                                           // buffers. If an error occurred,
+ *                                           // buffers. If an isError occurred,
  *                                           // this will be less than the sum
  *                                           // of the buffer sizes.
  * ); @endcode
@@ -632,7 +632,7 @@ async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
  * must be:
  * @code std::size_t completion_condition(
  *   // Result of latest async_write_some operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // Number of bytes transferred so far.
  *   std::size_t bytes_transferred
@@ -645,10 +645,10 @@ async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
  * Copies will be made of the handler as required. The function signature of the
  * handler must be:
  * @code void handler(
- *   const boost::system::error_code& error, // Result of operation.
+ *   const boost::system::error_code& isError, // Result of operation.
  *
  *   std::size_t bytes_transferred           // Number of bytes written from the
- *                                           // buffers. If an error occurred,
+ *                                           // buffers. If an isError occurred,
  *                                           // this will be less than the sum
  *                                           // of the buffer sizes.
  * ); @endcode
@@ -688,7 +688,7 @@ async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
  *
  * @li All of the data in the supplied dynamic buffer sequence has been written.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * async_write_some function, and is known as a <em>composed operation</em>. The
@@ -709,10 +709,10 @@ async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
  * Copies will be made of the handler as required. The function signature of the
  * handler must be:
  * @code void handler(
- *   const boost::system::error_code& error, // Result of operation.
+ *   const boost::system::error_code& isError, // Result of operation.
  *
  *   std::size_t bytes_transferred           // Number of bytes written from the
- *                                           // buffers. If an error occurred,
+ *                                           // buffers. If an isError occurred,
  *                                           // this will be less than the sum
  *                                           // of the buffer sizes.
  * ); @endcode
@@ -764,7 +764,7 @@ async_write(AsyncWriteStream& s,
  * must be:
  * @code std::size_t completion_condition(
  *   // Result of latest async_write_some operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // Number of bytes transferred so far.
  *   std::size_t bytes_transferred
@@ -777,10 +777,10 @@ async_write(AsyncWriteStream& s,
  * Copies will be made of the handler as required. The function signature of the
  * handler must be:
  * @code void handler(
- *   const boost::system::error_code& error, // Result of operation.
+ *   const boost::system::error_code& isError, // Result of operation.
  *
  *   std::size_t bytes_transferred           // Number of bytes written from the
- *                                           // buffers. If an error occurred,
+ *                                           // buffers. If an isError occurred,
  *                                           // this will be less than the sum
  *                                           // of the buffer sizes.
  * ); @endcode
@@ -814,7 +814,7 @@ async_write(AsyncWriteStream& s,
  *
  * @li All of the data in the supplied basic_streambuf has been written.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * async_write_some function, and is known as a <em>composed operation</em>. The
@@ -833,10 +833,10 @@ async_write(AsyncWriteStream& s,
  * Copies will be made of the handler as required. The function signature of the
  * handler must be:
  * @code void handler(
- *   const boost::system::error_code& error, // Result of operation.
+ *   const boost::system::error_code& isError, // Result of operation.
  *
  *   std::size_t bytes_transferred           // Number of bytes written from the
- *                                           // buffers. If an error occurred,
+ *                                           // buffers. If an isError occurred,
  *                                           // this will be less than the sum
  *                                           // of the buffer sizes.
  * ); @endcode
@@ -881,7 +881,7 @@ async_write(AsyncWriteStream& s, basic_streambuf<Allocator>& b,
  * must be:
  * @code std::size_t completion_condition(
  *   // Result of latest async_write_some operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // Number of bytes transferred so far.
  *   std::size_t bytes_transferred
@@ -894,10 +894,10 @@ async_write(AsyncWriteStream& s, basic_streambuf<Allocator>& b,
  * Copies will be made of the handler as required. The function signature of the
  * handler must be:
  * @code void handler(
- *   const boost::system::error_code& error, // Result of operation.
+ *   const boost::system::error_code& isError, // Result of operation.
  *
  *   std::size_t bytes_transferred           // Number of bytes written from the
- *                                           // buffers. If an error occurred,
+ *                                           // buffers. If an isError occurred,
  *                                           // this will be less than the sum
  *                                           // of the buffer sizes.
  * ); @endcode

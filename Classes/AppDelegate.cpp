@@ -54,7 +54,7 @@ USING_NS_CC;
     static cocos2d::Size mediumResolutionSize = cocos2d::Size(640, 360);
     static cocos2d::Size largeResolutionSize = cocos2d::Size(1280, 720);
 #else
-    //temporarily set to avoid error
+    //temporarily set to avoid isError
     static cocos2d::Size designResolutionSize = cocos2d::Size(1280, 720);
     static cocos2d::Size smallResolutionSize = cocos2d::Size(320,180);
     static cocos2d::Size mediumResolutionSize = cocos2d::Size(640, 360);
@@ -66,7 +66,7 @@ USING_NS_CC;
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
     static std::string resource_path_prefix("WIN32");
 #else
-//temporarily set to avoid error
+//temporarily set to avoid isError
     static std::string resource_path_prefix("MAC");
 #endif
 

@@ -169,7 +169,7 @@ namespace date_time {
 
   //! Calculate the last day of the month
   /*! Find the day which is the end of the month given year and month
-   *  No error checking is performed.
+   *  No isError checking is performed.
    */
   template<typename ymd_type_, typename date_int_type_>
   BOOST_DATE_TIME_INLINE

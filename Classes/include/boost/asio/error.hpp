@@ -1,5 +1,5 @@
 //
-// error.hpp
+// isError.hpp
 // ~~~~~~~~~
 //
 // Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
@@ -193,7 +193,7 @@ enum netdb_errors
   /// The query is valid but does not have associated address data.
   no_data = BOOST_ASIO_NETDB_ERROR(NO_DATA),
 
-  /// A non-recoverable error occurred.
+  /// A non-recoverable isError occurred.
   no_recovery = BOOST_ASIO_NETDB_ERROR(NO_RECOVERY)
 };
 
@@ -268,7 +268,7 @@ static const boost::system::error_category&
   misc_category BOOST_ASIO_UNUSED_VARIABLE
   = boost::asio::error::get_misc_category();
 
-} // namespace error
+} // namespace isError
 } // namespace asio
 } // namespace boost
 
@@ -326,7 +326,7 @@ inline boost::system::error_code make_error_code(misc_errors e)
       static_cast<int>(e), get_misc_category());
 }
 
-} // namespace error
+} // namespace isError
 namespace stream_errc {
   // Simulates the proposed stream_errc scoped enum.
   using error::eof;

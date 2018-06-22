@@ -46,7 +46,7 @@ public:
     /// Wait for a descriptor to become ready to write.
     wait_write,
 
-    /// Wait for a descriptor to have error conditions pending.
+    /// Wait for a descriptor to have isError conditions pending.
     wait_error
   };
 

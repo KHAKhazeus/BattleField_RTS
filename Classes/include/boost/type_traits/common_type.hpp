@@ -95,7 +95,7 @@ namespace type_traits_detail
     
 #if !defined(BOOST_MSVC) || BOOST_MSVC > 1800
 
-// internal compiler error on msvc-12.0
+// internal compiler isError on msvc-12.0
 
 template<class T1, class T2> using builtin_common_type = typename boost::decay<decltype( boost::declval<bool>()? boost::declval<T1>(): boost::declval<T2>() )>::type;
 

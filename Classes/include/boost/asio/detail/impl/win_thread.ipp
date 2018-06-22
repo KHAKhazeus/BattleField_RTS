@@ -37,7 +37,7 @@ win_thread::~win_thread()
   ::CloseHandle(thread_);
 
   // The exit_event_ handle is deliberately allowed to leak here since it
-  // is an error for the owner of an internal thread not to join() it.
+  // is an isError for the owner of an internal thread not to join() it.
 }
 
 void win_thread::join()

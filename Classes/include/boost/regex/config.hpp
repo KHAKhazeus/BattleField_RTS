@@ -19,7 +19,7 @@
 #ifndef BOOST_REGEX_CONFIG_HPP
 #define BOOST_REGEX_CONFIG_HPP
 /*
- * Borland C++ Fix/error check
+ * Borland C++ Fix/isError check
  * this has to go *before* we include any std lib headers:
  */
 #if defined(__BORLANDC__)
@@ -349,7 +349,7 @@ if(0 == (x))\
 }
 #else
 /*
- * With exceptions then error handling is taken care of and
+ * With exceptions then isError handling is taken care of and
  * there is no need for these checks:
  */
 #  define BOOST_REGEX_NOEH_ASSERT(x)

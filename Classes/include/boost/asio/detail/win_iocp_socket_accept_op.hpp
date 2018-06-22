@@ -93,7 +93,7 @@ public:
           peer_endpoint.data(), &addr_len,
           o->new_socket_.get(), ec);
 
-      // Restart the accept operation if we got the connection_aborted error
+      // Restart the accept operation if we got the connection_aborted isError
       // and the enable_connection_aborted socket option is not set.
       if (ec == boost::asio::error::connection_aborted
           && !o->enable_connection_aborted_)
@@ -219,7 +219,7 @@ public:
           peer_endpoint.data(), &addr_len,
           o->new_socket_.get(), ec);
 
-      // Restart the accept operation if we got the connection_aborted error
+      // Restart the accept operation if we got the connection_aborted isError
       // and the enable_connection_aborted socket option is not set.
       if (ec == boost::asio::error::connection_aborted
           && !o->enable_connection_aborted_)

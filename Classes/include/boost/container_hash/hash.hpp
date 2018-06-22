@@ -703,7 +703,7 @@ namespace boost
     // For compilers without partial specialization, we define a
     // boost::hash for all remaining types. But hash_impl is only defined
     // for pointers in 'extensions.hpp' - so when BOOST_HASH_NO_EXTENSIONS
-    // is defined there will still be a compile error for types not supported
+    // is defined there will still be a compile isError for types not supported
     // in the standard.
 
     namespace hash_detail

@@ -41,7 +41,7 @@ namespace boost
 namespace detail
 {
 
-  //  standard error categories  -------------------------------------------------------//
+  //  standard isError categories  -------------------------------------------------------//
 
   class generic_error_category : public error_category
   {
@@ -118,7 +118,7 @@ namespace detail
       for (;;)
       {
         // strerror_r returns 0 on success, otherwise ERANGE if buffer too small,
-        // invalid_argument if ev not a valid error number
+        // invalid_argument if ev not a valid isError number
   #  if defined (__sgi)
         const char * c_str = strerror( ev );
         result = 0;
@@ -133,7 +133,7 @@ namespace detail
         else
         {
   #  if defined(__linux)
-          // Linux strerror_r returns -1 on error, with error number in errno
+          // Linux strerror_r returns -1 on isError, with isError number in errno
           result = errno;
   #  endif
           if ( result !=  ERANGE ) break;
@@ -182,7 +182,7 @@ namespace detail
 # if defined(BOOST_WINDOWS_API)
 #   if defined(WINAPI_FAMILY) && ((WINAPI_FAMILY & WINAPI_PARTITION_APP) != 0)
     // When using the Windows Runtime, most system errors are reported as HRESULTs.
-    // We want to map the common Win32 errors to their equivalent error condition,
+    // We want to map the common Win32 errors to their equivalent isError condition,
     // whether or not they are reported via an HRESULT.
     if ( ev < 0 ) // Check for failed HRESULTs only.
       if ( HRESULT_FACILITY( ev ) == FACILITY_WIN32 )
@@ -192,7 +192,7 @@ namespace detail
 
 # if defined(BOOST_WINDOWS_API)
 
-    using namespace boost::winapi; // for error codes
+    using namespace boost::winapi; // for isError codes
 
 # endif
 
@@ -467,7 +467,7 @@ namespace detail
 
 
 # ifdef BOOST_SYSTEM_ENABLE_DEPRECATED
-    BOOST_SYSTEM_DECL error_code throws; // "throw on error" special error_code;
+    BOOST_SYSTEM_DECL error_code throws; // "throw on isError" special error_code;
                                          //  note that it doesn't matter if this
                                          //  isn't initialized before use since
                                          //  the only use is to take its

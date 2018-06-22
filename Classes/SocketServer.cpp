@@ -11,12 +11,12 @@
 #include <iterator>
 #include "cocos2d.h"
 
-std::shared_ptr<boost::asio::io_service> SocketServer::io_service_;
+std::shared_ptr<boost::asio::io_service> SocketServer::_io_service;
 
 //TcpConnection::~TcpConnection()
 //{
 //	std::cout << "delete";
-//	delete_from_parent();
+//	deleteFrom();
 //}
 
 TcpConnection::pointer TcpConnection::create(boost::asio::io_service& io_service, SocketServer* parent)
@@ -26,7 +26,7 @@ TcpConnection::pointer TcpConnection::create(boost::asio::io_service& io_service
 
 tcp::socket& TcpConnection::socket()
 {
-	return socket_;
+	return _socket;
 }
 
 void TcpConnection::start()
@@ -34,15 +34,15 @@ void TcpConnection::start()
 	//	
 	//	_timer_.async_wait(std::bind(&TcpConnection::check_timer, this));
 	//	steady_timer_.expires_from_now(std::chrono::seconds(60));
-	boost::asio::async_read(socket_,
-		boost::asio::buffer(read_msg_.data(), SocketMessage::header_length),
+	boost::asio::async_read(_socket,
+		boost::asio::buffer(_readMsg.data(), SocketMessage::header_length),
 		std::bind(&TcpConnection::handle_read_header, this,
 			std::placeholders::_1));
 }
 
-void TcpConnection::write_data(std::string s)
+void TcpConnection::writeData(std::string s)
 {
-	if (error_flag_) return;
+	if (_errorFlag) return;
 	SocketMessage msg;
 	if (s.size() == 0)
 	{
@@ -53,19 +53,19 @@ void TcpConnection::write_data(std::string s)
 		msg.body_length(s.size());
 	memcpy(msg.body(), &s[0u], msg.body_length());
 	msg.encode_header();
-	boost::asio::write(socket_,
+	boost::asio::write(_socket,
 		boost::asio::buffer(msg.data(), msg.length()));
 }
 
-std::string TcpConnection::read_data()
+std::string TcpConnection::readData()
 {
-	if (error_flag_)
+	if (_errorFlag)
 		return "";
-	std::unique_lock<std::mutex> lk{ mut_ };
-	while (read_msg_deque_.empty())
-		data_cond_.wait(lk);
-	auto read_msg = read_msg_deque_.front();
-	read_msg_deque_.pop_front();
+	std::unique_lock<std::mutex> lk{ _mut };
+	while (_read_Msg_Deque_.empty())
+		_cond.wait(lk);
+	auto read_msg = _read_Msg_Deque_.front();
+	_read_Msg_Deque_.pop_front();
 	lk.unlock();
 	auto ret = std::string(read_msg.body(), read_msg.body_length());
 	return ret;
@@ -75,23 +75,21 @@ void TcpConnection::do_close()
 {
 	try {
 		//		steady_timer_.cancel();
-		std::unique_lock<std::mutex> lk{ mut_ };
-		error_flag_ = true;
+		std::unique_lock<std::mutex> lk{ _mut };
+		_errorFlag = true;
 		SocketMessage empty_msg;
 		memcpy(empty_msg.data(), "0001\0", 5);
-		read_msg_deque_.push_back(empty_msg);
-		read_msg_deque_.push_back(empty_msg);
-		data_cond_.notify_one();
+		_read_Msg_Deque_.push_back(empty_msg);
+		_read_Msg_Deque_.push_back(empty_msg);
+		_cond.notify_one();
 		lk.unlock();
 		error_code ec;
-		socket_.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
-		if (!ec) {
-			cocos2d::log("111");
-		//	return;
-		}
+		_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
+		cocos2d::log("111");
+		return;
 		/*try*/ 
-			cocos2d::log("Socket closed\n");
-			socket_.close();
+		cocos2d::log("Socket closed\n");
+		_socket.close();
 		/*catch (boost::system::error_code &ec) {
 			cocos2d::log("Socket closed!");
 			std::cerr << "Socket closed!";
@@ -105,21 +103,21 @@ void TcpConnection::do_close()
 	{
 		e.what();
 	}
-	delete_from_parent();
+	deleteFrom();
 }
 
 void TcpConnection::handle_read_header(const error_code& error)
 {
-	if (!error && read_msg_.decode_header())
+	if (!error && _readMsg.decode_header())
 	{
 		//		steady_timer_.expires_from_now(std::chrono::seconds(10));
 		std::cout << "here\n";
-		boost::asio::async_read(socket_,
-			boost::asio::buffer(read_msg_.body(), read_msg_.body_length()),
+		boost::asio::async_read(_socket,
+			boost::asio::buffer(_readMsg.body(), _readMsg.body_length()),
 			std::bind(&TcpConnection::handle_read_body, this,
 				std::placeholders::_1));
 	}
-	else if(error_flag_ == true)
+	else if(_errorFlag == true)
 	{
 		return;
 	}
@@ -130,17 +128,17 @@ void TcpConnection::handle_read_header(const error_code& error)
 
 void TcpConnection::handle_read_body(const error_code& error)
 {
-	if (error_flag_) {
+	if (_errorFlag) {
 		true;
 	}
 	else if (!error)
 	{
 		//		steady_timer_.expires_from_now(std::chrono::seconds(10));
-		std::lock_guard<std::mutex> lk{ mut_ };
-		read_msg_deque_.push_back(read_msg_);
-		data_cond_.notify_one();
-		boost::asio::async_read(socket_,
-			boost::asio::buffer(read_msg_.data(), SocketMessage::header_length),
+		std::lock_guard<std::mutex> lk{ _mut };
+		_read_Msg_Deque_.push_back(_readMsg);
+		_cond.notify_one();
+		boost::asio::async_read(_socket,
+			boost::asio::buffer(_readMsg.data(), SocketMessage::header_length),
 			std::bind(&TcpConnection::handle_read_header, this,
 				std::placeholders::_1));
 	}
@@ -150,7 +148,7 @@ void TcpConnection::handle_read_body(const error_code& error)
 }
 
 TcpConnection::TcpConnection(boost::asio::io_service& io_service, SocketServer* parent) :
-	socket_(io_service), parent(parent)
+	_socket(io_service), _parent(parent)
 	//,steady_timer_(io_service)
 {
 	std::cout << "new tcp" << std::endl;
@@ -172,11 +170,11 @@ TcpConnection::TcpConnection(boost::asio::io_service& io_service, SocketServer* 
 //}
 
 
-void TcpConnection::delete_from_parent()
+void TcpConnection::deleteFrom()
 {
-	if (parent)
-		shared_from_this()->parent->remove_connection(shared_from_this());
-	parent = nullptr;
+	if (_parent)
+		shared_from_this()->_parent->removeConnection(shared_from_this());
+	_parent = nullptr;
 }
 
 SocketServer::~SocketServer(){
@@ -186,25 +184,25 @@ SocketServer::~SocketServer(){
 SocketServer* SocketServer::create(int port)
 {
 	//	_io_service = new asio::io_service;
-	io_service_.reset(new boost::asio::io_service);
+	_io_service.reset(new boost::asio::io_service);
 	auto s = new SocketServer(port);
 
-	s->thread_.reset(new std::thread(
+	s->_thread.reset(new std::thread(
 		std::bind(static_cast<std::size_t(boost::asio::io_service::*)()>(&boost::asio::io_service::run),
-			io_service_)));
-	s->thread_->detach();
+			_io_service)));
+	s->_thread->detach();
 	return s;
 }
 
 void SocketServer::close()
 {
 	try {
-		connections_.clear();
-		io_service_->stop();
-		acceptor_.close();
+		_connection_Vector.clear();
+		_io_service->stop();
+		_acceptor.close();
 		//		_thread = nullptr;
 		stop = true;
-        io_service_.reset(new boost::asio::io_service);
+        _io_service.reset(new boost::asio::io_service);
 	}
 	catch (std::exception&e)
 	{
@@ -212,12 +210,12 @@ void SocketServer::close()
 	}
 }
 
-void SocketServer::button_start()
+void SocketServer::clickStart()
 {
-	acceptor_.close();
+	_acceptor.close();
 	using namespace std; // For sprintf and memcpy.
 	char total[4 + 1] = "";
-	sprintf(total, "%4d", static_cast<int>(connections_.size()));
+	sprintf(total, "%4d", static_cast<int>(_connection_Vector.size()));
 
 	std::vector<std::string> campGroup = { "R","B" };
 	char map;
@@ -229,33 +227,33 @@ void SocketServer::button_start()
 	}
 
 
-	for (auto i = 0; i < connections_.size(); i++)
+	for (auto i = 0; i < _connection_Vector.size(); i++)
 	{
-		connections_[i]->write_data("PLAYER" + campGroup.at(i) + map);
+		_connection_Vector[i]->writeData("PLAYER" + campGroup.at(i) + map);
 	}
-	connection_num_ = connections_.size();
+	connection_num_ = _connection_Vector.size();
 	cocos2d::log("ConnectionSize %d\n", connection_num_);
-	this->button_thread_.reset(new std::thread(std::bind(&SocketServer::loop_process, this)));
-	button_thread_->detach();
+	this->_loopthread.reset(new std::thread(std::bind(&SocketServer::loop, this)));
+	_loopthread->detach();
 }
 
-bool SocketServer::error() const
+bool SocketServer::isError() const
 {
-	return error_flag_;
+	return _error;
 }
 
 int SocketServer::connection_num() const
 {
-	return connections_.size();
+	return _connection_Vector.size();
 }
 
 SocketServer::SocketServer(int port) :
-	acceptor_(*io_service_, tcp::endpoint(tcp::v4(), port))
+	_acceptor(*_io_service, tcp::endpoint(tcp::v4(), port))
 {
-	start_accept();
+	startAccept();
 }
 
-void SocketServer::loop_process()
+void SocketServer::loop()
 {
 	while (true)
 	{
@@ -264,25 +262,25 @@ void SocketServer::loop_process()
             if(stop){
                 break;
             }
-            if (connections_.size() != connection_num_)
+            if (_connection_Vector.size() != connection_num_)
             {
-                error_flag_ = true;
+                _error = true;
                 break;
             }
             //            throw std::exception{"lost connection"};
-            std::unique_lock<std::mutex> lock(delete_mutex_);
+            std::unique_lock<std::mutex> lock(_mutex);
             std::vector<std::string> ret;
-            for (auto r : connections_)
+            for (auto r : _connection_Vector)
             {
                 if (r->error())
                     //                break;
-                    error_flag_ |= r->error();
-                ret.push_back(r->read_data());
+                    _error |= r->error();
+                ret.push_back(r->readData());
             }
             auto game_msg = GameMessageOperation::combineMessage(ret);
             
-            for (auto r : connections_)
-                r->write_data(game_msg);
+            for (auto r : _connection_Vector)
+                r->writeData(game_msg);
         }
         catch(std::exception &e){
             times++;
@@ -291,48 +289,48 @@ void SocketServer::loop_process()
 	}
 }
 
-std::vector<TcpConnection::pointer> SocketServer::get_connection() const
+std::vector<TcpConnection::pointer> SocketServer::getConnection() const
 {
-	return connections_;
+	return _connection_Vector;
 }
 
-void SocketServer::remove_connection(TcpConnection::pointer p)
+void SocketServer::removeConnection(TcpConnection::pointer p)
 {
-	//		connections_.erase(std::remove(connections_.begin(), connections_.end(), p), connections_.end());
-	std::unique_lock<std::mutex> lock(delete_mutex_);
-	auto position = std::find(connections_.begin(), connections_.end(), p);
+	//		_connection_Vector.erase(std::remove(_connection_Vector.begin(), _connection_Vector.end(), p), _connection_Vector.end());
+	std::unique_lock<std::mutex> lock(_mutex);
+	auto position = std::find(_connection_Vector.begin(), _connection_Vector.end(), p);
 
-	if (position == connections_.end())
+	if (position == _connection_Vector.end())
 		std::cout << "delete not succ\n";
 	else
-		connections_.erase(position);
+		_connection_Vector.erase(position);
 	std::cout << "delete succ\n";
 }
 
 
-void SocketServer::start_accept()
+void SocketServer::startAccept()
 {
 	TcpConnection::pointer new_connection =
-		TcpConnection::create(acceptor_.get_io_service(), this);
+		TcpConnection::create(_acceptor.get_io_service(), this);
 
-	acceptor_.async_accept(new_connection->socket(),
-		std::bind(&SocketServer::handle_accept, this, new_connection,
+	_acceptor.async_accept(new_connection->socket(),
+		std::bind(&SocketServer::handleAccept, this, new_connection,
 			std::placeholders::_1));
 	std::cout << "start accept " << std::endl;
 }
 
-void SocketServer::handle_accept(TcpConnection::pointer new_connection, const error_code& error)
+void SocketServer::handleAccept(TcpConnection::pointer new_connection, const error_code& error)
 {
 	std::cout << "handle_accept\n";
 	if (!error)
 	{
 		cocos2d::log("connection + 1");
-		connections_.push_back(new_connection);
+		_connection_Vector.push_back(new_connection);
 		std::cout << new_connection->socket().remote_endpoint().address()
 			<< ":" << new_connection->socket().remote_endpoint().port() << std::endl;
 		new_connection->start();
 	}
-	start_accept();
+	startAccept();
 	//			std::cout << "handle accept\n";
 }
 

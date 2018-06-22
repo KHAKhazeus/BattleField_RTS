@@ -169,7 +169,7 @@ namespace boost
     //    between categories, since it is not yet known if that is needed.
     //
     //  * Users wishing to write system-specific code should be given enums for
-    //    at least the common error cases.
+    //    at least the common isError cases.
     //
     //  * System specific code should fail at compile time if moved to another
     //    operating system.
@@ -188,7 +188,7 @@ namespace boost
 
     class error_category;
 
-    //  predefined error categories  ---------------------------------------------------//
+    //  predefined isError categories  ---------------------------------------------------//
 
 #ifdef BOOST_ERROR_CODE_HEADER_ONLY
     inline const error_category &  system_category() BOOST_SYSTEM_NOEXCEPT;
@@ -265,7 +265,7 @@ namespace boost
       {
         // do not map generic to std::generic on purpose; occasionally,
         // there are two std::generic categories in a program, which leads
-        // to error codes/conditions mysteriously not being equal to themselves
+        // to isError codes/conditions mysteriously not being equal to themselves
         return std_cat_;
       }
 
@@ -390,7 +390,7 @@ namespace boost
 
 #if !defined(BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS)
 
-      explicit operator bool() const BOOST_SYSTEM_NOEXCEPT  // true if error
+      explicit operator bool() const BOOST_SYSTEM_NOEXCEPT  // true if isError
       {
         return m_val != 0;
       }
@@ -400,12 +400,12 @@ namespace boost
       typedef void (*unspecified_bool_type)();
       static void unspecified_bool_true() {}
 
-      operator unspecified_bool_type() const BOOST_SYSTEM_NOEXCEPT  // true if error
+      operator unspecified_bool_type() const BOOST_SYSTEM_NOEXCEPT  // true if isError
       {
         return m_val == 0 ? 0 : unspecified_bool_true;
       }
 
-      bool operator!() const BOOST_SYSTEM_NOEXCEPT  // true if no error
+      bool operator!() const BOOST_SYSTEM_NOEXCEPT  // true if no isError
       {
         return m_val == 0;
       }
@@ -449,7 +449,7 @@ namespace boost
 
     //  We want error_code to be a value type that can be copied without slicing
     //  and without requiring heap allocation, but we also want it to have
-    //  polymorphic behavior based on the error category. This is achieved by
+    //  polymorphic behavior based on the isError category. This is achieved by
     //  abstract base class error_category supplying the polymorphic behavior,
     //  and error_code containing a pointer to an object of a type derived
     //  from error_category.
@@ -500,7 +500,7 @@ namespace boost
 
 #if !defined(BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS)
 
-      explicit operator bool() const BOOST_SYSTEM_NOEXCEPT  // true if error
+      explicit operator bool() const BOOST_SYSTEM_NOEXCEPT  // true if isError
       {
         return m_val != 0;
       }
@@ -510,12 +510,12 @@ namespace boost
       typedef void (*unspecified_bool_type)();
       static void unspecified_bool_true() {}
 
-      operator unspecified_bool_type() const  BOOST_SYSTEM_NOEXCEPT // true if error
+      operator unspecified_bool_type() const  BOOST_SYSTEM_NOEXCEPT // true if isError
       {
         return m_val == 0 ? 0 : unspecified_bool_true;
       }
 
-      bool operator!() const  BOOST_SYSTEM_NOEXCEPT // true if no error
+      bool operator!() const  BOOST_SYSTEM_NOEXCEPT // true if no isError
       {
         return m_val == 0;
       }
@@ -555,7 +555,7 @@ namespace boost
 
     };
 
-    //  predefined error_code object used as "throw on error" tag
+    //  predefined error_code object used as "throw on isError" tag
 # ifdef BOOST_SYSTEM_ENABLE_DEPRECATED
     BOOST_SYSTEM_DECL extern error_code throws;
 # endif
@@ -573,7 +573,7 @@ namespace boost
     //  produce warnings or errors from popular compilers, is very efficient
     //  (as determined by inspecting generated code), and does not suffer
     //  from order of initialization problems. In practice, it also seems
-    //  cause user function error handling implementation errors to be detected
+    //  cause user function isError handling implementation errors to be detected
     //  very early in the development cycle.
     inline system::error_code* throws()
     {

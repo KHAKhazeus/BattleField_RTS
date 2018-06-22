@@ -56,7 +56,7 @@ public:
   }
 
 private:
-  // Open the descriptors. Throws on error.
+  // Open the descriptors. Throws on isError.
   BOOST_ASIO_DECL void open_descriptors();
 
   // Close the descriptors.

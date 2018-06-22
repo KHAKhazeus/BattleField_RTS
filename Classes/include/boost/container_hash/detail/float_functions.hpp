@@ -115,7 +115,7 @@ namespace boost {
     
         struct not_found {
             // Implicitly convertible to float and long double in order to avoid
-            // a compile error when the dummy float functions are used.
+            // a compile isError when the dummy float functions are used.
 
             inline operator float() const { return 0; }
             inline operator long double() const { return 0; }

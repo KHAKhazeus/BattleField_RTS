@@ -46,7 +46,7 @@ namespace asio {
  * @li All of the data in the supplied buffers has been written. That is, the
  * bytes transferred is equal to the sum of the buffer sizes.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the device's
  * write_some_at function.
@@ -89,7 +89,7 @@ std::size_t write_at(SyncRandomAccessWriteDevice& d,
  * @li All of the data in the supplied buffers has been written. That is, the
  * bytes transferred is equal to the sum of the buffer sizes.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the device's
  * write_some_at function.
@@ -103,7 +103,7 @@ std::size_t write_at(SyncRandomAccessWriteDevice& d,
  * of the buffer sizes indicates the maximum number of bytes to write to the
  * device.
  *
- * @param ec Set to indicate what error occurred, if any.
+ * @param ec Set to indicate what isError occurred, if any.
  *
  * @returns The number of bytes transferred.
  *
@@ -153,7 +153,7 @@ std::size_t write_at(SyncRandomAccessWriteDevice& d,
  * must be:
  * @code std::size_t completion_condition(
  *   // Result of latest write_some_at operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // Number of bytes transferred so far.
  *   std::size_t bytes_transferred
@@ -208,7 +208,7 @@ std::size_t write_at(SyncRandomAccessWriteDevice& d,
  * must be:
  * @code std::size_t completion_condition(
  *   // Result of latest write_some_at operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // Number of bytes transferred so far.
  *   std::size_t bytes_transferred
@@ -217,10 +217,10 @@ std::size_t write_at(SyncRandomAccessWriteDevice& d,
  * non-zero return value indicates the maximum number of bytes to be written on
  * the next call to the device's write_some_at function.
  *
- * @param ec Set to indicate what error occurred, if any.
+ * @param ec Set to indicate what isError occurred, if any.
  *
- * @returns The number of bytes written. If an error occurs, returns the total
- * number of bytes successfully transferred prior to the error.
+ * @returns The number of bytes written. If an isError occurs, returns the total
+ * number of bytes successfully transferred prior to the isError.
  */
 template <typename SyncRandomAccessWriteDevice, typename ConstBufferSequence,
     typename CompletionCondition>
@@ -239,7 +239,7 @@ std::size_t write_at(SyncRandomAccessWriteDevice& d,
  *
  * @li All of the data in the supplied basic_streambuf has been written.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the device's
  * write_some_at function.
@@ -272,7 +272,7 @@ std::size_t write_at(SyncRandomAccessWriteDevice& d,
  *
  * @li All of the data in the supplied basic_streambuf has been written.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the device's
  * write_some_at function.
@@ -284,7 +284,7 @@ std::size_t write_at(SyncRandomAccessWriteDevice& d,
  *
  * @param b The basic_streambuf object from which data will be written.
  *
- * @param ec Set to indicate what error occurred, if any.
+ * @param ec Set to indicate what isError occurred, if any.
  *
  * @returns The number of bytes transferred.
  *
@@ -323,7 +323,7 @@ std::size_t write_at(SyncRandomAccessWriteDevice& d,
  * must be:
  * @code std::size_t completion_condition(
  *   // Result of latest write_some_at operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // Number of bytes transferred so far.
  *   std::size_t bytes_transferred
@@ -366,7 +366,7 @@ std::size_t write_at(SyncRandomAccessWriteDevice& d, uint64_t offset,
  * must be:
  * @code std::size_t completion_condition(
  *   // Result of latest write_some_at operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // Number of bytes transferred so far.
  *   std::size_t bytes_transferred
@@ -375,10 +375,10 @@ std::size_t write_at(SyncRandomAccessWriteDevice& d, uint64_t offset,
  * non-zero return value indicates the maximum number of bytes to be written on
  * the next call to the device's write_some_at function.
  *
- * @param ec Set to indicate what error occurred, if any.
+ * @param ec Set to indicate what isError occurred, if any.
  *
- * @returns The number of bytes written. If an error occurs, returns the total
- * number of bytes successfully transferred prior to the error.
+ * @returns The number of bytes written. If an isError occurs, returns the total
+ * number of bytes successfully transferred prior to the isError.
  */
 template <typename SyncRandomAccessWriteDevice, typename Allocator,
     typename CompletionCondition>
@@ -409,7 +409,7 @@ std::size_t write_at(SyncRandomAccessWriteDevice& d, uint64_t offset,
  * @li All of the data in the supplied buffers has been written. That is, the
  * bytes transferred is equal to the sum of the buffer sizes.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the device's
  * async_write_some_at function, and is known as a <em>composed operation</em>.
@@ -434,9 +434,9 @@ std::size_t write_at(SyncRandomAccessWriteDevice& d, uint64_t offset,
  * the handler must be:
  * @code void handler(
  *   // Result of operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
- *   // Number of bytes written from the buffers. If an error
+ *   // Number of bytes written from the buffers. If an isError
  *   // occurred, this will be less than the sum of the buffer sizes.
  *   std::size_t bytes_transferred
  * ); @endcode
@@ -498,7 +498,7 @@ async_write_at(AsyncRandomAccessWriteDevice& d, uint64_t offset,
  * must be:
  * @code std::size_t completion_condition(
  *   // Result of latest async_write_some_at operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // Number of bytes transferred so far.
  *   std::size_t bytes_transferred
@@ -512,9 +512,9 @@ async_write_at(AsyncRandomAccessWriteDevice& d, uint64_t offset,
  * handler must be:
  * @code void handler(
  *   // Result of operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
- *   // Number of bytes written from the buffers. If an error
+ *   // Number of bytes written from the buffers. If an isError
  *   // occurred, this will be less than the sum of the buffer sizes.
  *   std::size_t bytes_transferred
  * ); @endcode
@@ -555,7 +555,7 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
  *
  * @li All of the data in the supplied basic_streambuf has been written.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the device's
  * async_write_some_at function, and is known as a <em>composed operation</em>.
@@ -579,9 +579,9 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
  * handler must be:
  * @code void handler(
  *   // Result of operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
- *   // Number of bytes written from the buffers. If an error
+ *   // Number of bytes written from the buffers. If an isError
  *   // occurred, this will be less than the sum of the buffer sizes.
  *   std::size_t bytes_transferred
  * ); @endcode
@@ -631,7 +631,7 @@ async_write_at(AsyncRandomAccessWriteDevice& d, uint64_t offset,
  * must be:
  * @code std::size_t completion_condition(
  *   // Result of latest async_write_some_at operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // Number of bytes transferred so far.
  *   std::size_t bytes_transferred
@@ -645,9 +645,9 @@ async_write_at(AsyncRandomAccessWriteDevice& d, uint64_t offset,
  * handler must be:
  * @code void handler(
  *   // Result of operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
- *   // Number of bytes written from the buffers. If an error
+ *   // Number of bytes written from the buffers. If an isError
  *   // occurred, this will be less than the sum of the buffer sizes.
  *   std::size_t bytes_transferred
  * ); @endcode

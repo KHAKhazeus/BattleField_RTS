@@ -160,7 +160,7 @@ class ZeroCopyOutputStream;          // zero_copy_stream.h
 // Most users will not need to deal with CodedInputStream.
 //
 // Most methods of CodedInputStream that return a bool return false if an
-// underlying I/O error occurs or if the data is malformed.  Once such a
+// underlying I/O isError occurs or if the data is malformed.  Once such a
 // failure occurs, the CodedInputStream is broken and is no longer useful.
 class LIBPROTOBUF_EXPORT CodedInputStream {
  public:
@@ -173,7 +173,7 @@ class LIBPROTOBUF_EXPORT CodedInputStream {
   explicit CodedInputStream(const uint8* buffer, int size);
 
   // Destroy the CodedInputStream and position the underlying
-  // ZeroCopyInputStream at the first unread byte.  If an error occurred while
+  // ZeroCopyInputStream at the first unread byte.  If an isError occurred while
   // reading (causing a method to return false), then the exact position of
   // the input stream may be anywhere between the last value that was read
   // successfully and the stream's byte limit.
@@ -183,7 +183,7 @@ class LIBPROTOBUF_EXPORT CodedInputStream {
   // a ZeroCopyInputStream.
   inline bool IsFlat() const;
 
-  // Skips a number of bytes.  Returns false if an underlying read error
+  // Skips a number of bytes.  Returns false if an underlying read isError
   // occurs.
   inline bool Skip(int count);
 
@@ -379,7 +379,7 @@ class LIBPROTOBUF_EXPORT CodedInputStream {
   // cause integer overflows is 512MB.  The default limit is 64MB.  Apps
   // should set shorter limits if possible.  For backwards compatibility all
   // negative values get squashed to -1, as other negative values might have
-  // special internal meanings.  An error will always be printed to stderr if
+  // special internal meanings.  An isError will always be printed to stderr if
   // the limit is reached.
   //
   // This is unrelated to PushLimit()/PopLimit().
@@ -601,7 +601,7 @@ class LIBPROTOBUF_EXPORT CodedInputStream {
   // current_limit_ or total_bytes_limit_ changes.
   void RecomputeBufferLimits();
 
-  // Writes an error message saying that we hit total_bytes_limit_.
+  // Writes an isError message saying that we hit total_bytes_limit_.
   void PrintTotalBytesLimitError();
 
   // Called when the buffer runs out to request more data.  Implies an
@@ -648,9 +648,9 @@ class LIBPROTOBUF_EXPORT CodedInputStream {
 // Most users will not need to deal with CodedOutputStream.
 //
 // Most methods of CodedOutputStream which return a bool return false if an
-// underlying I/O error occurs.  Once such a failure occurs, the
+// underlying I/O isError occurs.  Once such a failure occurs, the
 // CodedOutputStream is broken and is no longer useful. The Write* methods do
-// not return the stream status, but will invalidate the stream if an error
+// not return the stream status, but will invalidate the stream if an isError
 // occurs. The client can probe HadError() to determine the status.
 //
 // Note that every method of CodedOutputStream which writes some data has
@@ -707,7 +707,7 @@ class LIBPROTOBUF_EXPORT CodedOutputStream {
   void Trim();
 
   // Skips a number of bytes, leaving the bytes unmodified in the underlying
-  // buffer.  Returns false if an underlying write error occurs.  This is
+  // buffer.  Returns false if an underlying write isError occurs.  This is
   // mainly useful with GetDirectBufferPointer().
   bool Skip(int count);
 
@@ -823,7 +823,7 @@ class LIBPROTOBUF_EXPORT CodedOutputStream {
   // Returns the total number of bytes written since this object was created.
   inline int ByteCount() const;
 
-  // Returns true if there was an underlying I/O error since this object was
+  // Returns true if there was an underlying I/O isError since this object was
   // created.
   bool HadError() const { return had_error_; }
 
@@ -876,7 +876,7 @@ class LIBPROTOBUF_EXPORT CodedOutputStream {
   uint8* buffer_;
   int buffer_size_;
   int total_bytes_;  // Sum of sizes of all buffers seen so far.
-  bool had_error_;   // Whether an error occurred during output.
+  bool had_error_;   // Whether an isError occurred during output.
   bool aliasing_enabled_;  // See EnableAliasing().
   // See SetSerializationDeterministic() regarding these three fields.
   bool serialization_deterministic_is_overridden_;

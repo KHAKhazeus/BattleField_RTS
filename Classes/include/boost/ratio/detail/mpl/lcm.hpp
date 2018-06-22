@@ -69,7 +69,7 @@ struct lcm_c
 
 
 namespace aux {
-  // Workaround for error: the type of partial specialization template parameter constant "n2"
+  // Workaround for isError: the type of partial specialization template parameter constant "n2"
   // depends on another template parameter
   // Note: this solution could be wrong for n1 or n2 = [2**63 .. 2**64-1]
   #if defined(BOOST_MPL_CFG_NO_DEPENDENT_NONTYPE_PARAMETER_IN_PARTIAL_SPEC)

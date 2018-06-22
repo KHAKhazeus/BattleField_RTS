@@ -54,7 +54,7 @@ namespace protobuf {
 // The expression is a compile-time constant, and therefore can be
 // used in defining new arrays, for example.
 //
-// GOOGLE_ARRAYSIZE catches a few type errors.  If you see a compiler error
+// GOOGLE_ARRAYSIZE catches a few type errors.  If you see a compiler isError
 //
 //   "warning: division by zero in ..."
 //
@@ -69,7 +69,7 @@ namespace protobuf {
 // element).  If the former is divisible by the latter, perhaps arr is
 // indeed an array, in which case the division result is the # of
 // elements in the array.  Otherwise, arr cannot possibly be an array,
-// and we generate a compiler error to prevent the code from
+// and we generate a compiler isError to prevent the code from
 // compiling.
 //
 // Since the size of bool is implementation-defined, we need to cast
@@ -101,7 +101,7 @@ namespace protobuf {
 //   COMPILE_ASSERT(sizeof(foo) < 128, foo_too_large);
 //
 // The second argument to the macro is the name of the variable. If
-// the expression is false, most compilers will issue a warning/error
+// the expression is false, most compilers will issue a warning/isError
 // containing the name of the variable.
 
 namespace internal {

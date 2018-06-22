@@ -177,7 +177,7 @@ BOOST_ASIO_INITFN_RESULT_TYPE(ReadHandler,
 buffered_read_stream<Stream>::async_fill(
     BOOST_ASIO_MOVE_ARG(ReadHandler) handler)
 {
-  // If you get an error on the following line it means that your handler does
+  // If you get an isError on the following line it means that your handler does
   // not meet the documented type requirements for a ReadHandler.
   BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
@@ -375,7 +375,7 @@ buffered_read_stream<Stream>::async_read_some(
     const MutableBufferSequence& buffers,
     BOOST_ASIO_MOVE_ARG(ReadHandler) handler)
 {
-  // If you get an error on the following line it means that your handler does
+  // If you get an isError on the following line it means that your handler does
   // not meet the documented type requirements for a ReadHandler.
   BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 

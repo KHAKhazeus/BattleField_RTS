@@ -27,7 +27,7 @@ namespace CV {
   /*! This template provides a quick way to generate
    *  an integer type with a constrained range.  The type
    *  provides for the ability to specify the min, max, and
-   *  and error handling policy.
+   *  and isError handling policy.
    *  
    *  <b>value policies</b>
    *  A class that provides the range limits via the min and
@@ -35,7 +35,7 @@ namespace CV {
    *  determines how errors are handled.  A common strategy
    *  would be to assert or throw and exception.  The on_error
    *  is passed both the current value and the new value that
-   *  is in error.
+   *  is in isError.
    *
    */
   template<class value_policies>

@@ -679,7 +679,7 @@ inline void ExtensionSet::AddString(int number, FieldType type,
 //     // extensions and repeated extensions. If the TypeTraits for the passed
 //     // in extension doesn't have the expected symbol defined, it means the
 //     // user is passing a repeated extension to a singular accessor, or the
-//     // opposite. In that case the C++ compiler will generate an error
+//     // opposite. In that case the C++ compiler will generate an isError
 //     // message "no matching member function" to inform the user.
 //     typedef ? Singular
 //     typedef ? Repeated
@@ -707,12 +707,12 @@ inline void ExtensionSet::AddString(int number, FieldType type,
 // "Mutable" methods only make sense for strings and messages, and the
 // repeated methods only make sense for repeated types.  So, each type
 // traits class implements only the set of methods from this signature that it
-// actually supports.  This will cause a compiler error if the user tries to
+// actually supports.  This will cause a compiler isError if the user tries to
 // access an extension using a method that doesn't make sense for its type.
 // For example, if "foo" is an extension of type "optional int32", then if you
 // try to write code like:
 //   my_message.MutableExtension(foo)
-// you will get a compile error because PrimitiveTypeTraits<int32> does not
+// you will get a compile isError because PrimitiveTypeTraits<int32> does not
 // have a "Mutable()" method.
 
 // -------------------------------------------------------------------

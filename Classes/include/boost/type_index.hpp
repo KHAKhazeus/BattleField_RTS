@@ -63,7 +63,7 @@ namespace boost { namespace typeindex {
 /// that outputs the \b whole function signature \b including \b template \b parameters.
 ///
 /// If your compiler is not recognised and BOOST_TYPE_INDEX_FUNCTION_SIGNATURE is not defined,
-/// then a compile-time error will arise at any attempt to use boost::typeindex::ctti_type_index classes.
+/// then a compile-time isError will arise at any attempt to use boost::typeindex::ctti_type_index classes.
 ///
 /// See BOOST_TYPE_INDEX_REGISTER_CTTI_PARSING_PARAMS and BOOST_TYPE_INDEX_CTTI_USER_DEFINED_PARSING
 /// for an information of how to tune the implementation to make a nice pretty_name() output.

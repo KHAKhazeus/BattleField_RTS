@@ -337,7 +337,7 @@ public:
    *
    * @param protocol An object specifying which protocol is to be used.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @par Example
    * @code
@@ -346,7 +346,7 @@ public:
    * socket.open(boost::asio::ip::tcp::v4(), ec);
    * if (ec)
    * {
-   *   // An error occurred.
+   *   // An isError occurred.
    * }
    * @endcode
    */
@@ -384,7 +384,7 @@ public:
    *
    * @param native_socket A native socket.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    */
   BOOST_ASIO_SYNC_OP_VOID assign(const protocol_type& protocol,
       const native_handle_type& native_socket, boost::system::error_code& ec)
@@ -404,10 +404,10 @@ public:
   /**
    * This function is used to close the socket. Any asynchronous send, receive
    * or connect operations will be cancelled immediately, and will complete
-   * with the boost::asio::error::operation_aborted error.
+   * with the boost::asio::isError::operation_aborted isError.
    *
    * @throws boost::system::system_error Thrown on failure. Note that, even if
-   * the function indicates an error, the underlying descriptor is closed.
+   * the function indicates an isError, the underlying descriptor is closed.
    *
    * @note For portable behaviour with respect to graceful closure of a
    * connected socket, call shutdown() before closing the socket.
@@ -423,10 +423,10 @@ public:
   /**
    * This function is used to close the socket. Any asynchronous send, receive
    * or connect operations will be cancelled immediately, and will complete
-   * with the boost::asio::error::operation_aborted error.
+   * with the boost::asio::isError::operation_aborted isError.
    *
-   * @param ec Set to indicate what error occurred, if any. Note that, even if
-   * the function indicates an error, the underlying descriptor is closed.
+   * @param ec Set to indicate what isError occurred, if any. Note that, even if
+   * the function indicates an isError, the underlying descriptor is closed.
    *
    * @par Example
    * @code
@@ -436,7 +436,7 @@ public:
    * socket.close(ec);
    * if (ec)
    * {
-   *   // An error occurred.
+   *   // An isError occurred.
    * }
    * @endcode
    *
@@ -453,13 +453,13 @@ public:
   /**
    * This function causes all outstanding asynchronous connect, send and receive
    * operations to finish immediately, and the handlers for cancelled operations
-   * will be passed the boost::asio::error::operation_aborted error. Ownership
+   * will be passed the boost::asio::isError::operation_aborted isError. Ownership
    * of the native socket is then transferred to the caller.
    *
    * @throws boost::system::system_error Thrown on failure.
    *
    * @note This function is unsupported on Windows versions prior to Windows
-   * 8.1, and will fail with boost::asio::error::operation_not_supported on
+   * 8.1, and will fail with boost::asio::isError::operation_not_supported on
    * these platforms.
    */
 #if defined(BOOST_ASIO_MSVC) && (BOOST_ASIO_MSVC >= 1400) \
@@ -481,13 +481,13 @@ public:
   /**
    * This function causes all outstanding asynchronous connect, send and receive
    * operations to finish immediately, and the handlers for cancelled operations
-   * will be passed the boost::asio::error::operation_aborted error. Ownership
+   * will be passed the boost::asio::isError::operation_aborted isError. Ownership
    * of the native socket is then transferred to the caller.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @note This function is unsupported on Windows versions prior to Windows
-   * 8.1, and will fail with boost::asio::error::operation_not_supported on
+   * 8.1, and will fail with boost::asio::isError::operation_not_supported on
    * these platforms.
    */
 #if defined(BOOST_ASIO_MSVC) && (BOOST_ASIO_MSVC >= 1400) \
@@ -516,12 +516,12 @@ public:
   /**
    * This function causes all outstanding asynchronous connect, send and receive
    * operations to finish immediately, and the handlers for cancelled operations
-   * will be passed the boost::asio::error::operation_aborted error.
+   * will be passed the boost::asio::isError::operation_aborted isError.
    *
    * @throws boost::system::system_error Thrown on failure.
    *
    * @note Calls to cancel() will always fail with
-   * boost::asio::error::operation_not_supported when run on Windows XP, Windows
+   * boost::asio::isError::operation_not_supported when run on Windows XP, Windows
    * Server 2003, and earlier versions of Windows, unless
    * BOOST_ASIO_ENABLE_CANCELIO is defined. However, the CancelIo function has
    * two issues that should be considered before enabling its use:
@@ -529,7 +529,7 @@ public:
    * @li It will only cancel asynchronous operations that were initiated in the
    * current thread.
    *
-   * @li It can appear to complete without error, but the request to cancel the
+   * @li It can appear to complete without isError, but the request to cancel the
    * unfinished operations may be silently ignored by the operating system.
    * Whether it works or not seems to depend on the drivers that are installed.
    *
@@ -564,12 +564,12 @@ public:
   /**
    * This function causes all outstanding asynchronous connect, send and receive
    * operations to finish immediately, and the handlers for cancelled operations
-   * will be passed the boost::asio::error::operation_aborted error.
+   * will be passed the boost::asio::isError::operation_aborted isError.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @note Calls to cancel() will always fail with
-   * boost::asio::error::operation_not_supported when run on Windows XP, Windows
+   * boost::asio::isError::operation_not_supported when run on Windows XP, Windows
    * Server 2003, and earlier versions of Windows, unless
    * BOOST_ASIO_ENABLE_CANCELIO is defined. However, the CancelIo function has
    * two issues that should be considered before enabling its use:
@@ -577,7 +577,7 @@ public:
    * @li It will only cancel asynchronous operations that were initiated in the
    * current thread.
    *
-   * @li It can appear to complete without error, but the request to cancel the
+   * @li It can appear to complete without isError, but the request to cancel the
    * unfinished operations may be silently ignored by the operating system.
    * Whether it works or not seems to depend on the drivers that are installed.
    *
@@ -630,7 +630,7 @@ public:
    * This function is used to check whether the socket input is currently
    * positioned at the out-of-band data mark.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @return A bool indicating whether the socket is at the out-of-band data
    * mark.
@@ -646,7 +646,7 @@ public:
    * without blocking.
    *
    * @return The number of bytes that may be read without blocking, or 0 if an
-   * error occurs.
+   * isError occurs.
    *
    * @throws boost::system::system_error Thrown on failure.
    */
@@ -664,10 +664,10 @@ public:
    * This function is used to determine the number of bytes that may be read
    * without blocking.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @return The number of bytes that may be read without blocking, or 0 if an
-   * error occurs.
+   * isError occurs.
    */
   std::size_t available(boost::system::error_code& ec) const
   {
@@ -707,7 +707,7 @@ public:
    * @param endpoint An endpoint on the local machine to which the socket will
    * be bound.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @par Example
    * @code
@@ -718,7 +718,7 @@ public:
    *       boost::asio::ip::tcp::v4(), 12345), ec);
    * if (ec)
    * {
-   *   // An error occurred.
+   *   // An isError occurred.
    * }
    * @endcode
    */
@@ -733,7 +733,7 @@ public:
   /**
    * This function is used to connect a socket to the specified remote endpoint.
    * The function call will block until the connection is successfully made or
-   * an error occurs.
+   * an isError occurs.
    *
    * The socket is automatically opened if it is not already open. If the
    * connect fails, and the socket was automatically opened, the socket is
@@ -769,7 +769,7 @@ public:
   /**
    * This function is used to connect a socket to the specified remote endpoint.
    * The function call will block until the connection is successfully made or
-   * an error occurs.
+   * an isError occurs.
    *
    * The socket is automatically opened if it is not already open. If the
    * connect fails, and the socket was automatically opened, the socket is
@@ -778,7 +778,7 @@ public:
    * @param peer_endpoint The remote endpoint to which the socket will be
    * connected.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @par Example
    * @code
@@ -789,7 +789,7 @@ public:
    * socket.connect(endpoint, ec);
    * if (ec)
    * {
-   *   // An error occurred.
+   *   // An isError occurred.
    * }
    * @endcode
    */
@@ -826,7 +826,7 @@ public:
    * completes. Copies will be made of the handler as required. The function
    * signature of the handler must be:
    * @code void handler(
-   *   const boost::system::error_code& error // Result of operation
+   *   const boost::system::error_code& isError // Result of operation
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
@@ -835,9 +835,9 @@ public:
    *
    * @par Example
    * @code
-   * void connect_handler(const boost::system::error_code& error)
+   * void connect_handler(const boost::system::error_code& isError)
    * {
-   *   if (!error)
+   *   if (!isError)
    *   {
    *     // Connect succeeded.
    *   }
@@ -857,7 +857,7 @@ public:
   async_connect(const endpoint_type& peer_endpoint,
       BOOST_ASIO_MOVE_ARG(ConnectHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
+    // If you get an isError on the following line it means that your handler does
     // not meet the documented type requirements for a ConnectHandler.
     BOOST_ASIO_CONNECT_HANDLER_CHECK(ConnectHandler, handler) type_check;
 
@@ -943,7 +943,7 @@ public:
    *
    * @param option The new option value to be set on the socket.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @sa SettableSocketOption @n
    * boost::asio::socket_base::broadcast @n
@@ -972,7 +972,7 @@ public:
    * socket.set_option(option, ec);
    * if (ec)
    * {
-   *   // An error occurred.
+   *   // An isError occurred.
    * }
    * @endcode
    */
@@ -1033,7 +1033,7 @@ public:
    *
    * @param option The option value to be obtained from the socket.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @sa GettableSocketOption @n
    * boost::asio::socket_base::broadcast @n
@@ -1062,7 +1062,7 @@ public:
    * socket.get_option(option, ec);
    * if (ec)
    * {
-   *   // An error occurred.
+   *   // An isError occurred.
    * }
    * bool is_set = option.value();
    * @endcode
@@ -1111,7 +1111,7 @@ public:
    *
    * @param command The IO control command to be performed on the socket.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @sa IoControlCommand @n
    * boost::asio::socket_base::bytes_readable @n
@@ -1127,7 +1127,7 @@ public:
    * socket.io_control(command, ec);
    * if (ec)
    * {
-   *   // An error occurred.
+   *   // An isError occurred.
    * }
    * std::size_t bytes_readable = command.get();
    * @endcode
@@ -1143,13 +1143,13 @@ public:
   /// Gets the non-blocking mode of the socket.
   /**
    * @returns @c true if the socket's synchronous operations will fail with
-   * boost::asio::error::would_block if they are unable to perform the requested
+   * boost::asio::isError::would_block if they are unable to perform the requested
    * operation immediately. If @c false, synchronous operations will block
    * until complete.
    *
    * @note The non-blocking mode has no effect on the behaviour of asynchronous
-   * operations. Asynchronous operations will never fail with the error
-   * boost::asio::error::would_block.
+   * operations. Asynchronous operations will never fail with the isError
+   * boost::asio::isError::would_block.
    */
   bool non_blocking() const
   {
@@ -1159,15 +1159,15 @@ public:
   /// Sets the non-blocking mode of the socket.
   /**
    * @param mode If @c true, the socket's synchronous operations will fail with
-   * boost::asio::error::would_block if they are unable to perform the requested
+   * boost::asio::isError::would_block if they are unable to perform the requested
    * operation immediately. If @c false, synchronous operations will block
    * until complete.
    *
    * @throws boost::system::system_error Thrown on failure.
    *
    * @note The non-blocking mode has no effect on the behaviour of asynchronous
-   * operations. Asynchronous operations will never fail with the error
-   * boost::asio::error::would_block.
+   * operations. Asynchronous operations will never fail with the isError
+   * boost::asio::isError::would_block.
    */
   void non_blocking(bool mode)
   {
@@ -1179,15 +1179,15 @@ public:
   /// Sets the non-blocking mode of the socket.
   /**
    * @param mode If @c true, the socket's synchronous operations will fail with
-   * boost::asio::error::would_block if they are unable to perform the requested
+   * boost::asio::isError::would_block if they are unable to perform the requested
    * operation immediately. If @c false, synchronous operations will block
    * until complete.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @note The non-blocking mode has no effect on the behaviour of asynchronous
-   * operations. Asynchronous operations will never fail with the error
-   * boost::asio::error::would_block.
+   * operations. Asynchronous operations will never fail with the isError
+   * boost::asio::isError::would_block.
    */
   BOOST_ASIO_SYNC_OP_VOID non_blocking(
       bool mode, boost::system::error_code& ec)
@@ -1203,8 +1203,8 @@ public:
    * object's synchronous operations.
    *
    * @returns @c true if the underlying socket is in non-blocking mode and
-   * direct system calls may fail with boost::asio::error::would_block (or the
-   * equivalent system error).
+   * direct system calls may fail with boost::asio::isError::would_block (or the
+   * equivalent system isError).
    *
    * @note The current non-blocking mode is cached by the socket object.
    * Consequently, the return value may be incorrect if the non-blocking mode
@@ -1241,16 +1241,16 @@ public:
    *         errno = 0;
    *         int n = ::sendfile(sock_.native_handle(), fd_, &offset_, 65536);
    *         ec = boost::system::error_code(n < 0 ? errno : 0,
-   *             boost::asio::error::get_system_category());
+   *             boost::asio::isError::get_system_category());
    *         total_bytes_transferred_ += ec ? 0 : n;
    *
    *         // Retry operation immediately if interrupted by signal.
-   *         if (ec == boost::asio::error::interrupted)
+   *         if (ec == boost::asio::isError::interrupted)
    *           continue;
    *
    *         // Check if we need to run the operation again.
-   *         if (ec == boost::asio::error::would_block
-   *             || ec == boost::asio::error::try_again)
+   *         if (ec == boost::asio::isError::would_block
+   *             || ec == boost::asio::isError::try_again)
    *         {
    *           // We have to wait for the socket to become ready again.
    *           sock_.async_wait(tcp::socket::wait_write, *this);
@@ -1259,7 +1259,7 @@ public:
    *
    *         if (ec || n == 0)
    *         {
-   *           // An error occurred, or we have reached the end of the file.
+   *           // An isError occurred, or we have reached the end of the file.
    *           // Either way we must exit the loop so we can call the handler.
    *           break;
    *         }
@@ -1292,12 +1292,12 @@ public:
    * synchronous operations.
    *
    * @param mode If @c true, the underlying socket is put into non-blocking
-   * mode and direct system calls may fail with boost::asio::error::would_block
-   * (or the equivalent system error).
+   * mode and direct system calls may fail with boost::asio::isError::would_block
+   * (or the equivalent system isError).
    *
    * @throws boost::system::system_error Thrown on failure. If the @c mode is
    * @c false, but the current value of @c non_blocking() is @c true, this
-   * function fails with boost::asio::error::invalid_argument, as the
+   * function fails with boost::asio::isError::invalid_argument, as the
    * combination does not make sense.
    *
    * @par Example
@@ -1331,16 +1331,16 @@ public:
    *         errno = 0;
    *         int n = ::sendfile(sock_.native_handle(), fd_, &offset_, 65536);
    *         ec = boost::system::error_code(n < 0 ? errno : 0,
-   *             boost::asio::error::get_system_category());
+   *             boost::asio::isError::get_system_category());
    *         total_bytes_transferred_ += ec ? 0 : n;
    *
    *         // Retry operation immediately if interrupted by signal.
-   *         if (ec == boost::asio::error::interrupted)
+   *         if (ec == boost::asio::isError::interrupted)
    *           continue;
    *
    *         // Check if we need to run the operation again.
-   *         if (ec == boost::asio::error::would_block
-   *             || ec == boost::asio::error::try_again)
+   *         if (ec == boost::asio::isError::would_block
+   *             || ec == boost::asio::isError::try_again)
    *         {
    *           // We have to wait for the socket to become ready again.
    *           sock_.async_wait(tcp::socket::wait_write, *this);
@@ -1349,7 +1349,7 @@ public:
    *
    *         if (ec || n == 0)
    *         {
-   *           // An error occurred, or we have reached the end of the file.
+   *           // An isError occurred, or we have reached the end of the file.
    *           // Either way we must exit the loop so we can call the handler.
    *           break;
    *         }
@@ -1385,12 +1385,12 @@ public:
    * synchronous operations.
    *
    * @param mode If @c true, the underlying socket is put into non-blocking
-   * mode and direct system calls may fail with boost::asio::error::would_block
-   * (or the equivalent system error).
+   * mode and direct system calls may fail with boost::asio::isError::would_block
+   * (or the equivalent system isError).
    *
-   * @param ec Set to indicate what error occurred, if any. If the @c mode is
+   * @param ec Set to indicate what isError occurred, if any. If the @c mode is
    * @c false, but the current value of @c non_blocking() is @c true, this
-   * function fails with boost::asio::error::invalid_argument, as the
+   * function fails with boost::asio::isError::invalid_argument, as the
    * combination does not make sense.
    *
    * @par Example
@@ -1424,16 +1424,16 @@ public:
    *         errno = 0;
    *         int n = ::sendfile(sock_.native_handle(), fd_, &offset_, 65536);
    *         ec = boost::system::error_code(n < 0 ? errno : 0,
-   *             boost::asio::error::get_system_category());
+   *             boost::asio::isError::get_system_category());
    *         total_bytes_transferred_ += ec ? 0 : n;
    *
    *         // Retry operation immediately if interrupted by signal.
-   *         if (ec == boost::asio::error::interrupted)
+   *         if (ec == boost::asio::isError::interrupted)
    *           continue;
    *
    *         // Check if we need to run the operation again.
-   *         if (ec == boost::asio::error::would_block
-   *             || ec == boost::asio::error::try_again)
+   *         if (ec == boost::asio::isError::would_block
+   *             || ec == boost::asio::isError::try_again)
    *         {
    *           // We have to wait for the socket to become ready again.
    *           sock_.async_wait(tcp::socket::wait_write, *this);
@@ -1442,7 +1442,7 @@ public:
    *
    *         if (ec || n == 0)
    *         {
-   *           // An error occurred, or we have reached the end of the file.
+   *           // An isError occurred, or we have reached the end of the file.
    *           // Either way we must exit the loop so we can call the handler.
    *           break;
    *         }
@@ -1499,10 +1499,10 @@ public:
   /**
    * This function is used to obtain the locally bound endpoint of the socket.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @returns An object that represents the local endpoint of the socket.
-   * Returns a default-constructed endpoint object if an error occurred.
+   * Returns a default-constructed endpoint object if an isError occurred.
    *
    * @par Example
    * @code
@@ -1512,7 +1512,7 @@ public:
    * boost::asio::ip::tcp::endpoint endpoint = socket.local_endpoint(ec);
    * if (ec)
    * {
-   *   // An error occurred.
+   *   // An isError occurred.
    * }
    * @endcode
    */
@@ -1549,10 +1549,10 @@ public:
   /**
    * This function is used to obtain the remote endpoint of the socket.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @returns An object that represents the remote endpoint of the socket.
-   * Returns a default-constructed endpoint object if an error occurred.
+   * Returns a default-constructed endpoint object if an isError occurred.
    *
    * @par Example
    * @code
@@ -1562,7 +1562,7 @@ public:
    * boost::asio::ip::tcp::endpoint endpoint = socket.remote_endpoint(ec);
    * if (ec)
    * {
-   *   // An error occurred.
+   *   // An isError occurred.
    * }
    * @endcode
    */
@@ -1602,7 +1602,7 @@ public:
    *
    * @param what Determines what types of operation will no longer be allowed.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @par Example
    * Shutting down the send side of the socket:
@@ -1613,7 +1613,7 @@ public:
    * socket.shutdown(boost::asio::ip::tcp::socket::shutdown_send, ec);
    * if (ec)
    * {
-   *   // An error occurred.
+   *   // An isError occurred.
    * }
    * @endcode
    */
@@ -1625,10 +1625,10 @@ public:
   }
 
   /// Wait for the socket to become ready to read, ready to write, or to have
-  /// pending error conditions.
+  /// pending isError conditions.
   /**
    * This function is used to perform a blocking wait for a socket to enter
-   * a ready to read, write or error condition state.
+   * a ready to read, write or isError condition state.
    *
    * @param w Specifies the desired socket state.
    *
@@ -1648,14 +1648,14 @@ public:
   }
 
   /// Wait for the socket to become ready to read, ready to write, or to have
-  /// pending error conditions.
+  /// pending isError conditions.
   /**
    * This function is used to perform a blocking wait for a socket to enter
-   * a ready to read, write or error condition state.
+   * a ready to read, write or isError condition state.
    *
    * @param w Specifies the desired socket state.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @par Example
    * Waiting for a socket to become readable.
@@ -1673,10 +1673,10 @@ public:
   }
 
   /// Asynchronously wait for the socket to become ready to read, ready to
-  /// write, or to have pending error conditions.
+  /// write, or to have pending isError conditions.
   /**
    * This function is used to perform an asynchronous wait for a socket to enter
-   * a ready to read, write or error condition state.
+   * a ready to read, write or isError condition state.
    *
    * @param w Specifies the desired socket state.
    *
@@ -1684,7 +1684,7 @@ public:
    * Copies will be made of the handler as required. The function signature of
    * the handler must be:
    * @code void handler(
-   *   const boost::system::error_code& error // Result of operation
+   *   const boost::system::error_code& isError // Result of operation
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
@@ -1693,9 +1693,9 @@ public:
    *
    * @par Example
    * @code
-   * void wait_handler(const boost::system::error_code& error)
+   * void wait_handler(const boost::system::error_code& isError)
    * {
-   *   if (!error)
+   *   if (!isError)
    *   {
    *     // Wait succeeded.
    *   }
@@ -1713,7 +1713,7 @@ public:
       void (boost::system::error_code))
   async_wait(wait_type w, BOOST_ASIO_MOVE_ARG(WaitHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
+    // If you get an isError on the following line it means that your handler does
     // not meet the documented type requirements for a WaitHandler.
     BOOST_ASIO_WAIT_HANDLER_CHECK(WaitHandler, handler) type_check;
 

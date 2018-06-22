@@ -34,10 +34,10 @@ public:
 
 	void start();
 
-	void write_data(std::string s);
+	void writeData(std::string s);
 
-	std::string read_data();
-	bool error()const { return error_flag_; }
+	std::string readData();
+	bool error()const { return _errorFlag; }
 
 	void do_close();
 private:
@@ -48,16 +48,16 @@ private:
 	TcpConnection(boost::asio::io_service& io_service, SocketServer* parent);;
 
 	void check_timer();
-	void delete_from_parent();
+	void deleteFrom();
 	
-	tcp::socket socket_;
-	SocketServer* parent;
-	bool error_flag_{ false };
+	tcp::socket _socket;
+	SocketServer* _parent;
+	bool _errorFlag{ false };
 
-	SocketMessage read_msg_;
-	std::deque<SocketMessage> read_msg_deque_;
-	std::condition_variable data_cond_;
-	std::mutex mut_;
+	SocketMessage _readMsg;
+	std::deque<SocketMessage> _read_Msg_Deque_;
+	std::condition_variable _cond;
+	std::mutex _mut;
 	//	asio::steady_timer steady_timer_;
 
 };
@@ -67,7 +67,7 @@ class SocketServer
 public:
     ~SocketServer();
 	static SocketServer* create(int port = 8080);
-	//	~SocketServer() { acceptor_.close(); _io_service->stop(); }
+	//	~SocketServer() { _acceptor.close(); _io_service->stop(); }
 	/**
 	* \brief close the server
 	*/
@@ -76,7 +76,7 @@ public:
 	* \brief
 	* \return TcpConnection vector
 	*/
-	std::vector<TcpConnection::pointer> get_connection() const;
+	std::vector<TcpConnection::pointer> getConnection() const;
 
 	void setMapselect(int mapID) { _mapselect = mapID; }
 	int getMapselect() { return _mapselect; }
@@ -84,17 +84,17 @@ public:
 	* \brief remove a connction, if there is a connction
 	* \param p tcp connection
 	*/
-	void remove_connection(TcpConnection::pointer p);
+	void removeConnection(TcpConnection::pointer p);
 	/**
 	* \brief start the game
 	*/
-	void button_start();
+	void clickStart();
 
 	/**
 	* \brief
-	* \return if error occured
+	* \return if isError occured
 	*/
-	bool error() const;
+	bool isError() const;
 
 	/**
 	* \brief
@@ -105,25 +105,25 @@ public:
     bool stop{false};
 private:
 	SocketServer(int port);
-	void start_accept();
+	void startAccept();
 
-	void handle_accept(TcpConnection::pointer new_connection,
+	void handleAccept(TcpConnection::pointer new_connection,
 		const error_code& error);
 
-	void loop_process();
+	void loop();
 
 
-	tcp::acceptor acceptor_;
-	std::vector<TcpConnection::pointer> connections_;
+	tcp::acceptor _acceptor;
+	std::vector<TcpConnection::pointer> _connection_Vector;
 	int connection_num_;
 
-	static std::shared_ptr<boost::asio::io_service> io_service_;
+	static std::shared_ptr<boost::asio::io_service> _io_service;
 
-	std::shared_ptr<std::thread> thread_, button_thread_{ nullptr };
-	std::mutex delete_mutex_;
-	bool error_flag_{ false };
+	std::shared_ptr<std::thread> _thread, _loopthread{ nullptr };
+	std::mutex _mutex;
+	bool _error{ false };
 	int _mapselect { LOSTTEMP };
-	std::condition_variable data_cond_;
+	std::condition_variable _cond;
 };
 
 

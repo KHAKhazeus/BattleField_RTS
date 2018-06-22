@@ -702,7 +702,7 @@ async_connect(basic_socket<Protocol BOOST_ASIO_SVC_TARG>& s,
     typename enable_if<is_endpoint_sequence<
         EndpointSequence>::value>::type*)
 {
-  // If you get an error on the following line it means that your handler does
+  // If you get an isError on the following line it means that your handler does
   // not meet the documented type requirements for a RangeConnectHandler.
   BOOST_ASIO_RANGE_CONNECT_HANDLER_CHECK(
       RangeConnectHandler, handler, typename Protocol::endpoint) type_check;
@@ -730,7 +730,7 @@ async_connect(basic_socket<Protocol BOOST_ASIO_SVC_TARG>& s,
     Iterator begin, BOOST_ASIO_MOVE_ARG(IteratorConnectHandler) handler,
     typename enable_if<!is_endpoint_sequence<Iterator>::value>::type*)
 {
-  // If you get an error on the following line it means that your handler does
+  // If you get an isError on the following line it means that your handler does
   // not meet the documented type requirements for a IteratorConnectHandler.
   BOOST_ASIO_ITERATOR_CONNECT_HANDLER_CHECK(
       IteratorConnectHandler, handler, Iterator) type_check;
@@ -756,7 +756,7 @@ async_connect(basic_socket<Protocol BOOST_ASIO_SVC_TARG>& s,
     Iterator begin, Iterator end,
     BOOST_ASIO_MOVE_ARG(IteratorConnectHandler) handler)
 {
-  // If you get an error on the following line it means that your handler does
+  // If you get an isError on the following line it means that your handler does
   // not meet the documented type requirements for a IteratorConnectHandler.
   BOOST_ASIO_ITERATOR_CONNECT_HANDLER_CHECK(
       IteratorConnectHandler, handler, Iterator) type_check;
@@ -783,7 +783,7 @@ async_connect(basic_socket<Protocol BOOST_ASIO_SVC_TARG>& s,
     typename enable_if<is_endpoint_sequence<
         EndpointSequence>::value>::type*)
 {
-  // If you get an error on the following line it means that your handler does
+  // If you get an isError on the following line it means that your handler does
   // not meet the documented type requirements for a RangeConnectHandler.
   BOOST_ASIO_RANGE_CONNECT_HANDLER_CHECK(
       RangeConnectHandler, handler, typename Protocol::endpoint) type_check;
@@ -811,7 +811,7 @@ async_connect(basic_socket<Protocol BOOST_ASIO_SVC_TARG>& s,
     BOOST_ASIO_MOVE_ARG(IteratorConnectHandler) handler,
     typename enable_if<!is_endpoint_sequence<Iterator>::value>::type*)
 {
-  // If you get an error on the following line it means that your handler does
+  // If you get an isError on the following line it means that your handler does
   // not meet the documented type requirements for a IteratorConnectHandler.
   BOOST_ASIO_ITERATOR_CONNECT_HANDLER_CHECK(
       IteratorConnectHandler, handler, Iterator) type_check;
@@ -837,7 +837,7 @@ async_connect(basic_socket<Protocol BOOST_ASIO_SVC_TARG>& s,
     Iterator begin, Iterator end, ConnectCondition connect_condition,
     BOOST_ASIO_MOVE_ARG(IteratorConnectHandler) handler)
 {
-  // If you get an error on the following line it means that your handler does
+  // If you get an isError on the following line it means that your handler does
   // not meet the documented type requirements for a IteratorConnectHandler.
   BOOST_ASIO_ITERATOR_CONNECT_HANDLER_CHECK(
       IteratorConnectHandler, handler, Iterator) type_check;

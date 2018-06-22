@@ -428,7 +428,7 @@ bool NetworkLayer::init(){
 						_socket_server->startService();
 					}*/
                     if(_socket_server && _socket_client){
-                        _socket_server->button_start();
+                        _socket_server->clickStart();
 						auto gameScene = GameScene::createScene(_socket_server, _socket_client);
 						auto sceneAniamte = TransitionCrossFade::create(0.5f, gameScene);
 						Director::getInstance()->replaceScene(sceneAniamte);

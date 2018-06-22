@@ -284,7 +284,7 @@ public:
    *
    * @param device The platform-specific device name.
    *
-   * @param ec Set the indicate what error occurred, if any.
+   * @param ec Set the indicate what isError occurred, if any.
    */
   BOOST_ASIO_SYNC_OP_VOID open(const std::string& device,
       boost::system::error_code& ec)
@@ -315,7 +315,7 @@ public:
    *
    * @param native_serial_port A native serial port.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    */
   BOOST_ASIO_SYNC_OP_VOID assign(const native_handle_type& native_serial_port,
       boost::system::error_code& ec)
@@ -335,7 +335,7 @@ public:
   /**
    * This function is used to close the serial port. Any asynchronous read or
    * write operations will be cancelled immediately, and will complete with the
-   * boost::asio::error::operation_aborted error.
+   * boost::asio::isError::operation_aborted isError.
    *
    * @throws boost::system::system_error Thrown on failure.
    */
@@ -350,9 +350,9 @@ public:
   /**
    * This function is used to close the serial port. Any asynchronous read or
    * write operations will be cancelled immediately, and will complete with the
-   * boost::asio::error::operation_aborted error.
+   * boost::asio::isError::operation_aborted isError.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    */
   BOOST_ASIO_SYNC_OP_VOID close(boost::system::error_code& ec)
   {
@@ -375,7 +375,7 @@ public:
   /**
    * This function causes all outstanding asynchronous read or write operations
    * to finish immediately, and the handlers for cancelled operations will be
-   * passed the boost::asio::error::operation_aborted error.
+   * passed the boost::asio::isError::operation_aborted isError.
    *
    * @throws boost::system::system_error Thrown on failure.
    */
@@ -390,9 +390,9 @@ public:
   /**
    * This function causes all outstanding asynchronous read or write operations
    * to finish immediately, and the handlers for cancelled operations will be
-   * passed the boost::asio::error::operation_aborted error.
+   * passed the boost::asio::isError::operation_aborted isError.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    */
   BOOST_ASIO_SYNC_OP_VOID cancel(boost::system::error_code& ec)
   {
@@ -419,7 +419,7 @@ public:
    * This function causes a break sequence of platform-specific duration to be
    * sent out the serial port.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    */
   BOOST_ASIO_SYNC_OP_VOID send_break(boost::system::error_code& ec)
   {
@@ -456,7 +456,7 @@ public:
    *
    * @param option The option value to be set on the serial port.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @sa SettableSerialPortOption @n
    * boost::asio::serial_port_base::baud_rate @n
@@ -504,7 +504,7 @@ public:
    *
    * @param option The option value to be obtained from the serial port.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @sa GettableSerialPortOption @n
    * boost::asio::serial_port_base::baud_rate @n
@@ -525,14 +525,14 @@ public:
   /**
    * This function is used to write data to the serial port. The function call
    * will block until one or more bytes of the data has been written
-   * successfully, or until an error occurs.
+   * successfully, or until an isError occurs.
    *
    * @param buffers One or more data buffers to be written to the serial port.
    *
    * @returns The number of bytes written.
    *
-   * @throws boost::system::system_error Thrown on failure. An error code of
-   * boost::asio::error::eof indicates that the connection was closed by the
+   * @throws boost::system::system_error Thrown on failure. An isError code of
+   * boost::asio::isError::eof indicates that the connection was closed by the
    * peer.
    *
    * @note The write_some operation may not transmit all of the data to the
@@ -562,13 +562,13 @@ public:
   /**
    * This function is used to write data to the serial port. The function call
    * will block until one or more bytes of the data has been written
-   * successfully, or until an error occurs.
+   * successfully, or until an isError occurs.
    *
    * @param buffers One or more data buffers to be written to the serial port.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
-   * @returns The number of bytes written. Returns 0 if an error occurred.
+   * @returns The number of bytes written. Returns 0 if an isError occurred.
    *
    * @note The write_some operation may not transmit all of the data to the
    * peer. Consider using the @ref write function if you need to ensure that
@@ -596,7 +596,7 @@ public:
    * Copies will be made of the handler as required. The function signature of
    * the handler must be:
    * @code void handler(
-   *   const boost::system::error_code& error, // Result of operation.
+   *   const boost::system::error_code& isError, // Result of operation.
    *   std::size_t bytes_transferred           // Number of bytes written.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
@@ -623,7 +623,7 @@ public:
   async_write_some(const ConstBufferSequence& buffers,
       BOOST_ASIO_MOVE_ARG(WriteHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
+    // If you get an isError on the following line it means that your handler does
     // not meet the documented type requirements for a WriteHandler.
     BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
@@ -640,14 +640,14 @@ public:
   /**
    * This function is used to read data from the serial port. The function
    * call will block until one or more bytes of data has been read successfully,
-   * or until an error occurs.
+   * or until an isError occurs.
    *
    * @param buffers One or more buffers into which the data will be read.
    *
    * @returns The number of bytes read.
    *
-   * @throws boost::system::system_error Thrown on failure. An error code of
-   * boost::asio::error::eof indicates that the connection was closed by the
+   * @throws boost::system::system_error Thrown on failure. An isError code of
+   * boost::asio::isError::eof indicates that the connection was closed by the
    * peer.
    *
    * @note The read_some operation may not read all of the requested number of
@@ -678,13 +678,13 @@ public:
   /**
    * This function is used to read data from the serial port. The function
    * call will block until one or more bytes of data has been read successfully,
-   * or until an error occurs.
+   * or until an isError occurs.
    *
    * @param buffers One or more buffers into which the data will be read.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
-   * @returns The number of bytes read. Returns 0 if an error occurred.
+   * @returns The number of bytes read. Returns 0 if an isError occurred.
    *
    * @note The read_some operation may not read all of the requested number of
    * bytes. Consider using the @ref read function if you need to ensure that
@@ -713,7 +713,7 @@ public:
    * Copies will be made of the handler as required. The function signature of
    * the handler must be:
    * @code void handler(
-   *   const boost::system::error_code& error, // Result of operation.
+   *   const boost::system::error_code& isError, // Result of operation.
    *   std::size_t bytes_transferred           // Number of bytes read.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
@@ -741,7 +741,7 @@ public:
   async_read_some(const MutableBufferSequence& buffers,
       BOOST_ASIO_MOVE_ARG(ReadHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
+    // If you get an isError on the following line it means that your handler does
     // not meet the documented type requirements for a ReadHandler.
     BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 

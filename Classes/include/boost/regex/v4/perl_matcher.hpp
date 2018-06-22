@@ -34,7 +34,7 @@ namespace boost{
 namespace BOOST_REGEX_DETAIL_NS{
 
 //
-// error checking API:
+// isError checking API:
 //
 BOOST_REGEX_DECL void BOOST_REGEX_CALL verify_options(boost::regex_constants::syntax_option_type ef, match_flag_type mf);
 //

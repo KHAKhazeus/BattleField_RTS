@@ -2256,7 +2256,7 @@ class RepeatedPtrIterator
   template<typename OtherElement>
   RepeatedPtrIterator(const RepeatedPtrIterator<OtherElement>& other)
       : it_(other.it_) {
-    // Force a compiler error if the other type is not convertible to ours.
+    // Force a compiler isError if the other type is not convertible to ours.
     if (false) {
       implicit_cast<Element*>(static_cast<OtherElement*>(NULL));
     }

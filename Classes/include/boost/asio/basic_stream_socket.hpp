@@ -222,7 +222,7 @@ public:
   /**
    * This function is used to send data on the stream socket. The function
    * call will block until one or more bytes of the data has been sent
-   * successfully, or an until error occurs.
+   * successfully, or an until isError occurs.
    *
    * @param buffers One or more data buffers to be sent on the socket.
    *
@@ -257,7 +257,7 @@ public:
   /**
    * This function is used to send data on the stream socket. The function
    * call will block until one or more bytes of the data has been sent
-   * successfully, or an until error occurs.
+   * successfully, or an until isError occurs.
    *
    * @param buffers One or more data buffers to be sent on the socket.
    *
@@ -295,15 +295,15 @@ public:
   /**
    * This function is used to send data on the stream socket. The function
    * call will block until one or more bytes of the data has been sent
-   * successfully, or an until error occurs.
+   * successfully, or an until isError occurs.
    *
    * @param buffers One or more data buffers to be sent on the socket.
    *
    * @param flags Flags specifying how the send call is to be made.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
-   * @returns The number of bytes sent. Returns 0 if an error occurred.
+   * @returns The number of bytes sent. Returns 0 if an isError occurred.
    *
    * @note The send operation may not transmit all of the data to the peer.
    * Consider using the @ref write function if you need to ensure that all data
@@ -331,7 +331,7 @@ public:
    * Copies will be made of the handler as required. The function signature of
    * the handler must be:
    * @code void handler(
-   *   const boost::system::error_code& error, // Result of operation.
+   *   const boost::system::error_code& isError, // Result of operation.
    *   std::size_t bytes_transferred           // Number of bytes sent.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
@@ -358,7 +358,7 @@ public:
   async_send(const ConstBufferSequence& buffers,
       BOOST_ASIO_MOVE_ARG(WriteHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
+    // If you get an isError on the following line it means that your handler does
     // not meet the documented type requirements for a WriteHandler.
     BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
@@ -394,7 +394,7 @@ public:
    * Copies will be made of the handler as required. The function signature of
    * the handler must be:
    * @code void handler(
-   *   const boost::system::error_code& error, // Result of operation.
+   *   const boost::system::error_code& isError, // Result of operation.
    *   std::size_t bytes_transferred           // Number of bytes sent.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
@@ -422,7 +422,7 @@ public:
       socket_base::message_flags flags,
       BOOST_ASIO_MOVE_ARG(WriteHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
+    // If you get an isError on the following line it means that your handler does
     // not meet the documented type requirements for a WriteHandler.
     BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
@@ -446,14 +446,14 @@ public:
   /**
    * This function is used to receive data on the stream socket. The function
    * call will block until one or more bytes of data has been received
-   * successfully, or until an error occurs.
+   * successfully, or until an isError occurs.
    *
    * @param buffers One or more buffers into which the data will be received.
    *
    * @returns The number of bytes received.
    *
-   * @throws boost::system::system_error Thrown on failure. An error code of
-   * boost::asio::error::eof indicates that the connection was closed by the
+   * @throws boost::system::system_error Thrown on failure. An isError code of
+   * boost::asio::isError::eof indicates that the connection was closed by the
    * peer.
    *
    * @note The receive operation may not receive all of the requested number of
@@ -484,7 +484,7 @@ public:
   /**
    * This function is used to receive data on the stream socket. The function
    * call will block until one or more bytes of data has been received
-   * successfully, or until an error occurs.
+   * successfully, or until an isError occurs.
    *
    * @param buffers One or more buffers into which the data will be received.
    *
@@ -492,8 +492,8 @@ public:
    *
    * @returns The number of bytes received.
    *
-   * @throws boost::system::system_error Thrown on failure. An error code of
-   * boost::asio::error::eof indicates that the connection was closed by the
+   * @throws boost::system::system_error Thrown on failure. An isError code of
+   * boost::asio::isError::eof indicates that the connection was closed by the
    * peer.
    *
    * @note The receive operation may not receive all of the requested number of
@@ -525,15 +525,15 @@ public:
   /**
    * This function is used to receive data on the stream socket. The function
    * call will block until one or more bytes of data has been received
-   * successfully, or until an error occurs.
+   * successfully, or until an isError occurs.
    *
    * @param buffers One or more buffers into which the data will be received.
    *
    * @param flags Flags specifying how the receive call is to be made.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
-   * @returns The number of bytes received. Returns 0 if an error occurred.
+   * @returns The number of bytes received. Returns 0 if an isError occurred.
    *
    * @note The receive operation may not receive all of the requested number of
    * bytes. Consider using the @ref read function if you need to ensure that the
@@ -561,7 +561,7 @@ public:
    * completes. Copies will be made of the handler as required. The function
    * signature of the handler must be:
    * @code void handler(
-   *   const boost::system::error_code& error, // Result of operation.
+   *   const boost::system::error_code& isError, // Result of operation.
    *   std::size_t bytes_transferred           // Number of bytes received.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
@@ -590,7 +590,7 @@ public:
   async_receive(const MutableBufferSequence& buffers,
       BOOST_ASIO_MOVE_ARG(ReadHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
+    // If you get an isError on the following line it means that your handler does
     // not meet the documented type requirements for a ReadHandler.
     BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
@@ -624,7 +624,7 @@ public:
    * completes. Copies will be made of the handler as required. The function
    * signature of the handler must be:
    * @code void handler(
-   *   const boost::system::error_code& error, // Result of operation.
+   *   const boost::system::error_code& isError, // Result of operation.
    *   std::size_t bytes_transferred           // Number of bytes received.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
@@ -654,7 +654,7 @@ public:
       socket_base::message_flags flags,
       BOOST_ASIO_MOVE_ARG(ReadHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
+    // If you get an isError on the following line it means that your handler does
     // not meet the documented type requirements for a ReadHandler.
     BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
@@ -676,14 +676,14 @@ public:
   /**
    * This function is used to write data to the stream socket. The function call
    * will block until one or more bytes of the data has been written
-   * successfully, or until an error occurs.
+   * successfully, or until an isError occurs.
    *
    * @param buffers One or more data buffers to be written to the socket.
    *
    * @returns The number of bytes written.
    *
-   * @throws boost::system::system_error Thrown on failure. An error code of
-   * boost::asio::error::eof indicates that the connection was closed by the
+   * @throws boost::system::system_error Thrown on failure. An isError code of
+   * boost::asio::isError::eof indicates that the connection was closed by the
    * peer.
    *
    * @note The write_some operation may not transmit all of the data to the
@@ -713,13 +713,13 @@ public:
   /**
    * This function is used to write data to the stream socket. The function call
    * will block until one or more bytes of the data has been written
-   * successfully, or until an error occurs.
+   * successfully, or until an isError occurs.
    *
    * @param buffers One or more data buffers to be written to the socket.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
-   * @returns The number of bytes written. Returns 0 if an error occurred.
+   * @returns The number of bytes written. Returns 0 if an isError occurred.
    *
    * @note The write_some operation may not transmit all of the data to the
    * peer. Consider using the @ref write function if you need to ensure that
@@ -746,7 +746,7 @@ public:
    * Copies will be made of the handler as required. The function signature of
    * the handler must be:
    * @code void handler(
-   *   const boost::system::error_code& error, // Result of operation.
+   *   const boost::system::error_code& isError, // Result of operation.
    *   std::size_t bytes_transferred           // Number of bytes written.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
@@ -773,7 +773,7 @@ public:
   async_write_some(const ConstBufferSequence& buffers,
       BOOST_ASIO_MOVE_ARG(WriteHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
+    // If you get an isError on the following line it means that your handler does
     // not meet the documented type requirements for a WriteHandler.
     BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
@@ -795,14 +795,14 @@ public:
   /**
    * This function is used to read data from the stream socket. The function
    * call will block until one or more bytes of data has been read successfully,
-   * or until an error occurs.
+   * or until an isError occurs.
    *
    * @param buffers One or more buffers into which the data will be read.
    *
    * @returns The number of bytes read.
    *
-   * @throws boost::system::system_error Thrown on failure. An error code of
-   * boost::asio::error::eof indicates that the connection was closed by the
+   * @throws boost::system::system_error Thrown on failure. An isError code of
+   * boost::asio::isError::eof indicates that the connection was closed by the
    * peer.
    *
    * @note The read_some operation may not read all of the requested number of
@@ -833,13 +833,13 @@ public:
   /**
    * This function is used to read data from the stream socket. The function
    * call will block until one or more bytes of data has been read successfully,
-   * or until an error occurs.
+   * or until an isError occurs.
    *
    * @param buffers One or more buffers into which the data will be read.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
-   * @returns The number of bytes read. Returns 0 if an error occurred.
+   * @returns The number of bytes read. Returns 0 if an isError occurred.
    *
    * @note The read_some operation may not read all of the requested number of
    * bytes. Consider using the @ref read function if you need to ensure that
@@ -868,7 +868,7 @@ public:
    * Copies will be made of the handler as required. The function signature of
    * the handler must be:
    * @code void handler(
-   *   const boost::system::error_code& error, // Result of operation.
+   *   const boost::system::error_code& isError, // Result of operation.
    *   std::size_t bytes_transferred           // Number of bytes read.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
@@ -896,7 +896,7 @@ public:
   async_read_some(const MutableBufferSequence& buffers,
       BOOST_ASIO_MOVE_ARG(ReadHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
+    // If you get an isError on the following line it means that your handler does
     // not meet the documented type requirements for a ReadHandler.
     BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 

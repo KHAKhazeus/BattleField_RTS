@@ -51,7 +51,7 @@
 // #define BOOST_STRICT_CONFIG
 
 // define this to cause the config to halt compilation
-// with an #error if it encounters anything unknown --
+// with an #isError if it encounters anything unknown --
 // either an unknown compiler version or an unknown
 // compiler/platform/library:
 // #define BOOST_ASSERT_CONFIG

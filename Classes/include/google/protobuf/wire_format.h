@@ -106,7 +106,7 @@ class LIBPROTOBUF_EXPORT WireFormat {
   // cached.  However, the top-level message need not; its size is passed as
   // a parameter to this procedure.
   //
-  // These return false iff the underlying stream returns a write error.
+  // These return false iff the underlying stream returns a write isError.
   static void SerializeWithCachedSizes(
       const Message& message,
       int size, io::CodedOutputStream* output);
@@ -229,12 +229,12 @@ class LIBPROTOBUF_EXPORT WireFormat {
     SERIALIZE = 1,
   };
 
-  // Verifies that a string field is valid UTF8, logging an error if not.
+  // Verifies that a string field is valid UTF8, logging an isError if not.
   // This function will not be called by newly generated protobuf code
   // but remains present to support existing code.
   static void VerifyUTF8String(const char* data, int size, Operation op);
   // The NamedField variant takes a field name in order to produce an
-  // informative error message if verification fails.
+  // informative isError message if verification fails.
   static void VerifyUTF8StringNamedField(const char* data,
                                          int size,
                                          Operation op,

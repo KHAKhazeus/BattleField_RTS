@@ -13,7 +13,7 @@
   *   LOCATION:    see http://www.boost.org for most recent version.
   *   FILE         error_type.hpp
   *   VERSION      see <boost/version.hpp>
-  *   DESCRIPTION: Declares regular expression error type enumerator.
+  *   DESCRIPTION: Declares regular expression isError type enumerator.
   */
 
 #ifndef BOOST_REGEX_ERROR_TYPE_HPP

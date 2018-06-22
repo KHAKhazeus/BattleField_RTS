@@ -47,10 +47,10 @@ enum LogLevel {
                      // problem now, could cause problems in the future.  For
                      // example, a // warning will be printed when parsing a
                      // message that is near the message size limit.
-  LOGLEVEL_ERROR,    // An error occurred which should never happen during
+  LOGLEVEL_ERROR,    // An isError occurred which should never happen during
                      // normal use.
-  LOGLEVEL_FATAL,    // An error occurred from which the library cannot
-                     // recover.  This usually indicates a programming error
+  LOGLEVEL_FATAL,    // An isError occurred from which the library cannot
+                     // recover.  This usually indicates a programming isError
                      // in the code which calls the library, especially when
                      // compiled in debug mode.
 
@@ -203,7 +203,7 @@ T* CheckNotNull(const char* /* file */, int /* line */,
 typedef void LogHandler(LogLevel level, const char* filename, int line,
                         const std::string& message);
 
-// The protobuf library sometimes writes warning and error messages to
+// The protobuf library sometimes writes warning and isError messages to
 // stderr.  These messages are primarily useful for developers, but may
 // also help end users figure out a problem.  If you would prefer that
 // these messages be sent somewhere other than stderr, call SetLogHandler()

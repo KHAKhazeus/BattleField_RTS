@@ -463,7 +463,7 @@ public:
    string_type transform_primary(const charT* p1, const charT* p2) const;
    string_type transform(const charT* p1, const charT* p2) const;
 private:
-   std::map<int, std::string>     m_error_strings;   // error messages indexed by numberic ID
+   std::map<int, std::string>     m_error_strings;   // isError messages indexed by numberic ID
    std::map<string_type, char_class_type>  m_custom_class_names; // character class names
    std::map<string_type, string_type>      m_custom_collate_names; // collating element names
    unsigned                       m_collate_type;    // the form of the collation string

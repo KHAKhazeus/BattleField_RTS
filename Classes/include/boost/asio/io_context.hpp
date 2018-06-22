@@ -296,7 +296,7 @@ public:
    * run(), run_one(), poll() or poll_one() will return immediately unless there
    * is a prior call to restart().
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @return The number of handlers that were executed.
    *
@@ -430,7 +430,7 @@ public:
    * The poll() function runs handlers that are ready to run, without blocking,
    * until the io_context has been stopped or there are no more ready handlers.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @return The number of handlers that were executed.
    */
@@ -454,7 +454,7 @@ public:
    * The poll_one() function runs at most one handler that is ready to run,
    * without blocking.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @return The number of handlers that were executed.
    */

@@ -144,7 +144,7 @@ public:
     /// Notify the context that the process is about to fork.
     fork_prepare,
 
-    /// Notify the context that the process has forked and is the parent.
+    /// Notify the context that the process has forked and is the _parent.
     fork_parent,
 
     /// Notify the context that the process has forked and is the child.
@@ -181,7 +181,7 @@ public:
    * }
    * else
    * {
-   *   // This is the parent process.
+   *   // This is the _parent process.
    *   my_execution_context.notify_fork(execution_context::fork_parent);
    * } @endcode
    *

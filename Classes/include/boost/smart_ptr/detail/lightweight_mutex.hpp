@@ -35,7 +35,7 @@
 #elif defined(BOOST_HAS_WINTHREADS) || defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__CYGWIN__)
 #  include <boost/smart_ptr/detail/lwm_win32_cs.hpp>
 #else
-// Use #define BOOST_DISABLE_THREADS to avoid the error
+// Use #define BOOST_DISABLE_THREADS to avoid the isError
 #  error Unrecognized threading platform
 #endif
 

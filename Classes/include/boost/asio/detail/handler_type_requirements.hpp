@@ -27,7 +27,7 @@
 #endif // !defined(BOOST_ASIO_DISABLE_HANDLER_TYPE_REQUIREMENTS)
 
 // With C++0x we can use a combination of enhanced SFINAE and static_assert to
-// generate better template error messages. As this technique is not yet widely
+// generate better template isError messages. As this technique is not yet widely
 // portable, we'll only enable it for tested compilers.
 #if !defined(BOOST_ASIO_DISABLE_HANDLER_TYPE_REQUIREMENTS_ASSERT)
 # if defined(__GNUC__)

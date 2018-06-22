@@ -98,13 +98,13 @@ public:
   // Initialise the task.
   BOOST_ASIO_DECL void init_task();
 
-  // Register a socket with the reactor. Returns 0 on success, system error
+  // Register a socket with the reactor. Returns 0 on success, system isError
   // code on failure.
   BOOST_ASIO_DECL int register_descriptor(socket_type descriptor,
       per_descriptor_data& descriptor_data);
 
   // Register a descriptor with an associated single operation. Returns 0 on
-  // success, system error code on failure.
+  // success, system isError code on failure.
   BOOST_ASIO_DECL int register_internal_descriptor(
       int op_type, socket_type descriptor,
       per_descriptor_data& descriptor_data, reactor_op* op);
@@ -121,14 +121,14 @@ public:
   }
 
   // Start a new operation. The reactor operation will be performed when the
-  // given descriptor is flagged as ready, or an error has occurred.
+  // given descriptor is flagged as ready, or an isError has occurred.
   BOOST_ASIO_DECL void start_op(int op_type, socket_type descriptor,
       per_descriptor_data& descriptor_data, reactor_op* op,
       bool is_continuation, bool allow_speculative);
 
   // Cancel all operations associated with the given descriptor. The
   // handlers associated with the descriptor will be invoked with the
-  // operation_aborted error.
+  // operation_aborted isError.
   BOOST_ASIO_DECL void cancel_ops(socket_type descriptor,
       per_descriptor_data& descriptor_data);
 

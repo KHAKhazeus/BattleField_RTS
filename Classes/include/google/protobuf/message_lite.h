@@ -62,7 +62,7 @@ class WireFormatLite;
 // We compute sizes as size_t but cache them as int.  This function converts a
 // computed size to a cached size.  Since we don't proceed with serialization
 // if the total size was > INT_MAX, it is not important what this function
-// returns for inputs > INT_MAX.  However this case should not error or
+// returns for inputs > INT_MAX.  However this case should not isError or
 // GOOGLE_CHECK-fail, because the full size_t resolution is still returned from
 // ByteSizeLong() and checked against INT_MAX; we can catch the overflow
 // there.
@@ -232,7 +232,7 @@ class LIBPROTOBUF_EXPORT MessageLite {
   // called before merging the input.
 
   // Fill the message with a protocol buffer parsed from the given input
-  // stream. Returns false on a read error or if the input is in the wrong
+  // stream. Returns false on a read isError or if the input is in the wrong
   // format.  A successful return does not indicate the entire input is
   // consumed, ensure you call ConsumedEntireMessage() to check that if
   // applicable.
@@ -296,7 +296,7 @@ class LIBPROTOBUF_EXPORT MessageLite {
   // are just simple wrappers around ByteSize() and SerializeWithCachedSizes().
 
   // Write a protocol buffer of this message to the given output.  Returns
-  // false on a write error.  If the message is missing required fields,
+  // false on a write isError.  If the message is missing required fields,
   // this may GOOGLE_CHECK-fail.
   bool SerializeToCodedStream(io::CodedOutputStream* output) const;
   // Like SerializeToCodedStream(), but allows missing required fields.
@@ -319,7 +319,7 @@ class LIBPROTOBUF_EXPORT MessageLite {
 
   // Make a string encoding the message. Is equivalent to calling
   // SerializeToString() on a string and using that.  Returns the empty
-  // string if SerializeToString() would have returned an error.
+  // string if SerializeToString() would have returned an isError.
   // Note: If you intend to generate many such strings, you may
   // reduce heap fragmentation by instead re-using the same string
   // object with calls to SerializeToString().

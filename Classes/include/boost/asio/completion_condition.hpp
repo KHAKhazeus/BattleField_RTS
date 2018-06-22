@@ -110,7 +110,7 @@ private:
 
 /// Return a completion condition function object that indicates that a read or
 /// write operation should continue until all of the data has been transferred,
-/// or until an error occurs.
+/// or until an isError occurs.
 /**
  * This function is used to create an object, of unspecified type, that meets
  * CompletionCondition requirements.
@@ -125,7 +125,7 @@ private:
  *     boost::asio::transfer_all(), ec);
  * if (ec)
  * {
- *   // An error occurred.
+ *   // An isError occurred.
  * }
  * else
  * {
@@ -144,7 +144,7 @@ inline detail::transfer_all_t transfer_all()
 
 /// Return a completion condition function object that indicates that a read or
 /// write operation should continue until a minimum number of bytes has been
-/// transferred, or until an error occurs.
+/// transferred, or until an isError occurs.
 /**
  * This function is used to create an object, of unspecified type, that meets
  * CompletionCondition requirements.
@@ -159,7 +159,7 @@ inline detail::transfer_all_t transfer_all()
  *     boost::asio::transfer_at_least(64), ec);
  * if (ec)
  * {
- *   // An error occurred.
+ *   // An isError occurred.
  * }
  * else
  * {
@@ -178,7 +178,7 @@ inline detail::transfer_at_least_t transfer_at_least(std::size_t minimum)
 
 /// Return a completion condition function object that indicates that a read or
 /// write operation should continue until an exact number of bytes has been
-/// transferred, or until an error occurs.
+/// transferred, or until an isError occurs.
 /**
  * This function is used to create an object, of unspecified type, that meets
  * CompletionCondition requirements.
@@ -193,7 +193,7 @@ inline detail::transfer_at_least_t transfer_at_least(std::size_t minimum)
  *     boost::asio::transfer_exactly(64), ec);
  * if (ec)
  * {
- *   // An error occurred.
+ *   // An isError occurred.
  * }
  * else
  * {

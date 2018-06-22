@@ -85,7 +85,7 @@ struct is_match_condition
  * @li The get area of the dynamic buffer sequence contains the specified
  * delimiter.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * read_some function. If the dynamic buffer sequence's get area already
@@ -142,7 +142,7 @@ std::size_t read_until(SyncReadStream& s,
  * @li The get area of the dynamic buffer sequence contains the specified
  * delimiter.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * read_some function. If the dynamic buffer sequence's get area already
@@ -155,10 +155,10 @@ std::size_t read_until(SyncReadStream& s,
  *
  * @param delim The delimiter character.
  *
- * @param ec Set to indicate what error occurred, if any.
+ * @param ec Set to indicate what isError occurred, if any.
  *
  * @returns The number of bytes in the dynamic buffer sequence's get area up to
- * and including the delimiter. Returns 0 if an error occurred.
+ * and including the delimiter. Returns 0 if an isError occurred.
  *
  * @note After a successful read_until operation, the dynamic buffer sequence
  * may contain additional data beyond the delimiter. An application will
@@ -181,7 +181,7 @@ std::size_t read_until(SyncReadStream& s,
  * @li The get area of the dynamic buffer sequence contains the specified
  * delimiter.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * read_some function. If the dynamic buffer sequence's get area already
@@ -237,7 +237,7 @@ std::size_t read_until(SyncReadStream& s,
  * @li The get area of the dynamic buffer sequence contains the specified
  * delimiter.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * read_some function. If the dynamic buffer sequence's get area already
@@ -250,10 +250,10 @@ std::size_t read_until(SyncReadStream& s,
  *
  * @param delim The delimiter string.
  *
- * @param ec Set to indicate what error occurred, if any.
+ * @param ec Set to indicate what isError occurred, if any.
  *
  * @returns The number of bytes in the dynamic buffer sequence's get area up to
- * and including the delimiter. Returns 0 if an error occurred.
+ * and including the delimiter. Returns 0 if an isError occurred.
  *
  * @note After a successful read_until operation, the dynamic buffer sequence
  * may contain additional data beyond the delimiter. An application will
@@ -281,7 +281,7 @@ std::size_t read_until(SyncReadStream& s,
  * @li A substring of the dynamic buffer sequence's get area matches the
  * regular expression.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * read_some function. If the dynamic buffer sequence's get area already
@@ -340,7 +340,7 @@ std::size_t read_until(SyncReadStream& s,
  * @li A substring of the dynamic buffer sequence's get area matches the
  * regular expression.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * read_some function. If the dynamic buffer sequence's get area already
@@ -354,11 +354,11 @@ std::size_t read_until(SyncReadStream& s,
  *
  * @param expr The regular expression.
  *
- * @param ec Set to indicate what error occurred, if any.
+ * @param ec Set to indicate what isError occurred, if any.
  *
  * @returns The number of bytes in the dynamic buffer sequence's get area up to
  * and including the substring that matches the regular expression. Returns 0
- * if an error occurred.
+ * if an isError occurred.
  *
  * @note After a successful read_until operation, the dynamic buffer sequence
  * may contain additional data beyond that which matched the regular
@@ -385,7 +385,7 @@ std::size_t read_until(SyncReadStream& s,
  * @li The match condition function object returns a std::pair where the second
  * element evaluates to true.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * read_some function. If the match condition function object already indicates
@@ -493,7 +493,7 @@ std::size_t read_until(SyncReadStream& s,
  * @li The match condition function object returns a std::pair where the second
  * element evaluates to true.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * read_some function. If the match condition function object already indicates
@@ -519,10 +519,10 @@ std::size_t read_until(SyncReadStream& s,
  * @c second member of the return value is true if a match has been found, false
  * otherwise.
  *
- * @param ec Set to indicate what error occurred, if any.
+ * @param ec Set to indicate what isError occurred, if any.
  *
  * @returns The number of bytes in the dynamic buffer sequence's get area that
- * have been fully consumed by the match function. Returns 0 if an error
+ * have been fully consumed by the match function. Returns 0 if an isError
  * occurred.
  *
  * @note After a successful read_until operation, the dynamic buffer sequence
@@ -552,7 +552,7 @@ std::size_t read_until(SyncReadStream& s,
  *
  * @li The get area of the streambuf contains the specified delimiter.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * read_some function. If the streambuf's get area already contains the
@@ -604,7 +604,7 @@ std::size_t read_until(SyncReadStream& s,
  *
  * @li The get area of the streambuf contains the specified delimiter.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * read_some function. If the streambuf's get area already contains the
@@ -617,10 +617,10 @@ std::size_t read_until(SyncReadStream& s,
  *
  * @param delim The delimiter character.
  *
- * @param ec Set to indicate what error occurred, if any.
+ * @param ec Set to indicate what isError occurred, if any.
  *
  * @returns The number of bytes in the streambuf's get area up to and including
- * the delimiter. Returns 0 if an error occurred.
+ * the delimiter. Returns 0 if an isError occurred.
  *
  * @note After a successful read_until operation, the streambuf may contain
  * additional data beyond the delimiter. An application will typically leave
@@ -639,7 +639,7 @@ std::size_t read_until(SyncReadStream& s,
  *
  * @li The get area of the streambuf contains the specified delimiter.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * read_some function. If the streambuf's get area already contains the
@@ -692,7 +692,7 @@ std::size_t read_until(SyncReadStream& s,
  *
  * @li The get area of the streambuf contains the specified delimiter.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * read_some function. If the streambuf's get area already contains the
@@ -705,10 +705,10 @@ std::size_t read_until(SyncReadStream& s,
  *
  * @param delim The delimiter string.
  *
- * @param ec Set to indicate what error occurred, if any.
+ * @param ec Set to indicate what isError occurred, if any.
  *
  * @returns The number of bytes in the streambuf's get area up to and including
- * the delimiter. Returns 0 if an error occurred.
+ * the delimiter. Returns 0 if an isError occurred.
  *
  * @note After a successful read_until operation, the streambuf may contain
  * additional data beyond the delimiter. An application will typically leave
@@ -731,7 +731,7 @@ std::size_t read_until(SyncReadStream& s,
  *
  * @li A substring of the streambuf's get area matches the regular expression.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * read_some function. If the streambuf's get area already contains data that
@@ -785,7 +785,7 @@ std::size_t read_until(SyncReadStream& s,
  *
  * @li A substring of the streambuf's get area matches the regular expression.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * read_some function. If the streambuf's get area already contains data that
@@ -798,10 +798,10 @@ std::size_t read_until(SyncReadStream& s,
  *
  * @param expr The regular expression.
  *
- * @param ec Set to indicate what error occurred, if any.
+ * @param ec Set to indicate what isError occurred, if any.
  *
  * @returns The number of bytes in the streambuf's get area up to and including
- * the substring that matches the regular expression. Returns 0 if an error
+ * the substring that matches the regular expression. Returns 0 if an isError
  * occurred.
  *
  * @note After a successful read_until operation, the streambuf may contain
@@ -827,7 +827,7 @@ std::size_t read_until(SyncReadStream& s,
  * @li The match condition function object returns a std::pair where the second
  * element evaluates to true.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * read_some function. If the match condition function object already indicates
@@ -932,7 +932,7 @@ std::size_t read_until(SyncReadStream& s,
  * @li The match condition function object returns a std::pair where the second
  * element evaluates to true.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * read_some function. If the match condition function object already indicates
@@ -958,10 +958,10 @@ std::size_t read_until(SyncReadStream& s,
  * @c second member of the return value is true if a match has been found, false
  * otherwise.
  *
- * @param ec Set to indicate what error occurred, if any.
+ * @param ec Set to indicate what isError occurred, if any.
  *
  * @returns The number of bytes in the streambuf's get area that have been fully
- * consumed by the match function. Returns 0 if an error occurred.
+ * consumed by the match function. Returns 0 if an isError occurred.
  *
  * @note After a successful read_until operation, the streambuf may contain
  * additional data beyond that which matched the function object. An application
@@ -1004,7 +1004,7 @@ std::size_t read_until(SyncReadStream& s,
  * @li The get area of the dynamic buffer sequence contains the specified
  * delimiter.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * async_read_some function, and is known as a <em>composed operation</em>. If
@@ -1029,11 +1029,11 @@ std::size_t read_until(SyncReadStream& s,
  * handler must be:
  * @code void handler(
  *   // Result of operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // The number of bytes in the dynamic buffer sequence's
  *   // get area up to and including the delimiter.
- *   // 0 if an error occurred.
+ *   // 0 if an isError occurred.
  *   std::size_t bytes_transferred
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
@@ -1094,7 +1094,7 @@ async_read_until(AsyncReadStream& s,
  * @li The get area of the dynamic buffer sequence contains the specified
  * delimiter.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * async_read_some function, and is known as a <em>composed operation</em>. If
@@ -1119,11 +1119,11 @@ async_read_until(AsyncReadStream& s,
  * handler must be:
  * @code void handler(
  *   // Result of operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // The number of bytes in the dynamic buffer sequence's
  *   // get area up to and including the delimiter.
- *   // 0 if an error occurred.
+ *   // 0 if an isError occurred.
  *   std::size_t bytes_transferred
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
@@ -1189,7 +1189,7 @@ async_read_until(AsyncReadStream& s,
  * @li A substring of the dynamic buffer sequence's get area matches the regular
  * expression.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * async_read_some function, and is known as a <em>composed operation</em>. If
@@ -1215,12 +1215,12 @@ async_read_until(AsyncReadStream& s,
  * handler must be:
  * @code void handler(
  *   // Result of operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // The number of bytes in the dynamic buffer
  *   // sequence's get area up to and including the
  *   // substring that matches the regular expression.
- *   // 0 if an error occurred.
+ *   // 0 if an isError occurred.
  *   std::size_t bytes_transferred
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
@@ -1287,7 +1287,7 @@ async_read_until(AsyncReadStream& s,
  * @li The match condition function object returns a std::pair where the second
  * element evaluates to true.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * async_read_some function, and is known as a <em>composed operation</em>. If
@@ -1325,11 +1325,11 @@ async_read_until(AsyncReadStream& s,
  * handler must be:
  * @code void handler(
  *   // Result of operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // The number of bytes in the dynamic buffer sequence's
  *   // get area that have been fully consumed by the match
- *   // function. O if an error occurred.
+ *   // function. O if an isError occurred.
  *   std::size_t bytes_transferred
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
@@ -1423,7 +1423,7 @@ async_read_until(AsyncReadStream& s,
  *
  * @li The get area of the streambuf contains the specified delimiter.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * async_read_some function, and is known as a <em>composed operation</em>. If
@@ -1447,11 +1447,11 @@ async_read_until(AsyncReadStream& s,
  * handler must be:
  * @code void handler(
  *   // Result of operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // The number of bytes in the streambuf's get
  *   // area up to and including the delimiter.
- *   // 0 if an error occurred.
+ *   // 0 if an isError occurred.
  *   std::size_t bytes_transferred
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
@@ -1508,7 +1508,7 @@ async_read_until(AsyncReadStream& s,
  *
  * @li The get area of the streambuf contains the specified delimiter.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * async_read_some function, and is known as a <em>composed operation</em>. If
@@ -1532,11 +1532,11 @@ async_read_until(AsyncReadStream& s,
  * handler must be:
  * @code void handler(
  *   // Result of operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // The number of bytes in the streambuf's get
  *   // area up to and including the delimiter.
- *   // 0 if an error occurred.
+ *   // 0 if an isError occurred.
  *   std::size_t bytes_transferred
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
@@ -1598,7 +1598,7 @@ async_read_until(AsyncReadStream& s,
  *
  * @li A substring of the streambuf's get area matches the regular expression.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * async_read_some function, and is known as a <em>composed operation</em>. If
@@ -1623,12 +1623,12 @@ async_read_until(AsyncReadStream& s,
  * handler must be:
  * @code void handler(
  *   // Result of operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // The number of bytes in the streambuf's get
  *   // area up to and including the substring
  *   // that matches the regular. expression.
- *   // 0 if an error occurred.
+ *   // 0 if an isError occurred.
  *   std::size_t bytes_transferred
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
@@ -1691,7 +1691,7 @@ async_read_until(AsyncReadStream& s,
  * @li The match condition function object returns a std::pair where the second
  * element evaluates to true.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * async_read_some function, and is known as a <em>composed operation</em>. If
@@ -1726,11 +1726,11 @@ async_read_until(AsyncReadStream& s,
  * handler must be:
  * @code void handler(
  *   // Result of operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // The number of bytes in the streambuf's get
  *   // area that have been fully consumed by the
- *   // match function. O if an error occurred.
+ *   // match function. O if an isError occurred.
  *   std::size_t bytes_transferred
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or

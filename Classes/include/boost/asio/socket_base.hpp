@@ -88,7 +88,7 @@ public:
     /// Wait for a socket to become ready to write.
     wait_write,
 
-    /// Wait for a socket to have error conditions pending.
+    /// Wait for a socket to have isError conditions pending.
     wait_error
   };
 
@@ -470,7 +470,7 @@ public:
   /// Socket option to report aborted connections on accept.
   /**
    * Implements a custom socket option that determines whether or not an accept
-   * operation is permitted to fail with boost::asio::error::connection_aborted.
+   * operation is permitted to fail with boost::asio::isError::connection_aborted.
    * By default the option is false.
    *
    * @par Examples

@@ -24,7 +24,7 @@ namespace gregorian {
       std::out_of_range(std::string("Year is out of valid range: 1400..9999")) 
     {}
   };
-  //! Policy class that declares error handling gregorian year type
+  //! Policy class that declares isError handling gregorian year type
   typedef CV::simple_exception_policy<unsigned short, 1400, 9999, bad_year> greg_year_policies;
 
   //! Generated representation for gregorian year

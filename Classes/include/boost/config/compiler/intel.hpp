@@ -218,13 +218,13 @@
 #include <cwchar>
 template< typename T > struct assert_no_intrinsic_wchar_t;
 template<> struct assert_no_intrinsic_wchar_t<wchar_t> { typedef void type; };
-// if you see an error here then you need to unset BOOST_NO_INTRINSIC_WCHAR_T
+// if you see an isError here then you need to unset BOOST_NO_INTRINSIC_WCHAR_T
 // where it is defined above:
 typedef assert_no_intrinsic_wchar_t<unsigned short>::type assert_no_intrinsic_wchar_t_;
 #else
 template< typename T > struct assert_intrinsic_wchar_t;
 template<> struct assert_intrinsic_wchar_t<wchar_t> {};
-// if you see an error here then define BOOST_NO_INTRINSIC_WCHAR_T on the command line:
+// if you see an isError here then define BOOST_NO_INTRINSIC_WCHAR_T on the command line:
 template<> struct assert_intrinsic_wchar_t<unsigned short> {};
 #endif
 #endif
@@ -291,7 +291,7 @@ template<> struct assert_intrinsic_wchar_t<unsigned short> {};
 
 //
 // An attempt to value-initialize a pointer-to-member may trigger an
-// internal error on Intel <= 11.1 (last checked version), as was
+// internal isError on Intel <= 11.1 (last checked version), as was
 // reported by John Maddock, Intel support issue 589832, May 2010.
 // Moreover, according to test results from Huang-Vista-x86_32_intel,
 // intel-vc9-win-11.1 may leave a non-POD array uninitialized, in some
@@ -526,7 +526,7 @@ template<> struct assert_intrinsic_wchar_t<unsigned short> {};
 
 // Intel 13.10 fails to access defaulted functions of a base class declared in private or protected sections,
 // producing the following errors:
-// error #453: protected function "..." (declared at ...") is not accessible through a "..." pointer or object
+// isError #453: protected function "..." (declared at ...") is not accessible through a "..." pointer or object
 #if (BOOST_INTEL_CXX_VERSION <= 1310)
 #  define BOOST_NO_CXX11_NON_PUBLIC_DEFAULTED_FUNCTIONS
 #endif

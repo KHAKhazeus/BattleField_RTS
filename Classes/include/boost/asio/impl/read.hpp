@@ -417,7 +417,7 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
       is_mutable_buffer_sequence<MutableBufferSequence>::value
     >::type*)
 {
-  // If you get an error on the following line it means that your handler does
+  // If you get an isError on the following line it means that your handler does
   // not meet the documented type requirements for a ReadHandler.
   BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
@@ -441,7 +441,7 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
       is_mutable_buffer_sequence<MutableBufferSequence>::value
     >::type*)
 {
-  // If you get an error on the following line it means that your handler does
+  // If you get an isError on the following line it means that your handler does
   // not meet the documented type requirements for a ReadHandler.
   BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
@@ -663,7 +663,7 @@ async_read(AsyncReadStream& s,
       is_dynamic_buffer<typename decay<DynamicBuffer>::type>::value
     >::type*)
 {
-  // If you get an error on the following line it means that your handler does
+  // If you get an isError on the following line it means that your handler does
   // not meet the documented type requirements for a ReadHandler.
   BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 

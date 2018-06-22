@@ -88,9 +88,9 @@ class basic_waitable_timer;
  * @par 
  * Performing an asynchronous wait (C++11):
  * @code
- * void handler(const boost::system::error_code& error)
+ * void handler(const boost::system::error_code& isError)
  * {
- *   if (!error)
+ *   if (!isError)
  *   {
  *     // Timer expired.
  *   }
@@ -129,7 +129,7 @@ class basic_waitable_timer;
  *
  * void on_timeout(const boost::system::error_code& e)
  * {
- *   if (e != boost::asio::error::operation_aborted)
+ *   if (e != boost::asio::isError::operation_aborted)
  *   {
  *     // Timer was not cancelled, take necessary action.
  *   }
@@ -143,7 +143,7 @@ class basic_waitable_timer;
  * executed. If it returns 1 then the wait handler was successfully cancelled.
  *
  * @li If a wait handler is cancelled, the boost::system::error_code passed to
- * it contains the value boost::asio::error::operation_aborted.
+ * it contains the value boost::asio::isError::operation_aborted.
  */
 template <typename Clock, typename WaitTraits BOOST_ASIO_SVC_TPARAM>
 class basic_waitable_timer
@@ -305,7 +305,7 @@ public:
   /**
    * This function forces the completion of any pending asynchronous wait
    * operations against the timer. The handler for each cancelled operation will
-   * be invoked with the boost::asio::error::operation_aborted error code.
+   * be invoked with the boost::asio::isError::operation_aborted isError code.
    *
    * Cancelling the timer does not change the expiry time.
    *
@@ -321,7 +321,7 @@ public:
    * @li have been queued for invocation in the near future.
    *
    * These handlers can no longer be cancelled, and therefore are passed an
-   * error code that indicates the successful completion of the wait operation.
+   * isError code that indicates the successful completion of the wait operation.
    */
   std::size_t cancel()
   {
@@ -337,11 +337,11 @@ public:
   /**
    * This function forces the completion of any pending asynchronous wait
    * operations against the timer. The handler for each cancelled operation will
-   * be invoked with the boost::asio::error::operation_aborted error code.
+   * be invoked with the boost::asio::isError::operation_aborted isError code.
    *
    * Cancelling the timer does not change the expiry time.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @return The number of asynchronous operations that were cancelled.
    *
@@ -353,7 +353,7 @@ public:
    * @li have been queued for invocation in the near future.
    *
    * These handlers can no longer be cancelled, and therefore are passed an
-   * error code that indicates the successful completion of the wait operation.
+   * isError code that indicates the successful completion of the wait operation.
    */
   std::size_t cancel(boost::system::error_code& ec)
   {
@@ -366,7 +366,7 @@ public:
    * This function forces the completion of one pending asynchronous wait
    * operation against the timer. Handlers are cancelled in FIFO order. The
    * handler for the cancelled operation will be invoked with the
-   * boost::asio::error::operation_aborted error code.
+   * boost::asio::isError::operation_aborted isError code.
    *
    * Cancelling the timer does not change the expiry time.
    *
@@ -383,7 +383,7 @@ public:
    * @li have been queued for invocation in the near future.
    *
    * These handlers can no longer be cancelled, and therefore are passed an
-   * error code that indicates the successful completion of the wait operation.
+   * isError code that indicates the successful completion of the wait operation.
    */
   std::size_t cancel_one()
   {
@@ -401,11 +401,11 @@ public:
    * This function forces the completion of one pending asynchronous wait
    * operation against the timer. Handlers are cancelled in FIFO order. The
    * handler for the cancelled operation will be invoked with the
-   * boost::asio::error::operation_aborted error code.
+   * boost::asio::isError::operation_aborted isError code.
    *
    * Cancelling the timer does not change the expiry time.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @return The number of asynchronous operations that were cancelled. That is,
    * either 0 or 1.
@@ -418,7 +418,7 @@ public:
    * @li have been queued for invocation in the near future.
    *
    * These handlers can no longer be cancelled, and therefore are passed an
-   * error code that indicates the successful completion of the wait operation.
+   * isError code that indicates the successful completion of the wait operation.
    */
   std::size_t cancel_one(boost::system::error_code& ec)
   {
@@ -451,7 +451,7 @@ public:
   /**
    * This function sets the expiry time. Any pending asynchronous wait
    * operations will be cancelled. The handler for each cancelled operation will
-   * be invoked with the boost::asio::error::operation_aborted error code.
+   * be invoked with the boost::asio::isError::operation_aborted isError code.
    *
    * @param expiry_time The expiry time to be used for the timer.
    *
@@ -467,7 +467,7 @@ public:
    * @li have been queued for invocation in the near future.
    *
    * These handlers can no longer be cancelled, and therefore are passed an
-   * error code that indicates the successful completion of the wait operation.
+   * isError code that indicates the successful completion of the wait operation.
    */
   std::size_t expires_at(const time_point& expiry_time)
   {
@@ -484,11 +484,11 @@ public:
   /**
    * This function sets the expiry time. Any pending asynchronous wait
    * operations will be cancelled. The handler for each cancelled operation will
-   * be invoked with the boost::asio::error::operation_aborted error code.
+   * be invoked with the boost::asio::isError::operation_aborted isError code.
    *
    * @param expiry_time The expiry time to be used for the timer.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @return The number of asynchronous operations that were cancelled.
    *
@@ -500,7 +500,7 @@ public:
    * @li have been queued for invocation in the near future.
    *
    * These handlers can no longer be cancelled, and therefore are passed an
-   * error code that indicates the successful completion of the wait operation.
+   * isError code that indicates the successful completion of the wait operation.
    */
   std::size_t expires_at(const time_point& expiry_time,
       boost::system::error_code& ec)
@@ -514,7 +514,7 @@ public:
   /**
    * This function sets the expiry time. Any pending asynchronous wait
    * operations will be cancelled. The handler for each cancelled operation will
-   * be invoked with the boost::asio::error::operation_aborted error code.
+   * be invoked with the boost::asio::isError::operation_aborted isError code.
    *
    * @param expiry_time The expiry time to be used for the timer.
    *
@@ -530,7 +530,7 @@ public:
    * @li have been queued for invocation in the near future.
    *
    * These handlers can no longer be cancelled, and therefore are passed an
-   * error code that indicates the successful completion of the wait operation.
+   * isError code that indicates the successful completion of the wait operation.
    */
   std::size_t expires_after(const duration& expiry_time)
   {
@@ -557,7 +557,7 @@ public:
   /**
    * This function sets the expiry time. Any pending asynchronous wait
    * operations will be cancelled. The handler for each cancelled operation will
-   * be invoked with the boost::asio::error::operation_aborted error code.
+   * be invoked with the boost::asio::isError::operation_aborted isError code.
    *
    * @param expiry_time The expiry time to be used for the timer.
    *
@@ -573,7 +573,7 @@ public:
    * @li have been queued for invocation in the near future.
    *
    * These handlers can no longer be cancelled, and therefore are passed an
-   * error code that indicates the successful completion of the wait operation.
+   * isError code that indicates the successful completion of the wait operation.
    */
   std::size_t expires_from_now(const duration& expiry_time)
   {
@@ -589,11 +589,11 @@ public:
   /**
    * This function sets the expiry time. Any pending asynchronous wait
    * operations will be cancelled. The handler for each cancelled operation will
-   * be invoked with the boost::asio::error::operation_aborted error code.
+   * be invoked with the boost::asio::isError::operation_aborted isError code.
    *
    * @param expiry_time The expiry time to be used for the timer.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @return The number of asynchronous operations that were cancelled.
    *
@@ -605,7 +605,7 @@ public:
    * @li have been queued for invocation in the near future.
    *
    * These handlers can no longer be cancelled, and therefore are passed an
-   * error code that indicates the successful completion of the wait operation.
+   * isError code that indicates the successful completion of the wait operation.
    */
   std::size_t expires_from_now(const duration& expiry_time,
       boost::system::error_code& ec)
@@ -634,7 +634,7 @@ public:
    * This function is used to wait for the timer to expire. This function
    * blocks and does not return until the timer has expired.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    */
   void wait(boost::system::error_code& ec)
   {
@@ -651,14 +651,14 @@ public:
    *
    * @li The timer has expired.
    *
-   * @li The timer was cancelled, in which case the handler is passed the error
-   * code boost::asio::error::operation_aborted.
+   * @li The timer was cancelled, in which case the handler is passed the isError
+   * code boost::asio::isError::operation_aborted.
    *
    * @param handler The handler to be called when the timer expires. Copies
    * will be made of the handler as required. The function signature of the
    * handler must be:
    * @code void handler(
-   *   const boost::system::error_code& error // Result of operation.
+   *   const boost::system::error_code& isError // Result of operation.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
@@ -670,7 +670,7 @@ public:
       void (boost::system::error_code))
   async_wait(BOOST_ASIO_MOVE_ARG(WaitHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
+    // If you get an isError on the following line it means that your handler does
     // not meet the documented type requirements for a WaitHandler.
     BOOST_ASIO_WAIT_HANDLER_CHECK(WaitHandler, handler) type_check;
 

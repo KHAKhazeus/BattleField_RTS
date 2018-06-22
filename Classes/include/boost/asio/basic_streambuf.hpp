@@ -229,7 +229,7 @@ public:
    * no intervening operations that modify the input or output sequence.
    *
    * @note If @c n is greater than the size of the output sequence, the entire
-   * output sequence is moved to the input sequence and no error is issued.
+   * output sequence is moved to the input sequence and no isError is issued.
    */
   void commit(std::size_t n)
   {
@@ -243,7 +243,7 @@ public:
    * Removes @c n characters from the beginning of the input sequence.
    *
    * @note If @c n is greater than the size of the input sequence, the entire
-   * input sequence is consumed and no error is issued.
+   * input sequence is consumed and no isError is issued.
    */
   void consume(std::size_t n)
   {

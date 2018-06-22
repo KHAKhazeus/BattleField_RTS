@@ -60,7 +60,7 @@ inline Atomic32 NoBarrier_CompareAndSwap(volatile Atomic32* ptr,
                        "bne %0, %3, 2f\n"  // if (prev != old_value) goto 2
                        "move %2, %4\n"  // tmp = new_value
                        "sc %2, %1\n"  // *ptr = tmp (with atomic check)
-                       "beqz %2, 1b\n"  // start again on atomic error
+                       "beqz %2, 1b\n"  // start again on atomic isError
                        "nop\n"  // delay slot nop
                        "2:\n"
                        ".set pop\n"
@@ -81,7 +81,7 @@ inline Atomic32 NoBarrier_AtomicExchange(volatile Atomic32* ptr,
                        "ll %1, %4\n"  // old = *ptr
                        "move %0, %3\n"  // temp = new_value
                        "sc %0, %2\n"  // *ptr = temp (with atomic check)
-                       "beqz %0, 1b\n"  // start again on atomic error
+                       "beqz %0, 1b\n"  // start again on atomic isError
                        "nop\n"  // delay slot nop
                        ".set pop\n"
                        : "=&r" (temp), "=&r" (old), "=m" (*ptr)
@@ -103,7 +103,7 @@ inline Atomic32 NoBarrier_AtomicIncrement(volatile Atomic32* ptr,
                        "ll %0, %4\n"  // temp = *ptr
                        "addu %1, %0, %3\n"  // temp2 = temp + increment
                        "sc %1, %2\n"  // *ptr = temp2 (with atomic check)
-                       "beqz %1, 1b\n"  // start again on atomic error
+                       "beqz %1, 1b\n"  // start again on atomic isError
                        "addu %1, %0, %3\n"  // temp2 = temp + increment
                        ".set pop\n"
                        : "=&r" (temp), "=&r" (temp2), "=m" (*ptr)
@@ -192,7 +192,7 @@ inline Atomic64 NoBarrier_CompareAndSwap(volatile Atomic64* ptr,
                        "bne %0, %3, 2f\n"  // if (prev != old_value) goto 2
                        "move %2, %4\n"  // tmp = new_value
                        "scd %2, %1\n"  // *ptr = tmp (with atomic check)
-                       "beqz %2, 1b\n"  // start again on atomic error
+                       "beqz %2, 1b\n"  // start again on atomic isError
                        "nop\n"  // delay slot nop
                        "2:\n"
                        ".set pop\n"
@@ -213,7 +213,7 @@ inline Atomic64 NoBarrier_AtomicExchange(volatile Atomic64* ptr,
                        "lld %1, %4\n"  // old = *ptr
                        "move %0, %3\n"  // temp = new_value
                        "scd %0, %2\n"  // *ptr = temp (with atomic check)
-                       "beqz %0, 1b\n"  // start again on atomic error
+                       "beqz %0, 1b\n"  // start again on atomic isError
                        "nop\n"  // delay slot nop
                        ".set pop\n"
                        : "=&r" (temp), "=&r" (old), "=m" (*ptr)
@@ -235,7 +235,7 @@ inline Atomic64 NoBarrier_AtomicIncrement(volatile Atomic64* ptr,
                        "lld %0, %4\n"  // temp = *ptr
                        "daddu %1, %0, %3\n"  // temp2 = temp + increment
                        "scd %1, %2\n"  // *ptr = temp2 (with atomic check)
-                       "beqz %1, 1b\n"  // start again on atomic error
+                       "beqz %1, 1b\n"  // start again on atomic isError
                        "daddu %1, %0, %3\n"  // temp2 = temp + increment
                        ".set pop\n"
                        : "=&r" (temp), "=&r" (temp2), "=m" (*ptr)

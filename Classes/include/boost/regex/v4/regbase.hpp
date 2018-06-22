@@ -33,7 +33,7 @@
 namespace boost{
 //
 // class regbase
-// handles error codes and flags
+// handles isError codes and flags
 //
 class BOOST_REGEX_DECL regbase
 {
@@ -78,8 +78,8 @@ public:
       //
       no_escape_in_lists = 1 << 16,                     // '\' not special inside [...]
       newline_alt = 1 << 17,                            // \n is the same as |
-      no_except = 1 << 18,                              // no exception on error
-      failbit = 1 << 19,                                // error flag
+      no_except = 1 << 18,                              // no exception on isError
+      failbit = 1 << 19,                                // isError flag
       icase = 1 << 20,                                  // characters are matched regardless of case
       nocollate = 0,                                    // don't use locale specific collation (deprecated)
       collate = 1 << 21,                                // use locale specific collation

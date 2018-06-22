@@ -30,7 +30,7 @@ time2_demo contained this comment:
 
 TODO:
 
-  * Fully implement error handling, with test cases.
+  * Fully implement isError handling, with test cases.
   * Consider issues raised by Michael Marcin:
 
     > In the past I've seen QueryPerformanceCounter give incorrect results,

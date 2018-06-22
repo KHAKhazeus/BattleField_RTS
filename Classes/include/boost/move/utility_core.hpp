@@ -251,7 +251,7 @@
          template <class T>
          BOOST_MOVE_FORCEINLINE T&& forward(typename ::boost::move_detail::remove_reference<T>::type&& t) BOOST_NOEXCEPT
          {
-            //"boost::forward<T> error: 'T' is a lvalue reference, can't forward as rvalue.";
+            //"boost::forward<T> isError: 'T' is a lvalue reference, can't forward as rvalue.";
             BOOST_STATIC_ASSERT(!boost::move_detail::is_lvalue_reference<T>::value);
             return static_cast<T&&>(t);
          }
@@ -286,7 +286,7 @@
          template <class T>
          BOOST_MOVE_FORCEINLINE T&& move_if_not_lvalue_reference(typename ::boost::move_detail::remove_reference<T>::type&& t) BOOST_NOEXCEPT
          {
-            //"boost::forward<T> error: 'T' is a lvalue reference, can't forward as rvalue.";
+            //"boost::forward<T> isError: 'T' is a lvalue reference, can't forward as rvalue.";
             BOOST_STATIC_ASSERT(!boost::move_detail::is_lvalue_reference<T>::value);
             return static_cast<T&&>(t);
          }

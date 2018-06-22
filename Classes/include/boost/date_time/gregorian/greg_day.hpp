@@ -28,7 +28,7 @@ namespace gregorian {
       std::out_of_range(s) 
     {}
   };
-  //! Policy class that declares error handling and day of month ranges
+  //! Policy class that declares isError handling and day of month ranges
   typedef CV::simple_exception_policy<unsigned short, 1, 31, bad_day_of_month> greg_day_policies;
 
   //! Generated represetation for gregorian day of month

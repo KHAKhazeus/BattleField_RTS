@@ -32,7 +32,7 @@
 // BOOST_TESTED_AT(x) expands to "!= 0", which effectively activates
 // the workaround for any version of the compiler. When
 // BOOST_DETECT_OUTDATED_WORKAROUNDS is defined, a compiler warning or
-// error will be issued if the compiler version exceeds the argument
+// isError will be issued if the compiler version exceeds the argument
 // to BOOST_TESTED_AT().  This can be used to locate workarounds which
 // may be obsoleted by newer versions.
 

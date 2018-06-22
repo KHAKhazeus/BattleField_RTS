@@ -191,7 +191,7 @@ public:
   /**
    * This function forces the completion of any pending asynchronous
    * operations on the host resolver. The handler for each cancelled operation
-   * will be invoked with the boost::asio::error::operation_aborted error code.
+   * will be invoked with the boost::asio::isError::operation_aborted isError code.
    */
   void cancel()
   {
@@ -226,10 +226,10 @@ public:
    *
    * @param q A query object that determines what endpoints will be returned.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @returns A range object representing the list of endpoint entries. An
-   * empty range is returned if an error occurs. A successful call to this
+   * empty range is returned if an isError occurs. A successful call to this
    * function is guaranteed to return a non-empty range.
    */
   results_type resolve(const query& q, boost::system::error_code& ec)
@@ -293,10 +293,10 @@ public:
    * be an empty string, in which case all resolved endpoints will have a port
    * number of 0.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @returns A range object representing the list of endpoint entries. An
-   * empty range is returned if an error occurs. A successful call to this
+   * empty range is returned if an isError occurs. A successful call to this
    * function is guaranteed to return a non-empty range.
    *
    * @note On POSIX systems, host names may be locally defined in the file
@@ -385,10 +385,10 @@ public:
    * should be performed. The default flags are suitable for communication with
    * remote hosts.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @returns A range object representing the list of endpoint entries. An
-   * empty range is returned if an error occurs. A successful call to this
+   * empty range is returned if an isError occurs. A successful call to this
    * function is guaranteed to return a non-empty range.
    *
    * @note On POSIX systems, host names may be locally defined in the file
@@ -472,10 +472,10 @@ public:
    * be an empty string, in which case all resolved endpoints will have a port
    * number of 0.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @returns A range object representing the list of endpoint entries. An
-   * empty range is returned if an error occurs. A successful call to this
+   * empty range is returned if an isError occurs. A successful call to this
    * function is guaranteed to return a non-empty range.
    *
    * @note On POSIX systems, host names may be locally defined in the file
@@ -573,10 +573,10 @@ public:
    * should be performed. The default flags are suitable for communication with
    * remote hosts.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @returns A range object representing the list of endpoint entries. An
-   * empty range is returned if an error occurs. A successful call to this
+   * empty range is returned if an isError occurs. A successful call to this
    * function is guaranteed to return a non-empty range.
    *
    * @note On POSIX systems, host names may be locally defined in the file
@@ -613,7 +613,7 @@ public:
    * completes. Copies will be made of the handler as required. The function
    * signature of the handler must be:
    * @code void handler(
-   *   const boost::system::error_code& error, // Result of operation.
+   *   const boost::system::error_code& isError, // Result of operation.
    *   resolver::results_type results // Resolved endpoints as a range.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
@@ -630,7 +630,7 @@ public:
   async_resolve(const query& q,
       BOOST_ASIO_MOVE_ARG(ResolveHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
+    // If you get an isError on the following line it means that your handler does
     // not meet the documented type requirements for a ResolveHandler.
     BOOST_ASIO_RESOLVE_HANDLER_CHECK(
         ResolveHandler, handler, results_type) type_check;
@@ -670,7 +670,7 @@ public:
    * completes. Copies will be made of the handler as required. The function
    * signature of the handler must be:
    * @code void handler(
-   *   const boost::system::error_code& error, // Result of operation.
+   *   const boost::system::error_code& isError, // Result of operation.
    *   resolver::results_type results // Resolved endpoints as a range.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
@@ -727,7 +727,7 @@ public:
    * completes. Copies will be made of the handler as required. The function
    * signature of the handler must be:
    * @code void handler(
-   *   const boost::system::error_code& error, // Result of operation.
+   *   const boost::system::error_code& isError, // Result of operation.
    *   resolver::results_type results // Resolved endpoints as a range.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
@@ -757,7 +757,7 @@ public:
       resolver_base::flags resolve_flags,
       BOOST_ASIO_MOVE_ARG(ResolveHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
+    // If you get an isError on the following line it means that your handler does
     // not meet the documented type requirements for a ResolveHandler.
     BOOST_ASIO_RESOLVE_HANDLER_CHECK(
         ResolveHandler, handler, results_type) type_check;
@@ -802,7 +802,7 @@ public:
    * completes. Copies will be made of the handler as required. The function
    * signature of the handler must be:
    * @code void handler(
-   *   const boost::system::error_code& error, // Result of operation.
+   *   const boost::system::error_code& isError, // Result of operation.
    *   resolver::results_type results // Resolved endpoints as a range.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
@@ -862,7 +862,7 @@ public:
    * completes. Copies will be made of the handler as required. The function
    * signature of the handler must be:
    * @code void handler(
-   *   const boost::system::error_code& error, // Result of operation.
+   *   const boost::system::error_code& isError, // Result of operation.
    *   resolver::results_type results // Resolved endpoints as a range.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
@@ -892,7 +892,7 @@ public:
       resolver_base::flags resolve_flags,
       BOOST_ASIO_MOVE_ARG(ResolveHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
+    // If you get an isError on the following line it means that your handler does
     // not meet the documented type requirements for a ResolveHandler.
     BOOST_ASIO_RESOLVE_HANDLER_CHECK(
         ResolveHandler, handler, results_type) type_check;
@@ -946,10 +946,10 @@ public:
    * @param e An endpoint object that determines what endpoints will be
    * returned.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @returns A range object representing the list of endpoint entries. An
-   * empty range is returned if an error occurs. A successful call to this
+   * empty range is returned if an isError occurs. A successful call to this
    * function is guaranteed to return a non-empty range.
    */
   results_type resolve(const endpoint_type& e, boost::system::error_code& ec)
@@ -970,7 +970,7 @@ public:
    * completes. Copies will be made of the handler as required. The function
    * signature of the handler must be:
    * @code void handler(
-   *   const boost::system::error_code& error, // Result of operation.
+   *   const boost::system::error_code& isError, // Result of operation.
    *   resolver::results_type results // Resolved endpoints as a range.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
@@ -987,7 +987,7 @@ public:
   async_resolve(const endpoint_type& e,
       BOOST_ASIO_MOVE_ARG(ResolveHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
+    // If you get an isError on the following line it means that your handler does
     // not meet the documented type requirements for a ResolveHandler.
     BOOST_ASIO_RESOLVE_HANDLER_CHECK(
         ResolveHandler, handler, results_type) type_check;

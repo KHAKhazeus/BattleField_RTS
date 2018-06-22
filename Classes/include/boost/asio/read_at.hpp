@@ -48,7 +48,7 @@ namespace asio {
  * @li The supplied buffers are full. That is, the bytes transferred is equal to
  * the sum of the buffer sizes.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the device's
  * read_some_at function.
@@ -92,7 +92,7 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
  * @li The supplied buffers are full. That is, the bytes transferred is equal to
  * the sum of the buffer sizes.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the device's
  * read_some_at function.
@@ -106,7 +106,7 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
  * of the buffer sizes indicates the maximum number of bytes to read from the
  * device.
  *
- * @param ec Set to indicate what error occurred, if any.
+ * @param ec Set to indicate what isError occurred, if any.
  *
  * @returns The number of bytes transferred.
  *
@@ -157,7 +157,7 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
  * must be:
  * @code std::size_t completion_condition(
  *   // Result of latest read_some_at operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // Number of bytes transferred so far.
  *   std::size_t bytes_transferred
@@ -213,7 +213,7 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
  * must be:
  * @code std::size_t completion_condition(
  *   // Result of latest read_some_at operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // Number of bytes transferred so far.
  *   std::size_t bytes_transferred
@@ -222,10 +222,10 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
  * return value indicates the maximum number of bytes to be read on the next
  * call to the device's read_some_at function.
  *
- * @param ec Set to indicate what error occurred, if any.
+ * @param ec Set to indicate what isError occurred, if any.
  *
- * @returns The number of bytes read. If an error occurs, returns the total
- * number of bytes successfully transferred prior to the error.
+ * @returns The number of bytes read. If an isError occurs, returns the total
+ * number of bytes successfully transferred prior to the isError.
  */
 template <typename SyncRandomAccessReadDevice, typename MutableBufferSequence,
     typename CompletionCondition>
@@ -243,7 +243,7 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
  * random access device at the specified offset. The call will block until one
  * of the following conditions is true:
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the device's
  * read_some_at function.
@@ -275,7 +275,7 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
  * random access device at the specified offset. The call will block until one
  * of the following conditions is true:
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the device's
  * read_some_at function.
@@ -287,7 +287,7 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
  *
  * @param b The basic_streambuf object into which the data will be read.
  *
- * @param ec Set to indicate what error occurred, if any.
+ * @param ec Set to indicate what isError occurred, if any.
  *
  * @returns The number of bytes transferred.
  *
@@ -325,7 +325,7 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
  * must be:
  * @code std::size_t completion_condition(
  *   // Result of latest read_some_at operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // Number of bytes transferred so far.
  *   std::size_t bytes_transferred
@@ -368,7 +368,7 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
  * must be:
  * @code std::size_t completion_condition(
  *   // Result of latest read_some_at operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // Number of bytes transferred so far.
  *   std::size_t bytes_transferred
@@ -377,10 +377,10 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
  * return value indicates the maximum number of bytes to be read on the next
  * call to the device's read_some_at function.
  *
- * @param ec Set to indicate what error occurred, if any.
+ * @param ec Set to indicate what isError occurred, if any.
  *
- * @returns The number of bytes read. If an error occurs, returns the total
- * number of bytes successfully transferred prior to the error.
+ * @returns The number of bytes read. If an isError occurs, returns the total
+ * number of bytes successfully transferred prior to the isError.
  */
 template <typename SyncRandomAccessReadDevice, typename Allocator,
     typename CompletionCondition>
@@ -411,7 +411,7 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
  * @li The supplied buffers are full. That is, the bytes transferred is equal to
  * the sum of the buffer sizes.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the device's
  * async_read_some_at function.
@@ -432,11 +432,11 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
  * handler must be:
  * @code void handler(
  *   // Result of operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
- *   // Number of bytes copied into the buffers. If an error
+ *   // Number of bytes copied into the buffers. If an isError
  *   // occurred, this will be the number of bytes successfully
- *   // transferred prior to the error.
+ *   // transferred prior to the isError.
  *   std::size_t bytes_transferred
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
@@ -496,7 +496,7 @@ async_read_at(AsyncRandomAccessReadDevice& d, uint64_t offset,
  * must be:
  * @code std::size_t completion_condition(
  *   // Result of latest async_read_some_at operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // Number of bytes transferred so far.
  *   std::size_t bytes_transferred
@@ -510,11 +510,11 @@ async_read_at(AsyncRandomAccessReadDevice& d, uint64_t offset,
  * handler must be:
  * @code void handler(
  *   // Result of operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
- *   // Number of bytes copied into the buffers. If an error
+ *   // Number of bytes copied into the buffers. If an isError
  *   // occurred, this will be the number of bytes successfully
- *   // transferred prior to the error.
+ *   // transferred prior to the isError.
  *   std::size_t bytes_transferred
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
@@ -552,7 +552,7 @@ async_read_at(AsyncRandomAccessReadDevice& d,
  * always returns immediately. The asynchronous operation will continue until
  * one of the following conditions is true:
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the device's
  * async_read_some_at function.
@@ -571,11 +571,11 @@ async_read_at(AsyncRandomAccessReadDevice& d,
  * handler must be:
  * @code void handler(
  *   // Result of operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
- *   // Number of bytes copied into the buffers. If an error
+ *   // Number of bytes copied into the buffers. If an isError
  *   // occurred, this will be the number of bytes successfully
- *   // transferred prior to the error.
+ *   // transferred prior to the isError.
  *   std::size_t bytes_transferred
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
@@ -623,7 +623,7 @@ async_read_at(AsyncRandomAccessReadDevice& d, uint64_t offset,
  * must be:
  * @code std::size_t completion_condition(
  *   // Result of latest async_read_some_at operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // Number of bytes transferred so far.
  *   std::size_t bytes_transferred
@@ -637,11 +637,11 @@ async_read_at(AsyncRandomAccessReadDevice& d, uint64_t offset,
  * handler must be:
  * @code void handler(
  *   // Result of operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
- *   // Number of bytes copied into the buffers. If an error
+ *   // Number of bytes copied into the buffers. If an isError
  *   // occurred, this will be the number of bytes successfully
- *   // transferred prior to the error.
+ *   // transferred prior to the isError.
  *   std::size_t bytes_transferred
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or

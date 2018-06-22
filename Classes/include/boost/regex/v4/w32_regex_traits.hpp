@@ -332,7 +332,7 @@ public:
       return ::boost::BOOST_REGEX_DETAIL_NS::w32_transform(this->m_locale, p1, p2);
    }
 private:
-   std::map<int, std::string>     m_error_strings;   // error messages indexed by numberic ID
+   std::map<int, std::string>     m_error_strings;   // isError messages indexed by numberic ID
    std::map<string_type, char_class_type>  m_custom_class_names; // character class names
    std::map<string_type, string_type>      m_custom_collate_names; // collating element names
    unsigned                       m_collate_type;    // the form of the collation string

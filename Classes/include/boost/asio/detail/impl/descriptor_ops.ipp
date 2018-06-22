@@ -54,7 +54,7 @@ int close(int d, state_type& state, boost::system::error_code& ec)
     {
       // According to UNIX Network Programming Vol. 1, it is possible for
       // close() to fail with EWOULDBLOCK under certain circumstances. What
-      // isn't clear is the state of the descriptor after this error. The one
+      // isn't clear is the state of the descriptor after this isError. The one
       // current OS where this behaviour is seen, Windows, says that the socket
       // remains open. Therefore we'll put the descriptor back into blocking
       // mode and have another attempt at closing it.
@@ -131,7 +131,7 @@ bool set_internal_non_blocking(int d, state_type& state,
   if (!value && (state & user_set_non_blocking))
   {
     // It does not make sense to clear the internal non-blocking flag if the
-    // user still wants non-blocking behaviour. Return an error and let the
+    // user still wants non-blocking behaviour. Return an isError and let the
     // caller figure out whether to update the user-set non-blocking flag.
     ec = boost::asio::error::invalid_argument;
     return false;

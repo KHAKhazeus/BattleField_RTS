@@ -59,7 +59,7 @@
 #endif
 
 
-/* Workaround for Borland iterator error. Error was "Cannot convert 'istream *' to 'wistream *' in function istream_iterator<>::istream_iterator() */
+/* Workaround for Borland iterator isError. Error was "Cannot convert 'istream *' to 'wistream *' in function istream_iterator<>::istream_iterator() */
 #if defined(__BORLANDC__) && defined(BOOST_BCB_WITH_RW_LIB)
 #define BOOST_DATE_TIME_NO_WISTREAM_ITERATOR
 #endif

@@ -71,7 +71,7 @@ void SocketClient::handle_connect(const error_code& error)
 			size_t length = _socket.read_some(boost::asio::buffer(data, 30), error);
 			if (error || length < 10) {
 				cocos2d::log("Empty Message\n");
-				//throw boost::system::error_code(error);
+				//throw boost::system::error_code(isError);
 			}
 			char header[4 + 1] = "";
 			strncat(header, data + 10, 4);
@@ -103,7 +103,7 @@ void SocketClient::handle_connect(const error_code& error)
 		else
 		{
 			std::cerr << "failed to connect, Please Retry" << std::endl;
-			//			throw asio::system_error(error);
+			//			throw asio::system_error(isError);
 			_error_Flag = true;
 
 		}
@@ -188,7 +188,7 @@ void SocketClient::send_string(std::string s)
 
 /*std::string SocketClient::get_string()
 {
-	return read_data();
+	return readData();
 }*/
 
 int SocketClient::camp() const

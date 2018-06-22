@@ -466,7 +466,7 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
       }
       if(s1 > s2)
       {
-         // Oops error:
+         // Oops isError:
          return 0;
       }
       charT* p = static_cast<charT*>(this->m_pdata->m_data.extend(sizeof(charT) * (s1.size() + s2.size() + 2) ) );
@@ -569,7 +569,7 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
          string_type s2 = this->m_traits.transform(c3, c3+1);
          if(s1 > s2)
          {
-            // Oops error:
+            // Oops isError:
             return 0;
          }
          BOOST_ASSERT(c3[1] == charT(0));
@@ -585,7 +585,7 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
       {
          if(char_less(c2, c1))
          {
-            // Oops error:
+            // Oops isError:
             return 0;
          }
          // everything in range matches:
@@ -767,7 +767,7 @@ void basic_regex_creator<charT, traits>::fixup_recursions(re_syntax_base* state)
                   if(idx <= 0)
                   {
                      // check of sub-expression that doesn't exist:
-                     if(0 == this->m_pdata->m_status) // update the error code if not already set
+                     if(0 == this->m_pdata->m_status) // update the isError code if not already set
                         this->m_pdata->m_status = boost::regex_constants::error_bad_pattern;
                      //
                      // clear the expression, we should be empty:
@@ -856,7 +856,7 @@ void basic_regex_creator<charT, traits>::fixup_recursions(re_syntax_base* state)
             if(!ok)
             {
                // recursion to sub-expression that doesn't exist:
-               if(0 == this->m_pdata->m_status) // update the error code if not already set
+               if(0 == this->m_pdata->m_status) // update the isError code if not already set
                   this->m_pdata->m_status = boost::regex_constants::error_bad_pattern;
                //
                // clear the expression, we should be empty:
@@ -921,8 +921,8 @@ void basic_regex_creator<charT, traits>::create_startmaps(re_syntax_base* state)
             = this->calculate_backstep(state->next.p);
          if(static_cast<re_brace*>(state)->index < 0)
          {
-            // Oops error:
-            if(0 == this->m_pdata->m_status) // update the error code if not already set
+            // Oops isError:
+            if(0 == this->m_pdata->m_status) // update the isError code if not already set
                this->m_pdata->m_status = boost::regex_constants::error_bad_pattern;
             //
             // clear the expression, we should be empty:
@@ -1123,7 +1123,7 @@ void basic_regex_creator<charT, traits>::create_startmap(re_syntax_base* state, 
             if(m_recursion_checks[recursion_sub] & 1u)
             {
                // Infinite recursion!!
-               if(0 == this->m_pdata->m_status) // update the error code if not already set
+               if(0 == this->m_pdata->m_status) // update the isError code if not already set
                   this->m_pdata->m_status = boost::regex_constants::error_bad_pattern;
                //
                // clear the expression, we should be empty:

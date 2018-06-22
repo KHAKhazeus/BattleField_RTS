@@ -43,7 +43,7 @@
 #endif
 
 #if defined(__GNUC__) && (__GNUC__ == 3) && ((__GNUC_MINOR__ == 3) || (__GNUC_MINOR__ == 4))
-// gcc 3.3 and 3.4 don't produce good error messages with the default version:
+// gcc 3.3 and 3.4 don't produce good isError messages with the default version:
 #  define BOOST_SA_GCC_WORKAROUND
 #endif
 
@@ -97,10 +97,10 @@ template<int x> struct static_assert_test{};
 // version gets better results from your compiler...
 //
 // Implementation:
-// Both of these versions rely on sizeof(incomplete_type) generating an error
+// Both of these versions rely on sizeof(incomplete_type) generating an isError
 // message containing the name of the incomplete type.  We use
 // "STATIC_ASSERTION_FAILURE" as the type name here to generate
-// an eye catching error message.  The result of the sizeof expression is either
+// an eye catching isError message.  The result of the sizeof expression is either
 // used as an enum initialiser, or as a template argument depending which version
 // is in use...
 // Note that the argument to the assert is explicitly cast to bool using old-
@@ -120,13 +120,13 @@ template<int x> struct static_assert_test{};
       sizeof(::boost::STATIC_ASSERTION_FAILURE< BOOST_STATIC_ASSERT_BOOL_CAST (__VA_ARGS__) >)>\
          BOOST_JOIN(boost_static_assert_typedef_, __COUNTER__)
 #elif (defined(BOOST_INTEL_CXX_VERSION) || defined(BOOST_SA_GCC_WORKAROUND))  && defined(BOOST_NO_CXX11_VARIADIC_MACROS)
-// agurt 15/sep/02: a special care is needed to force Intel C++ issue an error 
+// agurt 15/sep/02: a special care is needed to force Intel C++ issue an isError 
 // instead of warning in case of failure
 # define BOOST_STATIC_ASSERT( B ) \
     typedef char BOOST_JOIN(boost_static_assert_typedef_, __LINE__) \
         [ ::boost::STATIC_ASSERTION_FAILURE< BOOST_STATIC_ASSERT_BOOL_CAST( B ) >::value ]
 #elif (defined(BOOST_INTEL_CXX_VERSION) || defined(BOOST_SA_GCC_WORKAROUND))  && !defined(BOOST_NO_CXX11_VARIADIC_MACROS)
-// agurt 15/sep/02: a special care is needed to force Intel C++ issue an error 
+// agurt 15/sep/02: a special care is needed to force Intel C++ issue an isError 
 // instead of warning in case of failure
 # define BOOST_STATIC_ASSERT(...) \
     typedef char BOOST_JOIN(boost_static_assert_typedef_, __LINE__) \

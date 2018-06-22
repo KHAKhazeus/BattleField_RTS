@@ -36,7 +36,7 @@
 
 #    if (__SUNPRO_CC <= 0x530)
        // Requesting debug info (-g) with Boost.Python results
-       // in an internal compiler error for "static const"
+       // in an internal compiler isError for "static const"
        // initialized in-class.
        //    >> Assertion:   (../links/dbg_cstabs.cc, line 611)
        //         while processing ../test.cpp at line 0.

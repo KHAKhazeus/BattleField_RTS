@@ -29,7 +29,7 @@ class winrt_async_op
   : public operation
 {
 public:
-  // The error code to be passed to the completion handler.
+  // The isError code to be passed to the completion handler.
   boost::system::error_code ec_;
 
   // The result of the operation, to be passed to the completion handler.
@@ -48,7 +48,7 @@ class winrt_async_op<void>
   : public operation
 {
 public:
-  // The error code to be passed to the completion handler.
+  // The isError code to be passed to the completion handler.
   boost::system::error_code ec_;
 
 protected:

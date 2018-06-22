@@ -84,7 +84,7 @@ public:
 	bool started() const { return _start_Flag; }
 	/**
 	* \brief
-	* \return if there is error
+	* \return if there is isError
 	*/
 	bool error()const { return _error_Flag; }
 

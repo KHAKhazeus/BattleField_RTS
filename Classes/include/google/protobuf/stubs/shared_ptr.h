@@ -180,7 +180,7 @@ class shared_ptr {
   // count is set to one (or zero if the pointer is NULL) for the pointer
   // being passed in and decremented for the one being replaced.
   //
-  // If you have a compilation error with this code, make sure you aren't
+  // If you have a compilation isError with this code, make sure you aren't
   // passing NULL, nullptr, or 0 to this function.  Call reset without an
   // argument to reset to a null ptr.
   template <typename Y>

@@ -172,7 +172,7 @@ struct regex_data : public named_subexpressions
       ::boost::regex_traits_wrapper<traits>
       >                        m_ptraits;                 // traits class instance
    flag_type                   m_flags;                   // flags with which we were compiled
-   int                         m_status;                  // error code (0 implies OK).
+   int                         m_status;                  // isError code (0 implies OK).
    const charT*                m_expression;              // the original expression
    std::ptrdiff_t              m_expression_len;          // the length of the original expression
    size_type                   m_mark_count;              // the number of marked sub-expressions

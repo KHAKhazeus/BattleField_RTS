@@ -46,7 +46,7 @@ namespace asio {
  * @li The supplied buffers are full. That is, the bytes transferred is equal to
  * the sum of the buffer sizes.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * read_some function.
@@ -88,7 +88,7 @@ std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers,
  * @li The supplied buffers are full. That is, the bytes transferred is equal to
  * the sum of the buffer sizes.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * read_some function.
@@ -100,7 +100,7 @@ std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers,
  * of the buffer sizes indicates the maximum number of bytes to read from the
  * stream.
  *
- * @param ec Set to indicate what error occurred, if any.
+ * @param ec Set to indicate what isError occurred, if any.
  *
  * @returns The number of bytes transferred.
  *
@@ -148,7 +148,7 @@ std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers,
  * must be:
  * @code std::size_t completion_condition(
  *   // Result of latest read_some operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // Number of bytes transferred so far.
  *   std::size_t bytes_transferred
@@ -202,7 +202,7 @@ std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers,
  * must be:
  * @code std::size_t completion_condition(
  *   // Result of latest read_some operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // Number of bytes transferred so far.
  *   std::size_t bytes_transferred
@@ -211,10 +211,10 @@ std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers,
  * return value indicates the maximum number of bytes to be read on the next
  * call to the stream's read_some function.
  *
- * @param ec Set to indicate what error occurred, if any.
+ * @param ec Set to indicate what isError occurred, if any.
  *
- * @returns The number of bytes read. If an error occurs, returns the total
- * number of bytes successfully transferred prior to the error.
+ * @returns The number of bytes read. If an isError occurs, returns the total
+ * number of bytes successfully transferred prior to the isError.
  */
 template <typename SyncReadStream, typename MutableBufferSequence,
     typename CompletionCondition>
@@ -232,7 +232,7 @@ std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers,
  * @li The specified dynamic buffer sequence is full (that is, it has reached
  * maximum size).
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * read_some function.
@@ -265,7 +265,7 @@ std::size_t read(SyncReadStream& s,
  *
  * @li The supplied buffer is full (that is, it has reached maximum size).
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * read_some function.
@@ -275,7 +275,7 @@ std::size_t read(SyncReadStream& s,
  *
  * @param buffers The dynamic buffer sequence into which the data will be read.
  *
- * @param ec Set to indicate what error occurred, if any.
+ * @param ec Set to indicate what isError occurred, if any.
  *
  * @returns The number of bytes transferred.
  *
@@ -315,7 +315,7 @@ std::size_t read(SyncReadStream& s,
  * must be:
  * @code std::size_t completion_condition(
  *   // Result of latest read_some operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // Number of bytes transferred so far.
  *   std::size_t bytes_transferred
@@ -360,7 +360,7 @@ std::size_t read(SyncReadStream& s,
  * must be:
  * @code std::size_t completion_condition(
  *   // Result of latest read_some operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // Number of bytes transferred so far.
  *   std::size_t bytes_transferred
@@ -369,10 +369,10 @@ std::size_t read(SyncReadStream& s,
  * return value indicates the maximum number of bytes to be read on the next
  * call to the stream's read_some function.
  *
- * @param ec Set to indicate what error occurred, if any.
+ * @param ec Set to indicate what isError occurred, if any.
  *
- * @returns The number of bytes read. If an error occurs, returns the total
- * number of bytes successfully transferred prior to the error.
+ * @returns The number of bytes read. If an isError occurs, returns the total
+ * number of bytes successfully transferred prior to the isError.
  */
 template <typename SyncReadStream, typename DynamicBuffer,
     typename CompletionCondition>
@@ -393,7 +393,7 @@ std::size_t read(SyncReadStream& s,
  *
  * @li The supplied buffer is full (that is, it has reached maximum size).
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * read_some function.
@@ -422,7 +422,7 @@ std::size_t read(SyncReadStream& s, basic_streambuf<Allocator>& b);
  *
  * @li The supplied buffer is full (that is, it has reached maximum size).
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * read_some function.
@@ -432,7 +432,7 @@ std::size_t read(SyncReadStream& s, basic_streambuf<Allocator>& b);
  *
  * @param b The basic_streambuf object into which the data will be read.
  *
- * @param ec Set to indicate what error occurred, if any.
+ * @param ec Set to indicate what isError occurred, if any.
  *
  * @returns The number of bytes transferred.
  *
@@ -467,7 +467,7 @@ std::size_t read(SyncReadStream& s, basic_streambuf<Allocator>& b,
  * must be:
  * @code std::size_t completion_condition(
  *   // Result of latest read_some operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // Number of bytes transferred so far.
  *   std::size_t bytes_transferred
@@ -507,7 +507,7 @@ std::size_t read(SyncReadStream& s, basic_streambuf<Allocator>& b,
  * must be:
  * @code std::size_t completion_condition(
  *   // Result of latest read_some operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // Number of bytes transferred so far.
  *   std::size_t bytes_transferred
@@ -516,10 +516,10 @@ std::size_t read(SyncReadStream& s, basic_streambuf<Allocator>& b,
  * return value indicates the maximum number of bytes to be read on the next
  * call to the stream's read_some function.
  *
- * @param ec Set to indicate what error occurred, if any.
+ * @param ec Set to indicate what isError occurred, if any.
  *
- * @returns The number of bytes read. If an error occurs, returns the total
- * number of bytes successfully transferred prior to the error.
+ * @returns The number of bytes read. If an isError occurs, returns the total
+ * number of bytes successfully transferred prior to the isError.
  */
 template <typename SyncReadStream, typename Allocator,
     typename CompletionCondition>
@@ -549,7 +549,7 @@ std::size_t read(SyncReadStream& s, basic_streambuf<Allocator>& b,
  * @li The supplied buffers are full. That is, the bytes transferred is equal to
  * the sum of the buffer sizes.
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * async_read_some function, and is known as a <em>composed operation</em>. The
@@ -570,13 +570,13 @@ std::size_t read(SyncReadStream& s, basic_streambuf<Allocator>& b,
  * Copies will be made of the handler as required. The function signature of the
  * handler must be:
  * @code void handler(
- *   const boost::system::error_code& error, // Result of operation.
+ *   const boost::system::error_code& isError, // Result of operation.
  *
  *   std::size_t bytes_transferred           // Number of bytes copied into the
- *                                           // buffers. If an error occurred,
+ *                                           // buffers. If an isError occurred,
  *                                           // this will be the  number of
  *                                           // bytes successfully transferred
- *                                           // prior to the error.
+ *                                           // prior to the isError.
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the handler will not be invoked from within this function. Invocation of
@@ -635,7 +635,7 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
  * must be:
  * @code std::size_t completion_condition(
  *   // Result of latest async_read_some operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // Number of bytes transferred so far.
  *   std::size_t bytes_transferred
@@ -648,13 +648,13 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
  * Copies will be made of the handler as required. The function signature of the
  * handler must be:
  * @code void handler(
- *   const boost::system::error_code& error, // Result of operation.
+ *   const boost::system::error_code& isError, // Result of operation.
  *
  *   std::size_t bytes_transferred           // Number of bytes copied into the
- *                                           // buffers. If an error occurred,
+ *                                           // buffers. If an isError occurred,
  *                                           // this will be the  number of
  *                                           // bytes successfully transferred
- *                                           // prior to the error.
+ *                                           // prior to the isError.
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the handler will not be invoked from within this function. Invocation of
@@ -693,7 +693,7 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
  * @li The specified dynamic buffer sequence is full (that is, it has reached
  * maximum size).
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * async_read_some function, and is known as a <em>composed operation</em>. The
@@ -713,13 +713,13 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
  * Copies will be made of the handler as required. The function signature of the
  * handler must be:
  * @code void handler(
- *   const boost::system::error_code& error, // Result of operation.
+ *   const boost::system::error_code& isError, // Result of operation.
  *
  *   std::size_t bytes_transferred           // Number of bytes copied into the
- *                                           // buffers. If an error occurred,
+ *                                           // buffers. If an isError occurred,
  *                                           // this will be the  number of
  *                                           // bytes successfully transferred
- *                                           // prior to the error.
+ *                                           // prior to the isError.
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the handler will not be invoked from within this function. Invocation of
@@ -775,7 +775,7 @@ async_read(AsyncReadStream& s,
  * must be:
  * @code std::size_t completion_condition(
  *   // Result of latest async_read_some operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // Number of bytes transferred so far.
  *   std::size_t bytes_transferred
@@ -788,13 +788,13 @@ async_read(AsyncReadStream& s,
  * Copies will be made of the handler as required. The function signature of the
  * handler must be:
  * @code void handler(
- *   const boost::system::error_code& error, // Result of operation.
+ *   const boost::system::error_code& isError, // Result of operation.
  *
  *   std::size_t bytes_transferred           // Number of bytes copied into the
- *                                           // buffers. If an error occurred,
+ *                                           // buffers. If an isError occurred,
  *                                           // this will be the  number of
  *                                           // bytes successfully transferred
- *                                           // prior to the error.
+ *                                           // prior to the isError.
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the handler will not be invoked from within this function. Invocation of
@@ -826,7 +826,7 @@ async_read(AsyncReadStream& s,
  *
  * @li The supplied buffer is full (that is, it has reached maximum size).
  *
- * @li An error occurred.
+ * @li An isError occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * async_read_some function, and is known as a <em>composed operation</em>. The
@@ -845,13 +845,13 @@ async_read(AsyncReadStream& s,
  * Copies will be made of the handler as required. The function signature of the
  * handler must be:
  * @code void handler(
- *   const boost::system::error_code& error, // Result of operation.
+ *   const boost::system::error_code& isError, // Result of operation.
  *
  *   std::size_t bytes_transferred           // Number of bytes copied into the
- *                                           // buffers. If an error occurred,
+ *                                           // buffers. If an isError occurred,
  *                                           // this will be the  number of
  *                                           // bytes successfully transferred
- *                                           // prior to the error.
+ *                                           // prior to the isError.
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the handler will not be invoked from within this function. Invocation of
@@ -900,7 +900,7 @@ async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
  * must be:
  * @code std::size_t completion_condition(
  *   // Result of latest async_read_some operation.
- *   const boost::system::error_code& error,
+ *   const boost::system::error_code& isError,
  *
  *   // Number of bytes transferred so far.
  *   std::size_t bytes_transferred
@@ -913,13 +913,13 @@ async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
  * Copies will be made of the handler as required. The function signature of the
  * handler must be:
  * @code void handler(
- *   const boost::system::error_code& error, // Result of operation.
+ *   const boost::system::error_code& isError, // Result of operation.
  *
  *   std::size_t bytes_transferred           // Number of bytes copied into the
- *                                           // buffers. If an error occurred,
+ *                                           // buffers. If an isError occurred,
  *                                           // this will be the  number of
  *                                           // bytes successfully transferred
- *                                           // prior to the error.
+ *                                           // prior to the isError.
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the handler will not be invoked from within this function. Invocation of

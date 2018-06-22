@@ -78,8 +78,8 @@ struct is_endpoint_sequence
  * @returns The successfully connected endpoint.
  *
  * @throws boost::system::system_error Thrown on failure. If the sequence is
- * empty, the associated @c error_code is boost::asio::error::not_found.
- * Otherwise, contains the error from the last connection attempt.
+ * empty, the associated @c error_code is boost::asio::isError::not_found.
+ * Otherwise, contains the isError from the last connection attempt.
  *
  * @par Example
  * @code tcp::resolver r(io_context);
@@ -106,8 +106,8 @@ typename Protocol::endpoint connect(
  *
  * @param endpoints A sequence of endpoints.
  *
- * @param ec Set to indicate what error occurred, if any. If the sequence is
- * empty, set to boost::asio::error::not_found. Otherwise, contains the error
+ * @param ec Set to indicate what isError occurred, if any. If the sequence is
+ * empty, set to boost::asio::isError::not_found. Otherwise, contains the isError
  * from the last connection attempt.
  *
  * @returns On success, the successfully connected endpoint. Otherwise, a
@@ -121,7 +121,7 @@ typename Protocol::endpoint connect(
  * boost::asio::connect(s, r.resolve(q), ec);
  * if (ec)
  * {
- *   // An error occurred.
+ *   // An isError occurred.
  * } @endcode
  */
 template <typename Protocol BOOST_ASIO_SVC_TPARAM, typename EndpointSequence>
@@ -149,8 +149,8 @@ typename Protocol::endpoint connect(
  * endpoint. Otherwise, the end iterator.
  *
  * @throws boost::system::system_error Thrown on failure. If the sequence is
- * empty, the associated @c error_code is boost::asio::error::not_found.
- * Otherwise, contains the error from the last connection attempt.
+ * empty, the associated @c error_code is boost::asio::isError::not_found.
+ * Otherwise, contains the isError from the last connection attempt.
  *
  * @note This overload assumes that a default constructed object of type @c
  * Iterator represents the end of the sequence. This is a valid assumption for
@@ -173,8 +173,8 @@ Iterator connect(basic_socket<Protocol BOOST_ASIO_SVC_TARG>& s, Iterator begin,
  *
  * @param begin An iterator pointing to the start of a sequence of endpoints.
  *
- * @param ec Set to indicate what error occurred, if any. If the sequence is
- * empty, set to boost::asio::error::not_found. Otherwise, contains the error
+ * @param ec Set to indicate what isError occurred, if any. If the sequence is
+ * empty, set to boost::asio::isError::not_found. Otherwise, contains the isError
  * from the last connection attempt.
  *
  * @returns On success, an iterator denoting the successfully connected
@@ -207,8 +207,8 @@ Iterator connect(basic_socket<Protocol BOOST_ASIO_SVC_TARG>& s,
  * @returns An iterator denoting the successfully connected endpoint.
  *
  * @throws boost::system::system_error Thrown on failure. If the sequence is
- * empty, the associated @c error_code is boost::asio::error::not_found.
- * Otherwise, contains the error from the last connection attempt.
+ * empty, the associated @c error_code is boost::asio::isError::not_found.
+ * Otherwise, contains the isError from the last connection attempt.
  *
  * @par Example
  * @code tcp::resolver r(io_context);
@@ -235,8 +235,8 @@ Iterator connect(basic_socket<Protocol BOOST_ASIO_SVC_TARG>& s,
  *
  * @param end An iterator pointing to the end of a sequence of endpoints.
  *
- * @param ec Set to indicate what error occurred, if any. If the sequence is
- * empty, set to boost::asio::error::not_found. Otherwise, contains the error
+ * @param ec Set to indicate what isError occurred, if any. If the sequence is
+ * empty, set to boost::asio::isError::not_found. Otherwise, contains the isError
  * from the last connection attempt.
  *
  * @returns On success, an iterator denoting the successfully connected
@@ -251,7 +251,7 @@ Iterator connect(basic_socket<Protocol BOOST_ASIO_SVC_TARG>& s,
  * boost::asio::connect(s, e.begin(), e.end(), ec);
  * if (ec)
  * {
- *   // An error occurred.
+ *   // An isError occurred.
  * } @endcode
  */
 template <typename Protocol BOOST_ASIO_SVC_TPARAM, typename Iterator>
@@ -284,8 +284,8 @@ Iterator connect(basic_socket<Protocol BOOST_ASIO_SVC_TARG>& s,
  * @returns The successfully connected endpoint.
  *
  * @throws boost::system::system_error Thrown on failure. If the sequence is
- * empty, the associated @c error_code is boost::asio::error::not_found.
- * Otherwise, contains the error from the last connection attempt.
+ * empty, the associated @c error_code is boost::asio::isError::not_found.
+ * Otherwise, contains the isError from the last connection attempt.
  *
  * @par Example
  * The following connect condition function object can be used to output
@@ -340,8 +340,8 @@ typename Protocol::endpoint connect(
  * The function object should return true if the next endpoint should be tried,
  * and false if it should be skipped.
  *
- * @param ec Set to indicate what error occurred, if any. If the sequence is
- * empty, set to boost::asio::error::not_found. Otherwise, contains the error
+ * @param ec Set to indicate what isError occurred, if any. If the sequence is
+ * empty, set to boost::asio::isError::not_found. Otherwise, contains the isError
  * from the last connection attempt.
  *
  * @returns On success, the successfully connected endpoint. Otherwise, a
@@ -370,7 +370,7 @@ typename Protocol::endpoint connect(
  *     r.resolve(q), my_connect_condition(), ec);
  * if (ec)
  * {
- *   // An error occurred.
+ *   // An isError occurred.
  * }
  * else
  * {
@@ -415,8 +415,8 @@ typename Protocol::endpoint connect(
  * endpoint. Otherwise, the end iterator.
  *
  * @throws boost::system::system_error Thrown on failure. If the sequence is
- * empty, the associated @c error_code is boost::asio::error::not_found.
- * Otherwise, contains the error from the last connection attempt.
+ * empty, the associated @c error_code is boost::asio::isError::not_found.
+ * Otherwise, contains the isError from the last connection attempt.
  *
  * @note This overload assumes that a default constructed object of type @c
  * Iterator represents the end of the sequence. This is a valid assumption for
@@ -452,8 +452,8 @@ Iterator connect(basic_socket<Protocol BOOST_ASIO_SVC_TARG>& s,
  * The function object should return true if the next endpoint should be tried,
  * and false if it should be skipped.
  *
- * @param ec Set to indicate what error occurred, if any. If the sequence is
- * empty, set to boost::asio::error::not_found. Otherwise, contains the error
+ * @param ec Set to indicate what isError occurred, if any. If the sequence is
+ * empty, set to boost::asio::isError::not_found. Otherwise, contains the isError
  * from the last connection attempt.
  *
  * @returns On success, an iterator denoting the successfully connected
@@ -498,8 +498,8 @@ Iterator connect(basic_socket<Protocol BOOST_ASIO_SVC_TARG>& s, Iterator begin,
  * @returns An iterator denoting the successfully connected endpoint.
  *
  * @throws boost::system::system_error Thrown on failure. If the sequence is
- * empty, the associated @c error_code is boost::asio::error::not_found.
- * Otherwise, contains the error from the last connection attempt.
+ * empty, the associated @c error_code is boost::asio::isError::not_found.
+ * Otherwise, contains the isError from the last connection attempt.
  *
  * @par Example
  * The following connect condition function object can be used to output
@@ -554,8 +554,8 @@ Iterator connect(basic_socket<Protocol BOOST_ASIO_SVC_TARG>& s, Iterator begin,
  * The function object should return true if the next endpoint should be tried,
  * and false if it should be skipped.
  *
- * @param ec Set to indicate what error occurred, if any. If the sequence is
- * empty, set to boost::asio::error::not_found. Otherwise, contains the error
+ * @param ec Set to indicate what isError occurred, if any. If the sequence is
+ * empty, set to boost::asio::isError::not_found. Otherwise, contains the isError
  * from the last connection attempt.
  *
  * @returns On success, an iterator denoting the successfully connected
@@ -585,7 +585,7 @@ Iterator connect(basic_socket<Protocol BOOST_ASIO_SVC_TARG>& s, Iterator begin,
  *     s, e.begin(), e.end(), my_connect_condition());
  * if (ec)
  * {
- *   // An error occurred.
+ *   // An isError occurred.
  * }
  * else
  * {
@@ -626,9 +626,9 @@ Iterator connect(basic_socket<Protocol BOOST_ASIO_SVC_TARG>& s,
  * signature of the handler must be:
  * @code void handler(
  *   // Result of operation. if the sequence is empty, set to
- *   // boost::asio::error::not_found. Otherwise, contains the
- *   // error from the last connection attempt.
- *   const boost::system::error_code& error,
+ *   // boost::asio::isError::not_found. Otherwise, contains the
+ *   // isError from the last connection attempt.
+ *   const boost::system::error_code& isError,
  *
  *   // On success, the successfully connected endpoint.
  *   // Otherwise, a default-constructed endpoint.
@@ -698,9 +698,9 @@ async_connect(basic_socket<Protocol BOOST_ASIO_SVC_TARG>& s,
  * signature of the handler must be:
  * @code void handler(
  *   // Result of operation. if the sequence is empty, set to
- *   // boost::asio::error::not_found. Otherwise, contains the
- *   // error from the last connection attempt.
- *   const boost::system::error_code& error,
+ *   // boost::asio::isError::not_found. Otherwise, contains the
+ *   // isError from the last connection attempt.
+ *   const boost::system::error_code& isError,
  *
  *   // On success, an iterator denoting the successfully
  *   // connected endpoint. Otherwise, the end iterator.
@@ -744,9 +744,9 @@ async_connect(basic_socket<Protocol BOOST_ASIO_SVC_TARG>& s,
  * signature of the handler must be:
  * @code void handler(
  *   // Result of operation. if the sequence is empty, set to
- *   // boost::asio::error::not_found. Otherwise, contains the
- *   // error from the last connection attempt.
- *   const boost::system::error_code& error,
+ *   // boost::asio::isError::not_found. Otherwise, contains the
+ *   // isError from the last connection attempt.
+ *   const boost::system::error_code& isError,
  *
  *   // On success, an iterator denoting the successfully
  *   // connected endpoint. Otherwise, the end iterator.
@@ -810,9 +810,9 @@ async_connect(basic_socket<Protocol BOOST_ASIO_SVC_TARG>& s,
  * signature of the handler must be:
  * @code void handler(
  *   // Result of operation. if the sequence is empty, set to
- *   // boost::asio::error::not_found. Otherwise, contains the
- *   // error from the last connection attempt.
- *   const boost::system::error_code& error,
+ *   // boost::asio::isError::not_found. Otherwise, contains the
+ *   // isError from the last connection attempt.
+ *   const boost::system::error_code& isError,
  *
  *   // On success, an iterator denoting the successfully
  *   // connected endpoint. Otherwise, the end iterator.
@@ -868,7 +868,7 @@ async_connect(basic_socket<Protocol BOOST_ASIO_SVC_TARG>& s,
  * {
  *   if (ec)
  *   {
- *     // An error occurred.
+ *     // An isError occurred.
  *   }
  *   else
  *   {
@@ -916,9 +916,9 @@ async_connect(basic_socket<Protocol BOOST_ASIO_SVC_TARG>& s,
  * signature of the handler must be:
  * @code void handler(
  *   // Result of operation. if the sequence is empty, set to
- *   // boost::asio::error::not_found. Otherwise, contains the
- *   // error from the last connection attempt.
- *   const boost::system::error_code& error,
+ *   // boost::asio::isError::not_found. Otherwise, contains the
+ *   // isError from the last connection attempt.
+ *   const boost::system::error_code& isError,
  *
  *   // On success, an iterator denoting the successfully
  *   // connected endpoint. Otherwise, the end iterator.
@@ -974,9 +974,9 @@ async_connect(basic_socket<Protocol BOOST_ASIO_SVC_TARG>& s, Iterator begin,
  * signature of the handler must be:
  * @code void handler(
  *   // Result of operation. if the sequence is empty, set to
- *   // boost::asio::error::not_found. Otherwise, contains the
- *   // error from the last connection attempt.
- *   const boost::system::error_code& error,
+ *   // boost::asio::isError::not_found. Otherwise, contains the
+ *   // isError from the last connection attempt.
+ *   const boost::system::error_code& isError,
  *
  *   // On success, an iterator denoting the successfully
  *   // connected endpoint. Otherwise, the end iterator.
@@ -1033,7 +1033,7 @@ async_connect(basic_socket<Protocol BOOST_ASIO_SVC_TARG>& s, Iterator begin,
  * {
  *   if (ec)
  *   {
- *     // An error occurred.
+ *     // An isError occurred.
  *   }
  *   else
  *   {

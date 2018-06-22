@@ -34,7 +34,7 @@
 //  28 Jun 00  Removed implicit_cast<>.  See comment below. (Beman Dawes)
 //  27 Jun 00  More MSVC6 workarounds
 //  15 Jun 00  Add workarounds for MSVC6
-//   2 Feb 00  Remove bad_numeric_cast ";" syntax error (Doncho Angelov)
+//   2 Feb 00  Remove bad_numeric_cast ";" syntax isError (Doncho Angelov)
 //  26 Jan 00  Add missing throw() to bad_numeric_cast::what(0 (Adam Levar)
 //  29 Dec 99  Change using declarations so usages in other namespaces work
 //             correctly (Dave Abrahams)

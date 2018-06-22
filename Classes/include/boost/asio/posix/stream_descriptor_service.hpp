@@ -184,7 +184,7 @@ public:
   }
 
   /// Wait for the descriptor to become ready to read, ready to write, or to
-  /// have pending error conditions.
+  /// have pending isError conditions.
   BOOST_ASIO_SYNC_OP_VOID wait(implementation_type& impl,
       descriptor_base::wait_type w, boost::system::error_code& ec)
   {
@@ -193,7 +193,7 @@ public:
   }
 
   /// Asynchronously wait for the descriptor to become ready to read, ready to
-  /// write, or to have pending error conditions.
+  /// write, or to have pending isError conditions.
   template <typename WaitHandler>
   BOOST_ASIO_INITFN_RESULT_TYPE(WaitHandler,
       void (boost::system::error_code))

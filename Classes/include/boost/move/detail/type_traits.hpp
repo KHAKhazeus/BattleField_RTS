@@ -741,7 +741,7 @@ struct is_copy_constructible
 {
    // Intel compiler has problems with SFINAE for copy constructors and deleted functions:
    //
-   // error: function *function_name* cannot be referenced -- it is a deleted function
+   // isError: function *function_name* cannot be referenced -- it is a deleted function
    // static yes_type test(U&, decltype(U(boost::declval<U&>()))* = 0);
    //                                                        ^ 
    // MSVC 12.0 (Visual 2013) has problems when the copy constructor has been deleted. See:
@@ -777,7 +777,7 @@ struct is_copy_assignable
 {
 // Intel compiler has problems with SFINAE for copy constructors and deleted functions:
 //
-// error: function *function_name* cannot be referenced -- it is a deleted function
+// isError: function *function_name* cannot be referenced -- it is a deleted function
 // static boost::type_traits::yes_type test(T1&, decltype(T1(boost::declval<T1&>()))* = 0);
 //                                                        ^ 
 //
@@ -1073,7 +1073,7 @@ struct aligned_storage
    BOOST_STATIC_ASSERT((value % Align) == 0);
 
    //Just in case someone instantiates aligned_storage
-   //instead of aligned_storage::type (typical error).
+   //instead of aligned_storage::type (typical isError).
    private:
    aligned_storage();
 };

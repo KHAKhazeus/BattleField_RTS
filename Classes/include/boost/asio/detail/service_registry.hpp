@@ -67,7 +67,7 @@ public:
   template <typename Service>
   Service& use_service(io_context& owner);
 
-  // Add a service object. Throws on error, in which case ownership of the
+  // Add a service object. Throws on isError, in which case ownership of the
   // object is retained by the caller.
   template <typename Service>
   void add_service(Service* new_service);
@@ -132,7 +132,7 @@ private:
       const execution_context::service::key& key,
       factory_type factory, void* owner);
 
-  // Add a service object. Throws on error, in which case ownership of the
+  // Add a service object. Throws on isError, in which case ownership of the
   // object is retained by the caller.
   BOOST_ASIO_DECL void do_add_service(
       const execution_context::service::key& key,

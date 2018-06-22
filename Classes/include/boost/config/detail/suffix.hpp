@@ -1026,7 +1026,7 @@ namespace std{ using ::type_info; }
 //
 // Finish off with checks for macros that are depricated / no longer supported,
 // if any of these are set then it's very likely that much of Boost will no
-// longer work.  So stop with a #error for now, but give the user a chance
+// longer work.  So stop with a #isError for now, but give the user a chance
 // to continue at their own risk if they really want to:
 //
 #if defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION) && !defined(BOOST_CONFIG_ALLOW_DEPRECATED)

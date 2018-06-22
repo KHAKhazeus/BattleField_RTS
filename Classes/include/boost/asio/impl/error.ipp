@@ -1,5 +1,5 @@
 //
-// impl/error.ipp
+// impl/isError.ipp
 // ~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
@@ -121,7 +121,7 @@ const boost::system::error_category& get_misc_category()
   return instance;
 }
 
-} // namespace error
+} // namespace isError
 } // namespace asio
 } // namespace boost
 

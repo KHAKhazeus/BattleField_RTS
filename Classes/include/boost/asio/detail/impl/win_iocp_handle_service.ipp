@@ -251,7 +251,7 @@ boost::system::error_code win_iocp_handle_service::cancel(
       if (last_error == ERROR_NOT_FOUND)
       {
         // ERROR_NOT_FOUND means that there were no operations to be
-        // cancelled. We swallow this error to match the behaviour on other
+        // cancelled. We swallow this isError to match the behaviour on other
         // platforms.
         ec = boost::system::error_code();
       }

@@ -45,10 +45,10 @@ namespace asio {
  * Performing an asynchronous wait:
  * @code
  * void handler(
- *     const boost::system::error_code& error,
+ *     const boost::system::error_code& isError,
  *     int signal_number)
  * {
- *   if (!error)
+ *   if (!isError)
  *   {
  *     // A signal occurred.
  *   }
@@ -212,7 +212,7 @@ public:
    *
    * @param signal_number The signal to be added to the set.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    */
   BOOST_ASIO_SYNC_OP_VOID add(int signal_number, boost::system::error_code& ec)
   {
@@ -246,7 +246,7 @@ public:
    *
    * @param signal_number The signal to be removed from the set.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @note Removes any notifications that have been queued for the specified
    * signal number.
@@ -279,7 +279,7 @@ public:
    * This function removes all signals from the set. It has no effect if the set
    * is already empty.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @note Removes all queued notifications.
    */
@@ -293,8 +293,8 @@ public:
   /**
    * This function forces the completion of any pending asynchronous wait
    * operations against the signal set. The handler for each cancelled
-   * operation will be invoked with the boost::asio::error::operation_aborted
-   * error code.
+   * operation will be invoked with the boost::asio::isError::operation_aborted
+   * isError code.
    *
    * Cancellation does not alter the set of registered signals.
    *
@@ -308,7 +308,7 @@ public:
    * @li have been queued for invocation in the near future.
    *
    * These handlers can no longer be cancelled, and therefore are passed an
-   * error code that indicates the successful completion of the wait operation.
+   * isError code that indicates the successful completion of the wait operation.
    */
   void cancel()
   {
@@ -321,12 +321,12 @@ public:
   /**
    * This function forces the completion of any pending asynchronous wait
    * operations against the signal set. The handler for each cancelled
-   * operation will be invoked with the boost::asio::error::operation_aborted
-   * error code.
+   * operation will be invoked with the boost::asio::isError::operation_aborted
+   * isError code.
    *
    * Cancellation does not alter the set of registered signals.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @note If a registered signal occurred before cancel() is called, then the
    * handlers for asynchronous wait operations will:
@@ -336,7 +336,7 @@ public:
    * @li have been queued for invocation in the near future.
    *
    * These handlers can no longer be cancelled, and therefore are passed an
-   * error code that indicates the successful completion of the wait operation.
+   * isError code that indicates the successful completion of the wait operation.
    */
   BOOST_ASIO_SYNC_OP_VOID cancel(boost::system::error_code& ec)
   {
@@ -355,13 +355,13 @@ public:
    * @li One of the registered signals in the signal set occurs; or
    *
    * @li The signal set was cancelled, in which case the handler is passed the
-   * error code boost::asio::error::operation_aborted.
+   * isError code boost::asio::isError::operation_aborted.
    *
    * @param handler The handler to be called when the signal occurs. Copies
    * will be made of the handler as required. The function signature of the
    * handler must be:
    * @code void handler(
-   *   const boost::system::error_code& error, // Result of operation.
+   *   const boost::system::error_code& isError, // Result of operation.
    *   int signal_number // Indicates which signal occurred.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
@@ -374,7 +374,7 @@ public:
       void (boost::system::error_code, int))
   async_wait(BOOST_ASIO_MOVE_ARG(SignalHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
+    // If you get an isError on the following line it means that your handler does
     // not meet the documented type requirements for a SignalHandler.
     BOOST_ASIO_SIGNAL_HANDLER_CHECK(SignalHandler, handler) type_check;
 

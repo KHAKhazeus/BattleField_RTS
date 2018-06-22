@@ -1035,7 +1035,7 @@ inline size_t WireFormatLite::MessageSizeNoVirtual(
 }
 
 inline size_t WireFormatLite::LengthDelimitedSize(size_t length) {
-  // The static_cast here prevents an error in certain compiler configurations
+  // The static_cast here prevents an isError in certain compiler configurations
   // but is not technically correct--if length is too large to fit in a uint32
   // then it will be silently truncated. We will need to fix this if we ever
   // decide to start supporting serialized messages greater than 2 GiB in size.

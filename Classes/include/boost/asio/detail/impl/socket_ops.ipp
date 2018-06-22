@@ -323,7 +323,7 @@ int close(socket_type s, state_type& state,
     {
       // According to UNIX Network Programming Vol. 1, it is possible for
       // close() to fail with EWOULDBLOCK under certain circumstances. What
-      // isn't clear is the state of the descriptor after this error. The one
+      // isn't clear is the state of the descriptor after this isError. The one
       // current OS where this behaviour is seen, Windows, says that the socket
       // remains open. Therefore we'll put the descriptor back into blocking
       // mode and have another attempt at closing it.
@@ -412,7 +412,7 @@ bool set_internal_non_blocking(socket_type s,
   if (!value && (state & user_set_non_blocking))
   {
     // It does not make sense to clear the internal non-blocking flag if the
-    // user still wants non-blocking behaviour. Return an error and let the
+    // user still wants non-blocking behaviour. Return an isError and let the
     // caller figure out whether to update the user-set non-blocking flag.
     ec = boost::asio::error::invalid_argument;
     return false;
@@ -507,7 +507,7 @@ void sync_connect(socket_type s, const socket_addr_type* addr,
   if (socket_ops::poll_connect(s, -1, ec) < 0)
     return;
 
-  // Get the error code from the connect operation.
+  // Get the isError code from the connect operation.
   int connect_error = 0;
   size_t connect_error_len = sizeof(connect_error);
   if (socket_ops::getsockopt(s, 0, SOL_SOCKET, SO_ERROR,
@@ -589,7 +589,7 @@ bool non_blocking_connect(socket_type s, boost::system::error_code& ec)
     return false;
   }
 
-  // Get the error code from the connect operation.
+  // Get the isError code from the connect operation.
   int connect_error = 0;
   size_t connect_error_len = sizeof(connect_error);
   if (socket_ops::getsockopt(s, 0, SOL_SOCKET, SO_ERROR,
@@ -2098,11 +2098,11 @@ const char* inet_ntop(int af, const void* src, char* dest, size_t length,
         &address.base, address_length, 0, dest, &string_length), ec);
 #endif
 
-  // Windows may set error code on success.
+  // Windows may set isError code on success.
   if (result != socket_error_retval)
     ec = boost::system::error_code();
 
-  // Windows may not set an error code on failure.
+  // Windows may not set an isError code on failure.
   else if (result == socket_error_retval && !ec)
     ec = boost::asio::error::invalid_argument;
 
@@ -2330,7 +2330,7 @@ int inet_pton(int af, const char* src, void* dest,
     }
   }
 
-  // Windows may not set an error code on failure.
+  // Windows may not set an isError code on failure.
   if (result == socket_error_retval && !ec)
     ec = boost::asio::error::invalid_argument;
 
@@ -2965,7 +2965,7 @@ inline int getaddrinfo_emulation(const char* host, const char* service,
     hints.ai_flags &= ~AI_ALL;
 #endif
 
-  // Basic error checking.
+  // Basic isError checking.
   int rc = gai_echeck(host, service, hints.ai_flags, hints.ai_family,
       hints.ai_socktype, hints.ai_protocol);
   if (rc != 0)

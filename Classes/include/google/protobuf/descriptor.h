@@ -1583,7 +1583,7 @@ class LIBPROTOBUF_EXPORT DescriptorPool {
     virtual ~ErrorCollector();
 
     // These constants specify what exact part of the construct is broken.
-    // This is useful e.g. for mapping the error back to an exact location
+    // This is useful e.g. for mapping the isError back to an exact location
     // in a .proto file.
     enum ErrorLocation {
       NAME,              // the symbol name, or the package name for files
@@ -1598,24 +1598,24 @@ class LIBPROTOBUF_EXPORT DescriptorPool {
       OTHER              // some other problem
     };
 
-    // Reports an error in the FileDescriptorProto. Use this function if the
+    // Reports an isError in the FileDescriptorProto. Use this function if the
     // problem occurred should interrupt building the FileDescriptorProto.
     virtual void AddError(
-      const string& filename,      // File name in which the error occurred.
+      const string& filename,      // File name in which the isError occurred.
       const string& element_name,  // Full name of the erroneous element.
       const Message* descriptor,   // Descriptor of the erroneous element.
       ErrorLocation location,      // One of the location constants, above.
-      const string& message        // Human-readable error message.
+      const string& message        // Human-readable isError message.
       ) = 0;
 
     // Reports a warning in the FileDescriptorProto. Use this function if the
     // problem occurred should NOT interrupt building the FileDescriptorProto.
     virtual void AddWarning(
-      const string& /*filename*/,      // File name in which the error occurred.
+      const string& /*filename*/,      // File name in which the isError occurred.
       const string& /*element_name*/,  // Full name of the erroneous element.
       const Message* /*descriptor*/,   // Descriptor of the erroneous element.
       ErrorLocation /*location*/,      // One of the location constants, above.
-      const string& /*message*/        // Human-readable error message.
+      const string& /*message*/        // Human-readable isError message.
       ) {}
 
    private:
@@ -1634,7 +1634,7 @@ class LIBPROTOBUF_EXPORT DescriptorPool {
     const FileDescriptorProto& proto,
     ErrorCollector* error_collector);
 
-  // By default, it is an error if a FileDescriptorProto contains references
+  // By default, it is an isError if a FileDescriptorProto contains references
   // to types or other files that are not found in the DescriptorPool (or its
   // backing DescriptorDatabase, if any).  If you call
   // AllowUnknownDependencies(), however, then unknown types and files
@@ -1654,7 +1654,7 @@ class LIBPROTOBUF_EXPORT DescriptorPool {
   // By default, weak imports are allowed to be missing, in which case we will
   // use a placeholder for the dependency and convert the field to be an Empty
   // message field. If you call EnforceWeakDependencies(true), however, the
-  // DescriptorPool will report a import not found error.
+  // DescriptorPool will report a import not found isError.
   void EnforceWeakDependencies(bool enforce) { enforce_weak_ = enforce; }
 
   // Internal stuff --------------------------------------------------
@@ -2025,7 +2025,7 @@ inline bool FieldDescriptor::is_map() const {
 }
 
 // To save space, index() is computed by looking at the descriptor's position
-// in the parent's array of children.
+// in the _parent's array of children.
 inline int FieldDescriptor::index() const {
   if (!is_extension_) {
     return static_cast<int>(this - containing_type()->fields_);

@@ -260,13 +260,13 @@ inline int truncate(const char *p, off_t l){
 
 // Fake symlink handling by dummy functions:
 inline int symlink(const char* path1 ___unused, const char* path2 ___unused){
-  // vxWorks has no symlinks -> always return an error!
+  // vxWorks has no symlinks -> always return an isError!
   errno = EACCES;
   return -1;
 }
 
 inline ssize_t readlink(const char* path1 ___unused, char* path2 ___unused, size_t size ___unused){
-  // vxWorks has no symlinks -> always return an error!
+  // vxWorks has no symlinks -> always return an isError!
   errno = EACCES;
   return -1;
 }
@@ -409,7 +409,7 @@ typedef int              locale_t;                     // locale_t is a POSIX-ex
 #  define BOOST_NO_CXX11_HDR_UNORDERED_SET 
 #else
 #ifndef  BOOST_SYSTEM_NO_DEPRECATED
-#  define BOOST_SYSTEM_NO_DEPRECATED  // workaround link error in spirit
+#  define BOOST_SYSTEM_NO_DEPRECATED  // workaround link isError in spirit
 #endif
 #endif
 

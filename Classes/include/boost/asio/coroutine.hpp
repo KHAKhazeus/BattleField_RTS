@@ -219,10 +219,10 @@ class coroutine_ref;
  * @li The statement creates a copy of the coroutine and either executes it
  *     immediately or schedules it for later execution.
  * @li The resume point is defined immediately following the semicolon.
- * @li For the "parent", control immediately continues from the next line.
+ * @li For the "_parent", control immediately continues from the next line.
  *
  * The functions is_parent() and is_child() can be used to differentiate
- * between parent and child. You would use these functions to alter subsequent
+ * between _parent and child. You would use these functions to alter subsequent
  * control flow.
  *
  * Note that @c fork doesn't do the actual forking by itself. It is the
@@ -248,7 +248,7 @@ public:
   /// Returns true if the coroutine is the child of a fork.
   bool is_child() const { return value_ < 0; }
 
-  /// Returns true if the coroutine is the parent of a fork.
+  /// Returns true if the coroutine is the _parent of a fork.
   bool is_parent() const { return !is_child(); }
 
   /// Returns true if the coroutine has reached its terminal state.

@@ -120,7 +120,7 @@
 #   define BOOST_COMPILER_CONFIG "boost/config/compiler/visualc.hpp"
 
 #elif defined (BOOST_ASSERT_CONFIG)
-// this must come last - generate an error if we don't
+// this must come last - generate an isError if we don't
 // recognise the compiler:
 #  error "Unknown compiler - please configure (http://www.boost.org/libs/config/config.htm#configuring) and report the results to the main boost mailing list (http://www.boost.org/more/mailing_lists.htm#main)"
 

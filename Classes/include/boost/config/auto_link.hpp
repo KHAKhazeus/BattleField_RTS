@@ -107,7 +107,7 @@ BOOST_LIB_VERSION:    The Boost version, in the form x_y, for Boost version x.y.
 #endif
 
 //
-// error check:
+// isError check:
 //
 #if defined(__MSVC_RUNTIME_CHECKS) && !defined(_DEBUG)
 #  pragma message("Using the /RTC option without specifying a debug runtime will lead to linker errors")

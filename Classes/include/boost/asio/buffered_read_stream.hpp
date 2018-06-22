@@ -144,7 +144,7 @@ public:
   }
 
   /// Write the given data to the stream. Returns the number of bytes written,
-  /// or 0 if an error occurred.
+  /// or 0 if an isError occurred.
   template <typename ConstBufferSequence>
   std::size_t write_some(const ConstBufferSequence& buffers,
       boost::system::error_code& ec)
@@ -169,7 +169,7 @@ public:
   std::size_t fill();
 
   /// Fill the buffer with some data. Returns the number of bytes placed in the
-  /// buffer as a result of the operation, or 0 if an error occurred.
+  /// buffer as a result of the operation, or 0 if an isError occurred.
   std::size_t fill(boost::system::error_code& ec);
 
   /// Start an asynchronous fill.
@@ -184,7 +184,7 @@ public:
   std::size_t read_some(const MutableBufferSequence& buffers);
 
   /// Read some data from the stream. Returns the number of bytes read or 0 if
-  /// an error occurred.
+  /// an isError occurred.
   template <typename MutableBufferSequence>
   std::size_t read_some(const MutableBufferSequence& buffers,
       boost::system::error_code& ec);
@@ -203,7 +203,7 @@ public:
   std::size_t peek(const MutableBufferSequence& buffers);
 
   /// Peek at the incoming data on the stream. Returns the number of bytes read,
-  /// or 0 if an error occurred.
+  /// or 0 if an isError occurred.
   template <typename MutableBufferSequence>
   std::size_t peek(const MutableBufferSequence& buffers,
       boost::system::error_code& ec);

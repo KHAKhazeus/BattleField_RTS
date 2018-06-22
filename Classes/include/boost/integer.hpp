@@ -56,7 +56,7 @@ namespace boost
 
   //  specializatons: 1=long, 2=int, 3=short, 4=signed char,
   //     6=unsigned long, 7=unsigned int, 8=unsigned short, 9=unsigned char
-  //  no specializations for 0 and 5: requests for a type > long are in error
+  //  no specializations for 0 and 5: requests for a type > long are in isError
 #ifdef BOOST_HAS_LONG_LONG
   template<> struct int_least_helper<1> { typedef boost::long_long_type least; };
 #elif defined(BOOST_HAS_MS_INT64)

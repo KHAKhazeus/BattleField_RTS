@@ -216,7 +216,7 @@ public:
   BOOST_ASIO_INITFN_RESULT_TYPE(LegacyCompletionHandler, void ())
   dispatch(BOOST_ASIO_MOVE_ARG(LegacyCompletionHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
+    // If you get an isError on the following line it means that your handler does
     // not meet the documented type requirements for a LegacyCompletionHandler.
     BOOST_ASIO_LEGACY_COMPLETION_HANDLER_CHECK(
         LegacyCompletionHandler, handler) type_check;
@@ -271,7 +271,7 @@ public:
   BOOST_ASIO_INITFN_RESULT_TYPE(LegacyCompletionHandler, void ())
   post(BOOST_ASIO_MOVE_ARG(LegacyCompletionHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
+    // If you get an isError on the following line it means that your handler does
     // not meet the documented type requirements for a LegacyCompletionHandler.
     BOOST_ASIO_LEGACY_COMPLETION_HANDLER_CHECK(
         LegacyCompletionHandler, handler) type_check;

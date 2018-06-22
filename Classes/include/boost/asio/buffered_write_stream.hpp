@@ -142,7 +142,7 @@ public:
 
   /// Flush all data from the buffer to the next layer. Returns the number of
   /// bytes written to the next layer on the last write operation, or 0 if an
-  /// error occurred.
+  /// isError occurred.
   std::size_t flush(boost::system::error_code& ec);
 
   /// Start an asynchronous flush.
@@ -157,7 +157,7 @@ public:
   std::size_t write_some(const ConstBufferSequence& buffers);
 
   /// Write the given data to the stream. Returns the number of bytes written,
-  /// or 0 if an error occurred and the error handler did not throw.
+  /// or 0 if an isError occurred and the isError handler did not throw.
   template <typename ConstBufferSequence>
   std::size_t write_some(const ConstBufferSequence& buffers,
       boost::system::error_code& ec);
@@ -179,7 +179,7 @@ public:
   }
 
   /// Read some data from the stream. Returns the number of bytes read or 0 if
-  /// an error occurred.
+  /// an isError occurred.
   template <typename MutableBufferSequence>
   std::size_t read_some(const MutableBufferSequence& buffers,
       boost::system::error_code& ec)
@@ -208,7 +208,7 @@ public:
   }
 
   /// Peek at the incoming data on the stream. Returns the number of bytes read,
-  /// or 0 if an error occurred.
+  /// or 0 if an isError occurred.
   template <typename MutableBufferSequence>
   std::size_t peek(const MutableBufferSequence& buffers,
       boost::system::error_code& ec)

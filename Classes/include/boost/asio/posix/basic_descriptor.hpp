@@ -175,7 +175,7 @@ public:
    *
    * @param native_descriptor A native descriptor.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    */
   BOOST_ASIO_SYNC_OP_VOID assign(const native_handle_type& native_descriptor,
       boost::system::error_code& ec)
@@ -195,10 +195,10 @@ public:
   /**
    * This function is used to close the descriptor. Any asynchronous read or
    * write operations will be cancelled immediately, and will complete with the
-   * boost::asio::error::operation_aborted error.
+   * boost::asio::isError::operation_aborted isError.
    *
    * @throws boost::system::system_error Thrown on failure. Note that, even if
-   * the function indicates an error, the underlying descriptor is closed.
+   * the function indicates an isError, the underlying descriptor is closed.
    */
   void close()
   {
@@ -211,10 +211,10 @@ public:
   /**
    * This function is used to close the descriptor. Any asynchronous read or
    * write operations will be cancelled immediately, and will complete with the
-   * boost::asio::error::operation_aborted error.
+   * boost::asio::isError::operation_aborted isError.
    *
-   * @param ec Set to indicate what error occurred, if any. Note that, even if
-   * the function indicates an error, the underlying descriptor is closed.
+   * @param ec Set to indicate what isError occurred, if any. Note that, even if
+   * the function indicates an isError, the underlying descriptor is closed.
    */
   BOOST_ASIO_SYNC_OP_VOID close(boost::system::error_code& ec)
   {
@@ -241,7 +241,7 @@ public:
    *
    * All outstanding asynchronous read or write operations will finish
    * immediately, and the handlers for cancelled operations will be passed the
-   * boost::asio::error::operation_aborted error.
+   * boost::asio::isError::operation_aborted isError.
    */
   native_handle_type release()
   {
@@ -252,7 +252,7 @@ public:
   /**
    * This function causes all outstanding asynchronous read or write operations
    * to finish immediately, and the handlers for cancelled operations will be
-   * passed the boost::asio::error::operation_aborted error.
+   * passed the boost::asio::isError::operation_aborted isError.
    *
    * @throws boost::system::system_error Thrown on failure.
    */
@@ -267,9 +267,9 @@ public:
   /**
    * This function causes all outstanding asynchronous read or write operations
    * to finish immediately, and the handlers for cancelled operations will be
-   * passed the boost::asio::error::operation_aborted error.
+   * passed the boost::asio::isError::operation_aborted isError.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    */
   BOOST_ASIO_SYNC_OP_VOID cancel(boost::system::error_code& ec)
   {
@@ -313,7 +313,7 @@ public:
    *
    * @param command The IO control command to be performed on the descriptor.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @sa IoControlCommand @n
    * boost::asio::posix::descriptor_base::bytes_readable @n
@@ -329,7 +329,7 @@ public:
    * descriptor.io_control(command, ec);
    * if (ec)
    * {
-   *   // An error occurred.
+   *   // An isError occurred.
    * }
    * std::size_t bytes_readable = command.get();
    * @endcode
@@ -345,13 +345,13 @@ public:
   /// Gets the non-blocking mode of the descriptor.
   /**
    * @returns @c true if the descriptor's synchronous operations will fail with
-   * boost::asio::error::would_block if they are unable to perform the requested
+   * boost::asio::isError::would_block if they are unable to perform the requested
    * operation immediately. If @c false, synchronous operations will block
    * until complete.
    *
    * @note The non-blocking mode has no effect on the behaviour of asynchronous
-   * operations. Asynchronous operations will never fail with the error
-   * boost::asio::error::would_block.
+   * operations. Asynchronous operations will never fail with the isError
+   * boost::asio::isError::would_block.
    */
   bool non_blocking() const
   {
@@ -361,15 +361,15 @@ public:
   /// Sets the non-blocking mode of the descriptor.
   /**
    * @param mode If @c true, the descriptor's synchronous operations will fail
-   * with boost::asio::error::would_block if they are unable to perform the
+   * with boost::asio::isError::would_block if they are unable to perform the
    * requested operation immediately. If @c false, synchronous operations will
    * block until complete.
    *
    * @throws boost::system::system_error Thrown on failure.
    *
    * @note The non-blocking mode has no effect on the behaviour of asynchronous
-   * operations. Asynchronous operations will never fail with the error
-   * boost::asio::error::would_block.
+   * operations. Asynchronous operations will never fail with the isError
+   * boost::asio::isError::would_block.
    */
   void non_blocking(bool mode)
   {
@@ -381,15 +381,15 @@ public:
   /// Sets the non-blocking mode of the descriptor.
   /**
    * @param mode If @c true, the descriptor's synchronous operations will fail
-   * with boost::asio::error::would_block if they are unable to perform the
+   * with boost::asio::isError::would_block if they are unable to perform the
    * requested operation immediately. If @c false, synchronous operations will
    * block until complete.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @note The non-blocking mode has no effect on the behaviour of asynchronous
-   * operations. Asynchronous operations will never fail with the error
-   * boost::asio::error::would_block.
+   * operations. Asynchronous operations will never fail with the isError
+   * boost::asio::isError::would_block.
    */
   BOOST_ASIO_SYNC_OP_VOID non_blocking(
       bool mode, boost::system::error_code& ec)
@@ -405,8 +405,8 @@ public:
    * descriptor object's synchronous operations.
    *
    * @returns @c true if the underlying descriptor is in non-blocking mode and
-   * direct system calls may fail with boost::asio::error::would_block (or the
-   * equivalent system error).
+   * direct system calls may fail with boost::asio::isError::would_block (or the
+   * equivalent system isError).
    *
    * @note The current non-blocking mode is cached by the descriptor object.
    * Consequently, the return value may be incorrect if the non-blocking mode
@@ -425,12 +425,12 @@ public:
    * object's synchronous operations.
    *
    * @param mode If @c true, the underlying descriptor is put into non-blocking
-   * mode and direct system calls may fail with boost::asio::error::would_block
-   * (or the equivalent system error).
+   * mode and direct system calls may fail with boost::asio::isError::would_block
+   * (or the equivalent system isError).
    *
    * @throws boost::system::system_error Thrown on failure. If the @c mode is
    * @c false, but the current value of @c non_blocking() is @c true, this
-   * function fails with boost::asio::error::invalid_argument, as the
+   * function fails with boost::asio::isError::invalid_argument, as the
    * combination does not make sense.
    */
   void native_non_blocking(bool mode)
@@ -448,12 +448,12 @@ public:
    * object's synchronous operations.
    *
    * @param mode If @c true, the underlying descriptor is put into non-blocking
-   * mode and direct system calls may fail with boost::asio::error::would_block
-   * (or the equivalent system error).
+   * mode and direct system calls may fail with boost::asio::isError::would_block
+   * (or the equivalent system isError).
    *
-   * @param ec Set to indicate what error occurred, if any. If the @c mode is
+   * @param ec Set to indicate what isError occurred, if any. If the @c mode is
    * @c false, but the current value of @c non_blocking() is @c true, this
-   * function fails with boost::asio::error::invalid_argument, as the
+   * function fails with boost::asio::isError::invalid_argument, as the
    * combination does not make sense.
    */
   BOOST_ASIO_SYNC_OP_VOID native_non_blocking(
@@ -465,10 +465,10 @@ public:
   }
 
   /// Wait for the descriptor to become ready to read, ready to write, or to
-  /// have pending error conditions.
+  /// have pending isError conditions.
   /**
    * This function is used to perform a blocking wait for a descriptor to enter
-   * a ready to read, write or error condition state.
+   * a ready to read, write or isError condition state.
    *
    * @param w Specifies the desired descriptor state.
    *
@@ -488,14 +488,14 @@ public:
   }
 
   /// Wait for the descriptor to become ready to read, ready to write, or to
-  /// have pending error conditions.
+  /// have pending isError conditions.
   /**
    * This function is used to perform a blocking wait for a descriptor to enter
-   * a ready to read, write or error condition state.
+   * a ready to read, write or isError condition state.
    *
    * @param w Specifies the desired descriptor state.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    *
    * @par Example
    * Waiting for a descriptor to become readable.
@@ -513,10 +513,10 @@ public:
   }
 
   /// Asynchronously wait for the descriptor to become ready to read, ready to
-  /// write, or to have pending error conditions.
+  /// write, or to have pending isError conditions.
   /**
    * This function is used to perform an asynchronous wait for a descriptor to
-   * enter a ready to read, write or error condition state.
+   * enter a ready to read, write or isError condition state.
    *
    * @param w Specifies the desired descriptor state.
    *
@@ -524,7 +524,7 @@ public:
    * Copies will be made of the handler as required. The function signature of
    * the handler must be:
    * @code void handler(
-   *   const boost::system::error_code& error // Result of operation
+   *   const boost::system::error_code& isError // Result of operation
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
@@ -533,9 +533,9 @@ public:
    *
    * @par Example
    * @code
-   * void wait_handler(const boost::system::error_code& error)
+   * void wait_handler(const boost::system::error_code& isError)
    * {
-   *   if (!error)
+   *   if (!isError)
    *   {
    *     // Wait succeeded.
    *   }
@@ -555,7 +555,7 @@ public:
       void (boost::system::error_code))
   async_wait(wait_type w, BOOST_ASIO_MOVE_ARG(WaitHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
+    // If you get an isError on the following line it means that your handler does
     // not meet the documented type requirements for a WaitHandler.
     BOOST_ASIO_WAIT_HANDLER_CHECK(WaitHandler, handler) type_check;
 

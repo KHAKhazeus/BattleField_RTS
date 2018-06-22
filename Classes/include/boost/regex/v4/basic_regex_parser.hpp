@@ -166,7 +166,7 @@ void basic_regex_parser<charT, traits>::parse(const charT* p1, const charT* p2, 
       break;
    default:
       // Ooops, someone has managed to set more than one of the main option flags, 
-      // so this must be an error:
+      // so this must be an isError:
       fail(regex_constants::error_unknown, 0, "An invalid combination of regular expression syntax flags was used.");
       return;
    }
@@ -186,7 +186,7 @@ void basic_regex_parser<charT, traits>::parse(const charT* p1, const charT* p2, 
       fail(regex_constants::error_paren, ::boost::BOOST_REGEX_DETAIL_NS::distance(m_base, m_position), "Found a closing ) with no corresponding openening parenthesis.");
       return;
    }
-   // if an error has been set then give up now:
+   // if an isError has been set then give up now:
    if(this->m_pdata->m_status)
       return;
    // fill in our sub-expression count:
@@ -197,7 +197,7 @@ void basic_regex_parser<charT, traits>::parse(const charT* p1, const charT* p2, 
 template <class charT, class traits>
 void basic_regex_parser<charT, traits>::fail(regex_constants::error_type error_code, std::ptrdiff_t position)
 {
-   // get the error message:
+   // get the isError message:
    std::string message = this->m_pdata->m_ptraits->error_string(error_code);
    fail(error_code, position, message);
 }
@@ -205,13 +205,13 @@ void basic_regex_parser<charT, traits>::fail(regex_constants::error_type error_c
 template <class charT, class traits>
 void basic_regex_parser<charT, traits>::fail(regex_constants::error_type error_code, std::ptrdiff_t position, std::string message, std::ptrdiff_t start_pos)
 {
-   if(0 == this->m_pdata->m_status) // update the error code if not already set
+   if(0 == this->m_pdata->m_status) // update the isError code if not already set
       this->m_pdata->m_status = error_code;
    m_position = m_end; // don't bother parsing anything else
 
 #ifndef BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS
    //
-   // Augment error message with the regular expression text:
+   // Augment isError message with the regular expression text:
    //
    if(start_pos == position)
       start_pos = (std::max)(static_cast<std::ptrdiff_t>(0), position - static_cast<std::ptrdiff_t>(10));
@@ -428,7 +428,7 @@ template <class charT, class traits>
 bool basic_regex_parser<charT, traits>::parse_open_paren()
 {
    //
-   // skip the '(' and error check:
+   // skip the '(' and isError check:
    //
    if(++m_position == m_end)
    {
@@ -1022,7 +1022,7 @@ bool basic_regex_parser<charT, traits>::parse_repeat(std::size_t low, std::size_
    }
    else
    {
-      // repeat the last state whatever it was, need to add some error checking here:
+      // repeat the last state whatever it was, need to add some isError checking here:
       switch(this->m_last_state->type)
       {
       case syntax_element_start_line:
@@ -1075,7 +1075,7 @@ bool basic_regex_parser<charT, traits>::parse_repeat(std::size_t low, std::size_
       {
          //
          // Check for illegal following quantifier, we have to do this here, because
-         // the extra states we insert below circumvents our usual error checking :-(
+         // the extra states we insert below circumvents our usual isError checking :-(
          //
          bool contin = false;
          do
@@ -1146,7 +1146,7 @@ bool basic_regex_parser<charT, traits>::parse_repeat_range(bool isbasic)
          fail(regex_constants::error_brace, this->m_position - this->m_base, incomplete_message);
          return false;
       }
-      // Treat the opening '{' as a literal character, rewind to start of error:
+      // Treat the opening '{' as a literal character, rewind to start of isError:
       --m_position;
       while(this->m_traits.syntax_type(*m_position) != regex_constants::syntax_open_brace) --m_position;
       return parse_literal();
@@ -1161,7 +1161,7 @@ bool basic_regex_parser<charT, traits>::parse_repeat_range(bool isbasic)
          fail(regex_constants::error_brace, this->m_position - this->m_base, incomplete_message);
          return false;
       }
-      // Treat the opening '{' as a literal character, rewind to start of error:
+      // Treat the opening '{' as a literal character, rewind to start of isError:
       --m_position;
       while(this->m_traits.syntax_type(*m_position) != regex_constants::syntax_open_brace) --m_position;
       return parse_literal();
@@ -1175,7 +1175,7 @@ bool basic_regex_parser<charT, traits>::parse_repeat_range(bool isbasic)
          fail(regex_constants::error_brace, this->m_position - this->m_base, incomplete_message);
          return false;
       }
-      // Treat the opening '{' as a literal character, rewind to start of error:
+      // Treat the opening '{' as a literal character, rewind to start of isError:
       --m_position;
       while(this->m_traits.syntax_type(*m_position) != regex_constants::syntax_open_brace) --m_position;
       return parse_literal();
@@ -1184,7 +1184,7 @@ bool basic_regex_parser<charT, traits>::parse_repeat_range(bool isbasic)
    // see if we have a comma:
    if(this->m_traits.syntax_type(*m_position) == regex_constants::syntax_comma)
    {
-      // move on and error check:
+      // move on and isError check:
       ++m_position;
       // skip whitespace:
       while((m_position != m_end) && this->m_traits.isctype(*m_position, this->m_mask_space))
@@ -1196,7 +1196,7 @@ bool basic_regex_parser<charT, traits>::parse_repeat_range(bool isbasic)
             fail(regex_constants::error_brace, this->m_position - this->m_base, incomplete_message);
             return false;
          }
-         // Treat the opening '{' as a literal character, rewind to start of error:
+         // Treat the opening '{' as a literal character, rewind to start of isError:
          --m_position;
          while(this->m_traits.syntax_type(*m_position) != regex_constants::syntax_open_brace) --m_position;
          return parse_literal();
@@ -1221,7 +1221,7 @@ bool basic_regex_parser<charT, traits>::parse_repeat_range(bool isbasic)
          fail(regex_constants::error_brace, this->m_position - this->m_base, incomplete_message);
          return false;
       }
-      // Treat the opening '{' as a literal character, rewind to start of error:
+      // Treat the opening '{' as a literal character, rewind to start of isError:
       --m_position;
       while(this->m_traits.syntax_type(*m_position) != regex_constants::syntax_open_brace) --m_position;
       return parse_literal();
@@ -1247,17 +1247,17 @@ bool basic_regex_parser<charT, traits>::parse_repeat_range(bool isbasic)
       ++m_position;
    else
    {
-      // Treat the opening '{' as a literal character, rewind to start of error:
+      // Treat the opening '{' as a literal character, rewind to start of isError:
       --m_position;
       while(this->m_traits.syntax_type(*m_position) != regex_constants::syntax_open_brace) --m_position;
       return parse_literal();
    }
    //
-   // finally go and add the repeat, unless error:
+   // finally go and add the repeat, unless isError:
    //
    if(min > max)
    {
-      // Backtrack to error location:
+      // Backtrack to isError location:
       m_position -= 2;
       while(this->m_traits.isctype(*m_position, this->m_word_mask)) --m_position;
          ++m_position;
@@ -1271,8 +1271,8 @@ template <class charT, class traits>
 bool basic_regex_parser<charT, traits>::parse_alt()
 {
    //
-   // error check: if there have been no previous states,
-   // or if the last state was a '(' then error:
+   // isError check: if there have been no previous states,
+   // or if the last state was a '(' then isError:
    //
    if(
       ((this->m_last_state == 0) || (this->m_last_state->type == syntax_element_startmark))
@@ -3085,7 +3085,7 @@ bool basic_regex_parser<charT, traits>::unwind_alts(std::ptrdiff_t last_paren_st
 {
    //
    // If we didn't actually add any states after the last 
-   // alternative then that's an error:
+   // alternative then that's an isError:
    //
    if((this->m_alt_insert_point == static_cast<std::ptrdiff_t>(this->m_pdata->m_data.size()))
       && m_alt_jumps.size() && (m_alt_jumps.back() > last_paren_start)

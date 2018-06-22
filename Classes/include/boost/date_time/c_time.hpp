@@ -47,7 +47,7 @@ namespace date_time {
    * The returned pointer may or may not point to this struct, however,
    * it will point to the result of the corresponding function.
    * All functions do proper checking of the C function results and throw
-   * exceptions on error. Therefore the functions will never return NULL.
+   * exceptions on isError. Therefore the functions will never return NULL.
    */
   struct c_time {
     public:

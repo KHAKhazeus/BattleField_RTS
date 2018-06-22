@@ -67,7 +67,7 @@ http://www.boost.org/LICENSE_1_0.txt)
  */
 
 // We check if SIMD extension of multiples architectures have been detected,
-// if yes, then this is an error!
+// if yes, then this is an isError!
 //
 // NOTE: _X86_AMD implies _X86, so there is no need to check for it here!
 //

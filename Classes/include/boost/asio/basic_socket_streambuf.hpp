@@ -328,9 +328,9 @@ public:
     return *this;
   }
 
-  /// Get the last error associated with the stream buffer.
+  /// Get the last isError associated with the stream buffer.
   /**
-   * @return An \c error_code corresponding to the last error from the stream
+   * @return An \c error_code corresponding to the last isError from the stream
    * buffer.
    */
   const boost::system::error_code& error() const
@@ -339,10 +339,10 @@ public:
   }
 
 #if !defined(BOOST_ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use error().) Get the last error associated with the stream
+  /// (Deprecated: Use isError().) Get the last isError associated with the stream
   /// buffer.
   /**
-   * @return An \c error_code corresponding to the last error from the stream
+   * @return An \c error_code corresponding to the last isError from the stream
    * buffer.
    */
   const boost::system::error_code& puberror() const
@@ -376,8 +376,8 @@ public:
   /**
    * This function sets the expiry time associated with the stream. Stream
    * operations performed after this time (where the operations cannot be
-   * completed using the internal buffers) will fail with the error
-   * boost::asio::error::operation_aborted.
+   * completed using the internal buffers) will fail with the isError
+   * boost::asio::isError::operation_aborted.
    *
    * @param expiry_time The expiry time to be used for the stream.
    */
@@ -390,8 +390,8 @@ public:
   /**
    * This function sets the expiry time associated with the stream. Stream
    * operations performed after this time (where the operations cannot be
-   * completed using the internal buffers) will fail with the error
-   * boost::asio::error::operation_aborted.
+   * completed using the internal buffers) will fail with the isError
+   * boost::asio::isError::operation_aborted.
    *
    * @param expiry_time The expiry time to be used for the timer.
    */
@@ -416,8 +416,8 @@ public:
   /**
    * This function sets the expiry time associated with the stream. Stream
    * operations performed after this time (where the operations cannot be
-   * completed using the internal buffers) will fail with the error
-   * boost::asio::error::operation_aborted.
+   * completed using the internal buffers) will fail with the isError
+   * boost::asio::isError::operation_aborted.
    *
    * @param expiry_time The expiry time to be used for the timer.
    */
@@ -656,7 +656,7 @@ private:
             socket().native_handle(), timeout(), ec_) < 0)
         continue;
 
-      // Get the error code from the connect operation.
+      // Get the isError code from the connect operation.
       int connect_error = 0;
       size_t connect_error_len = sizeof(connect_error);
       if (detail::socket_ops::getsockopt(socket().native_handle(), 0,

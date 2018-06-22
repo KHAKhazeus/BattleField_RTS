@@ -168,7 +168,7 @@ public:
    *
    * @param handle A native handle.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    */
   BOOST_ASIO_SYNC_OP_VOID assign(const native_handle_type& handle,
       boost::system::error_code& ec)
@@ -187,7 +187,7 @@ public:
   /**
    * This function is used to close the handle. Any asynchronous read or write
    * operations will be cancelled immediately, and will complete with the
-   * boost::asio::error::operation_aborted error.
+   * boost::asio::isError::operation_aborted isError.
    *
    * @throws boost::system::system_error Thrown on failure.
    */
@@ -202,9 +202,9 @@ public:
   /**
    * This function is used to close the handle. Any asynchronous read or write
    * operations will be cancelled immediately, and will complete with the
-   * boost::asio::error::operation_aborted error.
+   * boost::asio::isError::operation_aborted isError.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    */
   BOOST_ASIO_SYNC_OP_VOID close(boost::system::error_code& ec)
   {
@@ -227,7 +227,7 @@ public:
   /**
    * This function causes all outstanding asynchronous read or write operations
    * to finish immediately, and the handlers for cancelled operations will be
-   * passed the boost::asio::error::operation_aborted error.
+   * passed the boost::asio::isError::operation_aborted isError.
    *
    * @throws boost::system::system_error Thrown on failure.
    */
@@ -242,9 +242,9 @@ public:
   /**
    * This function causes all outstanding asynchronous read or write operations
    * to finish immediately, and the handlers for cancelled operations will be
-   * passed the boost::asio::error::operation_aborted error.
+   * passed the boost::asio::isError::operation_aborted isError.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what isError occurred, if any.
    */
   BOOST_ASIO_SYNC_OP_VOID cancel(boost::system::error_code& ec)
   {

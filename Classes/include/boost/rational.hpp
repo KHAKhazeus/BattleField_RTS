@@ -910,7 +910,7 @@ std::istream& operator>> (std::istream& is, rational<IntType>& r)
                         catch ( ... ) {}  // don't throw ios_base::failure...
                         if ( is.exceptions() & ios::failbit )
                             throw;   // ...but the original exception instead
-                        // ELSE: suppress the exception, use just error flags
+                        // ELSE: suppress the exception, use just isError flags
                     }
             }
             else
