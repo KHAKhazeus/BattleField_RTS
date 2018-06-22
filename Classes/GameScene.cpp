@@ -225,8 +225,8 @@ void GameScene::mapScroll() {
 	auto _tiled_map = _tiled_Map->getTiledMap();
 	float posX = _tiled_map->getPositionX();
 	float posY = _tiled_map->getPositionY();
-	float speed_low = 6.0;
-	float speed_high = 12.0;
+	float speed_low = 12.0;
+	float speed_high = 24.0;
 //	log("%f_%f", _cursorX - (_tiled_map->getPosition()).x, _cursorY - (_tiled_map->getPosition()).y);
 	if (_cursorX <= _screen_width * 0.05) {
 		if (_cursorY <= _screen_height * 0.05) {

@@ -12,9 +12,9 @@
 #define MONEYMINE_ELECT 40
 #define WARFACTORY_ELECT 50
 #define SOLDIERBASE_ELECT 10
-#define DOG_SPEED 0.2
-#define TANK_SPEED 0.5
-#define SOIDIER_SPEED 0.4
+#define DOG_SPEED 0.1
+#define TANK_SPEED 0.2
+#define SOIDIER_SPEED 0.2
 #define CONSTRUCTION "construction.mp3"
 #define DOG "dogFinished.mp3"
 #define SOLDIER "soldierFinished.mp3"

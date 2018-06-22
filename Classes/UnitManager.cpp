@@ -33,6 +33,7 @@ void UnitManager::initBase() {
 	auto tiledPos = _tiled_Map->tileCoordForPosition(myPos); //change the OpenGL coordinate to TiledMap
 	_base_me->setTiledPosition(tiledPos);
 	_base_me->setType("B");
+	_base_me->setProgressed(true);
 	
 	//TODO set the camera to the Base
 	_tiled_Map->getTiledMap()->addChild(_base_me, 100);
@@ -55,6 +56,7 @@ void UnitManager::initBase() {
 	auto tiledPos1 = _tiled_Map->tileCoordForPosition(enPos); //change the OpenGL coordinate to TiledMap
 	_base_en->setTiledPosition(tiledPos1);
 	_base_en->setType("B");
+	_base_en->setProgressed(true);
 
 	if (_base_me->getCampID() == REDCAMP) {
 		_base_me->setUnitID(_base_me->getIdCount());
@@ -344,13 +346,15 @@ void UnitManager::attack(int attacker_id, int under_attack_id, int damage) {
 				}
 			}
 		}
-		if (enemy->getCampID() == this->_myCamp) {
-			checkWinOrLose(false);
-			return;
-		}
-		else {
-			checkWinOrLose(true);
-			return;
+		if (enemy->getType().at(0) == 'B') {
+			if (enemy->getCampID() == this->_myCamp) {
+				checkWinOrLose(false);
+				return;
+			}
+			else {
+				checkWinOrLose(true);
+				return;
+			}
 		}
 		if (enemy->isBuilding()) {
 			auto callFunc = CallFunc::create([=] {
@@ -370,6 +374,15 @@ void UnitManager::attack(int attacker_id, int under_attack_id, int damage) {
 				destroyEffect(enemy, false);
 				if (!TiledMap::checkUnitId(under_attack_id)) {
 					return;
+				}
+				if (!TiledMap::getSelectedVector()->empty()) {
+					auto selectedVector = TiledMap::getSelectedVector();
+					for (auto i = selectedVector->begin(); i != selectedVector->end(); i++) {
+						if (enemy->getUnitID() == (*i)->getUnitID()) {
+							selectedVector->erase(i);
+							break;
+						}
+					}
 				}
 				TiledMap::removeMapGrid(enemy->getTiledPosition());
 				TiledMap::removeMapId(enemy->getUnitID());
