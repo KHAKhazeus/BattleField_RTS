@@ -15,31 +15,32 @@
 SocketClient* SocketClient::create(std::string ip, int port)
 {
 	auto s = new SocketClient(ip, port);
-	s->thread_ = new std::thread(
+	s->_thread = new std::thread(
 		std::bind(static_cast<std::size_t(boost::asio::io_service::*)()>(&boost::asio::io_service::run),
-			&s->io_service_));
-	//	s->thread_->detach();
+			&s->_io_service));
+	s->_thread->detach();
 	return s;
 }
 
 
-void SocketClient::do_close()
+void SocketClient::doClose()
 {
 	try {
-		std::lock_guard<std::mutex> lk{ mut };
-		error_flag_ = true;
+		std::lock_guard<std::mutex> lk{ _mut };
+		_error_Flag = true;
 		SocketMessage empty_msg;
 		memcpy(empty_msg.data(), "0001\0", 5);
-		read_msg_deque_.push_back(empty_msg);
-		data_cond_.notify_one();
+		_read_Msg_Deque.push_back(empty_msg);
+		_data_cond.notify_one();
 		error_code ec;
-		socket_.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
-		socket_.close();
-		thread_->join();
-		delete thread_;
+		_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
+		_socket.close();
+		_io_service.stop();
+	//	_thread->join();
+		delete _thread;
 
 
-		io_service_.stop();
+		
         std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 	}
 	catch (std::exception&e)
@@ -50,9 +51,9 @@ void SocketClient::do_close()
 }
 
 
-void SocketClient::start_connect()
+void SocketClient::startConnect()
 {
-	socket_.async_connect(endpoint_,
+	_socket.async_connect(_endpoint,
 		std::bind(&SocketClient::handle_connect, this,
 			std::placeholders::_1));
 }
@@ -67,7 +68,7 @@ void SocketClient::handle_connect(const error_code& error)
 			std::cout << "connected\n";
 			char data[30] = { 0 };
 			error_code error;
-			size_t length = socket_.read_some(boost::asio::buffer(data, 30), error);
+			size_t length = _socket.read_some(boost::asio::buffer(data, 30), error);
 			if (error || length < 10) {
 				cocos2d::log("Empty Message\n");
 				//throw boost::system::error_code(error);
@@ -75,10 +76,10 @@ void SocketClient::handle_connect(const error_code& error)
 			char header[4 + 1] = "";
 			strncat(header, data + 10, 4);
 			if (data[10] == 'R') {
-				camp_ = REDCAMP;
+				_camp = REDCAMP;
 			}
 			else if (data[10] == 'B') {
-				camp_ = BLUECAMP;
+				_camp = BLUECAMP;
 			}
 			if (data[11] == 'L') {
 				setMapselect(LOSTTEMP);
@@ -90,11 +91,11 @@ void SocketClient::handle_connect(const error_code& error)
 
 
 			//total_ = atoi(header);
-			//camp_ = atoi(data + 14);
-			cocos2d::log("GettheCamp %d", camp_);
-			start_flag_ = true;
-			boost::asio::async_read(socket_,
-				boost::asio::buffer(read_msg_.data(), SocketMessage::header_length),
+			//_camp = atoi(data + 14);
+			cocos2d::log("GettheCamp %d", _camp);
+			_start_Flag = true;
+			boost::asio::async_read(_socket,
+				boost::asio::buffer(_read_msg.data(), SocketMessage::header_length),
 				std::bind(&SocketClient::handle_read_header, this,
 					std::placeholders::_1));
 
@@ -103,30 +104,30 @@ void SocketClient::handle_connect(const error_code& error)
 		{
 			std::cerr << "failed to connect, Please Retry" << std::endl;
 			//			throw asio::system_error(error);
-			error_flag_ = true;
+			_error_Flag = true;
 
 		}
 	}
 	catch (std::exception& e)
 	{
 		//		std::terminate();
-		//		do_close();
+		//		doClose();
 		std::cerr << "Exception in connection: " << e.what() << "\n";
 	}
 }
 
 void SocketClient::handle_read_header(const error_code& error)
 {
-	if (!error && read_msg_.decode_header())
+	if (!error && _read_msg.decode_header())
 	{
-		boost::asio::async_read(socket_,
-			boost::asio::buffer(read_msg_.body(), read_msg_.body_length()),
+		boost::asio::async_read(_socket,
+			boost::asio::buffer(_read_msg.body(), _read_msg.body_length()),
 			std::bind(&SocketClient::handle_read_body, this,
 				std::placeholders::_1));
 	}
 	else
 	{
-		do_close();
+		doClose();
 	}
 }
 
@@ -134,23 +135,23 @@ void SocketClient::handle_read_body(const error_code& error)
 {
 	if (!error)
 	{
-		std::lock_guard<std::mutex> lk{ mut };
-		read_msg_deque_.push_back(read_msg_);
-		data_cond_.notify_one();
+		std::lock_guard<std::mutex> lk{ _mut };
+		_read_Msg_Deque.push_back(_read_msg);
+		_data_cond.notify_one();
 		std::cout << "read completed\n";
 
-		boost::asio::async_read(socket_,
-			boost::asio::buffer(read_msg_.data(), SocketMessage::header_length),
+		boost::asio::async_read(_socket,
+			boost::asio::buffer(_read_msg.data(), SocketMessage::header_length),
 			std::bind(&SocketClient::handle_read_header, this,
 				std::placeholders::_1));
 	}
 	else
 	{
-		do_close();
+		doClose();
 	}
 }
 
-std::vector<GameMessage> SocketClient::get_game_messages()
+std::vector<GameMessage> SocketClient::getGameMessages()
 {
 	auto game_message_set_stirng = read_data();
 	return GameMessageOperation::stringToVector(game_message_set_stirng);
@@ -158,13 +159,13 @@ std::vector<GameMessage> SocketClient::get_game_messages()
 
 std::string SocketClient::read_data()
 {
-	if (error_flag_)
+	if (_error_Flag)
 		return "";
-	std::unique_lock<std::mutex> lk{ mut };
-	while (read_msg_deque_.empty())
-		data_cond_.wait(lk);
-	auto read_msg = read_msg_deque_.front();
-	read_msg_deque_.pop_front();
+	std::unique_lock<std::mutex> lk{ _mut };
+	while (_read_Msg_Deque.empty())
+		_data_cond.wait(lk);
+	auto read_msg = _read_Msg_Deque.front();
+	_read_Msg_Deque.pop_front();
 	lk.unlock();
 	auto ret = std::string(read_msg.body(), read_msg.body_length());
 	return ret;
@@ -172,7 +173,7 @@ std::string SocketClient::read_data()
 
 /*-------------------------------------------------------------------*/
 
-void SocketClient::send_game_message(const std::vector<GameMessage>& vec_game_msg)
+void SocketClient::sendGameMessages(const std::vector<GameMessage>& vec_game_msg)
 {
 	auto set_string = GameMessageOperation::vectorToString(vec_game_msg);
 	write_data(set_string);
@@ -180,7 +181,7 @@ void SocketClient::send_game_message(const std::vector<GameMessage>& vec_game_ms
 
 void SocketClient::send_string(std::string s)
 {
-	if (error_flag_)
+	if (_error_Flag)
 		return;
 	write_data(s);
 }
@@ -192,15 +193,14 @@ void SocketClient::send_string(std::string s)
 
 int SocketClient::camp() const
 {
-	//while (!start_flag_);
-	return camp_;
+	//while (!_start_Flag);
+	return _camp;
 }
-
+/*
 int SocketClient::total() const
 {
-	while (!start_flag_);
-	return total_;
-}
+	while (!_start_Flag);
+}*/
 
 void SocketClient::write_data(std::string s)
 {
@@ -218,7 +218,7 @@ void SocketClient::write_data(std::string s)
 		std::copy(s.cbegin(),s.cend(),msg.body());
     //    memcpy(msg.body(), &s[0u], msg.body_length());
         msg.encode_header();
-        boost::asio::write(socket_,
+        boost::asio::write(_socket,
                            boost::asio::buffer(msg.data(), msg.length()));
     }
     catch(boost::system::system_error){
@@ -229,6 +229,6 @@ void SocketClient::write_data(std::string s)
 
 void SocketClient::close()
 {
-	do_close();
+	doClose();
 }
 

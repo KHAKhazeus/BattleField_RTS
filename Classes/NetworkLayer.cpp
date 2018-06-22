@@ -81,10 +81,10 @@ void NetworkLayer::initializeClientSide(){
 }
 
 void NetworkLayer::resetClientAndServer(){
-    if(_socket_client){
-        _socket_client->do_close();
+    if(_socket_client && client){
+        _socket_client->doClose();
     }
-    if(_socket_server){
+    if(_socket_server && server){
         _socket_server->close();
     }
     _socket_client.reset(static_cast<SocketClient*>(nullptr),[](SocketClient*){});
@@ -433,7 +433,7 @@ bool NetworkLayer::init(){
 						auto sceneAniamte = TransitionCrossFade::create(0.5f, gameScene);
 						Director::getInstance()->replaceScene(sceneAniamte);
                     }
-				/*	auto temp = _socket_client->get_game_messages();
+				/*	auto temp = _socket_client->getGameMessages();
 					auto str = GameMessageOperation::vectorToString(temp);
 					cocos2d::log("%s", str);*/
                     //need to be extended
@@ -476,7 +476,17 @@ bool NetworkLayer::init(){
                     
                 case Widget::TouchEventType::ENDED:{
                     return_button->setScale(1.0);
+					if (_socket_client != NULL) {
+						_socket_client->close();
+					}
+
+					
+					if (_socket_server != NULL) {
+						_socket_server->close();
+					}
+					
                     NetworkLayer::close(this);
+					
                     break;
                 }
                     

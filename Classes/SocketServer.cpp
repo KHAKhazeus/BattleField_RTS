@@ -11,7 +11,7 @@
 #include <iterator>
 #include "cocos2d.h"
 
-boost::asio::io_service* SocketServer::io_service_ = new boost::asio::io_service;
+std::shared_ptr<boost::asio::io_service> SocketServer::io_service_;
 
 //TcpConnection::~TcpConnection()
 //{
@@ -75,25 +75,27 @@ void TcpConnection::do_close()
 {
 	try {
 		//		steady_timer_.cancel();
+		std::unique_lock<std::mutex> lk{ mut_ };
 		error_flag_ = true;
 		SocketMessage empty_msg;
 		memcpy(empty_msg.data(), "0001\0", 5);
 		read_msg_deque_.push_back(empty_msg);
 		read_msg_deque_.push_back(empty_msg);
 		data_cond_.notify_one();
+		lk.unlock();
 		error_code ec;
-		socket_.shutdown(boost::asio::ip::tcp::socket::shutdown_receive, ec);
+		socket_.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
 		if (!ec) {
 			cocos2d::log("111");
-			throw boost::system::error_code(ec);
+		//	return;
 		}
-		try {
+		/*try*/ 
 			cocos2d::log("Socket closed\n");
-			socket_.close(ec);
-		}catch (boost::system::system_error &ec) {
+			socket_.close();
+		/*catch (boost::system::error_code &ec) {
 			cocos2d::log("Socket closed!");
 			std::cerr << "Socket closed!";
-		}
+		}*/
 	}
 	catch (boost::system::system_error) {
 		cocos2d::log("Socket closed!");
@@ -160,7 +162,7 @@ TcpConnection::TcpConnection(boost::asio::io_service& io_service, SocketServer* 
 //	{
 //		// The deadline has passed. The socket is closed so that any outstanding
 //		// asynchronous operations are cancelled.
-//		do_close();
+//		doClose();
 //		steady_timer_.expires_at(std::chrono::steady_clock::time_point::max());
 //		return;
 //	}
@@ -179,17 +181,18 @@ void TcpConnection::delete_from_parent()
 
 SocketServer::~SocketServer(){
     this->close();
-    delete thread_;
-    delete button_thread_;
 }
 
 SocketServer* SocketServer::create(int port)
 {
-	//	io_service_ = new asio::io_service;
+	//	_io_service = new asio::io_service;
+	io_service_.reset(new boost::asio::io_service);
 	auto s = new SocketServer(port);
-	s->thread_ = new std::thread(
+
+	s->thread_.reset(new std::thread(
 		std::bind(static_cast<std::size_t(boost::asio::io_service::*)()>(&boost::asio::io_service::run),
-			io_service_));
+			io_service_)));
+	s->thread_->detach();
 	return s;
 }
 
@@ -197,19 +200,11 @@ void SocketServer::close()
 {
 	try {
 		connections_.clear();
-
 		io_service_->stop();
 		acceptor_.close();
-		//		thread_ = nullptr;
-        if(thread_){
-            thread_->join();
-        }
-		delete io_service_;
-        io_service_ = new boost::asio::io_service;
-        stop = true;
-        if(button_thread_){
-            button_thread_->join();
-        }
+		//		_thread = nullptr;
+		stop = true;
+        io_service_.reset(new boost::asio::io_service);
 	}
 	catch (std::exception&e)
 	{
@@ -240,7 +235,7 @@ void SocketServer::button_start()
 	}
 	connection_num_ = connections_.size();
 	cocos2d::log("ConnectionSize %d\n", connection_num_);
-	this->button_thread_ = new std::thread(std::bind(&SocketServer::loop_process, this));
+	this->button_thread_.reset(new std::thread(std::bind(&SocketServer::loop_process, this)));
 	button_thread_->detach();
 }
 

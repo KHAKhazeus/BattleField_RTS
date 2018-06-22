@@ -34,9 +34,6 @@ void UnitManager::initBase() {
 	_base_me->setTiledPosition(tiledPos);
 	_base_me->setType("B");
 	
-	
-	TiledMap::newMapGrid(tiledPos, _base_me->getUnitID(), _base_me->getRange());
-	TiledMap::newMapId(_base_me->getUnitID(), _base_me);
 	//TODO set the camera to the Base
 	_tiled_Map->getTiledMap()->addChild(_base_me, 100);
 	if (_myCamp == BLUECAMP) {
@@ -71,6 +68,11 @@ void UnitManager::initBase() {
 		_base_me->setUnitID(_base_me->getIdCount());
 		_base_me->addIdCount();
 	}
+
+
+	TiledMap::newMapGrid(tiledPos, _base_me->getUnitID(), _base_me->getRange());
+	TiledMap::newMapId(_base_me->getUnitID(), _base_me);
+
 	
 	TiledMap::newMapGrid(tiledPos1, _base_en->getUnitID(), _base_en->getRange());
 	TiledMap::newMapId(_base_en->getUnitID(), _base_en);
@@ -761,9 +763,9 @@ void UnitManager::updateMessage(float delta) {
 	if (packages == CLIENT_ERROR || packages == CLIENT_CANCEL) {
 		//To do
 	}
-	getSocketClient()->send_game_message(this->getMessages());
+	getSocketClient()->sendGameMessages(this->getMessages());
 	//unpackage the received message
-	orders = getSocketClient()->get_game_messages();
+	orders = getSocketClient()->getGameMessages();
 	//match the message and implement functions
 	for (unsigned int i = 0; i < orders.size(); i++) {
 		//read the path_points

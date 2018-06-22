@@ -29,12 +29,12 @@ public:
 	/**
 	* \brief create a socket client
 	* \param ip ip address, default to localhost
-	* \param port port number, default to 8008
+	* \param port port number, default to 8080
 	* \return a socket client
 	*/
-	static SocketClient* create(std::string ip = "127.0.0.1", int port = 8008);
+	static SocketClient* create(std::string ip = "127.0.0.1", int port = 8080);
 
-	//	~SocketClient() {  io_service_.stop();do_close(); }
+	//	~SocketClient() {  _io_service.stop();doClose(); }
 
 	/**
 	* \brief close the socket
@@ -49,13 +49,13 @@ public:
 	*/
 	void start()
 	{
-		start_connect();
+		startConnect();
 	};
 	[[deprecated("just for test")]]
-	std::vector<GameMessage> get_game_messages();
+	std::vector<GameMessage> getGameMessages();
 
 	[[deprecated("just for test")]]
-	void send_game_message(const std::vector<GameMessage>& vec_game_msg);
+	void sendGameMessages(const std::vector<GameMessage>& vec_game_msg);
 
 
 	/**
@@ -68,12 +68,12 @@ public:
 	* \brief this is a block function of receving stirng
 	* \return protubuf serialized string
 	*/
-	std::string get_string();;
+	std::string get_string();
 
 	/**
 	* \brief inner use
 	*/
-	void do_close();
+	void doClose();
 
 
 
@@ -81,12 +81,12 @@ public:
 	* \brief
 	* \return if game has started
 	*/
-	bool started() const { return start_flag_; }
+	bool started() const { return _start_Flag; }
 	/**
 	* \brief
 	* \return if there is error
 	*/
-	bool error()const { return error_flag_; }
+	bool error()const { return _error_Flag; }
 
 	/**
 	* \brief start from 1
@@ -101,8 +101,8 @@ public:
 	int total() const;
 
 private:
-	SocketClient(std::string ip, int port) : socket_(io_service_),
-		endpoint_(boost::asio::ip::address_v4::from_string(ip), port)
+	SocketClient(std::string ip, int port) : _socket(_io_service),
+		_endpoint(boost::asio::ip::address_v4::from_string(ip), port)
 	{
 		start();
 	}
@@ -110,7 +110,7 @@ private:
 
 	void write_data(std::string s);
 
-	void start_connect();
+	void startConnect();
 
 	void handle_connect(const error_code& error);
 
@@ -121,21 +121,20 @@ private:
 	std::string read_data();
 private:
 
+	boost::asio::io_service _io_service;
+	tcp::socket	_socket;
+	tcp::endpoint _endpoint;
+	std::deque<SocketMessage> _read_Msg_Deque;
+	SocketMessage _read_msg;
 
-	boost::asio::io_service io_service_;
-	tcp::socket	socket_;
-	tcp::endpoint endpoint_;
-	std::deque<SocketMessage> read_msg_deque_;
-	SocketMessage read_msg_;
+	bool _start_Flag{ false }, _error_Flag{ false };
 
-	bool start_flag_{ false }, error_flag_{ false };
-
-	std::thread *thread_, *read_thread_;
-	int camp_, total_;
+	std::thread *_thread;
+	int _camp;
 	int _mapSelect;
 
-	std::condition_variable data_cond_;
-	std::mutex mut;
+	std::condition_variable _data_cond;
+	std::mutex _mut;
 };
 
 

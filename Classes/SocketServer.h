@@ -67,7 +67,7 @@ class SocketServer
 public:
     ~SocketServer();
 	static SocketServer* create(int port = 8080);
-	//	~SocketServer() { acceptor_.close(); io_service_->stop(); }
+	//	~SocketServer() { acceptor_.close(); _io_service->stop(); }
 	/**
 	* \brief close the server
 	*/
@@ -117,9 +117,9 @@ private:
 	std::vector<TcpConnection::pointer> connections_;
 	int connection_num_;
 
-	static boost::asio::io_service* io_service_;
+	static std::shared_ptr<boost::asio::io_service> io_service_;
 
-	std::thread *thread_, *button_thread_{ nullptr };
+	std::shared_ptr<std::thread> thread_, button_thread_{ nullptr };
 	std::mutex delete_mutex_;
 	bool error_flag_{ false };
 	int _mapselect { LOSTTEMP };
