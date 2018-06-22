@@ -354,7 +354,8 @@ void GameScene::winOrLose(int win) {
 	scene->addChild(layer);
 	auto _background = Sprite::create("background/overScene.png");
 	_background->setAnchorPoint(Vec2::ZERO);
-	_background->setPosition(Vec2(_screen_width / 2, _screen_height / 2));
+	_background->setPosition(Vec2::ZERO);
+	layer->addChild(_background, -1);
 	if (win) {
 		auto label = Label::createWithSystemFont("You Win", "Arial-Bold.ttf", 128);
 		label->setAnchorPoint(Point(0.0f, 0.0f));
