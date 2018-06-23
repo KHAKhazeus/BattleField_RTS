@@ -168,9 +168,10 @@ SocketServer* SocketServer::create(int port)
 	_io_service.reset(new boost::asio::io_service);
 	auto s = new SocketServer(port);
 
-	s->_thread.reset(new std::thread(
+	s->_thread = new std::thread(
 		std::bind(static_cast<std::size_t(boost::asio::io_service::*)()>(&boost::asio::io_service::run),
-			_io_service)));
+			_io_service));
+	s->_thread->detach();
 	return s;
 }
 
@@ -184,10 +185,12 @@ void SocketServer::close()
 		_acceptor.close();
 		_io_service->stop();
 		stop = true;
-		_thread->join();
-		_loopthread->join();
-		_thread.reset(static_cast<std::thread *>(nullptr));
-		_loopthread.reset(static_cast<std::thread *>(nullptr));
+		_io_service.reset(new boost::asio::io_service);
+	//	_thread->join();
+	//	_loopthread->join();
+		std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+		TerminateThread(_thread, 0);
+		TerminateThread(_loopthread, 0);
         _io_service.reset(new boost::asio::io_service);
 		_close = true;
 	}
@@ -217,7 +220,8 @@ void SocketServer::clickStart()
 	}
 	connection_num_ = _connection_Vector.size();
 	cocos2d::log("ConnectionSize %d\n", connection_num_);
-	this->_loopthread.reset(new std::thread(std::bind(&SocketServer::loop, this)));
+	this->_loopthread = new std::thread(std::bind(&SocketServer::loop, this));
+	this->_loopthread->detach();
 }
 
 bool SocketServer::isError() const

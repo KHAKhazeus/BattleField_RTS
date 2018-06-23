@@ -120,7 +120,8 @@ private:
 
 	static std::shared_ptr<boost::asio::io_service> _io_service;
 	std::vector<TcpConnection::pointer> _connection_Vector;
-	std::shared_ptr<std::thread> _thread, _loopthread{ nullptr };
+	std::thread* _thread;
+	std::thread* _loopthread{ nullptr };
 	std::mutex _mutex;
 	bool _error{ false };
 	int _mapselect { LOSTTEMP };

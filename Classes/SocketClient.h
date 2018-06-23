@@ -74,7 +74,6 @@ public:
 	void doClose();
 
 
-
 	/**
 	* \brief
 	* \return if game has started
@@ -130,7 +129,6 @@ private:
 	std::thread *_thread;
 	int _camp;
 	int _mapSelect;
-
 	std::condition_variable _data_cond;
 	std::mutex _mut;
 };

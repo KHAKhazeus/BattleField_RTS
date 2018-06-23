@@ -18,6 +18,7 @@ SocketClient* SocketClient::create(std::string ip, int port)
 	s->_thread = new std::thread(
 		std::bind(static_cast<std::size_t(boost::asio::io_service::*)()>(&boost::asio::io_service::run),
 			&s->_io_service));
+	s->_thread->detach();
 	return s;
 }
 
@@ -39,9 +40,9 @@ void SocketClient::doClose()
 		_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
 		_socket.close();
 		_io_service.stop();
-		_thread->join();
-		delete _thread;		
+		_io_service.reset();
         std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+		TerminateThread(_thread, 0);
 	}
 	catch (std::exception&e)
 	{
@@ -49,6 +50,7 @@ void SocketClient::doClose()
 	}
 
 }
+
 
 
 void SocketClient::startConnect()
