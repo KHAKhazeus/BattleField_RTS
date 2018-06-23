@@ -73,7 +73,13 @@ Vec2 WarFactory::RandomPosition() {
 
 //Build the building
 void SoldierBase::Build() {
-	auto animate =BuildingBase::getAnimateByName("soldierBase", 0.1f, 23);
+	Animate* animate;
+	if (this->getCampID() == REDCAMP) {
+		animate = BuildingBase::getAnimateByName("soldierBase", 0.1f, 23);
+	}
+	else {
+		animate = BuildingBase::getAnimateByName("soldierBaseBlue", 0.1f, 23);
+	}
 	auto barSprite = Sprite::create("bar/loadingbar.png");
 	this->setProgressed(false);
 	ProgressTimer* progress = ProgressTimer::create(barSprite);
@@ -162,6 +168,9 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 		int size = 2;
 		for (int i = 0; i < size; i++) {
 			auto temp = Sprite::createWithTexture(cache->addImage(StringUtils::format("unit/FighterUnit_%d.png", i + 1)));
+			if (i == 1 && this->getCampID() == BLUECAMP) {
+				temp->setTexture("unit/FighterUnit_3.png");
+			}
 			//make notes: do a little change to the position of the small icons
 			auto width = temp->getContentSize().width / 2;
 			temp->setScale(1.0);
@@ -188,6 +197,9 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 					}
 					this->setCreated(true);
 					auto temp_building = Sprite::createWithTexture(cache->addImage(StringUtils::format("unit/FighterUnit_%d.png", i + 1)));
+					if (i == 1 && this->getCampID() == BLUECAMP) {
+						temp_building->setTexture("unit/FighterUnit_3.png");
+					}
 					temp_building->setTag(i + 1);
 					/*
 					make notes:
@@ -300,9 +312,14 @@ bool WarFactory::onTouchBegan(Touch *touch, Event *event) {
 		//TODO change this to vector
 		auto height = this->getContentSize().height;
 		auto temp = Sprite::create("unit/FighterUnit.png");
+		if (this->getCampID() == BLUECAMP) {
+			temp->setTexture("unit/FighterUnit_4.png");
+		}
 		//make notes: do a little change to the position of the small icons
 		auto width = temp->getContentSize().width / 2;
-		temp->setScale(0.4f);
+		if (this->getCampID() == REDCAMP) {
+			temp->setScale(0.4f);
+		}
 		temp->setColor(Color3B(0, 255, 0));
 		//devided it into size(a num) pieces
 		temp->setPosition(width+100,
@@ -322,6 +339,9 @@ bool WarFactory::onTouchBegan(Touch *touch, Event *event) {
 				}
 				this->setCreated(true);
 				auto temp_building = Sprite::create("unit/FighterUnit.png");
+				if (this->getCampID() == BLUECAMP) {
+					temp_building->setTexture("unit/FighterUnit_4.png");
+				}
 				/*
 				make notes:
 				tempNode below is a pointer to the TiledMap Layer
@@ -330,7 +350,9 @@ bool WarFactory::onTouchBegan(Touch *touch, Event *event) {
 				auto tempNode = this->getParent()->getParent()->getParent();
 				auto pos = this->convertToWorldSpace(temp->getPosition());
 				temp_building->setColor(Color3B(255, 0, 0));
-				temp_building->setScale(0.4f);
+				if (this->getCampID() == REDCAMP) {
+					temp_building->setScale(0.4f);
+				}
 				temp_building->setPosition(pos);
 				tempNode->addChild(temp_building, 200);
 				auto listener1 = EventListenerTouchOneByOne::create();
@@ -388,7 +410,13 @@ bool WarFactory::onTouchBegan(Touch *touch, Event *event) {
 
 //Build the building
 void MoneyMine::Build() {
-	auto animate = BuildingBase::getAnimateByName("moneyMine", 0.1f, 24);
+	Animate* animate;
+	if (this->getCampID() == REDCAMP) {
+		animate = BuildingBase::getAnimateByName("moneyMine", 0.1f, 24);
+	}
+	else {
+		animate = BuildingBase::getAnimateByName("moneyMineBlue", 0.1f, 23);
+	}
 	auto barSprite = Sprite::create("bar/loadingbar.png");
 	this->setProgressed(false);
 	ProgressTimer* progress = ProgressTimer::create(barSprite);
@@ -441,7 +469,13 @@ void MoneyMine::Build() {
 
 //Build the building
 void WarFactory::Build() {
-	auto animate = BuildingBase::getAnimateByName("tankBase", 0.1f, 23);
+	Animate* animate;
+	if (this->getCampID() == REDCAMP) {
+		animate = BuildingBase::getAnimateByName("tankBase", 0.1f, 23);
+	}
+	else {
+		animate = BuildingBase::getAnimateByName("tankBaseBlue", 0.1f, 23);
+	}
 	auto barSprite = Sprite::create("bar/loadingbar.png");
 	this->setProgressed(false);
 	ProgressTimer* progress = ProgressTimer::create(barSprite);
@@ -498,7 +532,13 @@ void WarFactory::Build() {
 
 //Build the building
 void PowerPlant::Build() {
-	auto animate = PowerPlant::getAnimateByName("powerPlant", 0.1f, 23);
+	Animate* animate;
+	if (this->getCampID() == REDCAMP) {
+		animate = PowerPlant::getAnimateByName("powerPlant", 0.1f, 23);
+	}
+	else {
+		animate = PowerPlant::getAnimateByName("powerPlantBlue", 0.1f, 23);
+	}
 	auto barSprite = Sprite::create("bar/loadingbar.png");
 	this->setProgressed(false);
 	ProgressTimer* progress = ProgressTimer::create(barSprite);

@@ -20,13 +20,18 @@ bool Base::init(int campID) {
 	setCampID(campID);
 	_lifeValue = 5000;
 	auto cache = Director::getInstance()->getTextureCache();
-	_base = Unit::create("unit/base_28.png");
+	if (campID == REDCAMP) {
+		_base = Unit::create("unit/base_28.png");
+	}
+	else {
+		_base = Unit::create("unit/base_27.png");
+	}
 	// create a loading bar
 	if (this->getCampID() == REDCAMP) {
 		_base->setColor(Color3B(221, 160, 221));
 	}
 	else {
-		_base->setColor(Color3B(65, 105, 225));
+		_base->setColor(Color3B(135, 206, 235));
 	}
 	auto loadingBar = LoadingBar::create("bar/planeHP.png");
 	loadingBar->setScaleX(0.4f);

@@ -195,7 +195,12 @@ void Tank::Create(Unit* warFactory) {
 	// set direction
 	loadingBar->setDirection(LoadingBar::Direction::LEFT);
 	// set position
-	loadingBar->setPosition(Vec2(90, 150));
+	if (this->getCampID() == REDCAMP) {
+		loadingBar->setPosition(Vec2(90, 150));
+	}
+	else {
+		loadingBar->setPosition(Vec2(40, 70));
+	}
 	// set Hp bar for soldier
 	this->setHP(loadingBar);
 	// set the HP bar as a child
