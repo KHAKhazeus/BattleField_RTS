@@ -471,9 +471,9 @@ void GameScene::winOrLose(bool win) {
 
 		case Widget::TouchEventType::ENDED: {
 			quit_button->setScale(1.0);
-			if (isClient()) {
+			/*if (isClient()) {
 				_socket_client->close();
-			}
+			}*/
 			auto menuScene = MenuScene::createScene();
 			auto sceneAnimate = TransitionCrossFade::create(0.1f, menuScene);
 			Director::getInstance()->replaceScene(sceneAnimate);

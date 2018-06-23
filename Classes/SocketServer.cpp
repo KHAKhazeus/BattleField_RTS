@@ -31,9 +31,6 @@ tcp::socket& TcpConnection::socket()
 
 void TcpConnection::start()
 {
-	//	
-	//	_timer_.async_wait(std::bind(&TcpConnection::check_timer, this));
-	//	steady_timer_.expires_from_now(std::chrono::seconds(60));
 	boost::asio::async_read(_socket,
 		boost::asio::buffer(_readMsg.data(), SocketMessage::header_length),
 		std::bind(&TcpConnection::handle_read_header, this,
@@ -42,15 +39,17 @@ void TcpConnection::start()
 
 void TcpConnection::writeData(std::string s)
 {
-	if (_errorFlag) return;
+	if (_errorFlag) {
+		return;
+	}
 	SocketMessage msg;
-	if (s.size() == 0)
-	{
+	if (s.size() == 0){
 		s = std::string("\0");
 		msg.body_length(1);
 	}
-	else
+	else {
 		msg.body_length(s.size());
+	}
 	memcpy(msg.body(), &s[0u], msg.body_length());
 	msg.encode_header();
 	boost::asio::write(_socket,
@@ -59,22 +58,23 @@ void TcpConnection::writeData(std::string s)
 
 std::string TcpConnection::readData()
 {
-	if (_errorFlag)
+	if (_errorFlag) {
 		return "";
+	}
 	std::unique_lock<std::mutex> lk{ _mut };
-	while (_read_Msg_Deque_.empty())
+	while (_read_Msg_Deque_.empty()) {
 		_cond.wait(lk);
+	}
 	auto read_msg = _read_Msg_Deque_.front();
 	_read_Msg_Deque_.pop_front();
 	lk.unlock();
-	auto ret = std::string(read_msg.body(), read_msg.body_length());
-	return ret;
+	auto str = std::string(read_msg.body(), read_msg.body_length());
+	return str;
 }
 
-void TcpConnection::do_close()
+void TcpConnection::doClose()
 {
 	try {
-		//		steady_timer_.cancel();
 		std::unique_lock<std::mutex> lk{ _mut };
 		_errorFlag = true;
 		SocketMessage empty_msg;
@@ -82,21 +82,12 @@ void TcpConnection::do_close()
 		_read_Msg_Deque_.push_back(empty_msg);
 		_read_Msg_Deque_.push_back(empty_msg);
 		error_code ec;
+		_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
 		_socket.close();
-		//_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
 		_cond.notify_one();
 		lk.unlock();
-		
-		
 		cocos2d::log("111");
-	//	return;
-		/*try*/ 
 		cocos2d::log("Socket closed\n");
-		
-		/*catch (boost::system::error_code &ec) {
-			cocos2d::log("Socket closed!");
-			std::cerr << "Socket closed!";
-		}*/
 	}
 	catch (boost::system::system_error) {
 		cocos2d::log("Socket closed!");
@@ -113,7 +104,6 @@ void TcpConnection::handle_read_header(const error_code& error)
 {
 	if (!error && _readMsg.decode_header())
 	{
-		//		steady_timer_.expires_from_now(std::chrono::seconds(10));
 		std::cout << "here\n";
 		boost::asio::async_read(_socket,
 			boost::asio::buffer(_readMsg.body(), _readMsg.body_length()),
@@ -125,18 +115,18 @@ void TcpConnection::handle_read_header(const error_code& error)
 		return;
 	}
 	else {
-		do_close();
+		doClose();
 	}
 }
 
 void TcpConnection::handle_read_body(const error_code& error)
 {
+	
 	if (_errorFlag) {
-		true;
+		return;
 	}
 	else if (!error)
 	{
-		//		steady_timer_.expires_from_now(std::chrono::seconds(10));
 		std::lock_guard<std::mutex> lk{ _mut };
 		_read_Msg_Deque_.push_back(_readMsg);
 		_cond.notify_one();
@@ -146,13 +136,12 @@ void TcpConnection::handle_read_body(const error_code& error)
 				std::placeholders::_1));
 	}
 	else {
-		do_close();
+		doClose();
 	}
 }
 
 TcpConnection::TcpConnection(boost::asio::io_service& io_service, SocketServer* parent) :
 	_socket(io_service), _parent(parent)
-	//,steady_timer_(io_service)
 {
 	std::cout << "new tcp" << std::endl;
 }
@@ -199,13 +188,17 @@ SocketServer* SocketServer::create(int port)
 
 void SocketServer::close()
 {
+	if (_close) {
+		return;
+	}
 	try {
 		_connection_Vector.clear();
-		_io_service->stop();
 		_acceptor.close();
-		_thread.reset(static_cast<std::thread *>(nullptr));
+		_io_service->stop();
 		stop = true;
+		_thread.reset(static_cast<std::thread *>(nullptr));
         _io_service.reset(new boost::asio::io_service);
+		_close = true;
 	}
 	catch (std::exception&e)
 	{
@@ -217,8 +210,6 @@ void SocketServer::clickStart()
 {
 	_acceptor.close();
 	using namespace std; // For sprintf and memcpy.
-	char total[4 + 1] = "";
-	sprintf(total, "%4d", static_cast<int>(_connection_Vector.size()));
 
 	std::vector<std::string> campGroup = { "R","B" };
 	char map;
@@ -228,7 +219,6 @@ void SocketServer::clickStart()
 	else if (getMapselect() == SNOWMAP) {
 		map = 'S';
 	}
-
 
 	for (auto i = 0; i < _connection_Vector.size(); i++)
 	{
@@ -273,8 +263,7 @@ void SocketServer::loop()
             //            throw std::exception{"lost connection"};
             std::unique_lock<std::mutex> lock(_mutex);
             std::vector<std::string> ret;
-            for (auto r : _connection_Vector)
-            {
+            for (auto r : _connection_Vector){
 				if (r->error()) {
 					break;
 				}
@@ -283,8 +272,9 @@ void SocketServer::loop()
             }
             auto game_msg = GameMessageOperation::combineMessage(ret);
             
-            for (auto r : _connection_Vector)
-                r->writeData(game_msg);
+			for (auto r : _connection_Vector) {
+				r->writeData(game_msg);
+			}
         }
         catch(std::exception &e){
             times++;
@@ -304,10 +294,12 @@ void SocketServer::removeConnection(TcpConnection::pointer p)
 	std::unique_lock<std::mutex> lock(_mutex);
 	auto position = std::find(_connection_Vector.begin(), _connection_Vector.end(), p);
 
-	if (position == _connection_Vector.end())
+	if (position == _connection_Vector.end()) {
 		std::cout << "delete not succ\n";
-	else
+	}
+	else {
 		_connection_Vector.erase(position);
+	}
 	std::cout << "delete succ\n";
 }
 

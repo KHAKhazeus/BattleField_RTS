@@ -4,7 +4,6 @@
 //
 //  Created by Khazeus on 2018/6/10.
 //
-
 #ifndef __SOCKET_SERVER_H__
 #define __SOCKET_SERVER_H__
 #include <memory>
@@ -39,7 +38,7 @@ public:
 	std::string readData();
 	bool error()const { return _errorFlag; }
 
-	void do_close();
+	void doClose();
 private:
 
 	void handle_read_header(const error_code& error);
@@ -58,7 +57,6 @@ private:
 	std::deque<SocketMessage> _read_Msg_Deque_;
 	std::condition_variable _cond;
 	std::mutex _mut;
-	//	asio::steady_timer steady_timer_;
 
 };
 
@@ -101,7 +99,7 @@ public:
 	* \return total connction number
 	*/
 	int connection_num() const;
-    
+	bool _close{ false };
     bool stop{false};
 private:
 	SocketServer(int port);

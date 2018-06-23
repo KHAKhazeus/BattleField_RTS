@@ -87,7 +87,7 @@ void NetworkLayer::resetClientAndServer(){
     if(_socket_server && server){
         _socket_server->close();
     }
-    //_socket_client.reset(static_cast<SocketClient*>(nullptr),[](SocketClient*){});
+	//_socket_client.reset(static_cast<SocketClient*>(nullptr),[](SocketClient*){});
    // _socket_server.reset(static_cast<SocketServer*>(nullptr),[](SocketServer*){});
     client = false;
     server = false;
