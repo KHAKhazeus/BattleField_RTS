@@ -269,29 +269,10 @@ void FighterUnitBase::autoAttack(float dt) {
 			tempManager->addMessages(tempManager->msgs->newAttackMessage(this->getUnitID(), enemy->getUnitID(), this->getAttack()));
 		}
 		else {
-			if (this->getTempPos().x != -1) {
-				if (this->judgeAttack(this->getTempPos(), pos)) {
-					if (!TiledMap::checkPass(this->getTempPos())) {
-						return;
-					}
-					tempManager->addMessages(tempManager->msgs->newAttackMessage(this->getUnitID(), enemy->getUnitID(), this->getAttack()));
-					return;
-				}
-			}
-			if (this->getTargetPos().x != -1) {
-				if (judgeTarPos()) {
-					return;
-				}
-				//if dog is appointed to attack buildings nothing happen
 				if (this->getType() == "d" && enemy->isBuilding()) {
 					return;
 				}
-				std::vector<Vec2> path = { pos };
-				//send tracing message
-				tempManager->addMessages(tempManager->msgs->newMoveMessage(this->getUnitID(), path, pos));
-			}
-			else {
-				if (this->getType() == "d" && enemy->isBuilding()) {
+				if (this->isMove()) {
 					return;
 				}
 				std::vector<Vec2> path = { pos };
@@ -299,7 +280,7 @@ void FighterUnitBase::autoAttack(float dt) {
 				tempManager->addMessages(tempManager->msgs->newMoveMessage(this->getUnitID(), path, pos));
 			}
 		}
-	}
+
 	else if (isAutoAttack()) {
 		auto pos = searchEnemy();
 		if (pos.x != -1) {
@@ -307,14 +288,6 @@ void FighterUnitBase::autoAttack(float dt) {
 			auto tempNode = this->getParent()->getParent()->getParent();
 			auto tempScene = static_cast<GameScene*>(tempNode);
 			auto tempManager = tempScene->getUnitManager();
-		/*	if (!TiledM
-		
-		
-		
-		
-		ap::checkUnitId(this->getTargetID())) {
-				return;
-			}*/
 			auto id = TiledMap::getUnitIdByPosition(pos);
 			auto enemy = TiledMap::getUnitById(id);
 			//send attack message

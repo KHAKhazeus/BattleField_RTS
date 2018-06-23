@@ -3,6 +3,7 @@
 
 #define FIX_SQUARE 0
 #define FIX_HEIGHT 1
+#define CONNECT 90096
 #define REDCAMP 99
 #define BLUECAMP 66
 #define MONEYMINE_GOLD 2000
@@ -12,18 +13,18 @@
 #define MONEYMINE_ELECT 40
 #define WARFACTORY_ELECT 50
 #define SOLDIERBASE_ELECT 10
-#define DOG_SPEED 0.2
-#define TANK_SPEED 0.5
-#define SOIDIER_SPEED 0.4
-#define CONSTRUCTION "construction.mp3"
-#define DOG "dogFinished.mp3"
-#define SOLDIER "soldierFinished.mp3"
-#define TANK "tankFinished.mp3"
-#define BUILD "Building.mp3"
-#define FIGHT "gun.mp3"
-#define LOST "unitLost.mp3"
-#define TANKBULLET "tankbullet.mp3"
-#define EXPLODE "explode.mp3"
+#define DOG_SPEED 0.1
+#define TANK_SPEED 0.2
+#define SOIDIER_SPEED 0.2
+#define CONSTRUCTION "construction.wav"
+#define DOG "dogFinished.wav"
+#define SOLDIER "soldierFinished.wav"
+#define TANK "tankFinished.wav"
+#define BUILD "Building.wav"
+#define FIGHT "gun.wav"
+#define LOST "unitLost.wav"
+#define TANKBULLET "tankbullet.wav"
+#define EXPLODE "explode.wav"
 #define LOSTTEMP 13
 #define SNOWMAP  9
 

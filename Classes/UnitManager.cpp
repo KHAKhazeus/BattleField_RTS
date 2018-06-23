@@ -33,7 +33,7 @@ void UnitManager::initBase() {
 	auto tiledPos = _tiled_Map->tileCoordForPosition(myPos); //change the OpenGL coordinate to TiledMap
 	_base_me->setTiledPosition(tiledPos);
 	_base_me->setType("B");
-	
+	_base_me->setProgressed(true);
 	//TODO set the camera to the Base
 	_tiled_Map->getTiledMap()->addChild(_base_me, 100);
 	if (_myCamp == BLUECAMP) {
@@ -55,6 +55,7 @@ void UnitManager::initBase() {
 	auto tiledPos1 = _tiled_Map->tileCoordForPosition(enPos); //change the OpenGL coordinate to TiledMap
 	_base_en->setTiledPosition(tiledPos1);
 	_base_en->setType("B");
+	_base_en->setProgressed(true);
 
 	if (_base_me->getCampID() == REDCAMP) {
 		_base_me->setUnitID(_base_me->getIdCount());
@@ -78,13 +79,6 @@ void UnitManager::initBase() {
 	TiledMap::newMapId(_base_en->getUnitID(), _base_en);
 	//TODO set the camera to the Base
 	_tiled_Map->getTiledMap()->addChild(_base_en, 100);
-
-
-
-
-
-
-
 }
 
 Vec2 UnitManager::getBasePosition(std::string layername, int campId) {
@@ -291,7 +285,9 @@ void UnitManager::playerMoveWithWayPoints(int move_unit_id, std::vector<cocos2d:
 		log("%s", "Done!");
 		if (player->isMove()) {
 			player->setMove(false);
-			player->setAutoAttack(true);
+			if (!player->isAttack()) {
+				player->setAutoAttack(true);
+			}
 		}
 	});
 	Sequence *sequence;
@@ -299,7 +295,7 @@ void UnitManager::playerMoveWithWayPoints(int move_unit_id, std::vector<cocos2d:
 		Vec2 openGL_point = _tiled_Map->locationForTilePos(path_points[i]);
 		MoveTo* moveTo = MoveTo::create(speed, openGL_point);
 		auto callfunc = CallFunc::create([=] {
-			player->setTempPos(path_points[i]);
+			player->setTempPos(Vec2(-1,-1));
 //			log("player->set  %f,%f", player->getTempPos().x, player->getTempPos().y);
 		});
 		auto action = Spawn::create(moveTo, callfunc, NULL);
@@ -344,13 +340,15 @@ void UnitManager::attack(int attacker_id, int under_attack_id, int damage) {
 				}
 			}
 		}
-		if (enemy->getCampID() == this->_myCamp) {
-			checkWinOrLose(false);
-			return;
-		}
-		else {
-			checkWinOrLose(true);
-			return;
+		if (enemy->getType().at(0) == 'B') {
+			if (enemy->getCampID() == this->_myCamp) {
+				checkWinOrLose(false);
+				return;
+			}
+			else {
+				checkWinOrLose(true);
+				return;
+			}
 		}
 		if (enemy->isBuilding()) {
 			auto callFunc = CallFunc::create([=] {
@@ -370,6 +368,15 @@ void UnitManager::attack(int attacker_id, int under_attack_id, int damage) {
 				destroyEffect(enemy, false);
 				if (!TiledMap::checkUnitId(under_attack_id)) {
 					return;
+				}
+				if (!TiledMap::getSelectedVector()->empty()) {
+					auto selectedVector = TiledMap::getSelectedVector();
+					for (auto i = selectedVector->begin(); i != selectedVector->end(); i++) {
+						if (enemy->getUnitID() == (*i)->getUnitID()) {
+							selectedVector->erase(i);
+							break;
+						}
+					}
 				}
 				TiledMap::removeMapGrid(enemy->getTiledPosition());
 				TiledMap::removeMapId(enemy->getUnitID());
@@ -423,7 +430,7 @@ void UnitManager::attackEffect(int attacker_id, int under_attack_id) {
 	Animate* dogAttack;
 	switch (type) {
 	case 's':
-	//	SimpleAudioEngine::getInstance()->playEffect(FIGHT, false);
+		SimpleAudioEngine::getInstance()->playEffect(FIGHT, false);
 		player->setTexture("unit/FighterUnit_2.png");
 		bullet = Sprite::createWithTexture
 		(Director::getInstance()->getTextureCache()->addImage("soldierAttack/bullet.png"));
@@ -434,13 +441,13 @@ void UnitManager::attackEffect(int attacker_id, int under_attack_id) {
 		break;
 
 	case 'd':
-	//	SimpleAudioEngine::getInstance()->playEffect(DOG, false);
+		SimpleAudioEngine::getInstance()->playEffect(DOG, false);
 	//	player->setTexture("unit/FighterUnit_1.png");
 		dogAttack = player->getAnimateByName("dogAttack", 0.1, 6);
 		isDog = true;
 		break;
 	case 't':
-	//	SimpleAudioEngine::getInstance()->playEffect(TANKBULLET, false);
+		SimpleAudioEngine::getInstance()->playEffect(TANKBULLET, false);
 		bullet = Sprite::createWithTexture
 		(Director::getInstance()->getTextureCache()->addImage("tank/tankBullet.png"));
 		bullet->setPosition((_tiled_Map->changeOPGL(player->getPosition())));
@@ -785,8 +792,19 @@ void UnitManager::updateMessage(float delta) {
 		}
 		//if need to create new fighter unit
 		if (orders[i].cmd_code() == GameMessage::CmdCode::GameMessage_CmdCode_CRTBU) {
-			UnitManager::Building(orders[i].unit_0(), orders[i].create_type(), orders[i].base(), orders[i].building(),
-				path_points[0]);
+			if (orders[i].unit_0() == CONNECT) {
+				auto tempScene = static_cast<GameScene*>(this->getParent());
+				if (orders[i].base() == _myCamp) {
+					tempScene->getMyShow()->setString(orders[i].create_type());
+				}
+				else {
+					tempScene->getEnShow()->setString(orders[i].create_type());
+				}
+			}
+			else {
+				UnitManager::Building(orders[i].unit_0(), orders[i].create_type(), orders[i].base(), orders[i].building(),
+					path_points[0]);
+			}
 		}
 		//if attacking happens
 		else if (orders[i].cmd_code() == GameMessage::CmdCode::GameMessage_CmdCode_ATK) {

@@ -81,15 +81,18 @@ void TcpConnection::do_close()
 		memcpy(empty_msg.data(), "0001\0", 5);
 		_read_Msg_Deque_.push_back(empty_msg);
 		_read_Msg_Deque_.push_back(empty_msg);
+		error_code ec;
+		_socket.close();
+		//_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
 		_cond.notify_one();
 		lk.unlock();
-		error_code ec;
-		_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
+		
+		
 		cocos2d::log("111");
-		return;
+	//	return;
 		/*try*/ 
 		cocos2d::log("Socket closed\n");
-		_socket.close();
+		
 		/*catch (boost::system::error_code &ec) {
 			cocos2d::log("Socket closed!");
 			std::cerr << "Socket closed!";
@@ -173,7 +176,7 @@ TcpConnection::TcpConnection(boost::asio::io_service& io_service, SocketServer* 
 void TcpConnection::deleteFrom()
 {
 	if (_parent)
-		shared_from_this()->_parent->removeConnection(shared_from_this());
+//		shared_from_this()->_parent->removeConnection(shared_from_this());
 	_parent = nullptr;
 }
 
@@ -200,7 +203,7 @@ void SocketServer::close()
 		_connection_Vector.clear();
 		_io_service->stop();
 		_acceptor.close();
-		//		_thread = nullptr;
+		_thread.reset(static_cast<std::thread *>(nullptr));
 		stop = true;
         _io_service.reset(new boost::asio::io_service);
 	}
@@ -272,9 +275,10 @@ void SocketServer::loop()
             std::vector<std::string> ret;
             for (auto r : _connection_Vector)
             {
-                if (r->error())
-                    //                break;
-                    _error |= r->error();
+				if (r->error()) {
+					break;
+				}
+                 //   _error |= r->error();
                 ret.push_back(r->readData());
             }
             auto game_msg = GameMessageOperation::combineMessage(ret);

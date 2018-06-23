@@ -81,14 +81,14 @@ void NetworkLayer::initializeClientSide(){
 }
 
 void NetworkLayer::resetClientAndServer(){
-    if(_socket_client && client){
+    if(_socket_client){
         _socket_client->doClose();
     }
     if(_socket_server && server){
         _socket_server->close();
     }
-    _socket_client.reset(static_cast<SocketClient*>(nullptr),[](SocketClient*){});
-    _socket_server.reset(static_cast<SocketServer*>(nullptr),[](SocketServer*){});
+    //_socket_client.reset(static_cast<SocketClient*>(nullptr),[](SocketClient*){});
+   // _socket_server.reset(static_cast<SocketServer*>(nullptr),[](SocketServer*){});
     client = false;
     server = false;
     log("%s", "Client and Server Reset");
@@ -193,7 +193,7 @@ bool NetworkLayer::init(){
     
     auto box_size = ipbox->getCustomSize();
     
-    //!!!need to be packed
+    //!!!need to be s
     LayerGradient *text_ip_background = LayerGradient::create(Color4B(139,0,0,0),Color4B(139,35,35,200));
     if(!text_ip_background){
         problemLoading("LayerGradient");

@@ -6,7 +6,9 @@
 #include "BuildingBase.h"
 #include "FighterUnitBase.h"
 #include "MouseRect.h"
+#include "ui/CocosGUI.h"
 USING_NS_CC;
+using namespace ui;
 
 //Main Class of Game Scene
 class GameScene :public cocos2d::Scene {
@@ -29,6 +31,12 @@ private:
 	UnitManager * _unit_Manager;
 	//The Map class contains _collidabel_Vector and gridAndId_Map (Static)
 	TiledMap *_tiled_Map;
+
+	TextField* _inputBox;
+
+	Text* _myShow;
+	Text* _enShow;
+	LayerGradient* _textBackground;
 
 	//vector for unit
 	Vector<MoneyMine*> _moneyMine;
@@ -75,6 +83,14 @@ public:
 	//Scroll map
 	void mapScroll();
 
+
+	//check if there is a valid address
+	bool isServer();
+	bool isClient();
+
+	Text* getMyShow() { return _myShow; }
+	Text* getEnShow() { return _enShow; }
+ 
 
 	//Pass data from listener
 	MouseRect* mouse_rect;

@@ -1,4 +1,5 @@
 #include "GameScene.h"
+#include "MenuScene.h"
 
 std::shared_ptr<SocketServer> GameScene::_socket_server;
 std::shared_ptr<SocketClient> GameScene::_socket_client;
@@ -75,6 +76,22 @@ bool GameScene::init() {
 	*/
 	return true;
 }
+
+bool GameScene::isServer() {
+	if (_socket_server) {
+		return true;
+	}
+	return false;
+}
+
+bool GameScene::isClient() {
+	if (_socket_client) {
+		return true;
+	}
+	return false;
+}
+
+
 
 void GameScene::update(float dt) {
 	mapScroll();
@@ -167,6 +184,57 @@ void GameScene::onEnterTransitionDidFinish() {
 	auto keyListener = EventListenerKeyboard::create();
 	keyListener->onKeyPressed = CC_CALLBACK_2(GameScene::onKeyPressed, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(keyListener, this);
+
+
+	_inputBox = TextField::create("input your message", "Arial-Bold.ttf", 24);
+	_inputBox->setPlaceHolderColor(Color4B(255, 255, 255, 200));
+	_inputBox->setMaxLength(20);
+	_inputBox->setTextColor(Color4B::WHITE);
+	_inputBox->setTextHorizontalAlignment(TextHAlignment::LEFT);
+	_inputBox->setPosition(Vec2(_screen_width / 2, _screen_height * 0.1));
+	_inputBox->addEventListener([=](Ref *pSender, TextField::EventType event_type) {
+		switch (event_type) {
+		case TextField::EventType::ATTACH_WITH_IME:
+			break;
+		case TextField::EventType::DETACH_WITH_IME:
+			break;
+		case TextField::EventType::INSERT_TEXT: {
+			auto string = _inputBox->getString();
+			auto length = (_inputBox->getString()).length();
+			if (length > _inputBox->getMaxLength()) {
+				_inputBox->setString(string.substr(0, _inputBox->getMaxLength()));
+			}
+			break;
+		}
+		case TextField::EventType::DELETE_BACKWARD:
+			break;
+		default:
+			break;
+		}
+	});
+	this->addChild(_inputBox, 200);
+	
+	_textBackground = LayerGradient::create(Color4B(139, 0, 0, 0), Color4B(139, 35, 35, 200));
+	_textBackground->changeWidthAndHeight(_inputBox->getContentSize().width * 1.5,_inputBox->getContentSize().height * 1.2);
+	_textBackground->setAnchorPoint(Vec2(0.5,0));
+	_textBackground->setPosition(Vec2(_inputBox->getPosition().x - _inputBox->getContentSize().width * 3/4,
+		_inputBox->getPosition().y - _inputBox->getContentSize().height/2));
+	this->addChild(_textBackground, 180);
+
+	_myShow = Text::create("     11   ", "Arial - Bold.ttf", 24);
+	_myShow->setTextColor(Color4B::WHITE);
+	_myShow->setTextHorizontalAlignment(TextHAlignment::LEFT);
+	_myShow->setPosition(Vec2(_screen_width * 4 / 5, _screen_height * 0.8));
+	this->addChild(_myShow, 200);
+
+
+	_enShow = Text::create("     11   ", "Arial - Bold.ttf", 24);
+	_enShow->setTextColor(Color4B::WHITE);
+	_enShow->setTextHorizontalAlignment(TextHAlignment::LEFT);
+	_enShow->setPosition(Vec2(_screen_width * 4 / 5, _screen_height * 0.6));
+	this->addChild(_enShow, 200);
+	
+
 }
 
 void GameScene::onExit() {
@@ -181,10 +249,26 @@ void GameScene::onExit() {
 
 void GameScene::onKeyPressed(EventKeyboard::KeyCode keycode, Event* event) {
 	switch (keycode) {
-	case EventKeyboard::KeyCode::KEY_ESCAPE:
-		//TODO call the scene of Setting;
+	case EventKeyboard::KeyCode::KEY_ENTER:
+		if (_inputBox->isVisible()) {
+			_inputBox->setVisible(false);
+			_inputBox->setTouchEnabled(false);
+			_textBackground->setVisible(false);
+			auto str = _inputBox->getString();
+			_unit_Manager->addMessages(_unit_Manager->msgs->newCreateBuildingMessage(
+				CONNECT, str, _unit_Manager->_myCamp, 0, Vec2(0, 0)
+			));
+		}
+		else {
+			_textBackground->setVisible(true);
+			_inputBox->setVisible(true);
+			_inputBox->setTouchEnabled(true);
+		}
 		break;
 	case EventKeyboard::KeyCode::KEY_H:
+		if (_inputBox->isVisible()) {
+			break;
+		}
 		auto _tiled_map = _tiled_Map->getTiledMap();
 		auto map_size = _tiled_map->getContentSize();
 		Vec2 base_point = _unit_Manager->getBasePosition("ObjectLayer", _unit_Manager->_myCamp);
@@ -225,8 +309,8 @@ void GameScene::mapScroll() {
 	auto _tiled_map = _tiled_Map->getTiledMap();
 	float posX = _tiled_map->getPositionX();
 	float posY = _tiled_map->getPositionY();
-	float speed_low = 6.0;
-	float speed_high = 12.0;
+	float speed_low = 12.0;
+	float speed_high = 24.0;
 //	log("%f_%f", _cursorX - (_tiled_map->getPosition()).x, _cursorY - (_tiled_map->getPosition()).y);
 	if (_cursorX <= _screen_width * 0.05) {
 		if (_cursorY <= _screen_height * 0.05) {
@@ -387,7 +471,13 @@ void GameScene::winOrLose(bool win) {
 
 		case Widget::TouchEventType::ENDED: {
 			quit_button->setScale(1.0);
-			GameScene::menuCloseCallback(this);
+			if (isClient()) {
+				_socket_client->close();
+			}
+			auto menuScene = MenuScene::createScene();
+			auto sceneAnimate = TransitionCrossFade::create(0.1f, menuScene);
+			Director::getInstance()->replaceScene(sceneAnimate);
+
 			break;
 		}
 
@@ -411,7 +501,9 @@ void GameScene::menuCloseCallback(Ref* pSender)
 	return;
 #endif
 	// program finished, release scene
-	Director::getInstance()->end();
+	//Director::getInstance()->end();
+
+	
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 	exit(0);
