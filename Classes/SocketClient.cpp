@@ -18,29 +18,29 @@ SocketClient* SocketClient::create(std::string ip, int port)
 	s->_thread = new std::thread(
 		std::bind(static_cast<std::size_t(boost::asio::io_service::*)()>(&boost::asio::io_service::run),
 			&s->_io_service));
-	s->_thread->detach();
 	return s;
 }
 
 
 void SocketClient::doClose()
 {
+	if (_error_Flag) {
+		return;
+	}
 	try {
-		std::lock_guard<std::mutex> lk{ _mut };
+		std::unique_lock<std::mutex> lk{ _mut };
 		_error_Flag = true;
 		SocketMessage empty_msg;
 		memcpy(empty_msg.data(), "0001\0", 5);
 		_read_Msg_Deque.push_back(empty_msg);
 		_data_cond.notify_one();
+		lk.unlock();
 		error_code ec;
 		_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
 		_socket.close();
 		_io_service.stop();
-	//	_thread->join();
-		delete _thread;
-
-
-		
+		_thread->join();
+		delete _thread;		
         std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 	}
 	catch (std::exception&e)
@@ -118,7 +118,7 @@ void SocketClient::handle_connect(const error_code& error)
 
 void SocketClient::handle_read_header(const error_code& error)
 {
-	if (!error && _read_msg.decode_header())
+	if (!error && _read_msg.decode_header() && !_error_Flag )
 	{
 		boost::asio::async_read(_socket,
 			boost::asio::buffer(_read_msg.body(), _read_msg.body_length()),
@@ -133,11 +133,12 @@ void SocketClient::handle_read_header(const error_code& error)
 
 void SocketClient::handle_read_body(const error_code& error)
 {
-	if (!error)
+	if (!error && !_error_Flag)
 	{
-		std::lock_guard<std::mutex> lk{ _mut };
+		std::unique_lock<std::mutex> lk{ _mut };
 		_read_Msg_Deque.push_back(_read_msg);
 		_data_cond.notify_one();
+		lk.unlock();
 		std::cout << "read completed\n";
 
 		boost::asio::async_read(_socket,
@@ -159,11 +160,13 @@ std::vector<GameMessage> SocketClient::getGameMessages()
 
 std::string SocketClient::read_data()
 {
-	if (_error_Flag)
+	if (_error_Flag) {
 		return "";
+	}
 	std::unique_lock<std::mutex> lk{ _mut };
-	while (_read_Msg_Deque.empty())
+	while (_read_Msg_Deque.empty()) {
 		_data_cond.wait(lk);
+	}
 	auto read_msg = _read_Msg_Deque.front();
 	_read_Msg_Deque.pop_front();
 	lk.unlock();

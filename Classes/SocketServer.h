@@ -83,6 +83,8 @@ public:
 	* \param p tcp connection
 	*/
 	void removeConnection(TcpConnection::pointer p);
+
+	void insertConnection(TcpConnection::pointer p);
 	/**
 	* \brief start the game
 	*/
@@ -101,6 +103,7 @@ public:
 	int connection_num() const;
 	bool _close{ false };
     bool stop{false};
+	
 private:
 	SocketServer(int port);
 	void startAccept();
@@ -112,11 +115,11 @@ private:
 
 
 	tcp::acceptor _acceptor;
-	std::vector<TcpConnection::pointer> _connection_Vector;
+	
 	int connection_num_;
 
 	static std::shared_ptr<boost::asio::io_service> _io_service;
-
+	std::vector<TcpConnection::pointer> _connection_Vector;
 	std::shared_ptr<std::thread> _thread, _loopthread{ nullptr };
 	std::mutex _mutex;
 	bool _error{ false };

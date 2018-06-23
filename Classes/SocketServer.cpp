@@ -31,6 +31,8 @@ tcp::socket& TcpConnection::socket()
 
 void TcpConnection::start()
 {
+	_parent->insertConnection(shared_from_this());
+
 	boost::asio::async_read(_socket,
 		boost::asio::buffer(_readMsg.data(), SocketMessage::header_length),
 		std::bind(&TcpConnection::handle_read_header, this,
@@ -146,26 +148,13 @@ TcpConnection::TcpConnection(boost::asio::io_service& io_service, SocketServer* 
 	std::cout << "new tcp" << std::endl;
 }
 
-//void TcpConnection::check_timer()
-//{
-//	if (steady_timer_.expires_at() <= std::chrono::steady_clock::now())
-//	{
-//		// The deadline has passed. The socket is closed so that any outstanding
-//		// asynchronous operations are cancelled.
-//		doClose();
-//		steady_timer_.expires_at(std::chrono::steady_clock::time_point::max());
-//		return;
-//	}
-//
-//	// Put the actor back to sleep.
-//	steady_timer_.async_wait(std::bind(&TcpConnection::check_timer, this));
-//}
 
 
 void TcpConnection::deleteFrom()
 {
-	if (_parent)
-//		shared_from_this()->_parent->removeConnection(shared_from_this());
+	if (_parent) {
+		shared_from_this()->_parent->removeConnection(shared_from_this());
+	}
 	_parent = nullptr;
 }
 
@@ -182,7 +171,6 @@ SocketServer* SocketServer::create(int port)
 	s->_thread.reset(new std::thread(
 		std::bind(static_cast<std::size_t(boost::asio::io_service::*)()>(&boost::asio::io_service::run),
 			_io_service)));
-	s->_thread->detach();
 	return s;
 }
 
@@ -192,11 +180,14 @@ void SocketServer::close()
 		return;
 	}
 	try {
-		_connection_Vector.clear();
+	//	_connection_Vector.clear();
 		_acceptor.close();
 		_io_service->stop();
 		stop = true;
+		_thread->join();
+		_loopthread->join();
 		_thread.reset(static_cast<std::thread *>(nullptr));
+		_loopthread.reset(static_cast<std::thread *>(nullptr));
         _io_service.reset(new boost::asio::io_service);
 		_close = true;
 	}
@@ -227,7 +218,6 @@ void SocketServer::clickStart()
 	connection_num_ = _connection_Vector.size();
 	cocos2d::log("ConnectionSize %d\n", connection_num_);
 	this->_loopthread.reset(new std::thread(std::bind(&SocketServer::loop, this)));
-	_loopthread->detach();
 }
 
 bool SocketServer::isError() const
@@ -248,7 +238,7 @@ SocketServer::SocketServer(int port) :
 
 void SocketServer::loop()
 {
-	while (true)
+	while (!stop && !_error)
 	{
         static int times = 0;
         try{
@@ -288,6 +278,11 @@ std::vector<TcpConnection::pointer> SocketServer::getConnection() const
 	return _connection_Vector;
 }
 
+
+void SocketServer::insertConnection(TcpConnection::pointer p) {
+	_connection_Vector.push_back(p);
+}
+
 void SocketServer::removeConnection(TcpConnection::pointer p)
 {
 	//		_connection_Vector.erase(std::remove(_connection_Vector.begin(), _connection_Vector.end(), p), _connection_Vector.end());
@@ -321,13 +316,12 @@ void SocketServer::handleAccept(TcpConnection::pointer new_connection, const err
 	if (!error)
 	{
 		cocos2d::log("connection + 1");
-		_connection_Vector.push_back(new_connection);
+		//_connection_Vector.push_back(new_connection);
 		std::cout << new_connection->socket().remote_endpoint().address()
 			<< ":" << new_connection->socket().remote_endpoint().port() << std::endl;
 		new_connection->start();
 	}
 	startAccept();
-	//			std::cout << "handle accept\n";
 }
 
 

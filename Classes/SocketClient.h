@@ -34,7 +34,7 @@ public:
 	*/
 	static SocketClient* create(std::string ip = "127.0.0.1", int port = 8080);
 
-	//	~SocketClient() {  _io_service.stop();doClose(); }
+	~SocketClient() { doClose(); }
 
 	/**
 	* \brief close the socket
@@ -51,10 +51,8 @@ public:
 	{
 		startConnect();
 	};
-	[[deprecated("just for test")]]
 	std::vector<GameMessage> getGameMessages();
 
-	[[deprecated("just for test")]]
 	void sendGameMessages(const std::vector<GameMessage>& vec_game_msg);
 
 
