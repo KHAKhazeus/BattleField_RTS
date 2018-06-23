@@ -23,7 +23,7 @@ private:
     bool server{false};
    
 public:
-	std::shared_ptr<SocketServer> _socket_server{ static_cast<SocketServer*>(nullptr),[](SocketServer*) {} };
+    SocketServer* _socket_server{nullptr};
 	std::shared_ptr<SocketClient> _socket_client{ static_cast<SocketClient*>(nullptr),[](SocketClient*) {} };
 
     virtual bool init() override;

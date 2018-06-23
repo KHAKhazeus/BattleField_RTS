@@ -16,9 +16,9 @@ USING_NS_CC;
 class UnitManager :public cocos2d::Node {
 public:
 	GameMessageInterface * msgs ;
-	virtual bool init(TiledMap *, std::shared_ptr<SocketServer> spserver,
+	virtual bool init(TiledMap *, SocketServer* spserver,
 		std::shared_ptr<SocketClient> spclient);
-	static UnitManager * create(TiledMap* tiledMap, std::shared_ptr<SocketServer> spserver,
+	static UnitManager * create(TiledMap* tiledMap, SocketServer* spserver,
 		std::shared_ptr<SocketClient> spclient) {
 		auto unitManager = new UnitManager();
 		if (unitManager && unitManager->init(tiledMap,spserver,spclient)) {
@@ -72,7 +72,7 @@ public:
 	void addMessages(GameMessage msg) { _gameMessages.push_back(msg); }
 
 	std::shared_ptr<SocketClient>getSocketClient() { return _socket_client; }
-	std::shared_ptr<SocketServer>getSocketServer() { return _socket_server; }
+	SocketServer* getSocketServer() { return _socket_server; }
 	void writeOrders(std::vector<GameMessage> messages) {
 		_orders = messages;
 	}
@@ -98,7 +98,7 @@ private:
 	Vector<Unit*> _unit_Vector;
 
 	std::shared_ptr<SocketClient> _socket_client{ static_cast<SocketClient*>(nullptr),[](SocketClient*) {} };
-	std::shared_ptr<SocketServer> _socket_server{ static_cast<SocketServer*>(nullptr),[](SocketServer*) {} };
+	SocketServer* _socket_server{nullptr};
 	std::vector<GameMessage> _gameMessages;
 	std::vector<GameMessage>_orders;
 

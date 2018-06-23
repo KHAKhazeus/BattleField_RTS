@@ -37,7 +37,7 @@ void NetworkLayer::initializeServerSide(){
             if(!_socket_server){
                 auto new_socket_server = SocketServer::create(port_number);
                 if(new_socket_server){
-                    _socket_server.reset(new_socket_server);
+                    _socket_server=new_socket_server;
                 }
             }
             if(!_socket_client){
@@ -88,7 +88,7 @@ void NetworkLayer::resetClientAndServer(){
         _socket_server->close();
     }
     _socket_client.reset(static_cast<SocketClient*>(nullptr),[](SocketClient*){});
-    _socket_server.reset(static_cast<SocketServer*>(nullptr),[](SocketServer*){});
+    _socket_server=nullptr;
     client = false;
     server = false;
     log("%s", "Client and Server Reset");
@@ -428,6 +428,7 @@ bool NetworkLayer::init(){
 						_socket_server->startService();
 					}*/
                     if(_socket_server && _socket_client){
+                        _socket_server->stopAccept();
                         _socket_server->clickStart();
 						auto gameScene = GameScene::createScene(_socket_server, _socket_client);
 						auto sceneAniamte = TransitionCrossFade::create(0.5f, gameScene);

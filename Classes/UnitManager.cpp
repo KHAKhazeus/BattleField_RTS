@@ -4,7 +4,7 @@
 #include "GameScene.h"
 using namespace CocosDenshion;
 
-bool UnitManager::init(TiledMap * tiledMap, std::shared_ptr<SocketServer> spserver,
+bool UnitManager::init(TiledMap * tiledMap, SocketServer* spserver,
 	std::shared_ptr<SocketClient> spclient) {
 	_building = 1;
 	_soider = 0;
@@ -584,7 +584,7 @@ void UnitManager::Building(int new_building_id, std::string new_building_type, i
 		}
 	}
 	else if (new_building_type == "S") {
-		SoldierBase* soldierBase = SoldierBase::create("soldierBase/soldierBase_23.png");
+		SoldierBase* soldierBase = SoldierBase::create("soldierBase/soldierbase_23.png");
 		soldierBase->setUnitID(new_building_id);
 		soldierBase->setCampID(base_id);
 		if (soldierBase->getCampID() == REDCAMP) {

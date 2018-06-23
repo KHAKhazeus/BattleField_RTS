@@ -12,13 +12,17 @@
 #include <algorithm>
 #define MAX_LENGTH 8000
 
+SocketClient::~SocketClient(){
+    this->doClose();
+}
+
 SocketClient* SocketClient::create(std::string ip, int port)
 {
 	auto s = new SocketClient(ip, port);
 	s->_thread = new std::thread(
 		std::bind(static_cast<std::size_t(boost::asio::io_service::*)()>(&boost::asio::io_service::run),
 			&s->_io_service));
-	s->_thread->detach();
+	//s->_thread->detach();
 	return s;
 }
 
@@ -27,7 +31,9 @@ void SocketClient::doClose()
 {
 	try {
 		std::lock_guard<std::mutex> lk{ _mut };
+        _io_service.stop();
 		_error_Flag = true;
+        std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 		SocketMessage empty_msg;
 		memcpy(empty_msg.data(), "0001\0", 5);
 		_read_Msg_Deque.push_back(empty_msg);
@@ -35,13 +41,11 @@ void SocketClient::doClose()
 		error_code ec;
 		_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
 		_socket.close();
-		_io_service.stop();
-	//	_thread->join();
+        //	_thread->join();
+        if(_thread){
+            _thread->join();
+        }
 		delete _thread;
-
-
-		
-        std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 	}
 	catch (std::exception&e)
 	{

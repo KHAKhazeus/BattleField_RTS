@@ -32,6 +32,8 @@ public:
 	* \param port port number, default to 8080
 	* \return a socket client
 	*/
+    ~SocketClient();
+    void stopAccept();
 	static SocketClient* create(std::string ip = "127.0.0.1", int port = 8080);
 
 	//	~SocketClient() {  _io_service.stop();doClose(); }

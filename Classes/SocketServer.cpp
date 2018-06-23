@@ -15,13 +15,14 @@ std::shared_ptr<boost::asio::io_service> SocketServer::_io_service;
 
 //TcpConnection::~TcpConnection()
 //{
-//	std::cout << "delete";
-//	deleteFrom();
+//    std::cout << "delete";
+//    deleteFrom();
 //}
 
-TcpConnection::pointer TcpConnection::create(boost::asio::io_service& io_service, SocketServer* parent)
+TcpConnection* TcpConnection::create(boost::asio::io_service& io_service, SocketServer* parent)
 {
-	return pointer(new TcpConnection(io_service, parent));
+    auto connection = new TcpConnection(io_service, parent);
+	return connection;
 }
 
 tcp::socket& TcpConnection::socket()
@@ -129,7 +130,7 @@ void TcpConnection::handle_read_header(const error_code& error)
 void TcpConnection::handle_read_body(const error_code& error)
 {
 	if (_errorFlag) {
-		true;
+		return true;
 	}
 	else if (!error)
 	{
@@ -173,12 +174,8 @@ TcpConnection::TcpConnection(boost::asio::io_service& io_service, SocketServer* 
 void TcpConnection::deleteFrom()
 {
 	if (_parent)
-		shared_from_this()->_parent->removeConnection(shared_from_this());
+        _parent->removeConnection(this);
 	_parent = nullptr;
-}
-
-SocketServer::~SocketServer(){
-    this->close();
 }
 
 SocketServer* SocketServer::create(int port)
@@ -187,11 +184,20 @@ SocketServer* SocketServer::create(int port)
 	_io_service.reset(new boost::asio::io_service);
 	auto s = new SocketServer(port);
 
-	s->_thread.reset(new std::thread(
+	s->_thread = new std::thread(
 		std::bind(static_cast<std::size_t(boost::asio::io_service::*)()>(&boost::asio::io_service::run),
-			_io_service)));
-	s->_thread->detach();
+			_io_service));
+	//s->_thread->detach();
 	return s;
+}
+
+void SocketServer::stopAccept(){
+    try{
+        _acceptor.close();
+    }
+    catch(...){
+        std::cerr << "Acceptor Out" << std::endl;
+    }
 }
 
 void SocketServer::close()
@@ -199,14 +205,24 @@ void SocketServer::close()
 	try {
 		_connection_Vector.clear();
 		_io_service->stop();
-		_acceptor.close();
+		//_acceptor.close();
 		//		_thread = nullptr;
 		stop = true;
         _io_service.reset(new boost::asio::io_service);
+        if(_thread){
+            _thread->join();
+        }
+        if(_loopthread){
+            _loopthread->join();
+        }
+        delete _thread;
+        delete _loopthread;
+        delete this;
 	}
 	catch (std::exception&e)
 	{
 		std::cerr << e.what() << std::endl;
+        delete this;
 	}
 }
 
@@ -233,8 +249,8 @@ void SocketServer::clickStart()
 	}
 	connection_num_ = _connection_Vector.size();
 	cocos2d::log("ConnectionSize %d\n", connection_num_);
-	this->_loopthread.reset(new std::thread(std::bind(&SocketServer::loop, this)));
-	_loopthread->detach();
+	this->_loopthread = new std::thread(std::bind(&SocketServer::loop, this));
+	//_loopthread->detach();
 }
 
 bool SocketServer::isError() const
@@ -281,6 +297,7 @@ void SocketServer::loop()
             
             for (auto r : _connection_Vector)
                 r->writeData(game_msg);
+            lock.unlock();
         }
         catch(std::exception &e){
             times++;
@@ -289,12 +306,12 @@ void SocketServer::loop()
 	}
 }
 
-std::vector<TcpConnection::pointer> SocketServer::getConnection() const
-{
-	return _connection_Vector;
-}
+//std::vector<TcpConnection::pointer>& SocketServer::getConnection() const
+//{
+//    return _connection_Vector;
+//}
 
-void SocketServer::removeConnection(TcpConnection::pointer p)
+void SocketServer::removeConnection(TcpConnection* p)
 {
 	//		_connection_Vector.erase(std::remove(_connection_Vector.begin(), _connection_Vector.end(), p), _connection_Vector.end());
 	std::unique_lock<std::mutex> lock(_mutex);
@@ -302,24 +319,26 @@ void SocketServer::removeConnection(TcpConnection::pointer p)
 
 	if (position == _connection_Vector.end())
 		std::cout << "delete not succ\n";
-	else
-		_connection_Vector.erase(position);
+    else{
+        delete *position;
+        _connection_Vector.erase(position);
+    }
 	std::cout << "delete succ\n";
+    lock.unlock();
 }
 
 
 void SocketServer::startAccept()
 {
-	TcpConnection::pointer new_connection =
+	auto new_connection =
 		TcpConnection::create(_acceptor.get_io_service(), this);
-
 	_acceptor.async_accept(new_connection->socket(),
 		std::bind(&SocketServer::handleAccept, this, new_connection,
 			std::placeholders::_1));
 	std::cout << "start accept " << std::endl;
 }
 
-void SocketServer::handleAccept(TcpConnection::pointer new_connection, const error_code& error)
+void SocketServer::handleAccept(TcpConnection* new_connection, const error_code& error)
 {
 	std::cout << "handle_accept\n";
 	if (!error)
@@ -330,7 +349,9 @@ void SocketServer::handleAccept(TcpConnection::pointer new_connection, const err
 			<< ":" << new_connection->socket().remote_endpoint().port() << std::endl;
 		new_connection->start();
 	}
-	startAccept();
+    if(!stop){
+        startAccept();
+    }
 	//			std::cout << "handle accept\n";
 }
 

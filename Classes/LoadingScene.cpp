@@ -1,6 +1,6 @@
 #include "LoadingScene.h"
 #include "MenuScene.h"
-std::shared_ptr<SocketServer> LoadingScene::_socket_server;
+SocketServer* LoadingScene::_socket_server;
 std::shared_ptr<SocketClient> LoadingScene::_socket_client;
 
 

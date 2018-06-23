@@ -270,7 +270,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 								//delete powerPlant;
 							}
 							else if (temp_building->getTag() == 3) {
-								SoldierBase* soldierBase = SoldierBase::create("soldierBase/soldierBase_23.png");
+								SoldierBase* soldierBase = SoldierBase::create("soldierBase/soldierbase_23.png");
 								auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
 								auto tempManager = tempScene->getUnitManager();
 								if (tempScene->getMoney()->checkMoney(soldierBase->getGold()) &&

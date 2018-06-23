@@ -15,7 +15,7 @@ private:
 	LoadingBar* _loadingBar;
 	Sprite* _background;
 	int _count;
-	static std::shared_ptr<SocketServer> _socket_server;
+	static SocketServer* _socket_server;
 	static std::shared_ptr<SocketClient> _socket_client;
 public:
 	static Scene* createScene();

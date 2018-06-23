@@ -1,10 +1,10 @@
 #include "GameScene.h"
 
-std::shared_ptr<SocketServer> GameScene::_socket_server;
+SocketServer* GameScene::_socket_server=nullptr;
 std::shared_ptr<SocketClient> GameScene::_socket_client;
 
 
-Scene* GameScene::createScene(std::shared_ptr<SocketServer> spserver, std::shared_ptr<SocketClient> spclient) {
+Scene* GameScene::createScene(SocketServer* spserver, std::shared_ptr<SocketClient> spclient) {
 	auto scene = Scene::create();
 	auto gamescene = GameScene::create();
 	scene->addChild(gamescene);

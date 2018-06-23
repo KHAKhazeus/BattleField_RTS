@@ -24,12 +24,10 @@ typedef std::shared_ptr<tcp::socket> socket_ptr;
 
 class SocketServer;
 class TcpConnection
-	: public std::enable_shared_from_this<TcpConnection>
 {
 public:
-	typedef std::shared_ptr<TcpConnection> pointer;
 	//	~TcpConnection();
-	static pointer create(boost::asio::io_service& io_service, SocketServer* parent);
+	static TcpConnection* create(boost::asio::io_service& io_service, SocketServer* parent);
 	tcp::socket& socket();
 
 	void start();
@@ -65,18 +63,17 @@ private:
 class SocketServer
 {
 public:
-    ~SocketServer();
 	static SocketServer* create(int port = 8080);
 	//	~SocketServer() { _acceptor.close(); _io_service->stop(); }
 	/**
 	* \brief close the server
 	*/
 	void close();
+    void stopAccept();
 	/**
 	* \brief
 	* \return TcpConnection vector
 	*/
-	std::vector<TcpConnection::pointer> getConnection() const;
 
 	void setMapselect(int mapID) { _mapselect = mapID; }
 	int getMapselect() { return _mapselect; }
@@ -84,7 +81,7 @@ public:
 	* \brief remove a connction, if there is a connction
 	* \param p tcp connection
 	*/
-	void removeConnection(TcpConnection::pointer p);
+    void removeConnection(TcpConnection* p);
 	/**
 	* \brief start the game
 	*/
@@ -107,22 +104,22 @@ private:
 	SocketServer(int port);
 	void startAccept();
 
-	void handleAccept(TcpConnection::pointer new_connection,
+	void handleAccept(TcpConnection* new_connection,
 		const error_code& error);
 
 	void loop();
 
 
 	tcp::acceptor _acceptor;
-	std::vector<TcpConnection::pointer> _connection_Vector;
+	std::vector<TcpConnection*> _connection_Vector;
 	int connection_num_;
 
 	static std::shared_ptr<boost::asio::io_service> _io_service;
 
-	std::shared_ptr<std::thread> _thread, _loopthread{ nullptr };
+	std::thread* _thread, *_loopthread{ nullptr };
 	std::mutex _mutex;
 	bool _error{ false };
-	int _mapselect { LOSTTEMP };
+	int _mapselect { LOSTTEMP};
 	std::condition_variable _cond;
 };
 
