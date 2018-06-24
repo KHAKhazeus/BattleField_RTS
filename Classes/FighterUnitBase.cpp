@@ -244,7 +244,7 @@ Vec2 FighterUnitBase::searchEnemy() {
 	auto curpos = getTiledPosition();
 	auto range = getAttackRange();
 	auto rect = GridRect::create(curpos.x - range/2 , curpos.y - range/2 , range, range);
-	log("%f %f %d %d", curpos.x - range / 2, curpos.y - range / 2, range, range);
+//	log("%f %f %d %d", curpos.x - range / 2, curpos.y - range / 2, range, range);
 	for (auto i = rect->getX(); i <= rect->getX() + rect->getWidth(); i++) {
 		for (auto j = rect->getY(); j <= rect->getY() + rect->getHeight(); j++) {
 			auto vecPos = Vec2(i, j);

@@ -308,7 +308,7 @@ void UnitManager::playerMoveWithWayPoints(int move_unit_id, std::vector<cocos2d:
 		default:
 			break;
 		}
-		log("%s", "Done!");
+	//	log("%s", "Done!");
 		if (player->isMove()) {
 			player->setMove(false);
 			if (!player->isAttack()) {
@@ -908,7 +908,7 @@ void UnitManager::updateMessage(float delta) {
 			if (!TiledMap::checkPass(pos)){
 				pos = tempMap->findFreeNear(pos);
 			}
-			log("%f ,%f", pos.x, pos.y);
+		//	log("%f ,%f", pos.x, pos.y);
 			auto tiled_pos = tempMap->tileCoordForPosition(player->getPosition());
 			path_finder->initPathArithmetic(tempMap, tiled_pos, pos);
 			path_finder->findPath();
