@@ -228,6 +228,9 @@ Vec2 FighterUnitBase::searchEnemy() {
 			if (TiledMap::checkBoundary(vecPos)) {
 				if (TiledMap::checkMapGrid(vecPos)) {
 					auto id = TiledMap::getUnitIdByPosition(vecPos);
+					if (!TiledMap::checkUnitId(id)) {
+						return Vec2(-1, -1);
+					}
 					auto temp = TiledMap::getUnitById(id);
 					if (temp->getCampID() != getCampID()) {
 						return vecPos;
