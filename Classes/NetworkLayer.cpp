@@ -599,7 +599,7 @@ void NetworkLayer::close(Node* pSender){
 
 
 void NetworkLayer::startSchedule(float dt) {
-	if ( _socket_client && _socket_client->started()) {
+	if ( _socket_client && _socket_client->isStart()) {
 		wait_start();
 	}
 }

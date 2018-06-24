@@ -16,7 +16,7 @@ http://www.boost.org/LICENSE_1_0.txt)
 /*`
 [heading `BOOST_PLAT_WINDOWS_SERVER`]
 
-[@https://docs.microsoft.com/en-us/windows/uwp/get-started/universal-application-platform-guide UWP]
+[@https://docs.microsoft.com/en-us/windows/uwp/get-isStart/universal-application-platform-guide UWP]
 for Windows Server development.
 
 [table

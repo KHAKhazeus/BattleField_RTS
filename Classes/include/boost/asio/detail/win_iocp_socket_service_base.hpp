@@ -74,8 +74,8 @@ public:
 
 #if defined(BOOST_ASIO_ENABLE_CANCELIO)
     // The ID of the thread from which it is safe to cancel asynchronous
-    // operations. 0 means no asynchronous operations have been started yet.
-    // ~0 means asynchronous operations have been started from more than one
+    // operations. 0 means no asynchronous operations have been isStart yet.
+    // ~0 means asynchronous operations have been isStart from more than one
     // thread, and cancellation is not supported for the socket.
     DWORD safe_cancellation_thread_id_;
 #endif // defined(BOOST_ASIO_ENABLE_CANCELIO)

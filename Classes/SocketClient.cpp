@@ -29,6 +29,7 @@ void SocketClient::doClose()
 		return;
 	}
 	try {
+		//lock tht _mut to keep other operation from changing the msgDeque
 		std::unique_lock<std::mutex> lk{ _mut };
 		_error_Flag = true;
 		SocketMessage empty_msg;
@@ -37,6 +38,7 @@ void SocketClient::doClose()
 		_data_cond.notify_one();
 		lk.unlock();
 		error_code ec;
+		//close the socket
 		_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
 		_socket.close();
 		_io_service.stop();
@@ -71,6 +73,7 @@ void SocketClient::handle_connect(const error_code& error)
 			std::cout << "connected\n";
 			char data[30] = { 0 };
 			error_code error;
+			//synchronous read
 			size_t length = _socket.read_some(boost::asio::buffer(data, 30), error);
 			if (error || length < 10) {
 				cocos2d::log("Empty Message\n");
@@ -92,11 +95,9 @@ void SocketClient::handle_connect(const error_code& error)
 				setMapselect(SNOWMAP);
 			}
 
-
-			//total_ = atoi(header);
-			//_camp = atoi(data + 14);
 			cocos2d::log("GettheCamp %d", _camp);
 			_start_Flag = true;
+			//loop asynchronous read
 			boost::asio::async_read(_socket,
 				boost::asio::buffer(_read_msg.data(), SocketMessage::header_length),
 				std::bind(&SocketClient::handle_read_header, this,
@@ -157,6 +158,7 @@ void SocketClient::handle_read_body(const error_code& error)
 	}
 }
 
+///return MsgVector to client
 std::vector<GameMessage> SocketClient::getGameMessages()
 {
 	auto game_message_set_stirng = read_data();
@@ -173,6 +175,7 @@ std::string SocketClient::read_data()
 		if (_error_Flag) {
 			return "";
 		}
+		//if Deque is empty,release the lk and wait for it
 		_data_cond.wait(lk);
 	}
 	auto read_msg = _read_Msg_Deque.front();
@@ -190,28 +193,14 @@ void SocketClient::sendGameMessages(const std::vector<GameMessage>& vec_game_msg
 	write_data(set_string);
 }
 
-void SocketClient::send_string(std::string s)
-{
-	if (_error_Flag)
-		return;
-	write_data(s);
-}
 
-/*std::string SocketClient::get_string()
-{
-	return readData();
-}*/
+
 
 int SocketClient::camp() const
 {
 	//while (!_start_Flag);
 	return _camp;
 }
-/*
-int SocketClient::total() const
-{
-	while (!_start_Flag);
-}*/
 
 void SocketClient::write_data(std::string s)
 {
@@ -227,7 +216,6 @@ void SocketClient::write_data(std::string s)
 			msg.body_length(s.size());
 		}
 		std::copy(s.cbegin(),s.cend(),msg.body());
-    //    memcpy(msg.body(), &s[0u], msg.body_length());
         msg.encode_header();
         boost::asio::write(_socket,
                            boost::asio::buffer(msg.data(), msg.length()));

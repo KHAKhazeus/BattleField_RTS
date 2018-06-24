@@ -43,7 +43,7 @@ void win_object_handle_service::shutdown()
   mutex::scoped_lock lock(mutex_);
 
   // Setting this flag to true prevents new objects from being registered, and
-  // new asynchronous wait operations from being started. We only need to worry
+  // new asynchronous wait operations from being isStart. We only need to worry
   // about cleaning up the operations that are currently in progress.
   shutdown_ = true;
 

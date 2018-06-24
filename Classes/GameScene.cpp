@@ -416,7 +416,6 @@ void GameScene::onTouchEnded(Touch* touch, Event* event) {
 		touch_point.y = _screen_height;
 	Vec2 map_point = touch_point - _tiled_Map->getTiledMap()->getPosition();
 	mouse_rect->end = map_point;
-
 	float rect_width = fabs(mouse_rect->start.x - mouse_rect->end.x);
 	float rect_height = fabs(mouse_rect->start.y - mouse_rect->end.y);
 

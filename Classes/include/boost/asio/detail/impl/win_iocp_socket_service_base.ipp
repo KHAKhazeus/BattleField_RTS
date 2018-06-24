@@ -277,12 +277,12 @@ boost::system::error_code win_iocp_socket_service_base::cancel(
 #if defined(BOOST_ASIO_ENABLE_CANCELIO)
   else if (impl.safe_cancellation_thread_id_ == 0)
   {
-    // No operations have been started, so there's nothing to cancel.
+    // No operations have been isStart, so there's nothing to cancel.
     ec = boost::system::error_code();
   }
   else if (impl.safe_cancellation_thread_id_ == ::GetCurrentThreadId())
   {
-    // Asynchronous operations have been started from the current thread only,
+    // Asynchronous operations have been isStart from the current thread only,
     // so it is safe to try to cancel them using CancelIo.
     socket_type sock = impl.socket_;
     HANDLE sock_as_handle = reinterpret_cast<HANDLE>(sock);
@@ -299,7 +299,7 @@ boost::system::error_code win_iocp_socket_service_base::cancel(
   }
   else
   {
-    // Asynchronous operations have been started from more than one thread,
+    // Asynchronous operations have been isStart from more than one thread,
     // so cancellation is not safe.
     ec = boost::asio::error::operation_not_supported;
   }
@@ -311,7 +311,7 @@ boost::system::error_code win_iocp_socket_service_base::cancel(
   }
 #endif // defined(BOOST_ASIO_ENABLE_CANCELIO)
 
-  // Cancel any operations started via the reactor.
+  // Cancel any operations isStart via the reactor.
   if (!ec)
   {
     select_reactor* r = static_cast<select_reactor*>(

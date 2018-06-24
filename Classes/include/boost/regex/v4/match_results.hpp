@@ -569,7 +569,7 @@ private:
 
 
    vector_type            m_subs;                      // subexpressions
-   BidiIterator   m_base;                              // where the search started from
+   BidiIterator   m_base;                              // where the search isStart from
    sub_match<BidiIterator> m_null;                     // a null match
    boost::shared_ptr<named_sub_type> m_named_subs;     // Shared copy of named subs in the regex object
    int m_last_closed_paren;                            // Last ) to be seen - used for formatting

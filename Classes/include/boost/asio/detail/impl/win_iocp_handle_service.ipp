@@ -268,12 +268,12 @@ boost::system::error_code win_iocp_handle_service::cancel(
   }
   else if (impl.safe_cancellation_thread_id_ == 0)
   {
-    // No operations have been started, so there's nothing to cancel.
+    // No operations have been isStart, so there's nothing to cancel.
     ec = boost::system::error_code();
   }
   else if (impl.safe_cancellation_thread_id_ == ::GetCurrentThreadId())
   {
-    // Asynchronous operations have been started from the current thread only,
+    // Asynchronous operations have been isStart from the current thread only,
     // so it is safe to try to cancel them using CancelIo.
     if (!::CancelIo(impl.handle_))
     {
@@ -288,7 +288,7 @@ boost::system::error_code win_iocp_handle_service::cancel(
   }
   else
   {
-    // Asynchronous operations have been started from more than one thread,
+    // Asynchronous operations have been isStart from more than one thread,
     // so cancellation is not safe.
     ec = boost::asio::error::operation_not_supported;
   }

@@ -95,7 +95,7 @@ namespace date_time {
 
   //! Convert year-month-day into a modified julian day number
   /*! The day number is an absolute number of days.
-   *  MJD 0 thus started on 17 Nov 1858(Gregorian) at 00:00:00 UTC
+   *  MJD 0 thus isStart on 17 Nov 1858(Gregorian) at 00:00:00 UTC
    */
   template<typename ymd_type_, typename date_int_type_>
   BOOST_DATE_TIME_INLINE

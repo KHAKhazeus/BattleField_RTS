@@ -252,7 +252,7 @@ class repeater_count
    repeater_count* next;
    int state_id;
    std::size_t count;        // the number of iterations so far
-   BidiIterator start_pos;   // where the last repeat started
+   BidiIterator start_pos;   // where the last repeat isStart
 
    repeater_count* unwind_until(int n, repeater_count* p, int current_recursion_id)
    { 
@@ -475,7 +475,7 @@ private:
    BidiIterator position;
    // where to restart next search after failed match attempt:
    BidiIterator restart;
-   // where the current search started from, acts as base for $` during grep:
+   // where the current search isStart from, acts as base for $` during grep:
    BidiIterator search_base;
    // how far we can go back when matching lookbehind:
    BidiIterator backstop;

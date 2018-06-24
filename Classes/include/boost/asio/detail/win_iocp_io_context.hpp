@@ -93,7 +93,7 @@ public:
     ::InterlockedExchange(&stopped_, 0);
   }
 
-  // Notify that some work has started.
+  // Notify that some work has isStart.
   void work_started()
   {
     ::InterlockedIncrement(&outstanding_work_);

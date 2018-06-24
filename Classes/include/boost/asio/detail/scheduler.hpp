@@ -78,7 +78,7 @@ public:
   // Restart in preparation for a subsequent run invocation.
   BOOST_ASIO_DECL void restart();
 
-  // Notify that some work has started.
+  // Notify that some work has isStart.
   void work_started()
   {
     ++outstanding_work_;

@@ -21,6 +21,8 @@ using boost::system::error_code;
 
 typedef std::shared_ptr<tcp::socket> socket_ptr;
 
+
+//create a Tcp class to handle the connect between clint and server
 class SocketServer;
 class TcpConnection
 	: public std::enable_shared_from_this<TcpConnection>
@@ -28,6 +30,7 @@ class TcpConnection
 public:
 	typedef std::shared_ptr<TcpConnection> pointer;
 	//	~TcpConnection();
+	//create a Point of TcpConnection
 	static pointer create(boost::asio::io_service& io_service, SocketServer* parent);
 	tcp::socket& socket();
 
@@ -46,10 +49,11 @@ private:
 
 	TcpConnection(boost::asio::io_service& io_service, SocketServer* parent);;
 
-	void check_timer();
+	//delete it from the server
 	void deleteFrom();
 	
 	tcp::socket _socket;
+	//pointer to the server
 	SocketServer* _parent;
 	bool _errorFlag{ false };
 
@@ -65,17 +69,14 @@ class SocketServer
 public:
     ~SocketServer();
 	static SocketServer* create(int port = 8080);
-	//	~SocketServer() { _acceptor.close(); _io_service->stop(); }
-	/**
-	* \brief close the server
-	*/
+
+	//Close Operation
 	void close();
-	/**
-	* \brief
-	* \return TcpConnection vector
-	*/
+	
+	//The return value is a vector of Tcp Pointer
 	std::vector<TcpConnection::pointer> getConnection() const;
 
+	//set or get Map Operation
 	void setMapselect(int mapID) { _mapselect = mapID; }
 	int getMapselect() { return _mapselect; }
 	/**

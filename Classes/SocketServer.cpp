@@ -13,11 +13,6 @@
 
 std::shared_ptr<boost::asio::io_service> SocketServer::_io_service;
 
-//TcpConnection::~TcpConnection()
-//{
-//	std::cout << "delete";
-//	deleteFrom();
-//}
 
 TcpConnection::pointer TcpConnection::create(boost::asio::io_service& io_service, SocketServer* parent)
 {
@@ -167,7 +162,6 @@ SocketServer::~SocketServer(){
 
 SocketServer* SocketServer::create(int port)
 {
-	//	_io_service = new asio::io_service;
 	_io_service.reset(new boost::asio::io_service);
 	auto s = new SocketServer(port);
 
@@ -206,7 +200,7 @@ void SocketServer::close()
 void SocketServer::clickStart()
 {
 	_acceptor.close();
-	using namespace std; // For sprintf and memcpy.
+	using namespace std; 
 
 	std::vector<std::string> campGroup = { "R","B" };
 	char map;
@@ -232,11 +226,6 @@ bool SocketServer::isError() const
 	return _error;
 }
 
-int SocketServer::connection_num() const
-{
-	return _connection_Vector.size();
-}
-
 SocketServer::SocketServer(int port) :
 	_acceptor(*_io_service, tcp::endpoint(tcp::v4(), port))
 {
@@ -257,14 +246,12 @@ void SocketServer::loop()
                 _error = true;
                 break;
             }
-            //            throw std::exception{"lost connection"};
             std::unique_lock<std::mutex> lock(_mutex);
             std::vector<std::string> ret;
             for (auto r : _connection_Vector){
 				if (r->error()) {
 					break;
 				}
-                 //   _error |= r->error();
                 ret.push_back(r->readData());
             }
             auto game_msg = GameMessageOperation::combineMessage(ret);
@@ -297,12 +284,11 @@ void SocketServer::removeConnection(TcpConnection::pointer p)
 	auto position = std::find(_connection_Vector.begin(), _connection_Vector.end(), p);
 
 	if (position == _connection_Vector.end()) {
-		std::cout << "delete not succ\n";
+		return;
 	}
 	else {
 		_connection_Vector.erase(position);
 	}
-	std::cout << "delete succ\n";
 }
 
 
@@ -323,9 +309,6 @@ void SocketServer::handleAccept(TcpConnection::pointer new_connection, const err
 	if (!error)
 	{
 		cocos2d::log("connection + 1");
-		//_connection_Vector.push_back(new_connection);
-		std::cout << new_connection->socket().remote_endpoint().address()
-			<< ":" << new_connection->socket().remote_endpoint().port() << std::endl;
 		new_connection->start();
 	}
 	startAccept();

@@ -20,7 +20,7 @@ http://www.boost.org/LICENSE_1_0.txt)
 
 Deprecated.
 
-[@https://docs.microsoft.com/en-us/windows/uwp/get-started/universal-application-platform-guide UWP]
+[@https://docs.microsoft.com/en-us/windows/uwp/get-isStart/universal-application-platform-guide UWP]
 for Windows Phone or Store development.  This does not align to the existing development model for
 UWP and is deprecated.  Use one of the other `BOOST_PLAT_WINDOWS_*`definitions instead.
 
