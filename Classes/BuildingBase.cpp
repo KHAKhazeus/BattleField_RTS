@@ -232,7 +232,9 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 								auto id = dog->getIdCount();
 								dog->setUnitID(id);
 								Vec2 nodeLocation = this->RandomPosition();
+								auto tiledPos = tempScene->tileCoordForPosition(nodeLocation);
 								//send create message
+								TiledMap::setUnpass(tiledPos);
 								tempManager->addMessages(tempManager->msgs->newCreateUnitMessage(dog->getUnitID(), dog->getType(),this->getCampID(),
 									this->getUnitID(), nodeLocation));
 							}
@@ -247,6 +249,8 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 								soldier->setUnitID(id);
 								Vec2 nodeLocation = this->RandomPosition();
 								//send create message
+								auto tiledPos = tempScene->tileCoordForPosition(nodeLocation);
+								TiledMap::setUnpass(tiledPos);
 								tempManager->addMessages(tempManager->msgs->newCreateUnitMessage(soldier->getUnitID(), soldier->getType(), this->getCampID(),
 									this->getUnitID(), nodeLocation));
 							}
@@ -373,9 +377,11 @@ bool WarFactory::onTouchBegan(Touch *touch, Event *event) {
 					auto tempManager = tempScene->getUnitManager();
 					if (tempScene->getMoney()->checkMoney(tank->getGold())) {
 						Vec2 nodeLocation = this->RandomPosition();
+						auto tiledPos = tempScene->tileCoordForPosition(nodeLocation);
 						auto id =tank->getIdCount();
 						tank->setUnitID(id);
 						//send create message
+						TiledMap::setUnpass(tiledPos);
 						tempManager->addMessages(tempManager->msgs->newCreateUnitMessage(tank->getUnitID(), tank->getType(), this->getCampID(),
 							this->getUnitID(), nodeLocation));
 					}

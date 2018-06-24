@@ -224,15 +224,28 @@ TMXTiledMap* TiledMap::getTiledMap() {
 	return _tiled_Map;
 }
 
-void TiledMap::setUnpass(Vec2 Pos, int range) {
+void TiledMap::setUnpass(Vec2 Pos, int range,int fix_model) {
 	auto x = static_cast<int> (Pos.x + 0.1);
 	auto y = static_cast<int> (Pos.y + 0.1);
-	for (int i = x - range; i <= x + range; i++) {
-		for (int j = y - range; j <= y + range; j++) {
-			_grid_Vector.at(i).at(j)->setPass(false);
-			//DEBUG 
-		//	log("%d %d", i, j);
+	switch (fix_model) {
+	case FIX_SQUARE:
+		for (auto i = x - range; i <= x + range; i++) {
+			for (auto j = y - range; j <= y + range; j++) {
+				auto grid = _grid_Vector.at(i).at(j);
+				grid->setPass(false);
+			}
 		}
+		break;
+	case FIX_HEIGHT:
+		for (auto i = x - range; i <= x + range; i++) {
+			for (auto j = y - range + 1; j <= y + range - 1; j++) {
+				auto grid = _grid_Vector.at(i).at(j);
+				grid->setPass(false);
+			}
+		}
+		break;
+	default:
+		break;
 	}
 }
 

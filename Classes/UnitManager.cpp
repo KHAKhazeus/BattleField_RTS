@@ -101,6 +101,9 @@ void UnitManager::selectUnitsByPoint(Vec2 touch_point) {
 	//judge if there is a unit in the Grid  判断该瓦片上是否有单位
 	if (TiledMap::checkMapGrid(tiledLocation)) {
 		auto id = TiledMap::getUnitIdByPosition(tiledLocation);
+		if (!TiledMap::checkUnitId(id)) {
+			return;
+		}
 		auto tempSprite = TiledMap::getUnitById(id);
 		//if the tempSprite is the enemy  如果选中的精灵是敌人
 		if (tempSprite->getCampID() != this->getBase()->getCampID()) {
@@ -202,6 +205,9 @@ void UnitManager::selectUnitsByRect(MouseRect* mouse_rect) {
 			//if there is a unit Grid in this pos
 			if (TiledMap::checkMapGrid(pos)) {
 				auto id = TiledMap::getUnitIdByPosition(pos);
+				if (!TiledMap::checkUnitId(id)) {
+					continue;
+				}
 				auto tempSprite = TiledMap::getUnitById(id);
 				//if the unit is belonging to us and it isn't a building
 				if ((tempSprite->getCampID() == this->getBase()->getCampID())
@@ -853,16 +859,8 @@ void UnitManager::updateMessage(float delta) {
 				continue;
 			}
 			auto attacker = TiledMap::getUnitById(attackerId);
-			if (attacker->isMove()) {
-				if (!TiledMap::checkBoundary(attacker->getTempPos())||TiledMap::checkMapGrid(attacker->getTempPos())) {
-					continue;
-				}
-				TiledMap::updateMapGrid(attacker->getTiledPosition(), attacker->getTempPos());
-				attacker->setTiledPosition(attacker->getTempPos());
-				attacker->clearAllType();
-				TiledMap::setPass(attacker->getTargetPos());
-				attacker->setAttack(true);
-			}
+			attacker->clearAllType();
+			attacker->setAttack(true);
 			attacker->stopAllActions();
 			UnitManager::attack(orders[i].unit_0(), orders[i].unit_1(), orders[i].damage());
 			UnitManager::attackEffect(orders[i].unit_0(), orders[i].unit_1());

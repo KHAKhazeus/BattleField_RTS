@@ -51,7 +51,8 @@ public:
 	static bool checkBuilt(Vec2 pos,int range);
 	//@@param 1 is the positon of your building  *TiledMap positon
 	//@@paran 2 is the field range of your building
-	static void setUnpass(Vec2 pos, int range);
+	//@@param 3 is the fix_model
+	static void setUnpass(Vec2 pos, int range,int fix_model);
 
 	static void setUnpass(Vec2 Pos);
 

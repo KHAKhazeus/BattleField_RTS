@@ -296,6 +296,9 @@ void FighterUnitBase::autoAttack(float dt) {
 			auto tempScene = static_cast<GameScene*>(tempNode);
 			auto tempManager = tempScene->getUnitManager();
 			auto id = TiledMap::getUnitIdByPosition(pos);
+			if (!TiledMap::checkUnitId(id)) {
+				return;
+			}
 			auto enemy = TiledMap::getUnitById(id);
 			//send attack message
 			tempManager->addMessages(tempManager->msgs->newAttackMessage(this->getUnitID(), enemy->getUnitID(), this->getAttack()));

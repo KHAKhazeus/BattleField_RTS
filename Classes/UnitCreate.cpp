@@ -244,6 +244,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 					listener1->onTouchEnded = [this, temp_building](Touch *touch, Event *event) {
 						auto touchLocation = touch->getLocation();
 						Vec2 nodeLocation = this->getParent()->convertToNodeSpace(touchLocation);
+						auto tiledPos = static_cast<TiledMap*>(this->getParent()->getParent())->tileCoordForPosition(nodeLocation);
 						// if the field isn't occupied
 						if (this->getBuilt()) {
 							this->setBuilt(false);
@@ -256,6 +257,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 									auto id = moneyMine->getIdCount();
 									moneyMine->setUnitID(id);
 									//send building message
+									TiledMap::setUnpass(tiledPos, moneyMine->getRange(), FIX_SQUARE);
 									tempManager->addMessages(tempManager->msgs->newCreateBuildingMessage(moneyMine->getUnitID(), moneyMine->getType(),
 										this->getCampID(), this->getUnitID(),nodeLocation));
 								}
@@ -269,6 +271,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 									auto id = powerPlant->getIdCount();
 									powerPlant->setUnitID(id);
 									//send building message
+									TiledMap::setUnpass(tiledPos, powerPlant->getRange(), FIX_SQUARE);
 									tempManager->addMessages(tempManager->msgs->newCreateBuildingMessage(powerPlant->getUnitID(), powerPlant->getType(), this->getCampID(),
 										this->getUnitID(), nodeLocation));								
 								}
@@ -283,6 +286,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 									auto id = soldierBase->getIdCount();
 									soldierBase->setUnitID(id);
 									//send building message
+									TiledMap::setUnpass(tiledPos, soldierBase->getRange(), FIX_HEIGHT);
 									tempManager->addMessages(tempManager->msgs->newCreateBuildingMessage(soldierBase->getUnitID(), soldierBase->getType(), this->getCampID(), this->getUnitID()
 										, nodeLocation));
 								}
@@ -297,6 +301,7 @@ bool Base::onTouchBegan(Touch *touch, Event *event) {
 									auto id = warFactory->getIdCount();
 									warFactory->setUnitID(id);
 									//send building message
+									TiledMap::setUnpass(tiledPos, warFactory->getRange(), FIX_HEIGHT);
 									tempManager->addMessages(tempManager->msgs->newCreateBuildingMessage(warFactory->getUnitID(), warFactory->getType(), this->getCampID(),
 										this->getUnitID(),nodeLocation));
 									
