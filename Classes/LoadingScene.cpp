@@ -40,7 +40,7 @@ bool LoadingScene::init() {
 void LoadingScene::loadingCallback() {
 	_count++;
 	_loadingBar->setPercent((_count / 8.0) * 100);
-	log("%d", _count);
+	//log("%d", _count);
 	if(_count == 15) {
 		auto gameScene = MenuScene::createScene();
 		auto gameSceneAnimate = TransitionFade::create(1.0f, gameScene);

@@ -99,13 +99,8 @@ void GameScene::update(float dt) {
 }
 
 Vec2 GameScene::tileCoordForPosition(Vec2 position) {
-	//call the function getTiledMap to get the TMXTiledMap *
-	auto tiledMap = _tiled_Map->getTiledMap();
-	int x = static_cast<int>
-		(position.x / (tiledMap->getTileSize().width / CC_CONTENT_SCALE_FACTOR()));
-	float pointHeight = tiledMap->getTileSize().height / CC_CONTENT_SCALE_FACTOR();
-	int y = static_cast<int>
-		((tiledMap->getMapSize().height * pointHeight - position.y) / pointHeight);
+	int x = static_cast<int>(position.x) / 32;
+	int y = 127 - static_cast<int>(position.y) / 32;
 	return Vec2(x, y);
 }
 

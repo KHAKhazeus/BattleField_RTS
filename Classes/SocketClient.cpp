@@ -76,7 +76,7 @@ void SocketClient::handle_connect(const error_code& error)
 			//synchronous read
 			size_t length = _socket.read_some(boost::asio::buffer(data, 30), error);
 			if (error || length < 10) {
-				cocos2d::log("Empty Message\n");
+//				cocos2d::log("Empty Message\n");
 				//throw boost::system::error_code(isError);
 			}
 			char header[4 + 1] = "";
@@ -95,7 +95,7 @@ void SocketClient::handle_connect(const error_code& error)
 				setMapselect(SNOWMAP);
 			}
 
-			cocos2d::log("GettheCamp %d", _camp);
+	//		cocos2d::log("GettheCamp %d", _camp);
 			_start_Flag = true;
 			//loop asynchronous read
 			boost::asio::async_read(_socket,

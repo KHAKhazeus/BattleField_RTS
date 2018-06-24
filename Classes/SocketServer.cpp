@@ -86,11 +86,11 @@ void TcpConnection::doClose()
 		_socket.close();
 		_cond.notify_one();
 		lk.unlock();
-		cocos2d::log("111");
-		cocos2d::log("Socket closed\n");
+//		cocos2d::log("111");
+///		cocos2d::log("Socket closed\n");
 	}
 	catch (boost::system::system_error) {
-		cocos2d::log("Socket closed!");
+	//	cocos2d::log("Socket closed!");
         std::cerr << "Server ShutDowned with Process Left" << std::endl;
     }
 	catch (std::exception&e)
@@ -216,7 +216,7 @@ void SocketServer::clickStart()
 		_connection_Vector[i]->writeData("PLAYER" + campGroup.at(i) + map);
 	}
 	connection_num_ = _connection_Vector.size();
-	cocos2d::log("ConnectionSize %d\n", connection_num_);
+//	cocos2d::log("ConnectionSize %d\n", connection_num_);
 	this->_loopthread = new std::thread(std::bind(&SocketServer::loop, this));
 	this->_loopthread->detach();
 }
@@ -308,7 +308,7 @@ void SocketServer::handleAccept(TcpConnection::pointer new_connection, const err
 	std::cout << "handle_accept\n";
 	if (!error)
 	{
-		cocos2d::log("connection + 1");
+//		cocos2d::log("connection + 1");
 		new_connection->start();
 	}
 	startAccept();
