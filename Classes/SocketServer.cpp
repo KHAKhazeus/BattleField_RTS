@@ -162,7 +162,7 @@ void TcpConnection::deleteFrom()
 }
 
 SocketServer::~SocketServer(){
-    this->close();
+   // this->close();
 }
 
 SocketServer* SocketServer::create(int port)

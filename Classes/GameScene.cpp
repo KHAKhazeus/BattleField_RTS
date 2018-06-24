@@ -473,15 +473,15 @@ void GameScene::winOrLose(bool win) {
 			quit_button->setScale(1.0);
 			if (isClient()) {
 				_socket_client->close();
-				delete _socket_client;
 			}
 			if (isServer()) {
 				_socket_server->close();
-				delete _socket_server;
 			}
-			auto menuScene = MenuScene::createScene();
+			GameScene::menuCloseCallback(this);
+
+		/*	auto menuScene = MenuScene::createScene();
 			auto sceneAnimate = TransitionCrossFade::create(0.1f, menuScene);
-			Director::getInstance()->replaceScene(sceneAnimate);
+			Director::getInstance()->replaceScene(sceneAnimate);*/
 
 			break;
 		}
@@ -506,7 +506,7 @@ void GameScene::menuCloseCallback(Ref* pSender)
 	return;
 #endif
 	// program finished, release scene
-	//Director::getInstance()->end();
+	Director::getInstance()->end();
 
 	
 
