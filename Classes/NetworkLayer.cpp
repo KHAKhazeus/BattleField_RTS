@@ -450,7 +450,7 @@ bool NetworkLayer::init(){
                     if(_socket_server && _socket_client){
                         _socket_server->clickStart();
 						auto gameScene = GameScene::createScene(_socket_server, _socket_client);
-						auto sceneAniamte = TransitionCrossFade::create(1.0f, gameScene);
+						auto sceneAniamte = TransitionCrossFade::create(0.5f, gameScene);
 						Director::getInstance()->replaceScene(sceneAniamte);
                     }
 				/*	auto temp = _socket_client->getGameMessages();
@@ -601,7 +601,7 @@ void NetworkLayer::startSchedule(float dt) {
 void NetworkLayer::wait_start() {
 	unscheduleAllSelectors();
 	auto map = _socket_client->getMapselect();
-	cocos2d::log("%d\n", map);
+//	cocos2d::log("%d\n", map);
 	if (_socket_client->getMapselect() == LOSTTEMP) {
 		TiledMap::setMapFlagLost();
 		
@@ -610,6 +610,6 @@ void NetworkLayer::wait_start() {
 		TiledMap::setMapFlagSnow();
 	}
 	auto gameScene = GameScene::createScene(_socket_server, _socket_client);
-	auto sceneAniamte = TransitionCrossFade::create(1.0f, gameScene);
+	auto sceneAniamte = TransitionCrossFade::create(0.5f, gameScene);
 	Director::getInstance()->replaceScene(sceneAniamte);	
 }
