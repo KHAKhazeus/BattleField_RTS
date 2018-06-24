@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+message GameMessage {
+
+    enum CmdCode {
+        CRTBD = 0;
+        CRTBU = 1;
+        MOV = 2;
+        ATK = 3;
+        EMP = 4;
+    }
+
+
+    CmdCode cmd_code = 1;
+    int32 unit_0 = 2;
+    int32 unit_1 = 3;
+
+    int32 base = 4;
+    int32 building = 5;
+
+    int32 damage = 6;
+
+    GridPath grid_path = 7;
+    string create_type = 8;
+}
+message GridPoint {
+    int32 x = 1;
+    int32 y = 2;
+}
+message GridPath {
+    repeated GridPoint grid_point = 1;
+}
+
+message GameMessageGroup {
+    repeated GameMessage game_message = 1;
+}
