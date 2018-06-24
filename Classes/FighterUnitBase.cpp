@@ -73,6 +73,10 @@ void Soldier::Create(Unit* soldierBase) {
 	Vec2 pos = Vec2(this->getPosition().x, this->getPosition().y);
 	progress->setPosition(Vec2(120, 200));
 	soldierBase->addChild(progress);
+	auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
+	auto tiledLocation = tempScene->tileCoordForPosition(this->getPosition());
+	TiledMap::newMapGrid(tiledLocation, this->getUnitID());
+	TiledMap::newMapId(this->getUnitID(), this);
 	auto pft = ProgressFromTo::create(2.4f, progress->getPercentage(), 100);
 	auto sequence = Sequence::create(pft, CallFunc::create([=] {
 		soldierBase->removeChild(progress, true);
@@ -88,9 +92,7 @@ void Soldier::Create(Unit* soldierBase) {
 		if (this->getCampID() == tempManager->_myCamp) {
 			SimpleAudioEngine::getInstance()->playEffect(SOLDIER, false);
 		}
-		auto tiledLocation = tempScene->tileCoordForPosition(this->getPosition());
-		TiledMap::newMapGrid(tiledLocation, this->getUnitID());
-		TiledMap::newMapId(this->getUnitID(), this);
+		
 		if (this->getCampID() == tempManager->_myCamp) {
 			this->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
 		}
@@ -127,6 +129,10 @@ void Dog::Create(Unit* soldierBase) {
 	progress->setPosition(Vec2(120, 200));
 	soldierBase->addChild(progress);
 	auto pft = ProgressFromTo::create(2.4f, progress->getPercentage(), 100);
+	auto tempScene = static_cast<TiledMap*>(this->getParent()->getParent());
+	auto tiledLocation = tempScene->tileCoordForPosition(this->getPosition());
+	TiledMap::newMapGrid(tiledLocation, this->getUnitID());
+	TiledMap::newMapId(this->getUnitID(), this);
 	auto sequence = Sequence::create(pft, CallFunc::create([=] {
 		soldierBase->removeChild(progress, true);
 		this->setVisible(true);
@@ -141,9 +147,7 @@ void Dog::Create(Unit* soldierBase) {
 		if (this->getCampID() == tempManager->_myCamp) {
 			SimpleAudioEngine::getInstance()->playEffect(DOG, false);
 		}
-		auto tiledLocation = tempScene->tileCoordForPosition(this->getPosition());
-		TiledMap::newMapGrid(tiledLocation, this->getUnitID());
-		TiledMap::newMapId(this->getUnitID(), this);
+		
 		if (this->getCampID() == tempManager->_myCamp) {
 			this->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
 		}
@@ -181,6 +185,10 @@ void Tank::Create(Unit* warFactory) {
 	progress->setPosition(Vec2(120, 160));
 	warFactory->addChild(progress);
 	auto pft = ProgressFromTo::create(2.4f, progress->getPercentage(), 100);
+	auto tempScene = static_cast<TiledMap*>(this->getParent()->getParent());
+	auto tiledLocation = tempScene->tileCoordForPosition(this->getPosition());
+	TiledMap::newMapGrid(tiledLocation, this->getUnitID());
+	TiledMap::newMapId(this->getUnitID(), this);
 	auto sequence = Sequence::create(pft, CallFunc::create([=] {
 		warFactory->removeChild(progress, true);
 		this->setVisible(true);
@@ -195,9 +203,7 @@ void Tank::Create(Unit* warFactory) {
 		if (this->getCampID() == tempManager->_myCamp) {
 			SimpleAudioEngine::getInstance()->playEffect(TANK, false);
 		}
-		auto tiledLocation = tempScene->tileCoordForPosition(this->getPosition());
-		TiledMap::newMapGrid(tiledLocation, this->getUnitID());
-		TiledMap::newMapId(this->getUnitID(), this);
+		
 		if(this->getCampID() == tempManager->_myCamp) {
 			this->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
 		}
@@ -238,17 +244,30 @@ Vec2 FighterUnitBase::searchEnemy() {
 	auto curpos = getTiledPosition();
 	auto range = getAttackRange();
 	auto rect = GridRect::create(curpos.x - range/2 , curpos.y - range/2 , range, range);
+	log("%f %f %d %d", curpos.x - range / 2, curpos.y - range / 2, range, range);
 	for (auto i = rect->getX(); i <= rect->getX() + rect->getWidth(); i++) {
 		for (auto j = rect->getY(); j <= rect->getY() + rect->getHeight(); j++) {
 			auto vecPos = Vec2(i, j);
 			if (TiledMap::checkBoundary(vecPos)) {
 				if (TiledMap::checkMapGrid(vecPos)) {
 					auto id = TiledMap::getUnitIdByPosition(vecPos);
+					if (id == this->getUnitID()) {
+						continue;
+					}
 					if (!TiledMap::checkUnitId(id)) {
 						continue;
 					}
 					auto temp = TiledMap::getUnitById(id);
-					if (temp->getCampID() != getCampID()) {
+					if (temp->getTiledPosition() != vecPos) {
+						auto tempPos = Vec2(temp->getTiledPosition().x, temp->getTiledPosition().y);
+						if (!TiledMap::checkMapGrid(tempPos)) {
+							TiledMap::updateMapGrid(vecPos, tempPos);
+						}
+						else {
+							continue;
+						}
+					}
+					if (temp->getCampID() != this->getCampID()) {
 						return vecPos;
 					}
 				}

@@ -221,6 +221,9 @@ void UnitManager::selectUnitsByRect(MouseRect* mouse_rect) {
 
 
 void UnitManager::playerMoveWithWayPoints(int move_unit_id, std::vector<cocos2d::Vec2> path_points, cocos2d::Vec2 end_point) {
+	if (path_points.at(0) == end_point) {
+		return;
+	}
 	auto player = TiledMap::getUnitById(move_unit_id);
 	player->stopAllActions();
 	if (path_points.empty()) {
@@ -340,6 +343,9 @@ void UnitManager::delay(float dt) {
 }
 
 void UnitManager::attack(int attacker_id, int under_attack_id, int damage) {
+	if (attacker_id == under_attack_id) {
+		return;
+	}
 	if (!TiledMap::checkUnitId(attacker_id)) {
 		return;
 	}
@@ -442,6 +448,9 @@ void UnitManager::attack(int attacker_id, int under_attack_id, int damage) {
 
 
 void UnitManager::attackEffect(int attacker_id, int under_attack_id) {
+	if (attacker_id == under_attack_id) {
+		return;
+	}
 	if (!TiledMap::checkUnitId(attacker_id)) {
 		return;
 	}
@@ -449,6 +458,7 @@ void UnitManager::attackEffect(int attacker_id, int under_attack_id) {
 	if (!TiledMap::checkUnitId(under_attack_id)) {
 		return;
 	}
+
 	auto enemy = TiledMap::getUnitById(under_attack_id);
 	/*change the direction of the unit according to the target position*/
 	Vec2 tarPos = _tiled_Map->locationForTilePos(enemy->getPosition());
@@ -726,6 +736,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		else {
 			Dog::setBlueIsCreated(true);
 		}
+		static_cast<TMXTiledMap*>(plant->getParent())->addChild(dog, 200);
 		dog->Create(plant);
 		
 		//		TiledMap::setUnpass(tiledLocation);
@@ -734,7 +745,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 //		dog->setAnchorPoint(Vec2(0, 0.5));
 		
 
-		static_cast<TMXTiledMap*>(plant->getParent())->addChild(dog, 200);
+		
 		//tempScene->getVectorDogs().pushBack(dog);
 		if (base_id == this->_myCamp) {
 			tempScene->getMoney()->spendMoney(dog->getGold());
@@ -766,10 +777,11 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		else {
 			Soldier::setBlueIsCreated(true);
 		}
+		static_cast<TMXTiledMap*>(plant->getParent())->addChild(soldier, 200);
 		soldier->Create(plant);
 		
 		//		TiledMap::setUnpass(tiledLocation);
-		static_cast<TMXTiledMap*>(plant->getParent())->addChild(soldier, 200);
+		
 		//		auto tiledLocation = tempScene->tileCoordForPosition(nodeLocation);
 		
 //		soldier->setAnchorPoint(Vec2(0, 0.5));
@@ -806,10 +818,11 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		else {
 			Tank::setBlueIsCreated(true);
 		}
+		static_cast<TMXTiledMap*>(plant->getParent())->addChild(tank, 200);
 		tank->Create(plant);
 	
 		//		TiledMap::setUnpass(tiledLocation);
-		static_cast<TMXTiledMap*>(plant->getParent())->addChild(tank, 200);
+		
 		//		auto tiledLocation = tempScene->tileCoordForPosition(nodeLocation);
 		
 		
