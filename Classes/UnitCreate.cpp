@@ -18,7 +18,7 @@ bool Base::init(int campID) {
 		return false;
 	}
 	setCampID(campID);
-	_lifeValue = 5000;
+	this->setLifeValue(2000);
 	auto cache = Director::getInstance()->getTextureCache();
 	if (campID == REDCAMP) {
 		_base = Unit::create("unit/base_28.png");

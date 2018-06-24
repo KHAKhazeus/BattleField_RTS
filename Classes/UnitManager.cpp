@@ -730,8 +730,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		
 		//		TiledMap::setUnpass(tiledLocation);
 		//		auto tiledLocation = tempScene->tileCoordForPosition(nodeLocation);
-		TiledMap::newMapGrid(tiledLocation, dog->getUnitID());
-		TiledMap::newMapId(dog->getUnitID(), dog);
+		
 //		dog->setAnchorPoint(Vec2(0, 0.5));
 		
 
@@ -740,9 +739,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		if (base_id == this->_myCamp) {
 			tempScene->getMoney()->spendMoney(dog->getGold());
 		}
-		if (base_id == _myCamp) {
-			dog->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
-		}
+		
 	}
 	else if (new_unit_type == "s") {
 		Soldier* soldier = Soldier::create("soldierRun/soldierstand.png");
@@ -774,8 +771,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		//		TiledMap::setUnpass(tiledLocation);
 		static_cast<TMXTiledMap*>(plant->getParent())->addChild(soldier, 200);
 		//		auto tiledLocation = tempScene->tileCoordForPosition(nodeLocation);
-		TiledMap::newMapGrid(tiledLocation, soldier->getUnitID());
-		TiledMap::newMapId(soldier->getUnitID(), soldier);
+		
 //		soldier->setAnchorPoint(Vec2(0, 0.5));
 		
 		//	tempScene->getVectorSoldiers().pushBack(soldier);
@@ -783,9 +779,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		if (base_id == this->_myCamp) {
 			tempScene->getMoney()->spendMoney(soldier->getGold());
 		}
-		if (base_id == _myCamp) {
-			soldier->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
-		}
+		
 	}
 	else if (new_unit_type == "t") {
 		Tank* tank = Tank::create("tank/tank0.png");
@@ -817,17 +811,13 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		//		TiledMap::setUnpass(tiledLocation);
 		static_cast<TMXTiledMap*>(plant->getParent())->addChild(tank, 200);
 		//		auto tiledLocation = tempScene->tileCoordForPosition(nodeLocation);
-		TiledMap::newMapGrid(tiledLocation, tank->getUnitID());
-		TiledMap::newMapId(tank->getUnitID(), tank);
+		
 		
 //		tank->setAnchorPoint(Vec2(0, 1.0));
 		
 		//	tempScene->getVectorSoldiers().pushBack(soldier);
 		if (base_id == this->_myCamp) {
 			tempScene->getMoney()->spendMoney(tank->getGold());
-		}
-		if (base_id == _myCamp) {
-			tank->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
 		}
 	}
 }

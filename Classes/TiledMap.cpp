@@ -284,7 +284,12 @@ Vec2 TiledMap::locationForTilePos(Vec2 position) {
 				*/	
 
 void TiledMap::newMapId(int id, Unit* unit) {
-	_idAndUnit_Map.insert({ id,unit });
+	if (!TiledMap::checkUnitId(id)) {
+		_idAndUnit_Map.insert({ id,unit });
+	}
+	if (!TiledMap::checkUnitId(id)) {
+		_idAndUnit_Map.insert({ id,unit });
+	}
 }
 
 void TiledMap::removeMapId(int id) {

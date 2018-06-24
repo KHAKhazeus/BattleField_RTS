@@ -88,6 +88,12 @@ void Soldier::Create(Unit* soldierBase) {
 		if (this->getCampID() == tempManager->_myCamp) {
 			SimpleAudioEngine::getInstance()->playEffect(SOLDIER, false);
 		}
+		auto tiledLocation = tempScene->tileCoordForPosition(this->getPosition());
+		TiledMap::newMapGrid(tiledLocation, this->getUnitID());
+		TiledMap::newMapId(this->getUnitID(), this);
+		if (this->getCampID() == tempManager->_myCamp) {
+			this->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
+		}
 	}), nullptr);
 	progress->runAction(sequence);
 	// create a loading bar
@@ -135,7 +141,12 @@ void Dog::Create(Unit* soldierBase) {
 		if (this->getCampID() == tempManager->_myCamp) {
 			SimpleAudioEngine::getInstance()->playEffect(DOG, false);
 		}
-		//this->schedule(schedule_selector(FighterUnitBase::autoAttack), 2);
+		auto tiledLocation = tempScene->tileCoordForPosition(this->getPosition());
+		TiledMap::newMapGrid(tiledLocation, this->getUnitID());
+		TiledMap::newMapId(this->getUnitID(), this);
+		if (this->getCampID() == tempManager->_myCamp) {
+			this->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
+		}
 	}), nullptr);
 	progress->runAction(sequence);
 	// create a loading bar
@@ -184,7 +195,12 @@ void Tank::Create(Unit* warFactory) {
 		if (this->getCampID() == tempManager->_myCamp) {
 			SimpleAudioEngine::getInstance()->playEffect(TANK, false);
 		}
-		//this->schedule(schedule_selector(FighterUnitBase::autoAttack), 2);
+		auto tiledLocation = tempScene->tileCoordForPosition(this->getPosition());
+		TiledMap::newMapGrid(tiledLocation, this->getUnitID());
+		TiledMap::newMapId(this->getUnitID(), this);
+		if(this->getCampID() == tempManager->_myCamp) {
+			this->schedule(schedule_selector(FighterUnitBase::autoAttack), 1);
+		}
 	}), nullptr);
 	progress->runAction(sequence);
 	// create a loading bar
@@ -229,7 +245,7 @@ Vec2 FighterUnitBase::searchEnemy() {
 				if (TiledMap::checkMapGrid(vecPos)) {
 					auto id = TiledMap::getUnitIdByPosition(vecPos);
 					if (!TiledMap::checkUnitId(id)) {
-						return Vec2(-1, -1);
+						continue;
 					}
 					auto temp = TiledMap::getUnitById(id);
 					if (temp->getCampID() != getCampID()) {
