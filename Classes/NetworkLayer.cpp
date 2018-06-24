@@ -497,12 +497,7 @@ bool NetworkLayer::init(){
                 case Widget::TouchEventType::ENDED:{
                     return_button->setScale(1.0);
 					if (_socket_client != NULL) {
-						if (_socket_client->isStart()) {
-							break;
-						}
-						_socket_client->close();
-						delete _socket_client;
-						_socket_client = NULL;
+						break;
 					}
 
 					

@@ -380,6 +380,22 @@ void UnitManager::attack(int attacker_id, int under_attack_id, int damage) {
 				if (!TiledMap::checkUnitId(under_attack_id)) {
 					return;
 				}
+				if (enemy->getType().at(0) == 'S') {
+					if (enemy->getCampID() == REDCAMP) {
+						SoldierBase::setRedIsBuilt(true);
+					}
+					else {
+						SoldierBase::setBlueIsBuilt(true);
+					}
+				}
+				else if(enemy->getType().at(0) == 'W') {
+					if (enemy->getCampID() == REDCAMP) {
+						WarFactory::setRedIsBuilt(true);
+					}
+					else{
+						WarFactory::setBlueIsBuilt(true);
+					}
+				}
 				TiledMap::removeMapGrid(tiledLocation, enemy->getFixModel());
 				TiledMap::removeMapId(enemy->getUnitID());
 				_tiled_Map->getTiledMap()->removeChild(enemy);
