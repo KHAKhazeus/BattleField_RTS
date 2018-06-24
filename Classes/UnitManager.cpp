@@ -4,8 +4,8 @@
 #include "GameScene.h"
 using namespace CocosDenshion;
 
-bool UnitManager::init(TiledMap * tiledMap, std::shared_ptr<SocketServer> spserver,
-	std::shared_ptr<SocketClient> spclient) {
+bool UnitManager::init(TiledMap * tiledMap, SocketServer* spserver,
+	SocketClient* spclient) {
 	_building = 1;
 	_soider = 0;
 	_tiled_Map = tiledMap;

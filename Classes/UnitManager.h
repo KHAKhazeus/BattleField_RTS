@@ -16,10 +16,10 @@ USING_NS_CC;
 class UnitManager :public cocos2d::Node {
 public:
 	GameMessageInterface * msgs ;
-	virtual bool init(TiledMap *, std::shared_ptr<SocketServer> spserver,
-		std::shared_ptr<SocketClient> spclient);
-	static UnitManager * create(TiledMap* tiledMap, std::shared_ptr<SocketServer> spserver,
-		std::shared_ptr<SocketClient> spclient) {
+	virtual bool init(TiledMap *, SocketServer* spserver,
+		SocketClient* spclient);
+	static UnitManager * create(TiledMap* tiledMap, SocketServer* spserver,
+		SocketClient* spclient) {
 		auto unitManager = new UnitManager();
 		if (unitManager && unitManager->init(tiledMap,spserver,spclient)) {
 			unitManager->autorelease();
@@ -71,8 +71,8 @@ public:
 	std::vector<GameMessage>& getMessages() { return _gameMessages; }
 	void addMessages(GameMessage msg) { _gameMessages.push_back(msg); }
 
-	std::shared_ptr<SocketClient>getSocketClient() { return _socket_client; }
-	std::shared_ptr<SocketServer>getSocketServer() { return _socket_server; }
+	SocketClient* getSocketClient() { return _socket_client; }
+	SocketServer* getSocketServer() { return _socket_server; }
 	void writeOrders(std::vector<GameMessage> messages) {
 		_orders = messages;
 	}
@@ -97,8 +97,8 @@ private:
 	//Vector of the fightUnit created by us
 	Vector<Unit*> _unit_Vector;
 
-	std::shared_ptr<SocketClient> _socket_client{ static_cast<SocketClient*>(nullptr),[](SocketClient*) {} };
-	std::shared_ptr<SocketServer> _socket_server{ static_cast<SocketServer*>(nullptr),[](SocketServer*) {} };
+	SocketClient* _socket_client{NULL};
+	SocketServer* _socket_server{NULL};
 	std::vector<GameMessage> _gameMessages;
 	std::vector<GameMessage>_orders;
 

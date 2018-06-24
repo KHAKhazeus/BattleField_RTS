@@ -36,20 +36,26 @@ void NetworkLayer::initializeServerSide(){
         try{
             if(!_socket_server){
                 auto new_socket_server = SocketServer::create(port_number);
+				if (_socket_server != NULL) {
+					delete _socket_server;
+				}
                 if(new_socket_server){
-                    _socket_server.reset(new_socket_server);
+                    _socket_server = new_socket_server;
                 }
             }
             if(!_socket_client){
+				if (_socket_client != NULL) {
+					delete _socket_client;
+				}
                 auto new_socket_client = SocketClient::create(ip, port_number);
                 if(new_socket_client){
-                    _socket_client.reset(new_socket_client);
+                    _socket_client = new_socket_client;
                 }
             }
             server = true;
         }
         catch(boost::system::system_error){
-            _socket_client.reset(static_cast<SocketClient*>(nullptr),[](SocketClient*){});
+			_socket_client = NULL;
             std::cerr << "Server Or Client Create Denied, Resetting, Try Again" << std::endl;
         }
     }
@@ -66,15 +72,18 @@ void NetworkLayer::initializeClientSide(){
         port_stream >> port_number;
         try{
             if((!_socket_client)){
+				if (_socket_client != NULL) {
+					delete _socket_client;
+				}
                 auto new_socket_client = SocketClient::create(ip, port_number);
                 if(new_socket_client){
-                    _socket_client.reset(new_socket_client);
+                    _socket_client = new_socket_client;
                 }
             }
             client = true;
         }
         catch(boost::system::system_error){
-            _socket_client.reset(static_cast<SocketClient*>(nullptr),[](SocketClient*){});
+            _socket_client = NULL;
             std::cerr << "Client Create Denied, Resetting, Try Again" << std::endl;
         }
     }
@@ -83,9 +92,17 @@ void NetworkLayer::initializeClientSide(){
 void NetworkLayer::resetClientAndServer(){
     if(_socket_client){
         _socket_client->doClose();
+		if (_socket_client != NULL) {
+			delete _socket_client;
+			_socket_client = NULL;
+		}
     }
     if(_socket_server && server){
         _socket_server->close();
+		if (_socket_server != NULL) {
+			delete _socket_server;
+			_socket_server = NULL;
+		}
     }
 	//_socket_client.reset(static_cast<SocketClient*>(nullptr),[](SocketClient*){});
    // _socket_server.reset(static_cast<SocketServer*>(nullptr),[](SocketServer*){});
@@ -478,11 +495,15 @@ bool NetworkLayer::init(){
                     return_button->setScale(1.0);
 					if (_socket_client != NULL) {
 						_socket_client->close();
+						delete _socket_client;
+						_socket_client = NULL;
 					}
 
 					
 					if (_socket_server != NULL) {
 						_socket_server->close();
+						delete _socket_server;
+						_socket_server = NULL;
 					}
 					
                     NetworkLayer::close(this);

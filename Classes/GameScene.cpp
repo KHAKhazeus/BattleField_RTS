@@ -1,11 +1,11 @@
 #include "GameScene.h"
 #include "MenuScene.h"
 
-std::shared_ptr<SocketServer> GameScene::_socket_server;
-std::shared_ptr<SocketClient> GameScene::_socket_client;
+SocketServer* GameScene::_socket_server;
+SocketClient* GameScene::_socket_client;
 
 
-Scene* GameScene::createScene(std::shared_ptr<SocketServer> spserver, std::shared_ptr<SocketClient> spclient) {
+Scene* GameScene::createScene(SocketServer* spserver, SocketClient* spclient) {
 	auto scene = Scene::create();
 	auto gamescene = GameScene::create();
 	scene->addChild(gamescene);
@@ -471,9 +471,14 @@ void GameScene::winOrLose(bool win) {
 
 		case Widget::TouchEventType::ENDED: {
 			quit_button->setScale(1.0);
-			/*if (isClient()) {
+			if (isClient()) {
 				_socket_client->close();
-			}*/
+				delete _socket_client;
+			}
+			if (isServer()) {
+				_socket_server->close();
+				delete _socket_server;
+			}
 			auto menuScene = MenuScene::createScene();
 			auto sceneAnimate = TransitionCrossFade::create(0.1f, menuScene);
 			Director::getInstance()->replaceScene(sceneAnimate);

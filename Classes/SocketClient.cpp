@@ -41,6 +41,7 @@ void SocketClient::doClose()
 		_socket.close();
 		_io_service.stop();
 		_io_service.reset();
+		_thread->~thread();
         std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 		TerminateThread(_thread, 0);
 	}
@@ -122,10 +123,12 @@ void SocketClient::handle_read_header(const error_code& error)
 {
 	if (!error && _read_msg.decode_header() && !_error_Flag )
 	{
-		boost::asio::async_read(_socket,
-			boost::asio::buffer(_read_msg.body(), _read_msg.body_length()),
-			std::bind(&SocketClient::handle_read_body, this,
-				std::placeholders::_1));
+		
+			boost::asio::async_read(_socket,
+				boost::asio::buffer(_read_msg.body(), _read_msg.body_length()),
+				std::bind(&SocketClient::handle_read_body, this,
+					std::placeholders::_1));
+		
 	}
 	else
 	{
@@ -167,13 +170,16 @@ std::string SocketClient::read_data()
 	}
 	std::unique_lock<std::mutex> lk{ _mut };
 	while (_read_Msg_Deque.empty()) {
+		if (_error_Flag) {
+			return "";
+		}
 		_data_cond.wait(lk);
 	}
 	auto read_msg = _read_Msg_Deque.front();
 	_read_Msg_Deque.pop_front();
 	lk.unlock();
-	auto ret = std::string(read_msg.body(), read_msg.body_length());
-	return ret;
+	auto str = std::string(read_msg.body(), read_msg.body_length());
+	return str;
 }
 
 /*-------------------------------------------------------------------*/

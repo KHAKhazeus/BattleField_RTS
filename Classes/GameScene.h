@@ -40,12 +40,12 @@ private:
 
 	//vector for unit
 	Vector<MoneyMine*> _moneyMine;
-	static std::shared_ptr<SocketServer> _socket_server;
-	static std::shared_ptr<SocketClient> _socket_client;
+	static SocketServer* _socket_server;
+	static SocketClient* _socket_client;
 
 public:
 	
-	static cocos2d::Scene* createScene(std::shared_ptr<SocketServer> spserver, std::shared_ptr<SocketClient> spclient);
+	static cocos2d::Scene* createScene(SocketServer* spserver, SocketClient* spclient);
 	virtual bool init();
 	virtual void update(float dt) override;
 	

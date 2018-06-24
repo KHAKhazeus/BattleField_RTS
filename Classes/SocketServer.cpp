@@ -65,6 +65,9 @@ std::string TcpConnection::readData()
 	}
 	std::unique_lock<std::mutex> lk{ _mut };
 	while (_read_Msg_Deque_.empty()) {
+		if (_errorFlag) {
+			return "";
+		}
 		_cond.wait(lk);
 	}
 	auto read_msg = _read_Msg_Deque_.front();
