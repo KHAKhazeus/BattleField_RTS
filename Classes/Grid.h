@@ -65,10 +65,10 @@ private:
 			_x = x;
 		}
 		if (y < 0) {
-			_y = 127;
+			_y = 0;
 		}
 		else if (y >= 128) {
-			_y = 0;
+			_y = 127;
 		}
 		else {
 			_y = y;
