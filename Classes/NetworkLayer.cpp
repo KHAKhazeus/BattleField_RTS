@@ -353,11 +353,14 @@ bool NetworkLayer::init(){
                     
                 case Widget::TouchEventType::ENDED:{
                     reset->setScale(1.0);
+					if (_socket_server || _socket_client) {
+						break;
+					}
                     auto ip_default_string = StringUtils::toString("127.0.0.1");
                     auto port_default_string = StringUtils::toString("8080");
                     ipbox->setString(ip_default_string);
                     portbox->setString(port_default_string);
-                    NetworkLayer::resetClientAndServer();    //need to be extended
+                //    NetworkLayer::resetClientAndServer();    //need to be extended
                     break;
                 }
                     
@@ -494,6 +497,9 @@ bool NetworkLayer::init(){
                 case Widget::TouchEventType::ENDED:{
                     return_button->setScale(1.0);
 					if (_socket_client != NULL) {
+						if (_socket_client->isStart()) {
+							break;
+						}
 						_socket_client->close();
 						delete _socket_client;
 						_socket_client = NULL;
@@ -501,9 +507,10 @@ bool NetworkLayer::init(){
 
 					
 					if (_socket_server != NULL) {
-						_socket_server->close();
+						break;
+				/*		_socket_server->close();
 						delete _socket_server;
-						_socket_server = NULL;
+						_socket_server = NULL;*/
 					}
 					
                     NetworkLayer::close(this);

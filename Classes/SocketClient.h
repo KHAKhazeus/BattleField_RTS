@@ -76,9 +76,9 @@ public:
 
 	/**
 	* \brief
-	* \return if game has started
+	* \return if game has isStart
 	*/
-	bool started() const { return _start_Flag; }
+	bool isStart() const { return _start_Flag; }
 	/**
 	* \brief
 	* \return if there is isError

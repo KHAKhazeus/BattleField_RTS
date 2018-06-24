@@ -243,7 +243,12 @@ void UnitManager::playerMoveWithWayPoints(int move_unit_id, std::vector<cocos2d:
 	switch ((player->getType())[0])
 	{
 	case 's':
-		animate = player->getAnimateByName("soldierRun", 0.2, 7);
+		if (player->getCampID() == REDCAMP) {
+			animate = player->getAnimateByName("soldierRun", 0.2, 7);
+		}
+		else {
+			animate = player->getAnimateByName("soldierRunBlue", 0.2, 6);
+		}
 		speed = SOIDIER_SPEED;
 		break;
 	case 'd':
@@ -251,7 +256,12 @@ void UnitManager::playerMoveWithWayPoints(int move_unit_id, std::vector<cocos2d:
 		speed = DOG_SPEED;
 		break;
 	case 't':
-		animate = player->getAnimateByName("tankRun", 0.2, 7);
+		if (player->getCampID() == REDCAMP) {
+			animate = player->getAnimateByName("tankRun", 0.2, 7);
+		}
+		else {
+			animate = player->getAnimateByName("tankRunBlue", 0.2, 4);
+		}
 		speed = TANK_SPEED;
 		break;
 	default:
@@ -274,10 +284,17 @@ void UnitManager::playerMoveWithWayPoints(int move_unit_id, std::vector<cocos2d:
 			player->setTexture("unit/FighterUnit_1.png");
 			break;
 		case 's':
-			player->setTexture("unit/FighterUnit_2.png");
+			if (player->getCampID() == REDCAMP) {
+				player->setTexture("unit/FighterUnit_2.png");
+			}
+			else {
+				player->setTexture("unit/FighterUnit_3.png");
+			}
 			break;
 		case 't':
-		//	player->setTexture("unit/FighterUnit.png");
+			if (player->getCampID() == BLUECAMP) {
+				player->setTexture("unit/FighterUnit_4.png");
+			}
 			break;
 		default:
 			break;
@@ -351,7 +368,7 @@ void UnitManager::attack(int attacker_id, int under_attack_id, int damage) {
 			}
 		}
 		if (enemy->isBuilding()) {
-			auto callFunc = CallFunc::create([=] {
+		//	auto callFunc = CallFunc::create([=] {
 				destroyEffect(enemy, true);
 				auto tiledLocation = _tiled_Map->tileCoordForPosition(enemy->getPosition());
 				if (!TiledMap::checkUnitId(under_attack_id)) {
@@ -360,11 +377,11 @@ void UnitManager::attack(int attacker_id, int under_attack_id, int damage) {
 				TiledMap::removeMapGrid(tiledLocation, enemy->getFixModel());
 				TiledMap::removeMapId(enemy->getUnitID());
 				_tiled_Map->getTiledMap()->removeChild(enemy);
-			});
-			this->runAction(callFunc);
+			//});
+			//this->runAction(callFunc);
 		}
 		else {
-			auto callFunc = CallFunc::create([=] {
+			//auto callFunc = CallFunc::create([=] {
 				destroyEffect(enemy, false);
 				if (!TiledMap::checkUnitId(under_attack_id)) {
 					return;
@@ -387,11 +404,16 @@ void UnitManager::attack(int attacker_id, int under_attack_id, int damage) {
 					}
 				}
 				_tiled_Map->getTiledMap()->removeChild(enemy);
-			});
-			this->runAction(callFunc);
+		//	});
+			//this->runAction(callFunc);
 		}
 	}
 	if (enemy->getHP() != nullptr) {
+		if (!TiledMap::checkUnitId(under_attack_id))
+		{
+			return;
+		}
+		enemy->getHP()->setVisible(true);
 		enemy->getHP()->setPercent(enemy->getHPInterval() * static_cast<float>(enemy->getLifeValue()));
 	}
 }
@@ -431,7 +453,12 @@ void UnitManager::attackEffect(int attacker_id, int under_attack_id) {
 	switch (type) {
 	case 's':
 		SimpleAudioEngine::getInstance()->playEffect(FIGHT, false);
-		player->setTexture("unit/FighterUnit_2.png");
+		if (player->getCampID() == REDCAMP) {
+			player->setTexture("unit/FighterUnit_2.png");
+		}
+		else {
+			player->setTexture("unit/FighterUnit_3.png");
+		}
 		bullet = Sprite::createWithTexture
 		(Director::getInstance()->getTextureCache()->addImage("soldierAttack/bullet.png"));
 		bullet->setPosition(_tiled_Map->changeOPGL(player->getPosition()));
@@ -532,7 +559,8 @@ void UnitManager::Building(int new_building_id, std::string new_building_type, i
 			moneyMine->setColor(Color3B(221, 160, 221));
 		}
 		else {
-			moneyMine->setColor(Color3B(65, 105, 225));
+			moneyMine->setTexture("mineblue/Mine_23.png");
+			moneyMine->setColor(Color3B(135, 206, 235));
 		}
 		moneyMine->addIdCount();
 		moneyMine->setPosition(_tiled_Map->changeOPGL(Vec2(nodeLocation.x, nodeLocation.y)));
@@ -562,7 +590,8 @@ void UnitManager::Building(int new_building_id, std::string new_building_type, i
 			powerPlant->setColor(Color3B(221, 160, 221));
 		}
 		else {
-			powerPlant->setColor(Color3B(65, 105, 225));
+			powerPlant->setTexture("powerPlantBlue/powerPlant_23.png");
+			powerPlant->setColor(Color3B(135, 206, 235));
 		}
 		powerPlant->addIdCount();
 		powerPlant->setPosition(_tiled_Map->changeOPGL(Vec2(nodeLocation.x, nodeLocation.y)));
@@ -591,7 +620,8 @@ void UnitManager::Building(int new_building_id, std::string new_building_type, i
 			soldierBase->setColor(Color3B(221, 160, 221));
 		}
 		else {
-			soldierBase->setColor(Color3B(65, 105, 225));
+			soldierBase->setTexture("soldierbaseblue/SoldierBase_23.png");
+			soldierBase->setColor(Color3B(135, 206, 235));
 		}
 		soldierBase->addIdCount();
 		soldierBase->setPosition(_tiled_Map->changeOPGL(Vec2(nodeLocation.x, nodeLocation.y)));
@@ -620,6 +650,7 @@ void UnitManager::Building(int new_building_id, std::string new_building_type, i
 			warFactory->setColor(Color3B(221, 160, 221));
 		}
 		else {
+			warFactory->setTexture("warfactoryblue/warfactory_23.png");
 			warFactory->setColor(Color3B(65, 105, 225));
 		}
 		warFactory->addIdCount();
@@ -666,6 +697,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		}
 		auto tiledLocation = tempTiledMap->tileCoordForPosition(nodeLocation);
 		dog->setPosition(_tiled_Map->changeOPGL(Vec2(nodeLocation.x, nodeLocation.y)));
+		dog->setTiledPosition(tiledLocation);
 		if (base_id == REDCAMP) {
 			Dog::setRedIsCreated(true);
 		}
@@ -681,7 +713,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		TiledMap::newMapGrid(tiledLocation, dog->getUnitID());
 		TiledMap::newMapId(dog->getUnitID(), dog);
 //		dog->setAnchorPoint(Vec2(0, 0.5));
-		dog->setTiledPosition(tiledLocation);
+		
 
 		static_cast<TMXTiledMap*>(plant->getParent())->addChild(dog, 200);
 		//tempScene->getVectorDogs().pushBack(dog);
@@ -697,7 +729,8 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 			soldier->setColor(Color3B(255, 0, 0));
 		}
 		else {
-			soldier->setColor(Color3B(65, 105, 225));
+			soldier->setTexture("unit/FighterUnit_3.png");
+			//soldier->setColor(Color3B(65, 105, 225));
 		}
 		soldier->addIdCount();
 		soldier->setAutoAttack(true);
@@ -706,6 +739,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		}
 		auto tiledLocation = tempTiledMap->tileCoordForPosition(nodeLocation);
 		soldier->setPosition(_tiled_Map->changeOPGL(Vec2(nodeLocation.x, nodeLocation.y)));
+		soldier->setTiledPosition(tiledLocation);
 		if (base_id == REDCAMP) {
 			Soldier::setRedIsCreated(true);
 		}
@@ -722,7 +756,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		TiledMap::newMapGrid(tiledLocation, soldier->getUnitID());
 		TiledMap::newMapId(soldier->getUnitID(), soldier);
 //		soldier->setAnchorPoint(Vec2(0, 0.5));
-		soldier->setTiledPosition(tiledLocation);
+		
 		//	tempScene->getVectorSoldiers().pushBack(soldier);
 		if (base_id == this->_myCamp) {
 			tempScene->getMoney()->spendMoney(soldier->getGold());
@@ -733,19 +767,20 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		tank->setUnitID(new_unit_id);
 		tank->setCampID(base_id);
 		if (tank->getCampID() == REDCAMP) {
-			tank->setColor(Color3B(221, 160, 221));
+			tank->setColor(Color3B(221, 160, 221)); 
+			tank->setScale(0.4f);
 		}
 		else {
-			tank->setColor(Color3B(65, 105, 225));
+			tank->setTexture("blueTank/blueTank0.png");
 		}
 		tank->addIdCount();
 		tank->setAutoAttack(true);
-		tank->setScale(0.4f);
 		if (nodeLocation.x < plant->getPosition().x) {
 			tank->setFlippedX(true);
 		}
 		auto tiledLocation = tempTiledMap->tileCoordForPosition(nodeLocation);
 		tank->setPosition(_tiled_Map->changeOPGL(Vec2(nodeLocation.x, nodeLocation.y)));
+		tank->setTiledPosition(tiledLocation);
 		if (base_id == REDCAMP) {
 			Tank::setRedIsCreated(true);
 		}
@@ -762,7 +797,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		TiledMap::newMapGrid(tiledLocation, tank->getUnitID());
 		TiledMap::newMapId(tank->getUnitID(), tank);
 //		tank->setAnchorPoint(Vec2(0, 1.0));
-		tank->setTiledPosition(tiledLocation);
+		
 		//	tempScene->getVectorSoldiers().pushBack(soldier);
 		if (base_id == this->_myCamp) {
 			tempScene->getMoney()->spendMoney(tank->getGold());
