@@ -26,76 +26,46 @@ using boost::system::error_code;
 class SocketClient
 {
 public:
-	/**
-	* \brief create a socket client
-	* \param ip ip address, default to localhost
-	* \param port port number, default to 8080
-	* \return a socket client
-	*/
+	//@@param1 is a str refer to ip address, default  localhost
+	//@@param2 is an int refer to port number, default  8080
+	//create a SocketClient Pointer
 	static SocketClient* create(std::string ip = "127.0.0.1", int port = 8080);
 
 	~SocketClient() { doClose(); }
 
-	/**
-	* \brief close the socket
-	*/
+	//Close operation
 	void close();
 
+	//Get or Set Map operation
 	void setMapselect(int mapID) { _mapSelect = mapID; }
 	int getMapselect() { return _mapSelect; }
 
-	/**
-	* \brief start a socket
-	*/
+	//Start Operation
 	void start()
 	{
 		startConnect();
 	};
+
 	std::vector<GameMessage> getGameMessages();
 
 	void sendGameMessages(const std::vector<GameMessage>& vec_game_msg);
 
 
-	/**
-	* \brief send string through socket
-	* \param s protubuf serialized string
-	*/
-	void send_string(std::string s);
+	
 
-	/**
-	* \brief this is a block function of receving stirng
-	* \return protubuf serialized string
-	*/
-	std::string get_string();
-
-	/**
-	* \brief inner use
-	*/
+	//Close operation which be called by close()
 	void doClose();
 
 
-	/**
-	* \brief
-	* \return if game has isStart
-	*/
+	//To judge if it has already been connected
 	bool isStart() const { return _start_Flag; }
-	/**
-	* \brief
-	* \return if there is isError
-	*/
+	
+	//To judge if there is something error
 	bool error()const { return _error_Flag; }
 
-	/**
-	* \brief start from 1
-	* \return camp number
-	*/
+	//To get the client camp
 	int camp() const;
 
-	/**
-	* \brief
-	* \return total player number
-	*/
-	int total() const;
 
 private:
 	SocketClient(std::string ip, int port) : _socket(_io_service),
@@ -104,7 +74,7 @@ private:
 		start();
 	}
 
-
+	//Write Operation
 	void write_data(std::string s);
 
 	void startConnect();
@@ -115,6 +85,7 @@ private:
 
 	void handle_read_body(const error_code& error);
 
+	//Read Operation 
 	std::string read_data();
 private:
 
@@ -124,8 +95,10 @@ private:
 	std::deque<SocketMessage> _read_Msg_Deque;
 	SocketMessage _read_msg;
 
+	//Judge flag
 	bool _start_Flag{ false }, _error_Flag{ false };
 
+	// thread to bind io_service run
 	std::thread *_thread;
 	int _camp;
 	int _mapSelect;

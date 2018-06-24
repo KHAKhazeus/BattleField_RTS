@@ -192,6 +192,7 @@ void GameScene::onEnterTransitionDidFinish() {
 	_inputBox->setTextColor(Color4B::WHITE);
 	_inputBox->setTextHorizontalAlignment(TextHAlignment::LEFT);
 	_inputBox->setPosition(Vec2(_screen_width / 2, _screen_height * 0.1));
+	_inputBox->setVisible(false);
 	_inputBox->addEventListener([=](Ref *pSender, TextField::EventType event_type) {
 		switch (event_type) {
 		case TextField::EventType::ATTACH_WITH_IME:
@@ -217,23 +218,34 @@ void GameScene::onEnterTransitionDidFinish() {
 	_textBackground = LayerGradient::create(Color4B(139, 0, 0, 0), Color4B(139, 35, 35, 200));
 	_textBackground->changeWidthAndHeight(_inputBox->getContentSize().width * 1.5,_inputBox->getContentSize().height * 1.2);
 	_textBackground->setAnchorPoint(Vec2(0.5,0));
-	_textBackground->setPosition(Vec2(_inputBox->getPosition().x - _inputBox->getContentSize().width * 3/4,
+	_textBackground->setVisible(false);
+	_textBackground->setPosition(Vec2(_inputBox->getPosition().x - _inputBox->getContentSize().width * 3 / 4,
 		_inputBox->getPosition().y - _inputBox->getContentSize().height/2));
 	this->addChild(_textBackground, 180);
 
-	_myShow = Text::create("     11   ", "Arial - Bold.ttf", 24);
-	_myShow->setTextColor(Color4B::WHITE);
-	_myShow->setTextHorizontalAlignment(TextHAlignment::LEFT);
-	_myShow->setPosition(Vec2(_screen_width * 4 / 5, _screen_height * 0.8));
-	this->addChild(_myShow, 200);
+	Sprite* dialogue = Sprite::create("background/dialogue.png");
+	dialogue->setScale(0.15f);
+	dialogue->setPosition(Vec2(_screen_width / 10 - 10, _screen_height * 0.2));
+	dialogue->setOpacity(100);
+	this->addChild(dialogue, 200);
+
+	auto size = dialogue->getContentSize();
+	_myShow = Text::create("        ", "Arial - Bold.ttf", 24);
+	_myShow->setColor(Color3B(0, 0, 255));
+
+	_myShow->setScale(5.0f);
+	_myShow->setTextHorizontalAlignment(TextHAlignment::CENTER);
+	_myShow->setPosition(Vec2(size.width / 2 + 400, size.height / 1.5));
+	dialogue->addChild(_myShow, 210);
 
 
-	_enShow = Text::create("     11   ", "Arial - Bold.ttf", 24);
-	_enShow->setTextColor(Color4B::WHITE);
-	_enShow->setTextHorizontalAlignment(TextHAlignment::LEFT);
-	_enShow->setPosition(Vec2(_screen_width * 4 / 5, _screen_height * 0.6));
-	this->addChild(_enShow, 200);
-	
+	_enShow = Text::create("        ", "Arial - Bold.ttf", 24);
+	_enShow->setColor(Color3B(255, 170, 255));
+	_enShow->setScale(5.0f);
+	_enShow->setTextHorizontalAlignment(TextHAlignment::CENTER);
+	_enShow->setPosition(Vec2(size.width / 2 + 400, size.height / 4));
+	dialogue->addChild(_enShow, 210);
+
 
 }
 

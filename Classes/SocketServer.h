@@ -79,41 +79,36 @@ public:
 	//set or get Map Operation
 	void setMapselect(int mapID) { _mapselect = mapID; }
 	int getMapselect() { return _mapselect; }
-	/**
-	* \brief remove a connction, if there is a connction
-	* \param p tcp connection
-	*/
+	
+
+	//remove the TCP from the Vector *using shared from this to avoid delete repeat
 	void removeConnection(TcpConnection::pointer p);
 
+	//insert the TCP to the Vector *using shared fram this to avoid shared_ptr repeat point
 	void insertConnection(TcpConnection::pointer p);
-	/**
-	* \brief start the game
-	*/
+	
+	//call this when touch the button to start game
 	void clickStart();
 
-	/**
-	* \brief
-	* \return if isError occured
-	*/
+	//judge if there is an error
 	bool isError() const;
 
-	/**
-	* \brief
-	* \return total connction number
-	*/
-	int connection_num() const;
+	//judge if it has already closedd
 	bool _close{ false };
+
+	//judge if it need to stop
     bool stop{false};
 	
 private:
 	SocketServer(int port);
+
 	void startAccept();
 
 	void handleAccept(TcpConnection::pointer new_connection,
 		const error_code& error);
 
+	//loop operation
 	void loop();
-
 
 	tcp::acceptor _acceptor;
 	

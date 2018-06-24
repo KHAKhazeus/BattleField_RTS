@@ -16,15 +16,15 @@
 #define DOG_SPEED 0.1
 #define TANK_SPEED 0.2
 #define SOIDIER_SPEED 0.2
-#define CONSTRUCTION "construction.wav"
-#define DOG "dogFinished.wav"
-#define SOLDIER "soldierFinished.wav"
-#define TANK "tankFinished.wav"
-#define BUILD "Building.wav"
-#define FIGHT "gun.wav"
-#define LOST "unitLost.wav"
-#define TANKBULLET "tankbullet.wav"
-#define EXPLODE "explode.wav"
+#define CONSTRUCTION "Musics/construction.wav"
+#define DOG "Musics/dogFinished.wav"
+#define SOLDIER "Musics/soldierFinished.wav"
+#define TANK "Musics/tankFinished.wav"
+#define BUILD "Musics/Building.wav"
+#define FIGHT "Musics/gun.wav"
+#define LOST "Musics/unitLost.wav"
+#define TANKBULLET "Musics/tankbullet.wav"
+#define EXPLODE "Musics/explode.wav"
 #define LOSTTEMP 13
 #define SNOWMAP  9
 
