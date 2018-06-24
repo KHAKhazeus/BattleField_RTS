@@ -1,4 +1,7 @@
 # BattleField_RTS
+
+    Github根目录下的pdf中有更详细的信息，附有图片，详细信息请查看pdf
+
 - 概述
 - 游戏简介
     + 游戏框架
