@@ -168,7 +168,7 @@ bool MenuScene::init(){
     this->addChild(quit_button, 0);
     this->addChild(setting_button, 0);
     
-	CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic("CCCP.mp3", true);
+	CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic("Musics/CCCP.mp3", true);
     
     return true;
 }

@@ -7,6 +7,7 @@
 #include "FighterUnitBase.h"
 #include "MouseRect.h"
 #include "ui/CocosGUI.h"
+#include "SmallMap.h"
 USING_NS_CC;
 using namespace ui;
 
@@ -21,10 +22,14 @@ private:
 	//Cursor point
 	float _cursorX, _cursorY;
 
+	//Position compensation
+	Vec2 _returnPos;
+
 
 	//Pointer to class needed instance
 	Sprite* _money_Image;
 	Sprite* _power_Image;
+	
 	Money* _money;
 	Power* _power;
 	//Can create the base and check something(TODO)
@@ -37,6 +42,11 @@ private:
 	Text* _myShow;
 	Text* _enShow;
 	LayerGradient* _textBackground;
+
+	SmallMap* _small_Map;
+
+	//To judge if is able to mapscroll
+	bool _judge_Move;
 
 	//vector for unit
 	Vector<MoneyMine*> _moneyMine;
@@ -71,6 +81,8 @@ public:
 	virtual void onEnterTransitionDidFinish();
 	virtual void onExit();
 
+	Vec2 getScreen() { return Vec2(_screen_width, _screen_height); }
+
 	//Create the KeyBoard CallBack();
 	void onKeyPressed(EventKeyboard::KeyCode, Event * event) ;
 	//If you win,then ?
@@ -83,7 +95,7 @@ public:
 	//Scroll map
 	void mapScroll();
 
-
+	
 	//check if there is a valid address
 	bool isServer();
 	bool isClient();
@@ -99,6 +111,10 @@ public:
 	virtual bool onTouchBegan(Touch* touch, Event* event);
 	virtual void onTouchMoved(Touch* touch, Event* event);
 	virtual void onTouchEnded(Touch* touch, Event* event);
+
+	bool getJudgeMove() { return _judge_Move; }
+	void setJudgeMove(bool tag) { _judge_Move = tag; }
+
 
 	//Mouse listener
 	void onMouseMove(Event* event);

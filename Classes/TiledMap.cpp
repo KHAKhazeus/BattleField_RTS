@@ -374,3 +374,7 @@ Vec2 TiledMap::findFreeNear(Vec2 position) {
 Vec2 TiledMap::changeOPGL(Vec2 pos) {
 	return locationForTilePos(tileCoordForPosition(pos));
 }
+
+const std::map<int, Unit*>& TiledMap::getIdAndUnitMap() {
+	return _idAndUnit_Map;
+}
