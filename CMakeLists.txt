@@ -88,6 +88,7 @@ list(APPEND GAME_SOURCE
 	 Classes/PathArithmetic.cpp
 	 Classes/GameMessageInterface.cpp
 	 Classes/LoadingScene.cpp
+	 Classes/SmallMap.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
@@ -114,6 +115,7 @@ list(APPEND GAME_HEADER
 	Classes/GameMessageInterface.h
 	Classes/LoadingScene.h
 	Classes/GameMessageOperation.h
+	Classes/SmallMap.h
      )
 
 if(ANDROID)
