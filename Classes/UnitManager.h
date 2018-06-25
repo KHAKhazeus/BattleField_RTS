@@ -77,6 +77,8 @@ public:
 		_orders = messages;
 	}
 
+	TiledMap* getTiledMap() { return _tiled_Map; }
+
 //	void attack(Unit *player,Unit *target);
 
 

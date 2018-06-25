@@ -77,6 +77,9 @@ public:
 	//To check the Id if has been removed already
 	static bool checkUnitId(int id);
 
+	static const std::map<int, Unit*>& getIdAndUnitMap();
+	
+
 	Vec2 changeOPGL(Vec2 pos);
 
 	//_selected_Vector API
@@ -104,7 +107,7 @@ public:
 
 	static void setMapFlagLost() { _map_flag = LOSTTEMP; }
 	static void setMapFlagSnow() { _map_flag = SNOWMAP; }
-	
+	static int getMapFlag() { return _map_flag; }
 	
 	CREATE_FUNC(TiledMap);
 private:
