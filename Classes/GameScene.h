@@ -27,8 +27,8 @@ private:
 
 
 	//Pointer to class needed instance
-	Sprite* _money_Image;
-	Sprite* _power_Image;
+	Button* _money_Image;
+	Button* _power_Image;
 	
 	Money* _money;
 	Power* _power;

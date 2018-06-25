@@ -38,6 +38,7 @@ protected:
 	Vec2 _tiledPos; //the tiledPostion of the Unit
 	Vec2 _targetPos;
 	Vec2 _tempPos; //this Postion is to store the move Position
+	bool _createUnit;//if this unit is creating new unit
 public:
 	// Get the aniamtion
 	static Unit* create(const std::string& filename) {
@@ -90,6 +91,9 @@ public:
 
 	virtual void setAutoAttack(bool attack) { _isAutoAttack = attack; }
 	virtual bool isAutoAttack() { return _isAutoAttack; }
+
+	void setCreateUnit(bool judge) { _createUnit = judge; }
+	bool getCreateUnit() { return _createUnit; }
 
 
 	//get the range of the building

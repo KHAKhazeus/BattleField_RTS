@@ -74,17 +74,7 @@ public:
 
 class Soldier :public FighterUnitBase
 {
-private:
-	static bool _redIsBeingCreated;//find if there is a red unit being created
-	static bool _blueIsBeingCreated;//find if there is a blue unit being created
 public:
-
-	//set and judge whether there is a unit being created
-	static void setRedIsCreated(bool created);
-	static bool getRedIsCreated();
-
-	static void setBlueIsCreated(bool created);
-	static bool getBlueIsCreated();
 
 	//unit's creating function
 	static Soldier* create(const std::string& filename) {
@@ -115,16 +105,7 @@ public:
 
 class Dog :public FighterUnitBase
 {
-private:
-	static bool _redIsBeingCreated;//find if there is a red unit being created
-	static bool _blueIsBeingCreated;//find if there is a blue unit being created
 public:
-	//set and judge whether there is a unit being created
-	static void setRedIsCreated(bool created);
-	static bool getRedIsCreated();
-
-	static void setBlueIsCreated(bool created);
-	static bool getBlueIsCreated();
 
 	//unit's creating function
 	static Dog* create(const std::string& filename) {
@@ -155,15 +136,7 @@ public:
 
 class Tank :public FighterUnitBase
 {
-	static bool _redIsBeingCreated;//find if there is a unit being created
-	static bool _blueIsBeingCreated;//find if there is a unit being created
 public:
-	//set and judge whether there is a unit being created
-	static void setRedIsCreated(bool created);
-	static bool getRedIsCreated();
-
-	static void setBlueIsCreated(bool created);
-	static bool getBlueIsCreated();
 
 	//unit's creating function
 	static Tank* create(const std::string& filename) {

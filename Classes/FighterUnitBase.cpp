@@ -7,60 +7,6 @@
 using namespace CocosDenshion;
 #include "GameScene.h"
 
-bool Soldier::_redIsBeingCreated = false;
-bool Soldier::_blueIsBeingCreated = false;
-bool Soldier::getRedIsCreated() {
-	return _redIsBeingCreated;
-}
-
-void Soldier::setRedIsCreated(bool judge) {
-	_redIsBeingCreated = judge;
-}
-
-bool Soldier::getBlueIsCreated() {
-	return _blueIsBeingCreated;
-}
-
-void Soldier::setBlueIsCreated(bool judge) {
-	_blueIsBeingCreated = judge;
-}
-
-bool Dog::_redIsBeingCreated = false;
-bool Dog::_blueIsBeingCreated = false;
-bool Dog::getRedIsCreated() {
-	return _redIsBeingCreated;
-}
-
-void Dog::setRedIsCreated(bool judge) {
-	_redIsBeingCreated = judge;
-}
-
-bool Dog::getBlueIsCreated() {
-	return _blueIsBeingCreated;
-}
-
-void Dog::setBlueIsCreated(bool judge) {
-	_blueIsBeingCreated = judge;
-}
-
-bool Tank::_redIsBeingCreated = false;
-bool Tank::_blueIsBeingCreated = false;
-bool Tank::getRedIsCreated() {
-	return _redIsBeingCreated;
-}
-
-void Tank::setRedIsCreated(bool judge) {
-	_redIsBeingCreated = judge;
-}
-
-bool Tank::getBlueIsCreated() {
-	return _blueIsBeingCreated;
-}
-
-void Tank::setBlueIsCreated(bool judge) {
-	_blueIsBeingCreated = judge;
-}
-
 void Soldier::Create(Unit* soldierBase) {
 	this->setVisible(false);
 	auto barSprite = Sprite::create("bar/loadingbar.png");
@@ -81,12 +27,7 @@ void Soldier::Create(Unit* soldierBase) {
 	auto sequence = Sequence::create(pft, CallFunc::create([=] {
 		soldierBase->removeChild(progress, true);
 		this->setVisible(true);
-		if (this->getCampID() == REDCAMP) {
-			Soldier::setRedIsCreated(false);
-		}
-		else {
-			Soldier::setBlueIsCreated(false);
-		}
+		this->setCreateUnit(false);
 		auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
 		auto tempManager = tempScene->getUnitManager();
 		if (this->getCampID() == tempManager->_myCamp) {
@@ -136,12 +77,7 @@ void Dog::Create(Unit* soldierBase) {
 	auto sequence = Sequence::create(pft, CallFunc::create([=] {
 		soldierBase->removeChild(progress, true);
 		this->setVisible(true);
-		if (this->getCampID() == REDCAMP) {
-			Dog::setRedIsCreated(false);
-		}
-		else {
-			Dog::setBlueIsCreated(false);
-		}
+		soldierBase->setCreateUnit(false);
 		auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
 		auto tempManager = tempScene->getUnitManager();
 		if (this->getCampID() == tempManager->_myCamp) {
@@ -192,12 +128,7 @@ void Tank::Create(Unit* warFactory) {
 	auto sequence = Sequence::create(pft, CallFunc::create([=] {
 		warFactory->removeChild(progress, true);
 		this->setVisible(true);
-		if (this->getCampID() == REDCAMP) {
-			Tank::setRedIsCreated(false);
-		}
-		else {
-			Tank::setBlueIsCreated(false);
-		}
+		warFactory->setCreateUnit(false);
 		auto tempScene = static_cast<GameScene*>(this->getParent()->getParent()->getParent());
 		auto tempManager = tempScene->getUnitManager();
 		if (this->getCampID() == tempManager->_myCamp) {

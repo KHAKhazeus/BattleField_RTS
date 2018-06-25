@@ -147,15 +147,8 @@ bool SoldierBase::onTouchBegan(Touch *touch, Event *event) {
 	this->setCreated(false);
 
 	if (rect.containsPoint(locationInNode)) {	//if click is valid
-		if (tempManager->_myCamp == REDCAMP) {
-			if (Soldier::getRedIsCreated()||Dog::getRedIsCreated()) {
-				return false;
-			}
-		}
-		else {
-			if (Soldier::getBlueIsCreated() || Dog::getBlueIsCreated()) {
-				return false;
-			}
+		if (this->getCreateUnit()) {
+			return false;
 		}
 		if (getSelected() || getCreated()) {
 			return false;
@@ -299,15 +292,8 @@ bool WarFactory::onTouchBegan(Touch *touch, Event *event) {
 	this->setSelected(false);
 	this->setCreated(false);
 	if (rect.containsPoint(locationInNode)) {	//if click is valid
-		if (tempManager->_myCamp == REDCAMP) {
-			if (Tank::getRedIsCreated()) {
-				return false;
-			}
-		}
-		else {
-			if (Tank::getBlueIsCreated()) {
-				return false;
-			}
+		if (this->getCreateUnit()) {
+			return false;
 		}
 		if (this->getSelected() || this->getCreated()) {
 			return false;

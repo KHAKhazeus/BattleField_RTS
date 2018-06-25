@@ -67,13 +67,14 @@ void GameScene::onEnterTransitionDidFinish() {
 
 
 	// Set money and power
-	_money_Image = Sprite::create("ui/Coin.png");
+	_money_Image = Button::create("ui/Coin.png", "ui/Coin.png");
 	_money_Image->setPosition(Vec2(_screen_width*0.83, _screen_height*0.04));
 	this->addChild(_money_Image);
 	_money = Money::create();
 	_money->setPosition(Vec2(_screen_width *0.90, _screen_height*0.04));
 	this->addChild(_money);
-	_power_Image = Sprite::create("ui/electric.png");
+	
+	_power_Image = Button::create("ui/electric.png", "ui/electric.png");
 	_power_Image->setPosition(Vec2(_screen_width*0.83, _screen_height*0.12));
 	_power_Image->setScale(0.08);
 	_power = Power::create();
@@ -81,6 +82,58 @@ void GameScene::onEnterTransitionDidFinish() {
 	this->addChild(_power);
 	this->addChild(_power_Image);
 
+	_power_Image->addTouchEventListener([=](Ref* pSender, Widget::TouchEventType event_type) {
+		switch (event_type) {
+		case Widget::TouchEventType::BEGAN: {
+			_power_Image->setScale(0.085);
+			break;
+		}
+
+		case Widget::TouchEventType::ENDED: {
+			_power_Image->setScale(0.08);
+			int money = this->getMoney()->getMoney();
+			if (money < 800) {
+				return false;
+			}
+			this->getMoney()->spendMoney(800);
+			this->getPower()->increasePower(150);
+			break;
+		}
+		case Widget::TouchEventType::CANCELED: {
+			_power_Image->setScale(0.08);
+			break;
+		}
+		default:
+			break;
+		}
+	});
+
+
+	_money_Image->addTouchEventListener([=](Ref* pSender, Widget::TouchEventType event_type) {
+		switch (event_type) {
+		case Widget::TouchEventType::BEGAN: {
+			_money_Image->setScale(1.05);
+			break;
+		}
+
+		case Widget::TouchEventType::ENDED: {
+			_money_Image->setScale(1.0);
+			int power = this->getPower()->getPower();
+			if (power < 50) {
+				return false;
+			}
+			this->getPower()->spendPower(50);
+			this->getMoney()->increaseMoney(200);
+			break;
+		}
+		case Widget::TouchEventType::CANCELED: {
+			_money_Image->setScale(1.0);
+			break;
+		}
+		default:
+			break;
+		}
+	});
 
 	_unit_Manager = UnitManager::create(_tiled_Map,_socket_server,_socket_client);
 	_unit_Manager->setPosition(Vec2::ZERO);

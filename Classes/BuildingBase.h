@@ -59,7 +59,12 @@ public:
 
 //the derived class for SoldierBase
 class SoldierBase :public BuildingBase {
+private:
+	bool _createUnit;
 public:
+	void setCreateUnit(bool judge) { _createUnit = judge; }
+	bool getCreateUnit() { return _createUnit; }
+
 	static SoldierBase* create(const std::string& filename) {
 		SoldierBase *sprite = new SoldierBase();
 		if (sprite && sprite->initWithTexture(Director::getInstance()->getTextureCache()->addImage(filename)))
@@ -76,6 +81,7 @@ public:
 		_elect = 10;
 		_lifeValue = 900;
 		setRange(2);
+		setCreateUnit(false);
 		setFixModel(FIX_HEIGHT);
 		//
 		setIsBuilding(true);
@@ -146,7 +152,9 @@ public:
 };
 
 class WarFactory :public BuildingBase {
+
 public:
+
 	static WarFactory* create(const std::string& filename) {
 		WarFactory *sprite = new WarFactory();
 		if (sprite && sprite->initWithTexture(Director::getInstance()->getTextureCache()->addImage(filename)))
@@ -164,7 +172,7 @@ public:
 		_lifeValue = 1200;
 		setRange(2);
 		setFixModel(FIX_HEIGHT);
-		//
+		setCreateUnit(false);
 		setIsBuilding(true);
 		setType(std::string("W"));
 	}

@@ -386,22 +386,6 @@ void UnitManager::attack(int attacker_id, int under_attack_id, int damage) {
 				if (!TiledMap::checkUnitId(under_attack_id)) {
 					return;
 				}
-				if (enemy->getType().at(0) == 'S') {
-					if (enemy->getCampID() == REDCAMP) {
-						SoldierBase::setRedIsBuilt(true);
-					}
-					else {
-						SoldierBase::setBlueIsBuilt(true);
-					}
-				}
-				else if(enemy->getType().at(0) == 'W') {
-					if (enemy->getCampID() == REDCAMP) {
-						WarFactory::setRedIsBuilt(true);
-					}
-					else{
-						WarFactory::setBlueIsBuilt(true);
-					}
-				}
 				TiledMap::removeMapGrid(tiledLocation, enemy->getFixModel());
 				TiledMap::removeMapId(enemy->getUnitID());
 				_tiled_Map->getTiledMap()->removeChild(enemy);
@@ -730,12 +714,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		auto tiledLocation = tempTiledMap->tileCoordForPosition(nodeLocation);
 		dog->setPosition(_tiled_Map->changeOPGL(Vec2(nodeLocation.x, nodeLocation.y)));
 		dog->setTiledPosition(tiledLocation);
-		if (base_id == REDCAMP) {
-			Dog::setRedIsCreated(true);
-		}
-		else {
-			Dog::setBlueIsCreated(true);
-		}
+		plant->setCreateUnit(true);
 		static_cast<TMXTiledMap*>(plant->getParent())->addChild(dog, 200);
 		dog->Create(plant);
 		
@@ -771,12 +750,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		auto tiledLocation = tempTiledMap->tileCoordForPosition(nodeLocation);
 		soldier->setPosition(_tiled_Map->changeOPGL(Vec2(nodeLocation.x, nodeLocation.y)));
 		soldier->setTiledPosition(tiledLocation);
-		if (base_id == REDCAMP) {
-			Soldier::setRedIsCreated(true);
-		}
-		else {
-			Soldier::setBlueIsCreated(true);
-		}
+		plant->setCreateUnit(true);
 		static_cast<TMXTiledMap*>(plant->getParent())->addChild(soldier, 200);
 		soldier->Create(plant);
 		
@@ -812,12 +786,7 @@ void UnitManager::NewUnitCreate(int new_unit_id, std::string new_unit_type, int 
 		auto tiledLocation = tempTiledMap->tileCoordForPosition(nodeLocation);
 		tank->setPosition(_tiled_Map->changeOPGL(Vec2(nodeLocation.x, nodeLocation.y)));
 		tank->setTiledPosition(tiledLocation);
-		if (base_id == REDCAMP) {
-			Tank::setRedIsCreated(true);
-		}
-		else {
-			Tank::setBlueIsCreated(true);
-		}
+		plant->setCreateUnit(true);
 		static_cast<TMXTiledMap*>(plant->getParent())->addChild(tank, 200);
 		tank->Create(plant);
 	
